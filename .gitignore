@@ -62,3 +62,5 @@ typings/
 
 # Compile directory
 lib
+
+package-lock.json
