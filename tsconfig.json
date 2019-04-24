@@ -2,7 +2,6 @@
   "compilerOptions": {
     "target": "es5",
     "experimentalDecorators": true,
-    "noUnusedLocals": true,
     "declaration": true,
     "sourceMap": true,
     "outDir": "lib"
@@ -11,6 +10,6 @@
     "src/index.ts"
   ],
   "exclude": [
-    "node_modules",
+    "node_modules"
   ]
 }

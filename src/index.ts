@@ -1,14 +1,17 @@
 import Store from './store';
 
 export default class Fiy {
+  constructor(private react) {
+  }
+
   private stroes: {[namespace: string]: Store} = {};
 
-  public registerStore(namespace: string, config: object): Store {
+  public registerStore(namespace: string, bindings: object): Store {
     if (this.stroes[namespace]) {
       throw new Error(`Namespace have been used: ${namespace}.`);
     }
 
-    this.stroes[namespace] = new Store(config);
+    this.stroes[namespace] = new Store(bindings, this.react);
     return this.stroes[namespace];
   }
 
