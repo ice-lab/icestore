@@ -19,7 +19,13 @@ export default class Fiy {
         return store;
     }
 
-    public useStore(namespace: string) {
+    public useStore(namespace: string): object {
         return this.getModel(namespace).useStore();
+    }
+
+    public userStores(namespaces: string[]): object[] {
+        return namespaces.map((namespace) => {
+            return this.useStore(namespace);
+        });
     }
 }

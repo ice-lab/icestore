@@ -2,13 +2,16 @@
 import * as isFunction from 'lodash.isfunction';
 import { useState, useEffect } from 'react';
 
+interface MethodFunc {
+    (): void;
+}
+
 export default class Store {
     private state: {[name: string]: any} = {};
 
-    private methods = {};
+    private methods: {[name: string]: MethodFunc} = {};
 
     private queue = [];
-
 
     public constructor(bindings: object) {
         for (const key in bindings) {
@@ -22,7 +25,7 @@ export default class Store {
         }
     } 
 
-    private createMethod(fun) {
+    private createMethod(fun): MethodFunc {
         return async (...args) => {
             const newState = {...this.state};
             await fun.apply(newState, args);
@@ -30,14 +33,14 @@ export default class Store {
         };
     }
 
-    private setState(newState) {
+    private setState(newState: object): void {
         this.state = newState;
         const queue = [].concat(this.queue);
         this.queue = [];
         queue.forEach(setState => setState(newState));
     }
 
-    public useStore() { 
+    public useStore(): object { 
         const [, setState] = useState();
         useEffect(() => {
             const index = this.queue.length;
