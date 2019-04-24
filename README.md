@@ -11,10 +11,10 @@
 export default {
   dataSource: [],
   async refresh() {
-    this.dataSourde = await fetch(/* api */);
+    this.dataSourde = await (await fetch(/* api */)).json();
   },
   add(project) {
-    this.dataSourde = [].concat(this.dataSource).concat([project]) };
+    this.dataSourde.push(project);
   },
   async action() {
     // ...
