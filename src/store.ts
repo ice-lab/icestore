@@ -1,6 +1,7 @@
 
-import { React } from './types';
 import * as isFunction from 'lodash.isfunction';
+import { useState, useEffect } from 'react';
+
 export default class Store {
     private state: {[name: string]: any} = {};
 
@@ -8,10 +9,8 @@ export default class Store {
 
     private queue = [];
 
-    private react: React;
 
-    public constructor(bindings: object, react: React) {
-        this.react = react;
+    public constructor(bindings: object) {
         for (const key in bindings) {
             const value = bindings[key];
 
@@ -39,8 +38,8 @@ export default class Store {
     }
 
     public useStore() { 
-        const [, setState] = this.react.useState();
-        this.react.useEffect(() => {
+        const [, setState] = useState();
+        useEffect(() => {
             const index = this.queue.length;
             this.queue.push(setState);
             return () => {

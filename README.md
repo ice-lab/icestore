@@ -29,11 +29,10 @@ export default {
 
 ```javascript
 // src/stores/index.js
-import React from 'react';
 import materials from './materials';
 import Fiy from 'fiy';
 
-const fiy = new Fiy(React);
+const fiy = new Fiy();
 fiy.registerStore('materials', materials);
 
 export default fiy;

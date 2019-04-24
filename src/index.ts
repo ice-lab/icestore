@@ -1,20 +1,13 @@
 import Store from './store';
-import { React } from './types';
 export default class Fiy {
-    private react: React;
-
     private stores: {[namespace: string]: Store} = {};
-
-    public constructor(react: React) {
-        this.react = react;
-    }
 
     public registerStore(namespace: string, bindings: object): Store {
         if (this.stores[namespace]) {
             throw new Error(`Namespace have been used: ${namespace}.`);
         }
 
-        this.stores[namespace] = new Store(bindings, this.react);
+        this.stores[namespace] = new Store(bindings);
         return this.stores[namespace];
     }
 
