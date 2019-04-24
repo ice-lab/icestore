@@ -59,3 +59,8 @@ typings/
 
 # next.js build output
 .next
+
+# Compile directory
+lib
+
+package-lock.json
