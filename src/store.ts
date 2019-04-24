@@ -38,7 +38,7 @@ export default class Store {
         queue.forEach(setState => setState(newState));
     }
 
-    public useStroe() { 
+    public useStore() { 
         const [, setState] = this.react.useState();
         this.react.useEffect(() => {
             const index = this.queue.length;

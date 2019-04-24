@@ -26,7 +26,7 @@ export default class Fiy {
         return store;
     }
 
-    public useStroe(namespace: string) {
-        return this.getModel(namespace).useStroe();
+    public useStore(namespace: string) {
+        return this.getModel(namespace).useStore();
     }
 }
