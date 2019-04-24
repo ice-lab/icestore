@@ -50,9 +50,7 @@ const Material = () => {
   const {  dataSource } = materials;
 
   useEffect(() => {
-    (async () => {
-      await materials.refresh();
-    })();
+    materials.refresh();
   }, []);
 
   return (
