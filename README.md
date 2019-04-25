@@ -1,4 +1,4 @@
-# fiy
+# Ice Store
 
 基于 React Hooks 的数据流方案。
 
@@ -14,7 +14,7 @@ export default {
     this.dataSourde = await fetch(/* api */);
   },
   add(project) {
-    this.dataSourde = [].concat(this.dataSource).concat([project]) };
+    this.dataSourde.push(project);
   },
   async action() {
     // ...
@@ -30,19 +30,20 @@ export default {
 ```javascript
 // src/stores/index.js
 import materials from './materials';
-import Fiy from 'fiy';
+import Icestore from 'icestore';
 
-const fiy = new Fiy();
-fiy.registerStore('materials', materials);
+const icestore = new Fiy();
+icestore.registerStore('materials', materials);
 
-export default fiy;
+export default icestore;
 ```
 
 ### 在 View 中使用
 
 ```javascript
+// src/pages/Material/index.js
 import React, { useEffect } from 'react';
-import stores from '@src/stores';
+import stores from '../..//stores';
 
 const Material = () => {
   const materials = stores.useStore('materials');
