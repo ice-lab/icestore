@@ -43,7 +43,7 @@ export default {
 import materials from './materials';
 import Icestore from 'icestore';
 
-const icestore = new Fiy();
+const icestore = new Icestore();
 icestore.registerStore('materials', materials);
 
 export default icestore;
@@ -55,7 +55,7 @@ export default icestore;
 // src/pages/Material/index.js
 import React, { useEffect } from 'react';
 import ReactDOM from 'react-dom';
-import stores from '../..//stores';
+import stores from '../../stores';
 
 const Material = () => {
   const materials = stores.useStore('materials');
