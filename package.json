@@ -1,5 +1,5 @@
 {
-  "name": "fiy",
+  "name": "icestore",
   "version": "0.1.0",
   "description": "基于 React Hooks 的数据流方案",
   "main": "lib/index.js",
@@ -9,7 +9,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ice-lab/fiy.git"
+    "url": "git+https://github.com/ice-lab/icestore.git"
   },
   "keywords": [
     "hooks",
@@ -17,9 +17,9 @@
   ],
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/ice-lab/fiy/issues"
+    "url": "https://github.com/ice-lab/icestore/issues"
   },
-  "homepage": "https://github.com/ice-lab/fiy",
+  "homepage": "https://github.com/ice-lab/icestore",
   "husky": {
     "hooks": {
       "commit-msg": "commitlint -E HUSKY_GIT_PARAMS"

@@ -1,8 +1,19 @@
-# fiy
+# Ice Store
+
+[![NPM version](https://img.shields.io/npm/v/icestore.svg?style=flat)](https://npmjs.org/package/icestore)
+[![NPM downloads](http://img.shields.io/npm/dm/icestore.svg?style=flat)](https://npmjs.org/package/icestore)
 
 基于 React Hooks 的数据流方案。
 
-## 如何使用
+---
+
+## 快速上手
+
+### 安装
+
+```
+$ npm install icestore --save
+```
 
 ### 声明 Store
 
@@ -14,7 +25,7 @@ export default {
     this.dataSourde = await fetch(/* api */);
   },
   add(project) {
-    this.dataSourde = [].concat(this.dataSource).concat([project]) };
+    this.dataSourde.push(project);
   },
   async action() {
     // ...
@@ -30,19 +41,21 @@ export default {
 ```javascript
 // src/stores/index.js
 import materials from './materials';
-import Fiy from 'fiy';
+import Icestore from 'icestore';
 
-const fiy = new Fiy();
-fiy.registerStore('materials', materials);
+const icestore = new Icestore();
+icestore.registerStore('materials', materials);
 
-export default fiy;
+export default icestore;
 ```
 
 ### 在 View 中使用
 
 ```javascript
+// src/pages/Material/index.js
 import React, { useEffect } from 'react';
-import stores from '@src/stores';
+import ReactDOM from 'react-dom';
+import stores from '../../stores';
 
 const Material = () => {
   const materials = stores.useStore('materials');
@@ -62,5 +75,8 @@ const Material = () => {
   );
 };
 
-export default Material;
+ReactDOM.render(
+  <Material />,
+  document.body
+);
 ```
