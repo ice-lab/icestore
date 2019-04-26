@@ -59,7 +59,7 @@ import stores from '../../stores';
 
 const Material = () => {
   const materials = stores.useStore('materials');
-  const {  dataSource } = materials;
+  const { dataSource } = materials;
 
   useEffect(() => {
     materials.refresh();
