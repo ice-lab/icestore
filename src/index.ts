@@ -1,4 +1,5 @@
 import Store from './store';
+
 export default class Fiy {
     private stores: {[namespace: string]: Store} = {};
 
@@ -24,8 +25,6 @@ export default class Fiy {
     }
 
     public userStores(namespaces: string[]): object[] {
-        return namespaces.map((namespace) => {
-            return this.useStore(namespace);
-        });
+        return namespaces.map(namespace => this.useStore(namespace));
     }
 }

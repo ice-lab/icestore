@@ -14,7 +14,7 @@ export default class Store {
     private queue = [];
 
     public constructor(bindings: object) {
-        for (const key in bindings) {
+        Object.keys(bindings).forEach((key) => {
             const value = bindings[key];
 
             if (isFunction(value)) {
@@ -22,12 +22,12 @@ export default class Store {
             } else {
                 this.state[key] = value;
             }
-        }
-    } 
+        });
+    }
 
     private createMethod(fun): MethodFunc {
         return async (...args) => {
-            const newState = {...this.state};
+            const newState = { ...this.state };
             await fun.apply(newState, args);
             this.setState(newState);
         };
@@ -40,7 +40,7 @@ export default class Store {
         queue.forEach(setState => setState(newState));
     }
 
-    public useStore(): object { 
+    public useStore(): object {
         const [, setState] = useState();
         useEffect(() => {
             const index = this.queue.length;
