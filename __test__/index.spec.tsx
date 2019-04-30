@@ -1,36 +1,36 @@
-import { expect } from 'chai';
-import { mount } from 'enzyme';
+import * as React from 'react';
+import * as TestRenderer from 'react-test-renderer';
 import Icestore from '../src/index';
 import Store from '../src/store';
 
 describe('#Icestore', function () {
-    it('should new Class be ok.', () => {
-        expect(new Icestore()).to.exist;
+    test('new Class should be defined.', () => {
+        expect(new Icestore()).toBeDefined();
     });
 
     describe('#registerStore', function () {
         const icestore = new Icestore();
 
-        it('should return a Store.', function () {
+        test('should return a Store.', function () {
             const store = icestore.registerStore('test', {
                 name: 'ice'
             });
-            expect(store instanceof Store).to.be.true;
+            expect(store instanceof Store).toBe(true);
         });
 
-        it('should throw an Error when the same namespace is registered.', function() {
-            expect(() => icestore.registerStore('test', {})).to.throw(Error, 'Namespace have been used: test');
+        test('should throw an Error when the same namespace is registered.', function() {
+            expect(() => icestore.registerStore('test', {})).toThrowError('Namespace have been used: test');
         });
     });
 
     describe('#useStore', function () {
         const icestore = new Icestore();
 
-        it('should throw an Error when the namespace is not exist.', function() {
-            expect(() => icestore.useStore('test')).to.throw(Error, 'Not found namespace: test');
+        test('should throw an Error when the namespace is not exist.', function() {
+            expect(() => icestore.useStore('test')).toThrowError('Not found namespace: test');
         });
 
-        it('should useStore be ok.', function() {
+        test('should useStore be ok.', function() {
             const initState = [
                 {
                     name: 'ice'
@@ -44,14 +44,14 @@ describe('#Icestore', function () {
                 const todos: any = icestore.useStore('todos');
                 const { dataSource } = todos;
 
-                expect(dataSource).to.deep.equal(initState);
+                expect(dataSource).toEqual(initState);
 
                 return <div />;
-              };
+            };
               
-              mount(
+            TestRenderer.create(
                 <Todos />
-              );
+            );
         });
     });
 });

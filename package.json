@@ -31,34 +31,24 @@
     "prepublishOnly": "npm run lint && npm run test && npm run build",
     "lint": "npm run lint:nofix -- --fix",
     "lint:nofix": "eslint --cache --ext .ts ./src",
-    "cov": "rm -rf coverage && NODE_ENV=unittest nyc mocha && nyc report --reporter=json --reporter=lcov",
-    "test": "NODE_ENV=unittest mocha -r ts-node/register -r jsdom-global/register -r test/setup.ts --trace-warnings --timeout 0 test/**/*.test.ts test/**/*.test.tsx"
+    "test": "NODE_ENV=unittest jest"
   },
   "devDependencies": {
+    "@babel/core": "^7.4.4",
     "@commitlint/cli": "^7.5.2",
     "@commitlint/config-conventional": "^7.5.0",
-    "@types/chai": "^3.5.2",
-    "@types/enzyme": "^3.9.1",
-    "@types/enzyme-adapter-react-16": "^1.0.5",
-    "@types/jsdom": "^12.2.3",
-    "@types/mocha": "^2.2.41",
+    "@types/jest": "^24.0.12",
     "@types/node": "^11.13.7",
     "@typescript-eslint/eslint-plugin": "^1.7.0",
     "@typescript-eslint/parser": "^1.7.0",
-    "chai": "^4.2.0",
-    "enzyme": "^3.9.0",
-    "enzyme-adapter-react-16": "^1.12.1",
     "eslint": "^5.3.0",
     "eslint-config-airbnb-base": "^13.1.0",
     "eslint-plugin-import": "^2.17.2",
     "husky": "^1.3.1",
-    "jsdom": "^15.0.0",
-    "jsdom-global": "^3.0.2",
-    "mocha": "^3.5.0",
-    "nyc": "^14.0.0",
+    "jest": "^24.7.1",
     "react": "^16.7.0",
-    "react-dom": "^16.8.6",
-    "ts-node": "^3.2.0",
+    "react-test-renderer": "^16.8.6",
+    "ts-jest": "^24.0.2",
     "typescript": "^3.4.4"
   },
   "dependencies": {
@@ -67,26 +57,7 @@
   "peerDependencies": {
     "react": "^16.7.0"
   },
-  "nyc": {
-    "include": [
-      "src/*.ts",
-      "src/**/*.ts"
-    ],
-    "exclude": [
-      "**/*.d.ts"
-    ],
-    "extension": [
-      ".ts"
-    ],
-    "require": [
-      "ts-node/register"
-    ],
-    "reporter": [
-      "text",
-      "json",
-      "html",
-      "lcovonly"
-    ],
-    "all": true
+  "jest": {
+    "preset": "ts-jest"
   }
 }
