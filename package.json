@@ -1,6 +1,6 @@
 {
   "name": "icestore",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "基于 React Hooks 的数据流方案",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
