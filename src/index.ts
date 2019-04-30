@@ -1,6 +1,6 @@
 import Store from './store';
 
-export default class Fiy {
+export default class Icestore {
     private stores: {[namespace: string]: Store} = {};
 
     public registerStore(namespace: string, bindings: object): Store {
