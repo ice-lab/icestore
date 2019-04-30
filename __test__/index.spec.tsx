@@ -1,5 +1,6 @@
 import * as React from 'react';
-import * as TestRenderer from 'react-test-renderer';
+import * as ReactDOM from 'react-dom';
+import{ act } from 'react-dom/test-utils';
 import Icestore from '../src/index';
 import Store from '../src/store';
 
@@ -24,34 +25,46 @@ describe('#Icestore', function () {
     });
 
     describe('#useStore', function () {
+        let container;
+
+        beforeEach(() => {
+            container = document.createElement('div');
+            document.body.appendChild(container);
+        });
+
+        afterEach(() => {
+            document.body.removeChild(container);
+            container = null;
+        });
+
         const icestore = new Icestore();
+        const initState = [
+            {
+                name: 'ice'
+            }
+        ];
+        icestore.registerStore('todos', {
+            dataSource: initState
+        });
 
         test('should throw an Error when the namespace is not exist.', function() {
             expect(() => icestore.useStore('test')).toThrowError('Not found namespace: test');
         });
 
         test('should useStore be ok.', function() {
-            const initState = [
-                {
-                    name: 'ice'
-                }
-            ];
-            icestore.registerStore('todos', {
-                dataSource: initState,
-            });
-
+            let data;
             const Todos = () => {
                 const todos: any = icestore.useStore('todos');
-                const { dataSource } = todos;
-
-                expect(dataSource).toEqual(initState);
+                data = todos.dataSource;
 
                 return <div />;
             };
               
-            TestRenderer.create(
-                <Todos />
-            );
+            act(() => {
+                ReactDOM.render(<Todos />, container);
+            });
+
+            expect(data).toEqual(initState);
         });
     });
 });

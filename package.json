@@ -34,7 +34,6 @@
     "test": "NODE_ENV=unittest jest"
   },
   "devDependencies": {
-    "@babel/core": "^7.4.4",
     "@commitlint/cli": "^7.5.2",
     "@commitlint/config-conventional": "^7.5.0",
     "@types/jest": "^24.0.12",
@@ -47,7 +46,7 @@
     "husky": "^1.3.1",
     "jest": "^24.7.1",
     "react": "^16.7.0",
-    "react-test-renderer": "^16.8.6",
+    "react-dom": "^16.8.6",
     "ts-jest": "^24.0.2",
     "typescript": "^3.4.4"
   },
