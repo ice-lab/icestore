@@ -5,5 +5,5 @@
     "sourceType": "module",
     "project": "./tsconfig.json"
   },
-  "extends": ["plugin:@typescript-eslint/recommended"]
+  "extends": ["airbnb-base", "plugin:import/typescript", "plugin:@typescript-eslint/recommended"]
 }

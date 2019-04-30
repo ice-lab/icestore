@@ -1,5 +1,6 @@
 import Store from './store';
-export default class Fiy {
+
+export default class Icestore {
     private stores: {[namespace: string]: Store} = {};
 
     public registerStore(namespace: string, bindings: object): Store {
@@ -23,9 +24,7 @@ export default class Fiy {
         return this.getModel(namespace).useStore();
     }
 
-    public userStores(namespaces: string[]): object[] {
-        return namespaces.map((namespace) => {
-            return this.useStore(namespace);
-        });
+    public useStores(namespaces: string[]): object[] {
+        return namespaces.map(namespace => this.useStore(namespace));
     }
 }

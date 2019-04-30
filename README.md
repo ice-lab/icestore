@@ -1,31 +1,26 @@
 # Ice Store
 
+> 基于 React Hooks 的数据流方案。
+
 [![NPM version](https://img.shields.io/npm/v/icestore.svg?style=flat)](https://npmjs.org/package/icestore)
 [![NPM downloads](http://img.shields.io/npm/dm/icestore.svg?style=flat)](https://npmjs.org/package/icestore)
 
-基于 React Hooks 的数据流方案。
+## 安装
 
----
+```bash
+npm install icestore --save
+```
 
 ## 快速上手
 
-### 安装
-
-```
-$ npm install icestore --save
-```
-
-### 声明 Store
+声明 Store：
 
 ```javascript
-// src/stores/materials.js
+// src/stores/todos.js
 export default {
   dataSource: [],
   async refresh() {
-    this.dataSourde = await fetch(/* api */);
-  },
-  add(project) {
-    this.dataSourde.push(project);
+    this.dataSource = await (await fetch(/* api */)).json();
   },
   async action() {
     // ...
@@ -36,47 +31,53 @@ export default {
 };
 ```
 
-### 注册 Store
+注册 Store：
 
 ```javascript
 // src/stores/index.js
-import materials from './materials';
+import todos from './todos';
 import Icestore from 'icestore';
 
 const icestore = new Icestore();
-icestore.registerStore('materials', materials);
+icestore.registerStore('todos', todos);
 
 export default icestore;
 ```
 
-### 在 View 中使用
+在 View 中使用：
 
 ```javascript
-// src/pages/Material/index.js
+// src/index.js
 import React, { useEffect } from 'react';
 import ReactDOM from 'react-dom';
-import stores from '../../stores';
+import stores from './stores';
 
-const Material = () => {
-  const materials = stores.useStore('materials');
-  const {  dataSource } = materials;
+function Todo() {
+  const todos = stores.useStore('todos');
+  const { dataSource } = todos;
 
   useEffect(() => {
-    materials.refresh();
+    todos.refresh();
   }, []);
 
   return (
     <div>
-      <h2>Material</h2>
-      <div>
-        {dataSource.map(({ name }) => name)}
-      </div>
+      <h2>Todo</h2>
+      <ul>
+        {dataSource.map(({ name }) => (
+          <li>{name}</li>
+        ))}
+      </ul>
     </div>
   );
 };
 
 ReactDOM.render(
-  <Material />,
+  <Todo />,
   document.body
 );
 ```
+
+## 示例
+
+- Todos：[Sandbox](https://codesandbox.io/s/2017600okp)
