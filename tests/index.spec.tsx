@@ -1,38 +1,38 @@
 import * as React from 'react';
-import { render, fireEvent, getByTestId} from 'react-testing-library';
+import { render, fireEvent, getByTestId } from 'react-testing-library';
 import Icestore from '../src/index';
 import Store from '../src/store';
 
 function sleep(ms) {
-	return new Promise(resolve => setTimeout(resolve, ms));
+    return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-describe('#Icestore', function () {
+describe('#Icestore', () => {
     test('new Class should be defined.', () => {
         expect(new Icestore()).toBeDefined();
     });
 
-    describe('#registerStore', function () {
+    describe('#registerStore', () => {
         let icestore;
 
         beforeEach(() => {
             icestore = new Icestore();
         });
 
-        test('should return a Store.', function () {
+        test('should return a Store.', () => {
             const store = icestore.registerStore('test', {
-                name: 'ice'
+                name: 'ice',
             });
             expect(store instanceof Store).toBe(true);
         });
 
-        test('should throw an Error when the same namespace is registered.', function() {
+        test('should throw an Error when the same namespace is registered.', () => {
             icestore.registerStore('test', {});
             expect(() => icestore.registerStore('test', {})).toThrowError('Namespace have been used: test');
         });
     });
 
-    describe('#useStore', function () {
+    describe('#useStore', () => {
         let icestore;
 
         beforeEach(() => {
@@ -42,23 +42,23 @@ describe('#Icestore', function () {
         afterEach(() => {
             icestore = null;
         });
-  
-        test('should throw an Error when the namespace is not exist.', function() {
+
+        test('should throw an Error when the namespace is not exist.', () => {
             expect(() => icestore.useStore('test')).toThrowError('Not found namespace: test');
         });
 
-        test('should useStore be ok.', async function() {
+        test('should useStore be ok.', async () => {
             const initState = {
-                name: 'ice'
+                name: 'ice',
             };
             const newState = {
-                name: 'rax'
+                name: 'rax',
             };
             icestore.registerStore('todo', {
                 dataSource: initState,
-                setData: function(dataSource) {
+                setData(dataSource) {
                     this.dataSource = dataSource;
-                }
+                },
             });
 
             const renderFn = jest.fn();
@@ -80,7 +80,7 @@ describe('#Icestore', function () {
                     </button>
                 </div>;
             };
-           
+
             const { container } = render(<Todos />);
             const nameValue = getByTestId(container, 'nameValue');
             const actionButton = getByTestId(container, 'actionButton');
@@ -96,11 +96,11 @@ describe('#Icestore', function () {
             expect(nameValue.textContent).toEqual(newState.name);
         });
 
-        test('should useStores be ok.', function() {
-            const todo = { name: 'ice' };
-            const project = { name: 'rax' };
-            icestore.registerStore('todo', todo);
-            icestore.registerStore('project', project);
+        test('should useStores be ok.', () => {
+            const todoStore = { name: 'ice' };
+            const projectStore = { name: 'rax' };
+            icestore.registerStore('todo', todoStore);
+            icestore.registerStore('project', projectStore);
 
             const App = () => {
                 const [todo, project] = icestore.useStores(['todo', 'project']);
@@ -110,13 +110,13 @@ describe('#Icestore', function () {
                     <span data-testid="projectName">{project.name}</span>
                 </div>;
             };
-           
+
             const { container } = render(<App />);
             const todoName = getByTestId(container, 'todoName');
             const projectName = getByTestId(container, 'projectName');
 
-            expect(todoName.textContent).toEqual(todo.name);
-            expect(projectName.textContent).toEqual(project.name);
+            expect(todoName.textContent).toEqual(todoStore.name);
+            expect(projectName.textContent).toEqual(projectStore.name);
         });
     });
 });
