@@ -3,7 +3,10 @@
 > 基于 React Hooks 的数据流方案。
 
 [![NPM version](https://img.shields.io/npm/v/icestore.svg?style=flat)](https://npmjs.org/package/icestore)
+[![Package Quality](https://npm.packagequality.com/shield/icestore.svg)](https://packagequality.com/#?package=icestore)
+[![build status](https://img.shields.io/travis/ice-lab/icestore.svg?style=flat-square)](https://travis-ci.org/ice-lab/icestore)
 [![NPM downloads](http://img.shields.io/npm/dm/icestore.svg?style=flat)](https://npmjs.org/package/icestore)
+[![David deps](https://img.shields.io/david/ice-lab/icestore.svg?style=flat-square)](https://david-dm.org/ice-lab/icestore)
 
 ## 安装
 
