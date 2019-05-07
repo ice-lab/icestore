@@ -31,7 +31,8 @@
     "prepublishOnly": "npm run lint && npm run test && npm run build",
     "lint": "npm run lint:nofix -- --fix",
     "lint:nofix": "eslint --cache --ext .ts,.tsx ./",
-    "test": "NODE_ENV=unittest jest"
+    "test": "NODE_ENV=unittest jest",
+    "coverage": "codecov"
   },
   "devDependencies": {
     "@commitlint/cli": "^7.5.2",
@@ -40,6 +41,7 @@
     "@types/node": "^12.0.0",
     "@typescript-eslint/eslint-plugin": "^1.7.0",
     "@typescript-eslint/parser": "^1.7.0",
+    "codecov": "^3.3.0",
     "eslint": "^5.3.0",
     "eslint-config-airbnb-base": "^13.1.0",
     "eslint-plugin-import": "^2.17.2",
