@@ -30,6 +30,7 @@ export default class Store {
             const newState = { ...this.state };
             await fun.apply(newState, args);
             this.setState(newState);
+            return newState;
         };
     }
 
