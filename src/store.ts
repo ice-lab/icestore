@@ -37,11 +37,9 @@ export default class Store {
         this.state = newState;
         const queue = [].concat(this.queue);
         this.queue = [];
-        await Promise.all(queue.map(async setState => {
-            new Promise((resolve) => {
-                setState(newState, resolve);
-            });
-        }));
+        await Promise.all(queue.map(async setState => new Promise((resolve) => {
+            setState(newState, resolve);
+        })));
     }
 
     public useStore(): object {
