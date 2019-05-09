@@ -29,16 +29,19 @@ export default class Store {
         return async (...args) => {
             const newState = { ...this.state };
             await fun.apply(newState, args);
-            this.setState(newState);
-            return newState;
+            await this.setState(newState);
         };
     }
 
-    private setState(newState: object): void {
+    private async setState(newState: object): Promise<void> {
         this.state = newState;
         const queue = [].concat(this.queue);
         this.queue = [];
-        queue.forEach(setState => setState(newState));
+        await Promise.all(queue.map(async setState => {
+            new Promise((resolve) => {
+                setState(newState, resolve);
+            });
+        }));
     }
 
     public useStore(): object {
