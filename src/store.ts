@@ -25,11 +25,16 @@ export default class Store {
         });
     }
 
+    private getBindings() {
+        return { ...this.state, ...this.methods };
+    }
+
     private createMethod(fun): MethodFunc {
         return async (...args) => {
             const newState = { ...this.state };
             await fun.apply(newState, args);
             this.setState(newState);
+            return this.getBindings();
         };
     }
 
@@ -50,6 +55,6 @@ export default class Store {
             };
         });
 
-        return { ...this.state, ...this.methods };
+        return this.getBindings();
     }
 }
