@@ -42,7 +42,7 @@ export default class Store {
         this.state = newState;
         const queue = [].concat(this.queue);
         this.queue = [];
-        queue.map(setState => setState(newState));
+        queue.forEach(setState => setState(newState));
     }
 
     public useStore(): object {
