@@ -25,21 +25,24 @@ export default class Store {
         });
     }
 
+    private getBindings() {
+        return { ...this.state, ...this.methods };
+    }
+
     private createMethod(fun): MethodFunc {
         return async (...args) => {
             const newState = { ...this.state };
             await fun.apply(newState, args);
-            await this.setState(newState);
+            this.setState(newState);
+            return this.getBindings();
         };
     }
 
-    private async setState(newState: object): Promise<void> {
+    private setState(newState: object): void {
         this.state = newState;
         const queue = [].concat(this.queue);
         this.queue = [];
-        await Promise.all(queue.map(async setState => new Promise((resolve) => {
-            setState(newState, resolve);
-        })));
+        queue.map(setState => setState(newState));
     }
 
     public useStore(): object {
@@ -52,6 +55,6 @@ export default class Store {
             };
         });
 
-        return { ...this.state, ...this.methods };
+        return this.getBindings();
     }
 }
