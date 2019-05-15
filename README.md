@@ -86,3 +86,10 @@ ReactDOM.render(
 ## 示例
 
 - Todos：[Sandbox](https://codesandbox.io/s/2017600okp)
+
+## 参考
+
+- [react-hooks-model](https://github.com/yisbug/react-hooks-model)
+- [redux-react-hook](https://github.com/facebookincubator/redux-react-hook)
+- [mobx](https://github.com/mobxjs/mobx)
+
