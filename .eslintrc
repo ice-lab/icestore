@@ -2,7 +2,7 @@
   "parser": "@typescript-eslint/parser",
   "plugins": [
     "@typescript-eslint",
-    "react",    
+    "react",
     "import"
   ],
   "parserOptions": {
@@ -19,5 +19,8 @@
     "react": {
       "version": "detect"
     }
+  },
+  rules: {
+    "@typescript-eslint/indent": ["error", 2]
   }
 }
