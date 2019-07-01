@@ -1,30 +1,30 @@
 import Store from './store';
 
 export default class Icestore {
-    private stores: {[namespace: string]: Store} = {};
+  private stores: {[namespace: string]: Store} = {};
 
-    public registerStore(namespace: string, bindings: object): Store {
-        if (this.stores[namespace]) {
-            throw new Error(`Namespace have been used: ${namespace}.`);
-        }
-
-        this.stores[namespace] = new Store(bindings);
-        return this.stores[namespace];
+  public registerStore(namespace: string, bindings: object): Store {
+    if (this.stores[namespace]) {
+      throw new Error(`Namespace have been used: ${namespace}.`);
     }
 
-    private getModel(namespace: string): Store {
-        const store: Store = this.stores[namespace];
-        if (!store) {
-            throw new Error(`Not found namespace: ${namespace}.`);
-        }
-        return store;
-    }
+    this.stores[namespace] = new Store(bindings);
+    return this.stores[namespace];
+  }
 
-    public useStore(namespace: string): object {
-        return this.getModel(namespace).useStore();
+  private getModel(namespace: string): Store {
+    const store: Store = this.stores[namespace];
+    if (!store) {
+      throw new Error(`Not found namespace: ${namespace}.`);
     }
+    return store;
+  }
 
-    public useStores(namespaces: string[]): object[] {
-        return namespaces.map(namespace => this.useStore(namespace));
-    }
+  public useStore(namespace: string): object {
+    return this.getModel(namespace).useStore();
+  }
+
+  public useStores(namespaces: string[]): object[] {
+    return namespaces.map(namespace => this.useStore(namespace));
+  }
 }
