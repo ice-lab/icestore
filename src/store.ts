@@ -40,20 +40,18 @@ export default class Store {
 
     private setState(newState: object): void {
         this.state = newState;
-        const queue = [].concat(this.queue);
-        this.queue = [];
-        queue.forEach(setState => setState(newState));
+        this.queue.forEach(setState => setState(newState));
     }
 
     public useStore(): object {
-        const [, setState] = useState();
+        const [, setState] = useState(this.state);
         useEffect(() => {
             const index = this.queue.length;
             this.queue.push(setState);
             return () => {
                 this.queue.splice(index, 1);
             };
-        });
+        }, []);
 
         return this.getBindings();
     }
