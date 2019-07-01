@@ -46,9 +46,9 @@ export default class Store {
     public useStore(): object {
         const [, setState] = useState(this.state);
         useEffect(() => {
-            const index = this.queue.length;
             this.queue.push(setState);
             return () => {
+                const index = this.queue.indexOf(setState);
                 this.queue.splice(index, 1);
             };
         }, []);
