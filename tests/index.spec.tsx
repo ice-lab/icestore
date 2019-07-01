@@ -78,7 +78,7 @@ describe('#Icestore', () => {
           <button data-testid="actionButton" onClick={handleClick}>
           Click me
           </button>
-          </div>;
+        </div>;
       };
 
       const { container } = render(<Todos />);
@@ -108,7 +108,7 @@ describe('#Icestore', () => {
         return <div>
           <span data-testid="todoName">{todo.name}</span>
           <span data-testid="projectName">{project.name}</span>
-          </div>;
+        </div>;
       };
 
       const { container } = render(<App />);
