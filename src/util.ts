@@ -1,7 +1,9 @@
+/* eslint no-param-reassign: 0, import/prefer-default-export: 0 */
+
 import * as isObject from 'lodash.isobject';
 import * as isFunction from 'lodash.isfunction';
 
-const isArray = Array.isArray;
+const { isArray } = Array;
 
 /**
  * Recursively add proxy to javascipt variable

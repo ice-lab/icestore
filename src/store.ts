@@ -1,3 +1,5 @@
+/* eslint no-param-reassign: 0 */
+
 import * as isFunction from 'lodash.isfunction';
 import { useState, useEffect } from 'react';
 import { addProxy } from './util';
@@ -7,7 +9,6 @@ interface MethodFunc {
 }
 
 export default class Store {
-
   // store state and actions user defined
   private bindings: {[name: string]: any} = {};
 
