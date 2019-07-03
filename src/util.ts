@@ -8,7 +8,7 @@ import * as forEach from 'lodash.foreach';
  * @return {object} new proxy object
  */
 /* eslint no-param-reassign: 0, import/prefer-default-export: 0 */
-export function addProxy(value: object, handler: object): any {
+export function addProxy(value: object, handler: object): object {
   forEach(value, (item, key) => {
     if (isObject(item)) {
       value[key] = addProxy(item, handler);

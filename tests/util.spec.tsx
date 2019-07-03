@@ -19,12 +19,19 @@ describe('#util', () => {
       expect(addProxy(value, handler)).toBe(value);
     });
 
+    test('should function proxy set success', () => {
+      const value = () => {};
+      const result: any = addProxy(value, handler);
+      result.loading = true;
+      expect(result.loading).toBe('foo');
+    });
+
     test('should object proxy set success', () => {
       const value = {
         a: 1,
         b: 2,
       };
-      const result = addProxy(value, handler);
+      const result: any = addProxy(value, handler);
       result.a = 100;
       expect(result.a).toBe('foo');
     });
@@ -36,14 +43,14 @@ describe('#util', () => {
         ],
         b: 2,
       };
-      const result = addProxy(value, handler);
+      const result: any = addProxy(value, handler);
       result.a[0].c = 4;
       expect(result.a[0].c).toBe('foo');
     });
 
     test('should array proxy set success', () => {
       const value = [1, 2];
-      const result = addProxy(value, handler);
+      const result: any = addProxy(value, handler);
       result[0] = 4;
       expect(result[0]).toBe('foo');
     });
@@ -52,7 +59,7 @@ describe('#util', () => {
       const value = [
         { a: 1 },
       ];
-      const result = addProxy(value, handler);
+      const result: any = addProxy(value, handler);
       result[0].a = 4;
       expect(result[0].a).toBe('foo');
     });
