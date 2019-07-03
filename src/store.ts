@@ -29,7 +29,7 @@ export default class Store {
       set: (target, prop, value) => {
         if (!this.allowMutate) {
           console.error('Forbid modifying state directly, use action to modify instead.');
-          return true;
+          return false;
         }
         if (target[prop] !== value) {
           this.stateChanged = true;
