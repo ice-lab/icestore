@@ -1,50 +1,98 @@
-
 import * as isFunction from 'lodash.isfunction';
 import { useState, useEffect } from 'react';
+import { addProxy } from './util';
 
 interface MethodFunc {
   (): void;
 }
 
 export default class Store {
-  private state: {[name: string]: any} = {};
+  // store state and actions user defined
+  private bindings: {[name: string]: any} = {};
 
-  private methods: {[name: string]: MethodFunc} = {};
-
+  // queue of setState method from useState hook
   private queue = [];
+
+  // flag of whether allow state mutate
+  private allowMutate = false;
+
+  // flag of whether state changed after mutation
+  private stateChanged = false;
 
   public constructor(bindings: object) {
     Object.keys(bindings).forEach((key) => {
       const value = bindings[key];
-
-      if (isFunction(value)) {
-        this.methods[key] = this.createMethod(value);
-      } else {
-        this.state[key] = value;
-      }
+      this.bindings[key] = isFunction(value) ? this.createAction(value) : value;
     });
+
+    const handler = {
+      set: (target, prop, value) => {
+        if (!this.allowMutate) {
+          console.error('Forbid modifying state directly, use action to modify instead.');
+          return false;
+        }
+        if (target[prop] !== value) {
+          this.stateChanged = true;
+        }
+        /* eslint no-param-reassign: 0 */
+        target[prop] = addProxy(value, handler);
+        return true;
+      },
+    };
+
+    this.bindings = addProxy(this.bindings, handler);
   }
 
-  private getBindings() {
-    return { ...this.state, ...this.methods };
-  }
-
-  private createMethod(fun): MethodFunc {
+  /**
+   * Create action which will trigger state update after mutation
+   * @param {func} fun - original method user defined
+   * @return {func} action function
+   */
+  private createAction(fun): MethodFunc {
     return async (...args) => {
-      const newState = { ...this.state };
-      await fun.apply(newState, args);
-      this.setState(newState);
-      return this.getBindings();
+      this.allowMutate = true;
+      await fun.apply(this.bindings, args);
+      if (this.stateChanged) {
+        this.setState();
+      }
+      this.allowMutate = false;
+      this.stateChanged = false;
+      return this.bindings;
     };
   }
 
-  private setState(newState: object): void {
-    this.state = newState;
+  /**
+   * Get state from bindings
+   * @return {object} state
+   */
+  private getState(): object {
+    const { bindings } = this;
+    const state = {};
+    Object.keys(bindings).forEach((key) => {
+      const value = bindings[key];
+      if (!isFunction(value)) {
+        state[key] = value;
+      }
+    });
+    return state;
+  }
+
+  /**
+   * Trigger setState method in queue
+   */
+  private setState(): void {
+    const state = this.getState();
+    const newState = { ...state };
     this.queue.forEach(setState => setState(newState));
   }
 
+  /**
+   * Hook used to register setState and expose bindings
+   * @return {object} bindings of store
+   */
   public useStore(): object {
-    const [, setState] = useState(this.state);
+    const state = this.getState();
+    const [, setState] = useState(state);
     useEffect(() => {
       this.queue.push(setState);
       return () => {
@@ -52,7 +100,6 @@ export default class Store {
         this.queue.splice(index, 1);
       };
     }, []);
-
-    return this.getBindings();
+    return this.bindings;
   }
 }

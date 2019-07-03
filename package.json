@@ -1,6 +1,6 @@
 {
   "name": "@ice/store",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "基于 React Hooks 的数据流方案",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
@@ -55,7 +55,8 @@
     "typescript": "^3.4.4"
   },
   "dependencies": {
-    "lodash.isfunction": "^3.0.9"
+    "lodash.isfunction": "^3.0.9",
+    "lodash.isobject": "^3.0.2"
   },
   "peerDependencies": {
     "react": "^16.7.0"
