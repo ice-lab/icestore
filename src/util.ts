@@ -1,5 +1,3 @@
-/* eslint no-param-reassign: 0, import/prefer-default-export: 0 */
-
 import * as isObject from 'lodash.isobject';
 import * as isFunction from 'lodash.isfunction';
 
@@ -11,6 +9,7 @@ const { isArray } = Array;
  * @param {func} handler - proxy handler
  * @return {object} new proxy object
  */
+/* eslint no-param-reassign: 0, import/prefer-default-export: 0 */
 export const addProxy = (value, handler) => {
   if (!isObject(value) || isFunction(value)) {
     return value;

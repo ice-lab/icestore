@@ -1,5 +1,3 @@
-/* eslint no-param-reassign: 0 */
-
 import * as isFunction from 'lodash.isfunction';
 import { useState, useEffect } from 'react';
 import { addProxy } from './util';
@@ -36,6 +34,7 @@ export default class Store {
         if (target[prop] !== value) {
           this.stateChanged = true;
         }
+        /* eslint no-param-reassign: 0 */
         target[prop] = addProxy(value, handler);
         return true;
       },
