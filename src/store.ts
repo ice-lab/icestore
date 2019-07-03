@@ -1,4 +1,5 @@
 import * as isFunction from 'lodash.isfunction';
+import * as isPromise from 'is-promise';
 import { useState, useEffect } from 'react';
 import { addProxy } from './util';
 
@@ -18,6 +19,9 @@ export default class Store {
 
   // flag of whether state changed after mutation
   private stateChanged = false;
+
+  // flag of whether disable loading effect globally
+  public disableLoading = false;
 
   public constructor(bindings: object) {
     Object.keys(bindings).forEach((key) => {
@@ -45,20 +49,42 @@ export default class Store {
 
   /**
    * Create action which will trigger state update after mutation
-   * @param {func} fun - original method user defined
+   * @param {func} func - original method user defined
    * @return {func} action function
    */
-  private createAction(fun): MethodFunc {
-    return async (...args) => {
+  private createAction(func): MethodFunc {
+    const wrapper: any = async (...args) => {
       this.allowMutate = true;
-      await fun.apply(this.bindings, args);
-      if (this.stateChanged) {
+
+      const disableLoading = this.disableLoading || wrapper.disableLoading;
+      const result = func.apply(this.bindings, args);
+      const isAsync = isPromise(result);
+      const enableLoading = isAsync && !disableLoading;
+
+      if (enableLoading) {
+        wrapper.error = null;
+        wrapper.loading = true;
+        this.setState();
+      }
+
+      try {
+        await result;
+      } catch (e) {
+        console.error(e);
+        wrapper.error = e;
+      }
+
+      wrapper.loading = false;
+      if (enableLoading || this.stateChanged) {
         this.setState();
       }
       this.allowMutate = false;
       this.stateChanged = false;
+
       return this.bindings;
     };
+
+    return wrapper;
   }
 
   /**

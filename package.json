@@ -55,6 +55,7 @@
     "typescript": "^3.4.4"
   },
   "dependencies": {
+    "is-promise": "^2.1.0",
     "lodash.isfunction": "^3.0.9",
     "lodash.isobject": "^3.0.2"
   },
