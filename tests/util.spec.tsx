@@ -14,33 +14,8 @@ describe('#util', () => {
   });
 
   describe('#addProxy', () => {
-    test('should boolean type not affected', () => {
-      const value = false;
-      expect(addProxy(value, handler)).toBe(value);
-    });
-
-    test('should number type not affected', () => {
-      const value = 1;
-      expect(addProxy(value, handler)).toBe(value);
-    });
-
-    test('should string type not affected', () => {
-      const value = 'abc';
-      expect(addProxy(value, handler)).toBe(value);
-    });
-
     test('should null type not affected', () => {
       const value = null;
-      expect(addProxy(value, handler)).toBe(value);
-    });
-
-    test('should undefined type not affected', () => {
-      const value = undefined;
-      expect(addProxy(value, handler)).toBe(value);
-    });
-
-    test('should function type not affected', () => {
-      const value = () => {};
       expect(addProxy(value, handler)).toBe(value);
     });
 
