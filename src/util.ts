@@ -11,7 +11,7 @@ const { isArray } = Array;
  */
 /* eslint no-param-reassign: 0, import/prefer-default-export: 0 */
 export function addProxy(value: any, handler: object): any {
-  // basic type (number, boolean, string, null, undefined) and function type
+  // primitive type (number, boolean, string, null, undefined) and function type
   if (!isObject(value) || isFunction(value)) {
     return value;
   }
