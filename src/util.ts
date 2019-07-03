@@ -10,9 +10,9 @@ const { isArray } = Array;
  * @return {object} new proxy object
  */
 /* eslint no-param-reassign: 0, import/prefer-default-export: 0 */
-export function addProxy(value: any, handler: object): any {
-  // primitive type (number, boolean, string, null, undefined) and function type
-  if (!isObject(value) || isFunction(value)) {
+export function addProxy(value: object, handler: object): any {
+  // null and function also belongs to object type
+  if (value === null || isFunction(value)) {
     return value;
   }
 
