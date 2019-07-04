@@ -69,19 +69,23 @@ export default class Store {
         this.setState();
       }
 
+      const afterExec = () => {
+        wrapper.loading = false;
+        if (enableLoading || this.stateChanged) {
+          this.setState();
+        }
+        this.allowMutate = false;
+        this.stateChanged = false;
+      };
+
       try {
         await result;
+        afterExec();
       } catch (e) {
-        console.error(e);
         wrapper.error = e;
+        afterExec();
+        throw new Error(e);
       }
-
-      wrapper.loading = false;
-      if (enableLoading || this.stateChanged) {
-        this.setState();
-      }
-      this.allowMutate = false;
-      this.stateChanged = false;
 
       return this.bindings;
     };
