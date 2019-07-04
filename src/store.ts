@@ -1,4 +1,6 @@
 import * as isFunction from 'lodash.isfunction';
+import * as isPromise from 'is-promise';
+import * as isObject from 'lodash.isobject';
 import { useState, useEffect } from 'react';
 import { addProxy } from './util';
 
@@ -7,17 +9,20 @@ interface MethodFunc {
 }
 
 export default class Store {
-  // store state and actions user defined
+  /** Store state and actions user defined */
   private bindings: {[name: string]: any} = {};
 
-  // queue of setState method from useState hook
+  /** Queue of setState method from useState hook */
   private queue = [];
 
-  // flag of whether allow state mutate
-  private allowMutate = false;
-
-  // flag of whether state changed after mutation
+  /** Flag of whether state changed after mutation */
   private stateChanged = false;
+
+  /** Flag of how many actions are in exection */
+  private actionExecNum = 0;
+
+  /** Flag of whether disable loading effect globally */
+  public disableLoading = false;
 
   public constructor(bindings: object) {
     Object.keys(bindings).forEach((key) => {
@@ -27,7 +32,7 @@ export default class Store {
 
     const handler = {
       set: (target, prop, value) => {
-        if (!this.allowMutate) {
+        if (!this.actionExecNum) {
           console.error('Forbid modifying state directly, use action to modify instead.');
           return false;
         }
@@ -35,7 +40,7 @@ export default class Store {
           this.stateChanged = true;
         }
         /* eslint no-param-reassign: 0 */
-        target[prop] = addProxy(value, handler);
+        target[prop] = isObject(value) ? addProxy(value, handler) : value;
         return true;
       },
     };
@@ -45,20 +50,44 @@ export default class Store {
 
   /**
    * Create action which will trigger state update after mutation
-   * @param {func} fun - original method user defined
-   * @return {func} action function
+   * @param {function} func - original method user defined
+   * @return {function} action function
    */
-  private createAction(fun): MethodFunc {
-    return async (...args) => {
-      this.allowMutate = true;
-      await fun.apply(this.bindings, args);
-      if (this.stateChanged) {
+  private createAction(func): MethodFunc {
+    const wrapper: any = async (...args) => {
+      wrapper.loading = true;
+      wrapper.error = null;
+      this.actionExecNum += 1;
+
+      const disableLoading = wrapper.disableLoading !== undefined
+        ? wrapper.disableLoading : this.disableLoading;
+      const result = func.apply(this.bindings, args);
+      const isAsync = isPromise(result);
+      const enableLoading = isAsync && !disableLoading;
+      if (enableLoading) {
         this.setState();
       }
-      this.allowMutate = false;
-      this.stateChanged = false;
-      return this.bindings;
+
+      const afterExec = () => {
+        wrapper.loading = false;
+        this.actionExecNum -= 1;
+        if (enableLoading || this.stateChanged) {
+          this.setState();
+        }
+        this.stateChanged = false;
+      };
+
+      try {
+        await result;
+        afterExec();
+      } catch (e) {
+        wrapper.error = e;
+        afterExec();
+        throw new Error(e);
+      }
     };
+
+    return wrapper;
   }
 
   /**
