@@ -57,7 +57,8 @@ export default class Store {
     const wrapper: any = async (...args) => {
       this.allowMutate = true;
 
-      const disableLoading = this.disableLoading || wrapper.disableLoading;
+      const disableLoading = wrapper.disableLoading !== undefined
+        ? wrapper.disableLoading : this.disableLoading;
       const result = func.apply(this.bindings, args);
       const isAsync = isPromise(result);
       const enableLoading = isAsync && !disableLoading;
