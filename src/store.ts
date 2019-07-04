@@ -9,19 +9,19 @@ interface MethodFunc {
 }
 
 export default class Store {
-  /** store state and actions user defined */
+  /** Store state and actions user defined */
   private bindings: {[name: string]: any} = {};
 
-  /** queue of setState method from useState hook */
+  /** Queue of setState method from useState hook */
   private queue = [];
 
-  /** flag of whether state changed after mutation */
+  /** Flag of whether state changed after mutation */
   private stateChanged = false;
 
-  /** flag of how many actions are in exection */
+  /** Flag of how many actions are in exection */
   private actionExecNum = 0;
 
-  /** flag of whether disable loading effect globally */
+  /** Flag of whether disable loading effect globally */
   public disableLoading = false;
 
   public constructor(bindings: object) {
