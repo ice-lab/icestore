@@ -9,19 +9,19 @@ interface MethodFunc {
 }
 
 export default class Store {
-  // store state and actions user defined
+  /** store state and actions user defined */
   private bindings: {[name: string]: any} = {};
 
-  // queue of setState method from useState hook
+  /** queue of setState method from useState hook */
   private queue = [];
 
-  // flag of whether allow state mutate
+  /** flag of whether allow state mutate */
   private allowMutate = false;
 
-  // flag of whether state changed after mutation
+  /** flag of whether state changed after mutation */
   private stateChanged = false;
 
-  // flag of whether disable loading effect globally
+  /** flag of whether disable loading effect globally */
   public disableLoading = false;
 
   public constructor(bindings: object) {
@@ -50,8 +50,8 @@ export default class Store {
 
   /**
    * Create action which will trigger state update after mutation
-   * @param {func} func - original method user defined
-   * @return {func} action function
+   * @param {function} func - original method user defined
+   * @return {function} action function
    */
   private createAction(func): MethodFunc {
     const wrapper: any = async (...args) => {

@@ -1,7 +1,7 @@
 import Store from './store';
 
 export default class Icestore {
-  // stores registered
+  /** stores registered */
   private stores: {[namespace: string]: Store} = {};
 
   /**
