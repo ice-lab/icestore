@@ -15,11 +15,11 @@ export default class Store {
   /** queue of setState method from useState hook */
   private queue = [];
 
-  /** flag of whether allow state mutate */
-  private allowMutate = false;
-
   /** flag of whether state changed after mutation */
   private stateChanged = false;
+
+  /** flag of how many actions are in exection */
+  private actionExecNum = 0;
 
   /** flag of whether disable loading effect globally */
   public disableLoading = false;
@@ -32,7 +32,7 @@ export default class Store {
 
     const handler = {
       set: (target, prop, value) => {
-        if (!this.allowMutate) {
+        if (!this.actionExecNum) {
           console.error('Forbid modifying state directly, use action to modify instead.');
           return false;
         }
@@ -55,26 +55,25 @@ export default class Store {
    */
   private createAction(func): MethodFunc {
     const wrapper: any = async (...args) => {
-      this.allowMutate = true;
+      wrapper.loading = true;
+      wrapper.error = null;
+      this.actionExecNum += 1;
 
       const disableLoading = wrapper.disableLoading !== undefined
         ? wrapper.disableLoading : this.disableLoading;
       const result = func.apply(this.bindings, args);
       const isAsync = isPromise(result);
       const enableLoading = isAsync && !disableLoading;
-
       if (enableLoading) {
-        wrapper.error = null;
-        wrapper.loading = true;
         this.setState();
       }
 
       const afterExec = () => {
         wrapper.loading = false;
+        this.actionExecNum -= 1;
         if (enableLoading || this.stateChanged) {
           this.setState();
         }
-        this.allowMutate = false;
         this.stateChanged = false;
       };
 
@@ -86,8 +85,6 @@ export default class Store {
         afterExec();
         throw new Error(e);
       }
-
-      return this.bindings;
     };
 
     return wrapper;
