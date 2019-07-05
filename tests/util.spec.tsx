@@ -19,6 +19,14 @@ describe('#util', () => {
       expect(addProxy(value, handler)).toBe(value);
     });
 
+    test('should frozen object not affected', () => {
+      const value = Object.freeze({
+        a: 1,
+        b: 2,
+      });
+      expect(addProxy(value, handler)).toBe(value);
+    });
+
     test('should function proxy set success', () => {
       const value = () => {};
       const result: any = addProxy(value, handler);
