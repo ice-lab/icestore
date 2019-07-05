@@ -9,10 +9,13 @@ import * as forEach from 'lodash.foreach';
  */
 /* eslint no-param-reassign: 0, import/prefer-default-export: 0 */
 export function addProxy(value: object, handler: object): object {
+  if (!value || Object.isFrozen(value)) {
+    return value;
+  }
   forEach(value, (item, key) => {
     if (isObject(item)) {
       value[key] = addProxy(item, handler);
     }
   });
-  return value && new Proxy(value, handler);
+  return new Proxy(value, handler);
 }
