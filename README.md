@@ -279,8 +279,10 @@ Categorize your state and put them in indivisual stores for performance consider
 
 
 ### Don't overuse icestore
-Only put state in store when it needs to be shared across multiple pages or components, otherwise use local component state instead. Put local state in store will break component's self encapsulation which will affect its reusability. Take above `todos` app for example, it's perfectly fine to keep `datasource` in local component state.
-
+Only put state in store when it needs to be shared across multiple pages or components, otherwise use local component state instead. Put local state in store will break component's self encapsulation which will affect its reusability. Take above `todos` app for example, it's perfectly fine to keep `dataSource` in local component state.
+ 
+## Todos
+- [ ] Add debug util
 
 ## Feedback
 
