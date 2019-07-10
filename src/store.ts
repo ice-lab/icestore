@@ -83,7 +83,7 @@ export default class Store {
       } catch (e) {
         wrapper.error = e;
         afterExec();
-        throw new Error(e);
+        throw e;
       }
     };
 
