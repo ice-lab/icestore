@@ -1,7 +1,7 @@
 {
   "name": "@ice/store",
   "version": "0.2.2",
-  "description": "基于 React Hooks 的数据流方案",
+  "description": "Lightweight React state management library based on react hooks",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "files": [
