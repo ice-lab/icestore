@@ -34,20 +34,37 @@ Icestore is only compatable with React 16.8.0 and later cause it's dependency of
 ## Guide
 Let's build a simple todo app from scatch using icestore which includes follow steps:
 
-* Define store, store is a plain object, properties of function type  correspond to action and non function type correspond to state.   
+* Define store, store is a plain object, properties of function type correspond to action and non function type correspond to state.   
 
 ```javascript
 // src/stores/todos.js
 export default {
   dataSource: [],
   async refresh() {
-    this.dataSource = await fetch(/* api */).json();
+    this.dataSource = await new Promise(resolve =>
+      setTimeout(() => {
+        resolve([
+          {
+            name: "react"
+          },
+          {
+            name: "vue",
+            done: true
+          },
+          {
+            name: "angular"
+          }
+        ]);
+      }, 1000)
+    );  },
+  add(todo) {
+    this.dataSource.push(todo);
   },
-  add() {
-    // ...
+  remove(index) {
+    this.dataSource.splice(index, 1);
   },
-  remove() {
-    // ...
+  toggle(index) {
+    this.dataSource[index].done = !this.dataSource[index].done;
   },
 };
 ```
@@ -64,7 +81,7 @@ icestore.registerStore('todos', todos);
 export default icestore;
 ```
 
-* Import global store instance and useStore by namespace, trigger actions from lifecycle methods or user defined events, then bind state to JSX.
+* Import global store instance and useStore by namespace, trigger actions from lifecycle methods or user defined events, then bind state to view template.
 
 ```javascript
 // src/index.js
@@ -73,37 +90,72 @@ import ReactDOM from 'react-dom';
 import stores from './stores';
 
 function Todo() {
-  const todos = stores.useStore('todos');
-  const { dataSource } = todos;
+  const todos = stores.useStore("todos");
+  const { dataSource, refresh, add, remove, toggle } = todos;
 
-  useEffect(() => {
-    todos.refresh();
+  React.useEffect(() => {
+    refresh();
   }, []);
-  
-  function onRemove(index) {
-    todos.remove(index);
+
+  function onAdd(name) {
+    add({ name });
   }
-  
+
+  function onRemove(index) {
+    remove(index);
+  }
+
+  function onCheck(index) {
+    toggle(index);
+  }
+
   return (
     <div>
-      <h2>Todo</h2>
-      <ul>
-        {dataSource.map(({ name }) => (
-          <li>
-            <label>{name}</label>
-            <button onClick={() => onRemove(index)}>-</button>
-          </li>
-        ))}
-      </ul>
+      <h2>Todos</h2>
+      {!refresh.loading ? (
+        dataSource.length ? (
+          <ul>
+            {dataSource.map(({ name, done }, index) => (
+              <li key={index}>
+                <label>
+                  <input
+                    type="checkbox"
+                    checked={done}
+                    onClick={() => onCheck(index)}
+                  />
+                  {done ? <s>{name}</s> : <span>{name}</span>}
+                </label>
+                <button onClick={() => onRemove(index)}>-</button>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          "no task"
+        )
+      ) : (
+        "loading..."
+      )}
+      <div>
+        <input
+          onKeyDown={event => {
+            if (event.keyCode === 13) {
+              onAdd(event.target.value);
+              event.target.value = "";
+            }
+          }}
+          placeholder="Press Enter"
+        />
+      </div>
     </div>
   );
-};
+}
 
-ReactDOM.render(
-  <Todo />,
-  document.body
-);
+const rootElement = document.getElementById("root");
+ReactDOM.render(<Todo />, rootElement);
 ```
+
+Above todo example is presented in this [Sandbox](https://codesandbox.io/s/icestore-hs9fe), feel free to play with it.
+
 ## API
 
 ### registerStore
@@ -172,6 +224,30 @@ return (
   <Loading />
 );
 ```
+## Testing
+Because all the state and action are cleanly contained in a plain object, it's easy to write test without mocking.
+
+Example:
+
+```javascript
+test('todos', async () => {
+  await todos.refresh();
+  expect(todos.dataSource).toEqual([
+	{
+	  name: "react"
+	},
+	{
+	  name: "vue",
+	  done: true
+   },
+	{
+     name: "angular"
+	}
+  ]);
+});
+```
+
+Please refer to the `todos.spec.js` file in the above sandbox for complete reference.
 
 ## Best Practice
 ### Never mutate state outside actions
@@ -203,11 +279,8 @@ Categorize your state and put them in indivisual stores for performance consider
 
 
 ### Don't overuse icestore
-Only put state in store when it needs to be shared across multiple pages or components, otherwise use local component state instead. Put local state in store will break component's self encapsulation which will affect its reusability.
+Only put state in store when it needs to be shared across multiple pages or components, otherwise use local component state instead. Put local state in store will break component's self encapsulation which will affect its reusability. Take above `todos` app for example, it's perfectly fine to keep `datasource` in local component state.
 
-## Examples
-
-- Todos：[Sandbox](https://codesandbox.io/s/2017600okp)
 
 ## Feedback
 
