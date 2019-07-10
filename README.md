@@ -230,20 +230,22 @@ Because all the state and action are cleanly contained in a plain object, it's e
 Example:
 
 ```javascript
-test('todos', async () => {
-  await todos.refresh();
-  expect(todos.dataSource).toEqual([
-	{
-	  name: "react"
-	},
-	{
-	  name: "vue",
-	  done: true
-   },
-	{
-     name: "angular"
-	}
-  ]);
+describe("todos", () => {
+  test("refresh data success", async () => {
+    await todos.refresh();
+    expect(todos.dataSource).toEqual([
+      {
+        name: "react"
+      },
+      {
+        name: "vue",
+        done: true
+      },
+      {
+        name: "angular"
+      }
+    ]);
+  });
 });
 ```
 
