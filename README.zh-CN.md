@@ -322,7 +322,7 @@ describe("todos", () => {
 ## Contributors
 
 欢迎反馈问题 [issue 链接](https://github.com/alibaba/ice/issues/new)
-如果对 `ice-scripts` 感兴趣，欢迎参考 [CONTRIBUTING.md](https://github.com/alibaba/ice/blob/master/.github/CONTRIBUTING.md) 学习如何贡献代码。
+如果对 `icestore` 感兴趣，欢迎参考 [CONTRIBUTING.md](https://github.com/alibaba/ice/blob/master/.github/CONTRIBUTING.md) 学习如何贡献代码。
 
 ## License
 
