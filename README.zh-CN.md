@@ -1,6 +1,6 @@
 # icestore
 
-> Lightweight React state management library based on react hooks。
+>  基于React Hooks实现的轻量级状态管理框架。
 
 [![NPM version](https://img.shields.io/npm/v/@ice/store.svg?style=flat)](https://npmjs.org/package/@ice/store)
 [![Package Quality](https://npm.packagequality.com/shield/@ice%2Fstore.svg)](https://packagequality.com/#?package=@ice/store)
@@ -10,34 +10,32 @@
 [![Known Vulnerabilities](https://snyk.io/test/npm/@ice/store/badge.svg)](https://snyk.io/test/npm/@ice/store)
 [![David deps](https://img.shields.io/david/ice-lab/icestore.svg?style=flat-square)](https://david-dm.org/ice-lab/icestore)
 
-## Installation
+## 安装
 
 ```bash
 npm install @ice/store --save
 ```
 
-## Introduction
+## 简介
+`icestore` 是基于 React Hooks 实现的轻量级状态管理框架，有以下核心特点：
 
-icestore is a lightweight React state management library based on hooks. It has following core features:
+* 极简API: 只有3个API，真正做到五分钟上手
+* 单向数据流：与 Redux 一样使用单向数据流，便于状态的追踪与预测
+* 性能优化：通过多 store 的去中心化设计，减少单个 state 变化触发重新渲染的组件个数，同时改变 state 时做 diff，进一步减少不必要的渲染
+* 集成异步状态：记录异步 action 的执行状态，简化 view 组件中对于 loading 与 error 状态的渲染逻辑
 
-* Minimal API: only 3 apis, easy to pick up in 5 minutes
-* Predictable: unidirectional data flow just like Redux, only allow state mutation inside actions, make data flow easier to trace
-* Optimal performance: multiple store design and only trigger rerender when state changed
-* Built in async status: record loading and error status of async actions, simplify loading and error render logic in view
+`icestore` 数据流示意图如下：  
+<img src="https://user-images.githubusercontent.com/5419233/60956252-012f9300-a335-11e9-8667-75490ceb62b1.png" width="400" />
 
-The data flow is as follows:   
+### 兼容性
 
-<img src="https://user-images.githubusercontent.com/5419233/60878757-f44a6b00-a272-11e9-8afa-d47e8493e040.png" width="400" />
+`icestore` 由于依赖于 React 16.8.0提供的 Hooks 特性，因此只支持16.8.0及以上版本。
 
-### Compatibility
+## 快速开始
 
-icestore is only compatable with React 16.8.0 and later cause it's dependency of React hooks.
+让我们使用 `icestore` 从头开始搭建一个 todo 应用，包含以下几个步骤：
 
-## Getting Started
-
-Let's build a simple todo app from scatch using icestore which includes following steps:
-
-* Define store config which is a plain javascript object, properties of function type correspond to action and non function type correspond to state.   
+* 定义 store 配置，store 是一个普通的 js 对象，对象上函数类型属性对应 action，非函数类型对应 state。
 
 ```javascript
 // src/stores/todos.js
@@ -71,7 +69,8 @@ export default {
   },
 };
 ```
-* Initialize store instance and register pre-defined store config to store instance by namespace.
+
+* 初始化 store 实例，并且按 namespace 将定义好的 store 配置注册到 store 实例中。
 
 ```javascript
 // src/stores/index.js
@@ -84,7 +83,7 @@ icestore.registerStore('todos', todos);
 export default icestore;
 ```
 
-* In view component, import store instance, get store config (including state and actions) by using `useStore` hook, then trigger actions from `useEffect` hook or event callbacks, finally bind state to view template.
+* 在 view 组件中，import store 实例，通过 `useStore` hook 获取 store 配置(包含 state 和 actions)，然后在 `useEffect` hook 或者事件回调中触发 actions，最后将 state 绑定到 view 模板上。
 
 ```javascript
 // src/index.js
@@ -157,60 +156,61 @@ const rootElement = document.getElementById("root");
 ReactDOM.render(<Todo />, rootElement);
 ```
 
-Complete example is presented in this [sandbox](https://codesandbox.io/s/icestore-hs9fe), feel free to play with it.
+完整示例展示在这个 [sandbox](https://codesandbox.io/s/icestore-hs9fe)。
 
 ## API
 
 ### registerStore
 
-Register store config to global store instance. 
+将 store 配置注释到全局 store 实例。
 
-* Paramters
-  - namespace {string} unique name of store
-  - bindings {object} object of store config including state and actions
-* Return value
-  - {object} store instance
+* 参数
+  - namespace {string} store 的命名空间
+  - bindings {object} store 配置，包含 state 和 actions
+* 返回值
+  - {object} store 实例
 
 ### useStores
 
-Hooks of using multiple store.
+同时使用多个 store 的 hook。
 
-* Paramters
-  - namespaces {array} arrays of store namespace
-* Return value
-  - {array} array of stores' bindings
+* 参数
+  - namespaces {array} 多个 store 的命名空间数组
+* 返回值
+  - {array} 多个 store 的配置对象数组
 
 ### useStore
 
-Hooks of using single store.
+使用单个 store 的 hook。
 
-* Paramters
-  - namespace {string} store namespace
-* Return value
-  - {object} store's bindings
+* 参数
+  - namespace {string} store 的命名空间
+* 返回值
+  - {object} store 的配置对象
 
-## Advanced use
+## 高级用法
 
-### async status
+### 异步状态
 
-icestore has built in async status support in async function, it enables user to access to async functions' loading and error status without defining extra state which will make code more consise and clean.
+`icestore` 内部集成了对于异步 action 的异步状态记录，方便用户在不增加额外的 state 的前提下访问异步 action 的执行状态（loading 与 error），从而使状态的渲染逻辑更简洁。
 
 #### API
 
-* `action.loading` - flag of whether action is executing
+* `action.loading` - action 是否正在执行中的标志位
   - Type: {boolean}
   - Default: false
-* `action.error` - flag of whether action has error after executing
+* `action.error` - action 执行完成后是否抛出错误的标志位
   - Type: {boolean}
   - Default: false
-* `action.disableLoading` - flag of whether disable action's loading effect, if set to true, views will not rerender when loading status changed
+* `action.disableLoading` - 是否关闭 action loading 效果的开关, 如果设置为 true, 当 loading 标志位变化时，关联的 view 组件将不会重新渲染 
   - Type: {boolean}
   - Default: false
-* `store.disableLoading` - flag of whether disable loading effect globally. Note, action's `disableLoading` flag will always takes priority when both are set
+* `store.disableLoading` - 是否全局关闭所有 action 的 loading 效果. 注意当全局与 action 上的该标志位均设置时，action 上标志位优先级高
   - Type: {boolean}
   - Default: false
 
-#### Example
+
+#### 示例
 
 ```javascript
 const todos = store.useStore('todos');
@@ -241,11 +241,11 @@ return (
   <Loading />
 );
 ```
-## Testing
+## 测试
 
-Because all the state and action are cleanly contained in a plain object, it's easy to write test without mocking.
+由于所有的 state 和 actions 都封装在一个普通的 javascript 对象中，可以在不 mock 的情况下很容易的给 store 写测试用例。
 
-Example:
+#### 示例
 
 ```javascript
 describe("todos", () => {
@@ -267,13 +267,13 @@ describe("todos", () => {
 });
 ```
 
-Please refer to the `todos.spec.js` file in the above sandbox for complete reference.
+完整的测试用例请参考上面[sandbox](https://codesandbox.io/s/icestore-hs9fe)中的 `todos.spec.js` 文件。
 
-## Best Practice
+## 最佳实践
 
-### Never mutate state outside actions
+### 不要在action之外直接修改state
 
-icestore enforce all the mutations to state can only ouccr in action methods. It will throw error when mutate state directly outside actions(eg. in view component). It will cause your mutation logic hard to trace and imposible to test if let mutation scatterd around view component other than store.
+`icestore` 的架构设计中强制要求对state的变更只能在 action 中进行。在 action 之外的对 state的修改将直接 throw 错误。这个设计的原因是在 action 之外修改 state 将导致 state 变更逻辑散落在 view 中，变更逻辑将会难以追踪和调试。
 
 ```javascript
   // store.js
@@ -296,18 +296,17 @@ icestore enforce all the mutations to state can only ouccr in action methods. It
   });
 ```
 
-### Divide store as small as possible
+### 尽可能小的拆分 store
+从 `icestore` 的内部设计来看，当某个 store 的 state 发生变化时，所有使用 useStore 监听 store 变化的 view 组件都会触发重新渲染，这意味着一个 store 中存放的 state 越多越可能触发更多的 view 组件重新渲染。因此从性能方面考虑，建议按照功能划分将 store拆分成一个个独立的个体。
 
-By design, `icestore` will trigger the rerender of all the view component subscribed to the store by `useStore` once the state of the store has changed. Which means puting more state in one store may cause more view compoenent to rerender which will affect the performance of app. So from performance aspect, it's advised to categorize your state and put them in indivisual stores. 
+### 不要滥用 `icestore`
+从工程的角度来看，store 中应该只用来存放跨页面与组件的状态。将页面或者组件中的内部状态放到 store 中将会破坏组件自身的封装性，进而影响组件的复用性。对于组件内部状态完全可以使用 useState来实现，因此如果上面的 todo app 如果是作为工程中的页面或者组件存在的话，使用 useState 而不是全局 store 来实现才是更合理的。
 
-### Don't overuse icestore
-
-From project management aspect, global store should only be used to store the state sharing ac ross multiple pages or state. Put local state in store will break component's self encapsulation which will affect its reusability. Take above `todo` app for example, if it exists as one page or component in the project, the state of `todo` app is prefered to store as local state in view component other than in global store.
  
 ## Todos
 
-- [ ] debug util
-- [ ] middleware support
+- [ ] 调试工具
+- [ ] 支持middleware
 
 ## Reference
 
@@ -318,10 +317,10 @@ From project management aspect, global store should only be used to store the st
 
 ## Contributors
 
-Feel free to report any questions as an [issue](https://github.com/alibaba/ice/issues/new), we'd love to have your helping hand on `ice-scripts`.
-
-If you're interested in `icestore`, see [CONTRIBUTING.md](https://github.com/alibaba/ice/blob/master/.github/CONTRIBUTING.md) for more information to learn how to get started.
+欢迎反馈问题 [issue 链接](https://github.com/alibaba/ice/issues/new)
+如果对 `ice-scripts` 感兴趣，欢迎参考 [CONTRIBUTING.md](https://github.com/alibaba/ice/blob/master/.github/CONTRIBUTING.md) 学习如何贡献代码。
 
 ## License
 
 [MIT](LICENSE)
+
