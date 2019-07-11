@@ -17,21 +17,24 @@ npm install @ice/store --save
 ```
 
 ## Introduction
-Icestore is a lightweight React state management library based on hooks. It has following core features:
 
-* Minimal API: Only 3 apis, easy to pick up in 5 minutes
-* Predictable: Unidirectional data flow just like Redux, only allow state mutation inside actions, make data flow easier to trace
-* Optimal performance: Multiple store design and only trigger rerender when state changed
-* Built in async status: Record loading and error status of async actions, simplify loading and error render logic in view
+icestore is a lightweight React state management library based on hooks. It has following core features:
+
+* Minimal API: only 3 apis, easy to pick up in 5 minutes
+* Predictable: unidirectional data flow just like Redux, only allow state mutation inside actions, make data flow easier to trace
+* Optimal performance: multiple store design and only trigger rerender when state changed
+* Built in async status: record loading and error status of async actions, simplify loading and error render logic in view
 
 The data flow is as follows:   
 
 <img src="https://user-images.githubusercontent.com/5419233/60878757-f44a6b00-a272-11e9-8afa-d47e8493e040.png" width="400" />
 
 ### React Compatibility
-Icestore is only compatable with React 16.8.0 and later cause it's dependency of React hooks.
+
+icestore is only compatable with React 16.8.0 and later cause it's dependency of React hooks.
 
 ## Guide
+
 Let's build a simple todo app from scatch using icestore which includes follow steps:
 
 * Define store, store is a plain object, properties of function type correspond to action and non function type correspond to state.   
@@ -159,33 +162,38 @@ Above todo example is presented in this [Sandbox](https://codesandbox.io/s/icest
 ## API
 
 ### registerStore
+
 Register store config to global store instance. Note store's bindings refers to store config including state and actions.
 
 * Paramters
-    - namespace {string} unique name of store
-    - bindings {object} object of store config including state and actions
+  - namespace {string} unique name of store
+  - bindings {object} object of store config including state and actions
 * Return value
-    - {object} store instance
+  - {object} store instance
 
 ### useStores
+
 Hooks of using multiple store.
 
 * Paramters
-    - namespaces {array} arrays of store namespace
+  - namespaces {array} arrays of store namespace
 * Return value
-    - {array} array of stores' bindings
+  - {array} array of stores' bindings
 
 ### useStore
+
 Hooks of using single store.
 
 * Paramters
-    - namespace {string} store namespace
+  - namespace {string} store namespace
 * Return value
-    - {object} store's bindings
+  - {object} store's bindings
 
 ## Advanced use
+
 ### async status
-Icestore has built in async status support in async function, it enables user to access to async functions' loading and error status without defining extra state which will make code more consise and clean.
+
+icestore has built in async status support in async function, it enables user to access to async functions' loading and error status without defining extra state which will make code more consise and clean.
 
 #### API
 
@@ -195,6 +203,7 @@ Icestore has built in async status support in async function, it enables user to
 * `store.disableLoading` {boolean} - flag to whether disable loading render globally, if set to true, all the async function's loading effect will be disabled. Note, action's `disableLoading` flag will always takes priority when both are set.
 
 #### Example
+
 ```javascript
 const todos = store.useStore('todos');
 
@@ -225,6 +234,7 @@ return (
 );
 ```
 ## Testing
+
 Because all the state and action are cleanly contained in a plain object, it's easy to write test without mocking.
 
 Example:
@@ -252,8 +262,10 @@ describe("todos", () => {
 Please refer to the `todos.spec.js` file in the above sandbox for complete reference.
 
 ## Best Practice
+
 ### Never mutate state outside actions
-Icestore enforce all the mutations to state can only ouccr in action methods. It will not take effect and throw error when mutate state directly outside actions(eg. in view component). It will cause your mutation logic hard to trace and imposible to test if let mutation scatterd around view component other than store.
+
+icestore enforce all the mutations to state can only ouccr in action methods. It will not take effect and throw error when mutate state directly outside actions(eg. in view component). It will cause your mutation logic hard to trace and imposible to test if let mutation scatterd around view component other than store.
 
 ```javascript
   // store.js
@@ -277,13 +289,16 @@ Icestore enforce all the mutations to state can only ouccr in action methods. It
 ```
 
 ### Divide store as small as possible
+
 Categorize your state and put them in indivisual stores for performance consideration. Icestore will rerender all the view component which has subscribe to store change by `useStore`. One big store will cause more view component to renderer which will slow your you app, so small store is always prefered.
 
 
 ### Don't overuse icestore
+
 Only put state in store when it needs to be shared across multiple pages or components, otherwise use local component state instead. Put local state in store will break component's self encapsulation which will affect its reusability. Take above `todos` app for example, it's perfectly fine to keep `dataSource` in local component state.
  
 ## Todos
+
 - [ ] Add debug util
 
 ## Feedback
