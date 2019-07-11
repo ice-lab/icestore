@@ -1,3 +1,5 @@
+English | [简体中文](./README_zh-CN.md)
+
 # icestore
 
 > Lightweight React state management library based on react hooks。
@@ -306,8 +308,8 @@ From project management aspect, global store should only be used to store the st
  
 ## Todos
 
-- [ ] debug util
-- [ ] middleware support
+- [ ] Add debug util
+- [ ] Add middleware support
 
 ## Reference
 

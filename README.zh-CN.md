@@ -1,3 +1,5 @@
+[English](./README.md) | 简体中文
+
 # icestore
 
 >  基于React Hooks实现的轻量级状态管理框架。
