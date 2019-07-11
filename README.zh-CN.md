@@ -29,7 +29,7 @@ npm install @ice/store --save
 
 ### 兼容性
 
-`icestore` 由于依赖于 React 16.8.0提供的 Hooks 特性，因此只支持16.8.0及以上版本。
+`icestore` 由于依赖于 React 16.8.0 提供的 Hooks 特性，因此只支持16.8.0及以上版本。
 
 ## 快速开始
 
@@ -271,7 +271,7 @@ describe("todos", () => {
 
 ## 最佳实践
 
-### 不要在action之外直接修改state
+### 不要在 action 之外直接修改 state
 
 `icestore` 的架构设计中强制要求对state的变更只能在 action 中进行。在 action 之外的对 state的修改将直接 throw 错误。这个设计的原因是在 action 之外修改 state 将导致 state 变更逻辑散落在 view 中，变更逻辑将会难以追踪和调试。
 
@@ -297,16 +297,18 @@ describe("todos", () => {
 ```
 
 ### 尽可能小的拆分 store
+
 从 `icestore` 的内部设计来看，当某个 store 的 state 发生变化时，所有使用 useStore 监听 store 变化的 view 组件都会触发重新渲染，这意味着一个 store 中存放的 state 越多越可能触发更多的 view 组件重新渲染。因此从性能方面考虑，建议按照功能划分将 store拆分成一个个独立的个体。
 
 ### 不要滥用 `icestore`
+
 从工程的角度来看，store 中应该只用来存放跨页面与组件的状态。将页面或者组件中的内部状态放到 store 中将会破坏组件自身的封装性，进而影响组件的复用性。对于组件内部状态完全可以使用 useState来实现，因此如果上面的 todo app 如果是作为工程中的页面或者组件存在的话，使用 useState 而不是全局 store 来实现才是更合理的。
 
- 
+
 ## Todos
 
-- [ ] 调试工具
-- [ ] 支持middleware
+- [ ] 增加调试工具
+- [ ] 支持 middleware
 
 ## Reference
 
