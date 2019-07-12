@@ -20,26 +20,26 @@ npm install @ice/store --save
 
 ## Introduction
 
-icestore is a lightweight React state management library based on hooks. It has following core features:
+`icestore` is a lightweight React state management library based on hooks. It has the following core features:
 
-* Minimal API: only 3 API, easy to pick up in 5 minutes
-* Predictable: unidirectional data flow just like Redux, only allow state mutation inside actions, make data flow easier to trace
-* Optimal performance: multiple store design and only trigger rerender when state changed
-* Built in async status: record loading and error status of async actions, simplify loading and error render logic in view
+* Minimal API: Contains 3 APIs, which is easily learnable in 5 minutes.
+* Predictable: Uses unidirectional data flow (similar to Redux) and allows state mutation only inside actions, allowing data flow to be traced easily.
+* Optimal performance: decrease the number of view components needs to rerender when state changes by creating multiple stores, and rerendering only occurs when the state changes by diffing with previous state.
+* Built in async status: Records loading and error status of async actions, simplifying the rendering logic in the view layer.
 
-The data flow is as follows:   
+The data flow is as follows:  
 
 <img src="https://user-images.githubusercontent.com/5419233/60878757-f44a6b00-a272-11e9-8afa-d47e8493e040.png" width="400" />
 
 ### Compatibility
 
-icestore is only compatable with React 16.8.0 and later cause it's dependency of React hooks.
+`icestore` is only compatable with React 16.8.0 and later because of its dependency of React hooks.
 
 ## Getting Started
 
-Let's build a simple todo app from scatch using icestore which includes following steps:
+Let's build a simple todo app from scatch using `icestore` which includes following steps:
 
-* Define store config which is a plain javascript object, properties of function type correspond to action and non function type correspond to state.   
+* Define a store config (a plain javascript object) which consists of function properties (correspond to the action) and other properties (correspond to state).
 
 ```javascript
 // src/stores/todos.js
@@ -73,7 +73,8 @@ export default {
   },
 };
 ```
-* Initialize store instance and register pre-defined store config to store instance by namespace.
+* Initialize the store instance and register the pre-defined store config using
+  the namespace.
 
 ```javascript
 // src/stores/index.js
@@ -86,7 +87,7 @@ icestore.registerStore('todos', todos);
 export default icestore;
 ```
 
-* In view component, import store instance, get store config (including state and actions) by using `useStore` hook, then trigger actions from `useEffect` hook or event callbacks, finally bind state to view template.
+* In the view component, you can get the store config (including state and actions) by using the useStore hook after importing the store instance. After that, you can trigger actions through event callbacks or by using the useEffect hook, which binds the state to the view template.
 
 ```javascript
 // src/index.js
@@ -165,50 +166,50 @@ Complete example is presented in this [sandbox](https://codesandbox.io/s/icestor
 
 ### registerStore
 
-Register store config to global store instance. 
+Register store config to global store instance.
 
-* Paramters
-  - namespace {string} unique name of store
+* Parameters
+  - namespace {string} unique name of the store
   - bindings {object} object of store config including state and actions
 * Return value
   - {object} store instance
 
 ### useStores
 
-Hooks of using multiple store.
+Hook to use multiple stores.
 
-* Paramters
-  - namespaces {array} arrays of store namespace
+* Parameters
+  - namespaces {array} array of store namespaces
 * Return value
-  - {array} array of stores' bindings
+  - {array} array of stores' instances
 
 ### useStore
 
-Hooks of using single store.
+Hook to use a single store.
 
-* Paramters
+* Parameters
   - namespace {string} store namespace
 * Return value
-  - {object} store's bindings
+  - {object} single store instance
 
 ## Advanced use
 
 ### async status
 
-icestore has built in async status support in async function, it enables user to access to async functions' loading and error status without defining extra state which will make code more consise and clean.
+`icestore` has built in async status support in async function, it enables user to access to async functions' loading and error status without defining extra state which will make code more consise and clean.
 
 #### API
 
-* `action.loading` - flag of whether action is executing
+* `action.loading` - flag checking if the action is executing
   - Type: {boolean}
   - Default: false
 * `action.error` - error object if error was throw after action executed
   - Type: {object}
   - Default: null
-* `action.disableLoading` - flag of whether disable action's loading effect, if set to true, views will not rerender when loading status changed
+* `action.disableLoading` - flag to disable the loading effect of the action. If this is set to true, relevant view components would not rerender when their loading status changes
   - Type: {boolean}
   - Default: false
-* `store.disableLoading` - flag of whether disable loading effect globally. Note, action's `disableLoading` flag will always takes priority when both are set
+* `store.disableLoading` - flag to disable the loading effect at global level. An action's disableLoading flag will always take priority when both values are set.
   - Type: {boolean}
   - Default: false
 
@@ -250,7 +251,7 @@ return (
 
 ## Testing
 
-Because all the state and action are cleanly contained in a plain object, it's easy to write test without mocking.
+Because all the states and actions are contained in a plain javascript object, it is easy to write tests without using mock objects.
 
 Example:
 
@@ -274,13 +275,15 @@ describe('todos', () => {
 });
 ```
 
-Please refer to the `todos.spec.js` file in the above sandbox for complete reference.
+Please refer to the `todos.spec.js` file in the sandbox above for complete reference.
 
-## Best Practice
+## Best Practices
 
 ### Never mutate state outside actions
 
-icestore enforce all the mutations to state can only ouccr in action methods. It will throw error when mutate state directly outside actions(eg. in view component). It will cause your mutation logic hard to trace and imposible to test if let mutation scatterd around view component other than store.
+`icestore` enforces all the mutations to the state to occur only in action methods. An error would be thrown if the state is mutated outside actions (e.g. in the view component).
+
+The reason is that the mutation logic would be hard to trace and impossible to test as there might be unpredictable changes made to the view components as a result of mutations outside actions.
 
 ```javascript
   // store.js
@@ -305,12 +308,16 @@ icestore enforce all the mutations to state can only ouccr in action methods. It
 
 ### Divide store as small as possible
 
-By design, `icestore` will trigger the rerender of all the view component subscribed to the store by `useStore` once the state of the store has changed. Which means puting more state in one store may cause more view compoenent to rerender which will affect the performance of app. So from performance aspect, it's advised to categorize your state and put them in indivisual stores. 
+By design, icestore will trigger the rerender of all the view components subscribed to the store (by using useStore) once the state of the store has changed.
 
-### Don't overuse icestore
+This means that putting more state in one store may cause more view components to rerender, affecting the overall performance of the application. As such, it is advised to categorize your state and put them in individual stores to improve performance.
 
-From project management aspect, global store should only be used to store the state sharing ac ross multiple pages or state. Put local state in store will break component's self encapsulation which will affect its reusability. Take above `todo` app for example, if it exists as one page or component in the project, the state of `todo` app is prefered to store as local state in view component other than in global store.
- 
+### Don't overuse `icestore`
+
+From the engineering perspective, the global store should only be used to store states that are shared across multiple pages or components.
+
+Putting local state in the global store will break the component's encapsulation, affecting its reusability. Using the todo app as an example, if the app only has one page, the state of the todo app is preferred to be stored as a local state in the view component rather than in the global store.
+
 ## Todos
 
 - [ ] Add debug util

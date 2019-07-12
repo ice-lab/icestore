@@ -22,10 +22,10 @@ npm install @ice/store --save
 
 `icestore` 是基于 React Hooks 实现的轻量级状态管理框架，有以下核心特点：
 
-* 极简 API : 只有 3 个 API，真正做到五分钟上手
-* 单向数据流：与 Redux 一样使用单向数据流，便于状态的追踪与预测
-* 性能优化：通过多 store 的去中心化设计，减少单个 state 变化触发重新渲染的组件个数，同时改变 state 时做 diff，进一步减少不必要的渲染
-* 集成异步状态：记录异步 action 的执行状态，简化 view 组件中对于 loading 与 error 状态的渲染逻辑
+* 极简 API : 只有 3 个 API，真正做到五分钟上手。
+* 单向数据流：与 Redux 一样使用单向数据流，便于状态的追踪与预测。
+* 性能优化：通过多 store 的去中心化设计，减少单个 state 变化触发重新渲染的组件个数，同时改变 state 时做 diff，进一步减少不必要的渲染。
+* 集成异步状态：记录异步 action 的执行状态，简化 view 组件中对于 loading 与 error 状态的渲染逻辑。
 
 `icestore` 数据流示意图如下：  
 
