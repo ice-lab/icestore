@@ -24,7 +24,7 @@ npm install @ice/store --save
 
 * Minimal API: Contains 3 APIs, which is easily learnable in 5 minutes.
 * Predictable: Uses unidirectional data flow (similar to Redux) and allows state mutation only inside actions, allowing data flow to be traced easily.
-* Optimal performance: decrease the number of view components needs to rerender when state changes by creating multiple stores, and rerendering only occurs when the state changes by diffing with previous state.
+* Optimal performance: Decreases the number of view components that rerender when the state changes by creating multiple stores. Rerendering only occurs when the current state is different from the previous state.
 * Built in async status: Records loading and error status of async actions, simplifying the rendering logic in the view layer.
 
 The data flow is as follows:  
@@ -33,7 +33,7 @@ The data flow is as follows:
 
 ### Compatibility
 
-`icestore` is only compatable with React 16.8.0 and later because of its dependency of React hooks.
+`icestore` is only compatable with React 16.8.0 and later because of its dependency on React hooks.
 
 ## Getting Started
 
@@ -73,8 +73,7 @@ export default {
   },
 };
 ```
-* Initialize the store instance and register the pre-defined store config using
-  the namespace.
+* Initialize the store instance and register the pre-defined store config using the namespace.
 
 ```javascript
 // src/stores/index.js
@@ -166,7 +165,7 @@ Complete example is presented in this [sandbox](https://codesandbox.io/s/icestor
 
 ### registerStore
 
-Register store config to global store instance.
+Register store config to the global store instance.
 
 * Parameters
   - namespace {string} unique name of the store
@@ -197,7 +196,6 @@ Hook to use a single store.
 ### async actions' executing status
 
 `icestore` has built-in support to access the executing status of async actions. This enables users to have access to the loading and error executing status of async actions without defining extra state, making the code more consise and clean.
-`icestore` has built in async status support in async function, it enables user to access to async functions' loading and error status without defining extra state which will make code more consise and clean.
 
 #### API
 
