@@ -194,8 +194,9 @@ Hook to use a single store.
 
 ## Advanced use
 
-### async status
+### async actions' executing status
 
+`icestore` has built-in support to access the executing status of async actions. This enables users to have access to the loading and error executing status of async actions without defining extra state, making the code more consise and clean.
 `icestore` has built in async status support in async function, it enables user to access to async functions' loading and error status without defining extra state which will make code more consise and clean.
 
 #### API
@@ -308,7 +309,7 @@ The reason is that the mutation logic would be hard to trace and impossible to t
 
 ### Divide store as small as possible
 
-By design, icestore will trigger the rerender of all the view components subscribed to the store (by using useStore) once the state of the store has changed.
+By design, `icestore` will trigger the rerender of all the view components subscribed to the store (by using useStore) once the state of the store has changed.
 
 This means that putting more state in one store may cause more view components to rerender, affecting the overall performance of the application. As such, it is advised to categorize your state and put them in individual stores to improve performance.
 

@@ -194,7 +194,7 @@ ReactDOM.render(<Todo />, rootElement);
 
 ## 高级用法
 
-### 异步状态
+### 异步 action 执行状态
 
 `icestore` 内部集成了对于异步 action 的异步状态记录，方便用户在不增加额外的 state 的前提下访问异步 action 的执行状态（loading 与 error），从而使状态的渲染逻辑更简洁。
 
