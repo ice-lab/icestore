@@ -252,7 +252,7 @@ return (
 
 ## 测试
 
-由于所有的 state 和 actions 都封装在一个普通的 javascript 对象中，可以在不 mock 的情况下很容易的给 store 写测试用例。
+由于所有的 state 和 actions 都封装在一个普通的 JavaScript 对象中，可以在不 mock 的情况下很容易的给 store 写测试用例。
 
 #### 示例
 
