@@ -2,7 +2,7 @@ English | [简体中文](./README.zh-CN.md)
 
 # icestore
 
-> Lightweight React state management library based on react hooks。
+> Lightweight React state management library based on react hooks
 
 [![NPM version](https://img.shields.io/npm/v/@ice/store.svg?style=flat)](https://npmjs.org/package/@ice/store)
 [![Package Quality](https://npm.packagequality.com/shield/@ice%2Fstore.svg)](https://packagequality.com/#?package=@ice/store)
@@ -22,7 +22,7 @@ npm install @ice/store --save
 
 icestore is a lightweight React state management library based on hooks. It has following core features:
 
-* Minimal API: only 3 apis, easy to pick up in 5 minutes
+* Minimal API: only 3 API, easy to pick up in 5 minutes
 * Predictable: unidirectional data flow just like Redux, only allow state mutation inside actions, make data flow easier to trace
 * Optimal performance: multiple store design and only trigger rerender when state changed
 * Built in async status: record loading and error status of async actions, simplify loading and error render logic in view
@@ -50,14 +50,14 @@ export default {
       setTimeout(() => {
         resolve([
           {
-            name: "react"
+            name: 'react'
           },
           {
-            name: "vue",
+            name: 'vue',
             done: true
           },
           {
-            name: "angular"
+            name: 'angular'
           }
         ]);
       }, 1000)
@@ -95,10 +95,10 @@ import ReactDOM from 'react-dom';
 import stores from './stores';
 
 function Todo() {
-  const todos = stores.useStore("todos");
+  const todos = stores.useStore('todos');
   const { dataSource, refresh, add, remove, toggle } = todos;
 
-  React.useEffect(() => {
+  useEffect(() => {
     refresh();
   }, []);
 
@@ -114,38 +114,38 @@ function Todo() {
     toggle(index);
   }
 
+  const noTaskView = <span>no task</span>;
+  const loadingView = <span>loading...</span>;
+  const taskView = dataSource.length ? (
+    <ul>
+      {dataSource.map(({ name, done }, index) => (
+        <li key={index}>
+          <label>
+            <input
+              type="checkbox"
+              checked={done}
+              onClick={() => onCheck(index)}
+            />
+            {done ? <s>{name}</s> : <span>{name}</span>}
+          </label>
+          <button onClick={() => onRemove(index)}>-</button>
+        </li>
+      ))}
+    </ul>
+  ) : (
+    noTaskView
+  );
+
   return (
     <div>
       <h2>Todos</h2>
-      {!refresh.loading ? (
-        dataSource.length ? (
-          <ul>
-            {dataSource.map(({ name, done }, index) => (
-              <li key={index}>
-                <label>
-                  <input
-                    type="checkbox"
-                    checked={done}
-                    onClick={() => onCheck(index)}
-                  />
-                  {done ? <s>{name}</s> : <span>{name}</span>}
-                </label>
-                <button onClick={() => onRemove(index)}>-</button>
-              </li>
-            ))}
-          </ul>
-        ) : (
-          "no task"
-        )
-      ) : (
-        "loading..."
-      )}
+      {!refresh.loading ? taskView : loadingView}
       <div>
         <input
           onKeyDown={event => {
             if (event.keyCode === 13) {
               onAdd(event.target.value);
-              event.target.value = "";
+              event.target.value = '';
             }
           }}
           placeholder="Press Enter"
@@ -155,7 +155,7 @@ function Todo() {
   );
 }
 
-const rootElement = document.getElementById("root");
+const rootElement = document.getElementById('root');
 ReactDOM.render(<Todo />, rootElement);
 ```
 
@@ -202,9 +202,9 @@ icestore has built in async status support in async function, it enables user to
 * `action.loading` - flag of whether action is executing
   - Type: {boolean}
   - Default: false
-* `action.error` - flag of whether action has error after executing
-  - Type: {boolean}
-  - Default: false
+* `action.error` - error object if error was throw after action executed
+  - Type: {object}
+  - Default: null
 * `action.disableLoading` - flag of whether disable action's loading effect, if set to true, views will not rerender when loading status changed
   - Type: {boolean}
   - Default: false
@@ -216,33 +216,38 @@ icestore has built in async status support in async function, it enables user to
 
 ```javascript
 const todos = store.useStore('todos');
+const { refresh, dataSource } = todos;
 
 useEffect(() => {
-  todos.refresh();
+  refresh();
 }, []);
+
+const loadingView = (
+  <div>
+    loading.......
+  </div>
+);
+
+const taskView = !refresh.error ? (
+  <ul>
+   {dataSource.map(({ name }) => (
+     <li>{name}</li>
+   ))}
+  </ul>
+) : (
+  <div>
+    {refresh.error.message}
+  </div>
+);
+
 
 return (
   <div>
-    {todos.refresh.error ? 
-      todos.refresh.loading ? (
-	    <div>
-	      loading.......
-	    </div>
-      ) : (
-        <div>
-	      error.......
-	     </div>
-      ) 
-    : (
-       <ul>
-         {dataSource.map(({ name }) => (
-           <li>{name}</li>
-         ))}
-       </ul>
-    )}
+    {!refresh.loading ? taskView : loadingView}
   <Loading />
 );
 ```
+
 ## Testing
 
 Because all the state and action are cleanly contained in a plain object, it's easy to write test without mocking.
@@ -250,19 +255,19 @@ Because all the state and action are cleanly contained in a plain object, it's e
 Example:
 
 ```javascript
-describe("todos", () => {
-  test("refresh data success", async () => {
+describe('todos', () => {
+  test('refresh data success', async () => {
     await todos.refresh();
     expect(todos.dataSource).toEqual([
       {
-        name: "react"
+        name: 'react'
       },
       {
-        name: "vue",
+        name: 'vue',
         done: true
       },
       {
-        name: "angular"
+        name: 'angular'
       }
     ]);
   });

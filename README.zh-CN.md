@@ -2,7 +2,7 @@
 
 # icestore
 
->  基于React Hooks实现的轻量级状态管理框架。
+>  基于React Hooks实现的轻量级状态管理框架
 
 [![NPM version](https://img.shields.io/npm/v/@ice/store.svg?style=flat)](https://npmjs.org/package/@ice/store)
 [![Package Quality](https://npm.packagequality.com/shield/@ice%2Fstore.svg)](https://packagequality.com/#?package=@ice/store)
@@ -19,19 +19,21 @@ npm install @ice/store --save
 ```
 
 ## 简介
+
 `icestore` 是基于 React Hooks 实现的轻量级状态管理框架，有以下核心特点：
 
-* 极简API: 只有3个API，真正做到五分钟上手
+* 极简 API : 只有 3 个 API，真正做到五分钟上手
 * 单向数据流：与 Redux 一样使用单向数据流，便于状态的追踪与预测
 * 性能优化：通过多 store 的去中心化设计，减少单个 state 变化触发重新渲染的组件个数，同时改变 state 时做 diff，进一步减少不必要的渲染
 * 集成异步状态：记录异步 action 的执行状态，简化 view 组件中对于 loading 与 error 状态的渲染逻辑
 
 `icestore` 数据流示意图如下：  
+
 <img src="https://user-images.githubusercontent.com/5419233/60956252-012f9300-a335-11e9-8667-75490ceb62b1.png" width="400" />
 
 ### 兼容性
 
-`icestore` 由于依赖于 React 16.8.0 提供的 Hooks 特性，因此只支持16.8.0及以上版本。
+`icestore` 由于依赖于 React 16.8.0 提供的 Hooks 特性，因此只支持 16.8.0 及以上版本。
 
 ## 快速开始
 
@@ -48,14 +50,14 @@ export default {
       setTimeout(() => {
         resolve([
           {
-            name: "react"
+            name: 'react'
           },
           {
-            name: "vue",
+            name: 'vue',
             done: true
           },
           {
-            name: "angular"
+            name: 'angular'
           }
         ]);
       }, 1000)
@@ -94,10 +96,10 @@ import ReactDOM from 'react-dom';
 import stores from './stores';
 
 function Todo() {
-  const todos = stores.useStore("todos");
+  const todos = stores.useStore('todos');
   const { dataSource, refresh, add, remove, toggle } = todos;
 
-  React.useEffect(() => {
+  useEffect(() => {
     refresh();
   }, []);
 
@@ -113,38 +115,38 @@ function Todo() {
     toggle(index);
   }
 
+  const noTaskView = <span>no task</span>;
+  const loadingView = <span>loading...</span>;
+  const taskView = dataSource.length ? (
+    <ul>
+      {dataSource.map(({ name, done }, index) => (
+        <li key={index}>
+          <label>
+            <input
+              type="checkbox"
+              checked={done}
+              onClick={() => onCheck(index)}
+            />
+            {done ? <s>{name}</s> : <span>{name}</span>}
+          </label>
+          <button onClick={() => onRemove(index)}>-</button>
+        </li>
+      ))}
+    </ul>
+  ) : (
+    noTaskView
+  );
+
   return (
     <div>
       <h2>Todos</h2>
-      {!refresh.loading ? (
-        dataSource.length ? (
-          <ul>
-            {dataSource.map(({ name, done }, index) => (
-              <li key={index}>
-                <label>
-                  <input
-                    type="checkbox"
-                    checked={done}
-                    onClick={() => onCheck(index)}
-                  />
-                  {done ? <s>{name}</s> : <span>{name}</span>}
-                </label>
-                <button onClick={() => onRemove(index)}>-</button>
-              </li>
-            ))}
-          </ul>
-        ) : (
-          "no task"
-        )
-      ) : (
-        "loading..."
-      )}
+      {!refresh.loading ? taskView : loadingView}
       <div>
         <input
           onKeyDown={event => {
             if (event.keyCode === 13) {
               onAdd(event.target.value);
-              event.target.value = "";
+              event.target.value = '';
             }
           }}
           placeholder="Press Enter"
@@ -154,7 +156,7 @@ function Todo() {
   );
 }
 
-const rootElement = document.getElementById("root");
+const rootElement = document.getElementById('root');
 ReactDOM.render(<Todo />, rootElement);
 ```
 
@@ -201,10 +203,10 @@ ReactDOM.render(<Todo />, rootElement);
 * `action.loading` - action 是否正在执行中的标志位
   - Type: {boolean}
   - Default: false
-* `action.error` - action 执行完成后是否抛出错误的标志位
-  - Type: {boolean}
-  - Default: false
-* `action.disableLoading` - 是否关闭 action loading 效果的开关, 如果设置为 true, 当 loading 标志位变化时，关联的 view 组件将不会重新渲染 
+* `action.error` - action 执行完成后如果有错误发生返回的错误对象
+  - Type: {object}
+  - Default: null
+* `action.disableLoading` - 是否关闭 action loading 效果的开关, 如果设置为 true, 当 loading 标志位变化时，关联的 view 组件将不会重新渲染
   - Type: {boolean}
   - Default: false
 * `store.disableLoading` - 是否全局关闭所有 action 的 loading 效果. 注意当全局与 action 上的该标志位均设置时，action 上标志位优先级高
@@ -216,33 +218,38 @@ ReactDOM.render(<Todo />, rootElement);
 
 ```javascript
 const todos = store.useStore('todos');
+const { refresh, dataSource } = todos;
 
 useEffect(() => {
-  todos.refresh();
+  refresh();
 }, []);
+
+const loadingView = (
+  <div>
+    loading.......
+  </div>
+);
+
+const taskView = !refresh.error ? (
+  <ul>
+   {dataSource.map(({ name }) => (
+     <li>{name}</li>
+   ))}
+  </ul>
+) : (
+  <div>
+    {refresh.error.message}
+  </div>
+);
+
 
 return (
   <div>
-    {todos.refresh.error ? 
-      todos.refresh.loading ? (
-	    <div>
-	      loading.......
-	    </div>
-      ) : (
-        <div>
-	      error.......
-	     </div>
-      ) 
-    : (
-       <ul>
-         {dataSource.map(({ name }) => (
-           <li>{name}</li>
-         ))}
-       </ul>
-    )}
+    {!refresh.loading ? taskView : loadingView}
   <Loading />
 );
 ```
+
 ## 测试
 
 由于所有的 state 和 actions 都封装在一个普通的 javascript 对象中，可以在不 mock 的情况下很容易的给 store 写测试用例。
@@ -250,19 +257,19 @@ return (
 #### 示例
 
 ```javascript
-describe("todos", () => {
-  test("refresh data success", async () => {
+describe('todos', () => {
+  test('refresh data success', async () => {
     await todos.refresh();
     expect(todos.dataSource).toEqual([
       {
-        name: "react"
+        name: 'react'
       },
       {
-        name: "vue",
+        name: 'vue',
         done: true
       },
       {
-        name: "angular"
+        name: 'angular'
       }
     ]);
   });
@@ -300,7 +307,7 @@ describe("todos", () => {
 
 ### 尽可能小的拆分 store
 
-从 `icestore` 的内部设计来看，当某个 store 的 state 发生变化时，所有使用 useStore 监听 store 变化的 view 组件都会触发重新渲染，这意味着一个 store 中存放的 state 越多越可能触发更多的 view 组件重新渲染。因此从性能方面考虑，建议按照功能划分将 store拆分成一个个独立的个体。
+从 `icestore` 的内部设计来看，当某个 store 的 state 发生变化时，所有使用 useStore 监听 store 变化的 view 组件都会触发重新渲染，这意味着一个 store 中存放的 state 越多越可能触发更多的 view 组件重新渲染。因此从性能方面考虑，建议按照功能划分将 store 拆分成一个个独立的个体。
 
 ### 不要滥用 `icestore`
 
