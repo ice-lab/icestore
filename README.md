@@ -39,7 +39,7 @@ The data flow is as follows:
 
 Let's build a simple todo app from scatch using `icestore` which includes following steps:
 
-* Define a store config (a plain javascript object) which consists of function properties (correspond to the action) and other properties (correspond to state).
+* Define a store config (a plain Javascript object) which consists of function properties (correspond to the action) and other properties (correspond to state).
 
 ```javascript
 // src/stores/todos.js
@@ -250,7 +250,7 @@ return (
 
 ## Testing
 
-Because all the states and actions are contained in a plain javascript object, it is easy to write tests without using mock objects.
+Because all the states and actions are contained in a plain Javascript object, it is easy to write tests without using mock objects.
 
 Example:
 
