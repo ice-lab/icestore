@@ -19,6 +19,9 @@ export default class Store {
   // flag of whether state changed after mutation
   private stateChanged = false;
 
+  /** Flag of how many actions are in execution */
+  private actionExecNum = 0;
+
   public constructor(bindings: object) {
     Object.keys(bindings).forEach((key) => {
       const value = bindings[key];
@@ -27,7 +30,7 @@ export default class Store {
 
     const handler = {
       set: (target, prop, value) => {
-        if (!this.allowMutate) {
+        if (!this.actionExecNum) {
           console.error('Forbid modifying state directly, use action to modify instead.');
           return false;
         }
@@ -50,12 +53,12 @@ export default class Store {
    */
   private createAction(fun): MethodFunc {
     return async (...args) => {
-      this.allowMutate = true;
+      this.actionExecNum += 1;
       await fun.apply(this.bindings, args);
       if (this.stateChanged) {
         this.setState();
       }
-      this.allowMutate = false;
+      this.actionExecNum -= 1;
       this.stateChanged = false;
       return this.bindings;
     };
