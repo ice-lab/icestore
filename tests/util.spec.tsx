@@ -1,4 +1,4 @@
-import { addProxy } from '../src/util';
+import { addProxy, toJS } from '../src/util';
 
 describe('#util', () => {
   let handler;
@@ -70,6 +70,33 @@ describe('#util', () => {
       const result: any = addProxy(value, handler);
       result[0].a = 4;
       expect(result[0].a).toBe('foo');
+    });
+  });
+
+
+  describe('#toJS', () => {
+    test('should null type convert success', () => {
+      const value = null;
+      const jsValue = toJS(value);
+      expect(jsValue).toBe(value);
+    });
+
+    test('should non object type convert success', () => {
+      const value = 1;
+      const jsValue = toJS(value);
+      expect(jsValue).toBe(value);
+    });
+
+    test('should object type convert success', () => {
+      const value = {
+        a: [
+          { c: 3 },
+        ],
+        b: 2,
+      };
+      const result: any = addProxy(value, handler);
+      const jsValue = toJS(result);
+      expect(jsValue).toEqual(value);
     });
   });
 });

@@ -1,4 +1,5 @@
 import Store from './store';
+import { toJS } from './util';
 
 export default class Icestore {
   /** Stores registered */
@@ -50,3 +51,5 @@ export default class Icestore {
     return namespaces.map(namespace => this.useStore(namespace));
   }
 }
+
+export { toJS };

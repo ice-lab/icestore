@@ -7,7 +7,7 @@ import * as forEach from 'lodash.foreach';
  * @param {object} handler - proxy handler
  * @return {object} new proxy object
  */
-/* eslint no-param-reassign: 0, import/prefer-default-export: 0 */
+/* eslint no-param-reassign: 0 */
 export function addProxy(value: object, handler: object): object {
   if (!value || Object.isFrozen(value)) {
     return value;
@@ -18,4 +18,25 @@ export function addProxy(value: object, handler: object): object {
     }
   });
   return new Proxy(value, handler);
+}
+
+/**
+ * Convert proxied value to plain js object
+ * @param {any} value - js value of any type
+ * @return {any} plain js type
+ */
+export function toJS(value: any): any {
+  if (!value || !isObject(value)) {
+    return value;
+  }
+
+  const newValue = Array.isArray(value) ? [] : {};
+  forEach(value, (item, key) => {
+    if (isObject(item)) {
+      newValue[key] = toJS(item);
+    } else {
+      newValue[key] = item;
+    }
+  });
+  return newValue;
 }
