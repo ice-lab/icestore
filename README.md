@@ -191,6 +191,34 @@ Hook to use a single store.
 * Return value
   - {object} single store instance
 
+### toJS
+
+Recursively convert proxified state object to plain javaScript type.
+
+* Parameters
+  - value {any} value of any javaScript type
+* Return value
+  - {any} javaScript value of any type
+
+#### Example
+
+```javascript
+// store.js
+export default {
+  value: {
+    a: 1,
+    b: 2,
+  }
+};
+
+// view.jsx
+import IceStore, { toJS } from '@ice/store';
+const { value } = useStore('foo');
+
+const a = toJS(value);
+console.log(a);
+
+```
 ## Advanced use
 
 ### async actions' executing status

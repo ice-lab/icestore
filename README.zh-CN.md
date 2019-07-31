@@ -192,6 +192,35 @@ ReactDOM.render(<Todo />, rootElement);
 * 返回值
   - {object} store 的配置对象
 
+### toJS
+
+递归将 Proxy 化的 state 对象转化成普通的 javaScript 对象
+
+* 参数
+  - value {any} 任意 javaScript 类型值
+* 返回值
+  - {any} 去 Proxy 后的 javaScript 类型
+
+#### 示例
+
+```javascript
+// store.js
+export default {
+  value: {
+    a: 1,
+    b: 2,
+  }
+};
+
+// view.jsx
+import IceStore, { toJS } from '@ice/store';
+const { value } = useStore('foo');
+
+const a = toJS(value);
+console.log(a);
+
+```
+
 ## 高级用法
 
 ### 异步 action 执行状态
