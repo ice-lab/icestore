@@ -1,9 +1,14 @@
 import Store from './store';
 import { toJS } from './util';
 
-export default class Icestore {
+interface IceStore {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  [namespace: string]: any;
+}
+
+export default class Icestore<T extends IceStore> {
   /** Stores registered */
-  private stores: {[namespace: string]: Store} = {};
+  private stores: { [P in keyof T]: Store<T[P]> } = {} as { [P in keyof T]: Store<T[P]> }
 
   /**
    * Register and init store
@@ -11,7 +16,7 @@ export default class Icestore {
    * @param {object} bindings - object of state and actions used to init store
    * @return {object} store instance
    */
-  public registerStore(namespace: string, bindings: object): Store {
+  public registerStore<P extends keyof T>(namespace: P, bindings: T[P]): Store<T[P]> {
     if (this.stores[namespace]) {
       throw new Error(`Namespace have been used: ${namespace}.`);
     }
@@ -25,8 +30,8 @@ export default class Icestore {
    * @param {string} namespace - unique name of store
    * @return {object} store instance
    */
-  private getModel(namespace: string): Store {
-    const store: Store = this.stores[namespace];
+  private getModel<P extends keyof T>(namespace: P): Store<T[P]> {
+    const store = this.stores[namespace];
     if (!store) {
       throw new Error(`Not found namespace: ${namespace}.`);
     }
@@ -38,7 +43,7 @@ export default class Icestore {
    * @param {string} namespace - unique name of store
    * @return {object} store's bindings
    */
-  public useStore(namespace: string): object {
+  public useStore<P extends keyof T>(namespace: P): T[P] {
     return this.getModel(namespace).useStore();
   }
 
@@ -47,7 +52,7 @@ export default class Icestore {
    * @param {string} namespace - unique name of store
    * @return {array} array of store's bindings
    */
-  public useStores(namespaces: string[]): object[] {
+  public useStores<P extends keyof T>(namespaces: P[]): T[P][] {
     return namespaces.map(namespace => this.useStore(namespace));
   }
 }

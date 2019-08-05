@@ -8,7 +8,7 @@ import * as forEach from 'lodash.foreach';
  * @return {object} new proxy object
  */
 /* eslint no-param-reassign: 0 */
-export function addProxy(value: object, handler: object): object {
+export function addProxy<T extends object>(value: T, handler: object): T {
   if (!value || Object.isFrozen(value)) {
     return value;
   }

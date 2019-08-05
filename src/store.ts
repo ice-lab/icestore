@@ -8,9 +8,9 @@ interface MethodFunc {
   (): void;
 }
 
-export default class Store {
+export default class Store<T extends object> {
   /** Store state and actions user defined */
-  private bindings: {[name: string]: any} = {};
+  private bindings: T = {} as T;
 
   /** Queue of setState method from useState hook */
   private queue = [];
@@ -119,7 +119,7 @@ export default class Store {
    * Hook used to register setState and expose bindings
    * @return {object} bindings of store
    */
-  public useStore(): object {
+  public useStore(): T {
     const state = this.getState();
     const [, setState] = useState(state);
     useEffect(() => {

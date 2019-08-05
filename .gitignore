@@ -64,3 +64,4 @@ typings/
 lib
 
 package-lock.json
+.cache
