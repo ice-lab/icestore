@@ -75,7 +75,7 @@ describe('#Icestore', () => {
 
         return <div>
           <span data-testid="nameValue">{dataSource.name}</span>
-          <button data-testid="actionButton" onClick={handleClick}>
+          <button type="button" data-testid="actionButton" onClick={handleClick}>
           Click me
           </button>
         </div>;
