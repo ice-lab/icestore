@@ -1,9 +1,15 @@
 import Store from './store';
-import { toJS } from './util';
+import { toJS, compose } from './util';
+
+interface MethodFunc {
+  (): void;
+}
 
 export default class Icestore {
   /** Stores registered */
   private stores: {[namespace: string]: Store} = {};
+
+  private middlewares = [];
 
   /**
    * Register and init store
@@ -16,8 +22,12 @@ export default class Icestore {
       throw new Error(`Namespace have been used: ${namespace}.`);
     }
 
-    this.stores[namespace] = new Store(bindings);
+    this.stores[namespace] = new Store(bindings, namespace, this.middlewares);
     return this.stores[namespace];
+  }
+
+  public applyMiddleware(...middlewares): void {
+    this.middlewares = middlewares;
   }
 
   /**

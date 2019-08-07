@@ -2,7 +2,7 @@ import * as isFunction from 'lodash.isfunction';
 import * as isPromise from 'is-promise';
 import * as isObject from 'lodash.isobject';
 import { useState, useEffect } from 'react';
-import { addProxy } from './util';
+import { addProxy, compose } from './util';
 
 interface MethodFunc {
   (): void;
@@ -24,10 +24,16 @@ export default class Store {
   /** Flag of whether disable loading effect globally */
   public disableLoading = false;
 
-  public constructor(bindings: object) {
+  private middlewareCtx: {[name: string]: any} = {};
+
+  public constructor(bindings: object, namespace: string, middlewares) {
+    this.middlewareCtx  = {
+      namespace,
+      getState: this.getState,
+    };
     Object.keys(bindings).forEach((key) => {
       const value = bindings[key];
-      this.bindings[key] = isFunction(value) ? this.createAction(value) : value;
+      this.bindings[key] = isFunction(value) ? this.createAction(value, key, middlewares) : value;
     });
 
     const handler = {
@@ -53,7 +59,7 @@ export default class Store {
    * @param {function} func - original method user defined
    * @return {function} action function
    */
-  private createAction(func): MethodFunc {
+  private createAction(func, actionType, middlewares): MethodFunc {
     const wrapper: any = async (...args) => {
       wrapper.loading = true;
       wrapper.error = null;
@@ -87,14 +93,19 @@ export default class Store {
       }
     };
 
-    return wrapper;
+    const defaultMiddleware = async function (ctx, next, actionType, ...args) {
+      await wrapper(...args);
+      await next();
+    };
+
+    return compose([...middlewares, defaultMiddleware], this.middlewareCtx, actionType);
   }
 
   /**
    * Get state from bindings
    * @return {object} state
    */
-  private getState(): object {
+  private getState = (): object => {
     const { bindings } = this;
     const state = {};
     Object.keys(bindings).forEach((key) => {

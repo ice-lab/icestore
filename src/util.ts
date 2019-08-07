@@ -1,6 +1,10 @@
 import * as isObject from 'lodash.isobject';
 import * as forEach from 'lodash.foreach';
 
+interface ComposeFunc {
+  (): void;
+}
+
 /**
  * Recursively add proxy to object
  * @param {object} value - value of object type
@@ -39,4 +43,32 @@ export function toJS(value: any): any {
     }
   });
   return newValue;
+}
+
+/**
+ * Compose a middleware chain consisting of all the middlewares
+ * @param {array} middlewares - middlewares user passed
+ * @param {object} ctx - excuting context of middleware functions
+ * @param {string} actionType - function name of the action triggered
+ * @return {function} middleware chain
+ */
+export function compose(middlewares: (() => void)[], ctx: object, actionType: string): ComposeFunc {
+  return async (...args) => {
+    function goNext(middleware, next) {
+      return async () => {
+        await middleware(ctx, next, actionType, ...args);
+      };
+    }
+    let next = async () => {
+      Promise.resolve();
+    };
+    middlewares.slice().reverse().forEach((middleware) => {
+      next = goNext(middleware, next);
+    });
+    try {
+      await next();
+    } catch (e) {
+      console.error(e);
+    }
+  };
 }

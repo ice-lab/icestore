@@ -1,4 +1,4 @@
-import { addProxy, toJS } from '../src/util';
+import { addProxy, toJS, compose } from '../src/util';
 
 describe('#util', () => {
   let handler;
@@ -97,6 +97,31 @@ describe('#util', () => {
       const result: any = addProxy(value, handler);
       const jsValue = toJS(result);
       expect(jsValue).toEqual(value);
+    });
+  });
+
+  describe('#compose', () => {
+    const arr = [];
+    const middlewares = [];
+    test('should work', async () => {
+      middlewares.push(async (ctx, next) => {
+        arr.push(1);
+        await next();
+        arr.push(6);
+      });
+      middlewares.push(async (ctx, next) => {
+        arr.push(2);
+        await next();
+        arr.push(5);
+      });
+      middlewares.push(async (ctx, next) => {
+        arr.push(3);
+        await next();
+        arr.push(4);
+      });
+
+      await compose(middlewares, {}, '')();
+      expect(arr).toEqual([1, 2, 3, 4, 5, 6]);
     });
   });
 });
