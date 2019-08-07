@@ -1,6 +1,5 @@
 export default {
   dataSource: [],
-  foo: 1,
   async refresh() {
     this.dataSource = await new Promise(resolve =>
       setTimeout(() => {

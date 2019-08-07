@@ -1,5 +1,5 @@
 import todos from './todos';
-import Icestore, { toJS } from '@ice/store';
+import Icestore from '@ice/store';
 import debug from '@ice/store-debug';
 
 const icestore = new Icestore();

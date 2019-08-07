@@ -12,7 +12,7 @@ export default async (ctx, next, actionType) => {
   const hasChanges = obj => Object.keys(obj).length > 0;
 
   console.group('Store name: ', namespace);
-  console.log('Action Type: ', actionType);
+  console.log('Action type: ', actionType);
 
   if (hasChanges(diff.added)) {
     console.log('Added\n', diff.added);
