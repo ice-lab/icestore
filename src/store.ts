@@ -95,7 +95,6 @@ export default class Store {
 
     const defaultMiddleware = async function (ctx, next, actionType, ...args) {
       await wrapper(...args);
-      await next();
     };
 
     return compose([...middlewares, defaultMiddleware], this.middlewareCtx, actionType);
