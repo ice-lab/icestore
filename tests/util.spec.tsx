@@ -103,20 +103,30 @@ describe('#util', () => {
   describe('#compose', () => {
     const arr = [];
     const middlewares = [];
+
+    function wait (ms) {
+      return new Promise((resolve) => setTimeout(resolve, ms || 1))
+    }
     test('should work', async () => {
       middlewares.push(async (ctx, next) => {
         arr.push(1);
+        await wait(1);
         await next();
+        await wait(1);
         arr.push(6);
       });
       middlewares.push(async (ctx, next) => {
         arr.push(2);
+        await wait(1);
         await next();
+        await wait(1);
         arr.push(5);
       });
       middlewares.push(async (ctx, next) => {
         arr.push(3);
+        await wait(1);
         await next();
+        await wait(1);
         arr.push(4);
       });
 
