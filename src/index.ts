@@ -1,5 +1,5 @@
 import Store from './store';
-import { toJS, compose } from './util';
+import { toJS } from './util';
 
 interface MethodFunc {
   (): void;

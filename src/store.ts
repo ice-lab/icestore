@@ -24,6 +24,7 @@ export default class Store {
   /** Flag of whether disable loading effect globally */
   public disableLoading = false;
 
+  /** Context object passed to middlewares */
   private middlewareCtx: {[name: string]: any} = {};
 
   public constructor(bindings: object, namespace: string, middlewares) {
