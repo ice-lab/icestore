@@ -48,15 +48,14 @@ export function toJS(value: any): any {
 /**
  * Compose a middleware chain consisting of all the middlewares
  * @param {array} middlewares - middlewares user passed
- * @param {object} ctx - excuting context of middleware functions
- * @param {string} actionType - function name of the action triggered
+ * @param {object} store - middleware API
  * @return {function} middleware chain
  */
-export function compose(middlewares: (() => void)[], ctx: object, actionType: string): ComposeFunc {
+export function compose(middlewares: (() => void)[], store: object): ComposeFunc {
   return async (...args) => {
     function goNext(middleware, next) {
-      return async () => {
-        await middleware(ctx, next, actionType, ...args);
+      return async (...args) => {
+        await middleware(store)(next)(...args);
       };
     }
     let next = async () => {
@@ -66,7 +65,7 @@ export function compose(middlewares: (() => void)[], ctx: object, actionType: st
       next = goNext(middleware, next);
     });
     try {
-      await next();
+      await next(...args);
     } catch (e) {
       console.error(e);
     }

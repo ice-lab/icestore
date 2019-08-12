@@ -25,10 +25,10 @@ export default class Store {
   public disableLoading = false;
 
   /** Context object passed to middlewares */
-  private middlewareCtx: {[name: string]: any} = {};
+  private middlewareAPI: {[name: string]: any} = {};
 
   public constructor(bindings: object, namespace: string, middlewares) {
-    this.middlewareCtx  = {
+    this.middlewareAPI  = {
       namespace,
       getState: this.getState,
     };
@@ -94,11 +94,16 @@ export default class Store {
       }
     };
 
-    const defaultMiddleware = async function (ctx, next, actionType, ...args) {
+    const defaultMiddleware = store => next => async (...args) => {
       await wrapper(...args);
     };
 
-    return compose([...middlewares, defaultMiddleware], this.middlewareCtx, actionType);
+    const middlewareAPI = {
+      ...this.middlewareAPI,
+      actionType,
+    };
+
+    return compose([...middlewares, defaultMiddleware], middlewareAPI);
   }
 
   /**

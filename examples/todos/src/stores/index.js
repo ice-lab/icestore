@@ -1,6 +1,6 @@
-import todos from './todos';
 import Icestore from '@ice/store';
 import debug from '@ice/store-debug';
+import todos from './todos';
 
 const icestore = new Icestore();
 

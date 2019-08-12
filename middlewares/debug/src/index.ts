@@ -1,18 +1,17 @@
 import { toJS } from '@ice/store';
 import { detailedDiff } from 'deep-object-diff';
 
-export default async (ctx, next, actionType) => {
-  const { namespace, getState } = ctx;
+export default store => next => async (...args) => {
+  const { namespace, getState } = store;
   const preState = toJS(getState());
-
-  await next();
+  await next(...args);
 
   const state = toJS(getState());
   const diff: any  = detailedDiff(preState, state);
   const hasChanges = obj => Object.keys(obj).length > 0;
 
   console.group('Store name: ', namespace);
-  console.log('Action type: ', actionType);
+  console.log('Action type: ', store.actionType);
 
   if (hasChanges(diff.added)) {
     console.log('Added\n', diff.added);
