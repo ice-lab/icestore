@@ -1,15 +1,26 @@
 import Store from './store';
-import { toJS } from './util';
+import { toJS, compose } from './util';
 
 interface MethodFunc {
   (): void;
 }
 
+let storeManagers = [];
+
 export default class Icestore {
   /** Stores registered */
   private stores: {[namespace: string]: Store} = {};
 
-  private middlewares = [];
+  private globalMiddlewares = [];
+
+  private middlewares = {};
+
+  public constructor(namespace: string) {
+    storeManagers.push({
+      ...namespace !== undefined ? {namespace} : {},
+      instance: this,
+    });
+  }
 
   /**
    * Register and init store
@@ -22,12 +33,16 @@ export default class Icestore {
       throw new Error(`Namespace have been used: ${namespace}.`);
     }
 
-    this.stores[namespace] = new Store(bindings, namespace, this.middlewares);
+    this.stores[namespace] = new Store(namespace, bindings, this.composeMiddleware.bind(this, namespace));
     return this.stores[namespace];
   }
 
-  public applyMiddleware(...middlewares): void {
-    this.middlewares = middlewares;
+  public applyMiddleware(middlewares, namespace): void {
+    if (namespace !== undefined) {
+      this.middlewares[namespace] = middlewares;
+    } else {
+      this.globalMiddlewares = middlewares;
+    }
   }
 
   /**
@@ -41,6 +56,32 @@ export default class Icestore {
       throw new Error(`Not found namespace: ${namespace}.`);
     }
     return store;
+  }
+
+  private composeMiddleware(namespace, store, action, actionType: string) {
+    const storeMiddlewares = this.middlewares[namespace] || [];
+    const actionMiddleware = (store, next) => async (actionType, ...args) => {
+      await action(...args);
+    };
+    const middlewares = this.globalMiddlewares
+      .concat(storeMiddlewares)
+      .concat(actionMiddleware);
+    const middlewareAPI = {
+      namespace,
+      getState: store.getState,
+      storeManagers,
+    };
+
+    return compose(middlewares, middlewareAPI, actionType);
+  }
+
+  /**
+   * Get state of store by namespace
+   * @param {string} namespace - unique name of store
+   * @return {object} store's state
+   */
+  public getState(namespace: string): object {
+    return this.getModel(namespace).getState();
   }
 
   /**

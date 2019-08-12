@@ -24,17 +24,10 @@ export default class Store {
   /** Flag of whether disable loading effect globally */
   public disableLoading = false;
 
-  /** Context object passed to middlewares */
-  private middlewareAPI: {[name: string]: any} = {};
-
-  public constructor(bindings: object, namespace: string, middlewares) {
-    this.middlewareAPI  = {
-      namespace,
-      getState: this.getState,
-    };
+  public constructor(namespace: string, bindings: object, composeMiddleware) {
     Object.keys(bindings).forEach((key) => {
       const value = bindings[key];
-      this.bindings[key] = isFunction(value) ? this.createAction(value, key, middlewares) : value;
+      this.bindings[key] = isFunction(value) ? this.createAction(value, key, composeMiddleware) : value;
     });
 
     const handler = {
@@ -60,7 +53,7 @@ export default class Store {
    * @param {function} func - original method user defined
    * @return {function} action function
    */
-  private createAction(func, actionType, middlewares): MethodFunc {
+  private createAction(func, actionType, composeMiddleware): MethodFunc {
     const wrapper: any = async (...args) => {
       wrapper.loading = true;
       wrapper.error = null;
@@ -94,23 +87,14 @@ export default class Store {
       }
     };
 
-    const defaultMiddleware = store => next => async (...args) => {
-      await wrapper(...args);
-    };
-
-    const middlewareAPI = {
-      ...this.middlewareAPI,
-      actionType,
-    };
-
-    return compose([...middlewares, defaultMiddleware], middlewareAPI);
+    return composeMiddleware(this, wrapper, actionType);
   }
 
   /**
    * Get state from bindings
    * @return {object} state
    */
-  private getState = (): object => {
+  public getState = (): object => {
     const { bindings } = this;
     const state = {};
     Object.keys(bindings).forEach((key) => {

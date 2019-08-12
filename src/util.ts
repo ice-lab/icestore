@@ -49,13 +49,14 @@ export function toJS(value: any): any {
  * Compose a middleware chain consisting of all the middlewares
  * @param {array} middlewares - middlewares user passed
  * @param {object} store - middleware API
+ * @param {string} actionType - type of action
  * @return {function} middleware chain
  */
-export function compose(middlewares: (() => void)[], store: object): ComposeFunc {
+export function compose(middlewares: (() => void)[], store: object, actionType: string): ComposeFunc {
   return async (...args) => {
     function goNext(middleware, next) {
       return async (...args) => {
-        await middleware(store)(next)(...args);
+        await middleware(store, next)(actionType, ...args);
       };
     }
     let next = async () => {
