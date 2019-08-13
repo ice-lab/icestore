@@ -1,5 +1,5 @@
 import Store from './store';
-import { toJS, compose } from './util';
+import { compose } from './util';
 
 interface MethodFunc {
   (): void;
@@ -116,4 +116,3 @@ export default class Icestore {
   }
 }
 
-export { toJS };
