@@ -5,15 +5,14 @@ export default (store, next) => {
   const { storeManagers } = store;
   (window as any).ICESTORE = {
     getState: (namespace: string) => {
-
       storeManagers.forEach((value, index) => {
         const managerName = value.namespace;
         if (namespace !== undefined && namespace !== managerName) {
           return;
         }
         const storeManager = value.instance;
-        console.log(`%cStore Manager ${index}: ${managerName !== undefined ? '(' + managerName + ')' : ''}`,
-          'font-weight:bold; font-size: 14px;');
+        const label = managerName !== undefined ? `(${managerName })` : '';
+        console.log(`%cStore Manager ${index}: ${label}`, 'font-weight:bold; font-size: 14px;');
         const stores = storeManager.stores;
         Object.keys(stores).forEach((key) => {
           console.group(`Store Name: ${key}\n`);
@@ -21,7 +20,7 @@ export default (store, next) => {
           console.groupEnd();
         });
       });
-    }
+    },
   };
   return async (actionType, ...args) => {
     const { namespace, getState } = store;
