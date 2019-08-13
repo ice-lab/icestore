@@ -51,6 +51,8 @@ export default class Store {
   /**
    * Create action which will trigger state update after mutation
    * @param {function} func - original method user defined
+   * @param {string} actionType - action type
+   * @param {function} composeMiddleware - middleware compose function
    * @return {function} action function
    */
   private createAction(func, actionType, composeMiddleware): MethodFunc {

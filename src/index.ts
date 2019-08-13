@@ -5,17 +5,24 @@ interface MethodFunc {
   (): void;
 }
 
-let storeManagers = [];
+// all store managers defined
+const storeManagers = [];
 
 export default class Icestore {
   /** Stores registered */
   private stores: {[namespace: string]: Store} = {};
 
+  /** Global middlewares applied to all stores */
   private globalMiddlewares = [];
 
-  private middlewares = {};
+  /** middleware applied to single store */
+  private middlewaresMap = {};
 
-  public constructor(namespace: string) {
+  /**
+   * Init store manager
+   * @param {string} namespace - unique name of store manager
+   */
+  public constructor(namespace?: string) {
     storeManagers.push({
       ...namespace !== undefined ? {namespace} : {},
       instance: this,
@@ -37,9 +44,12 @@ export default class Icestore {
     return this.stores[namespace];
   }
 
-  public applyMiddleware(middlewares, namespace): void {
+  /**
+   * Apply middleware to stores
+   */
+  public applyMiddleware(middlewares: (() => void)[], namespace: string): void {
     if (namespace !== undefined) {
-      this.middlewares[namespace] = middlewares;
+      this.middlewaresMap[namespace] = middlewares;
     } else {
       this.globalMiddlewares = middlewares;
     }
@@ -58,8 +68,11 @@ export default class Icestore {
     return store;
   }
 
-  private composeMiddleware(namespace, store, action, actionType: string) {
-    const storeMiddlewares = this.middlewares[namespace] || [];
+  /**
+   * Compose middlewares and action
+   */
+  private composeMiddleware(namespace: string, store: Store, action, actionType: string) {
+    const storeMiddlewares = this.middlewaresMap[namespace] || [];
     const actionMiddleware = (store, next) => async (actionType, ...args) => {
       await action(...args);
     };

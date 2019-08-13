@@ -3,7 +3,7 @@ import { detailedDiff } from 'deep-object-diff';
 
 export default (store, next) => {
   const { storeManagers } = store;
-  window.ICESTORE = {
+  (window as any).ICESTORE = {
     getState: (namespace: string) => {
 
       storeManagers.forEach((value, index) => {
@@ -47,8 +47,8 @@ export default (store, next) => {
       console.log('Deleted\n', diff.deleted);
     }
 
-    console.log('New State\n', state);
     console.log('Old State\n', preState);
+    console.log('New State\n', state);
     console.groupEnd();
   }
 }

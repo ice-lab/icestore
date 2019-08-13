@@ -108,21 +108,21 @@ describe('#util', () => {
       return new Promise((resolve) => setTimeout(resolve, ms || 1))
     }
     test('should work', async () => {
-      middlewares.push(async (ctx, next) => {
+      middlewares.push((store, next) => async (actionType, ...args) => {
         arr.push(1);
         await wait(1);
         await next();
         await wait(1);
         arr.push(6);
       });
-      middlewares.push(async (ctx, next) => {
+      middlewares.push((store, next) => async (actionType, ...args) => {
         arr.push(2);
         await wait(1);
         await next();
         await wait(1);
         arr.push(5);
       });
-      middlewares.push(async (ctx, next) => {
+      middlewares.push((store, next) => async (actionType, ...args) => {
         arr.push(3);
         await wait(1);
         await next();
