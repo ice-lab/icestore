@@ -64,3 +64,5 @@ typings/
 lib
 
 package-lock.json
+
+yarn.lock
