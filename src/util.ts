@@ -5,6 +5,17 @@ interface ComposeFunc {
   (): void;
 }
 
+interface Ctx {
+  action: {
+    name: string;
+    arguments: any[];
+  };
+  store: {
+    namespace: string;
+    getState: () => object;
+  };
+}
+
 /**
  * Recursively add proxy to object
  * @param {object} value - value of object type
@@ -48,15 +59,16 @@ export function toJS(value: any): any {
 /**
  * Compose a middleware chain consisting of all the middlewares
  * @param {array} middlewares - middlewares user passed
- * @param {object} store - middleware API
- * @param {string} actionType - type of action
+ * @param {object} ctx - middleware context
  * @return {function} middleware chain
  */
-export function compose(middlewares: (() => void)[], store: object, actionType: string): ComposeFunc {
+export function compose(middlewares: (() => void)[], ctx: Ctx): ComposeFunc {
   return async (...args) => {
+    ctx.action.arguments = args;
+
     function goNext(middleware, next) {
-      return async (...args) => {
-        await middleware(store, next)(actionType, ...args);
+      return async () => {
+        await middleware(ctx, next);
       };
     }
     let next = async () => {
@@ -66,7 +78,7 @@ export function compose(middlewares: (() => void)[], store: object, actionType: 
       next = goNext(middleware, next);
     });
     try {
-      await next(...args);
+      await next();
     } catch (e) {
       console.error(e);
     }
