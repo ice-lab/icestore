@@ -1,6 +1,3 @@
-import * as isObject from 'lodash.isobject';
-import * as forEach from 'lodash.foreach';
-
 interface ComposeFunc {
   (): void;
 }
