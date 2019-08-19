@@ -13,12 +13,6 @@ export default class Store {
   /** Queue of setState method from useState hook */
   private queue = [];
 
-  /** Flag of whether state changed after mutation */
-  private stateChanged = false;
-
-  /** Flag of how many actions are in exection */
-  // private actionExecNum = 0;
-
   /** Flag of whether disable loading effect globally */
   public disableLoading = false;
 
@@ -27,23 +21,6 @@ export default class Store {
       const value = bindings[key];
       this.bindings[key] = isFunction(value) ? this.createAction(value, key, composeMiddleware) : value;
     });
-
-    // const handler = {
-    //   set: (target, prop, value) => {
-    //     if (!this.actionExecNum) {
-    //       console.error('Forbid modifying state directly, use action to modify instead.');
-    //       return false;
-    //     }
-    //     if (target[prop] !== value) {
-    //       this.stateChanged = true;
-    //     }
-    //     /* eslint no-param-reassign: 0 */
-    //     target[prop] = isObject(value) ? addProxy(value, handler) : value;
-    //     return true;
-    //   },
-    // };
-    //
-    // this.bindings = addProxy(this.bindings, handler);
   }
 
   /**
@@ -57,7 +34,6 @@ export default class Store {
     const wrapper: any = async (...args) => {
       wrapper.loading = true;
       wrapper.error = null;
-      // this.actionExecNum += 1;
 
       const disableLoading = wrapper.disableLoading !== undefined
         ? wrapper.disableLoading : this.disableLoading;
@@ -70,11 +46,7 @@ export default class Store {
 
       const afterExec = () => {
         wrapper.loading = false;
-        // this.actionExecNum -= 1;
-        if (enableLoading || this.stateChanged) {
-          this.setState();
-        }
-        this.stateChanged = false;
+        this.setState();
       };
 
       try {
