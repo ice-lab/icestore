@@ -33,7 +33,7 @@ function Todo() {
             <input
               type="checkbox"
               checked={done}
-              onClick={() => onCheck(index)}
+              onChange={() => onCheck(index)}
             />
             {done ? <s>{name}</s> : <span>{name}</span>}
           </label>

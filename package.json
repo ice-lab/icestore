@@ -1,6 +1,6 @@
 {
   "name": "@ice/store",
-  "version": "0.2.5",
+  "version": "0.3.0",
   "description": "Lightweight React state management library based on react hooks",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",

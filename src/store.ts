@@ -26,11 +26,11 @@ export default class Store {
   /**
    * Create action which will trigger state update after mutation
    * @param {function} func - original method user defined
-   * @param {string} actionType - action type
+   * @param {string} actionName - name of action function
    * @param {function} composeMiddleware - middleware compose function
    * @return {function} action function
    */
-  private createAction(func, actionType, composeMiddleware): MethodFunc {
+  private createAction(func, actionName, composeMiddleware): MethodFunc {
     const wrapper: any = async (...args) => {
       wrapper.loading = true;
       wrapper.error = null;
@@ -59,7 +59,7 @@ export default class Store {
       }
     };
 
-    return composeMiddleware(this, wrapper, actionType);
+    return composeMiddleware(this, wrapper, actionName);
   }
 
   /**

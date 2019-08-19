@@ -1,7 +1,7 @@
 {
-  "name": "@ice/store-debug",
+  "name": "@ice/store-logger",
   "version": "0.0.1",
-  "description": "icestore debug middleware",
+  "description": "icestore logger middleware",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "files": [

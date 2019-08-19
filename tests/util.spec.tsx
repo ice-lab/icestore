@@ -21,21 +21,21 @@ describe('#util', () => {
       return new Promise((resolve) => setTimeout(resolve, ms || 1))
     }
     test('should work', async () => {
-      middlewares.push((store, next) => async (actionType, ...args) => {
+      middlewares.push(async (ctx, next) => {
         arr.push(1);
         await wait(1);
         await next();
         await wait(1);
         arr.push(6);
       });
-      middlewares.push((store, next) => async (actionType, ...args) => {
+      middlewares.push(async (ctx, next) => {
         arr.push(2);
         await wait(1);
         await next();
         await wait(1);
         arr.push(5);
       });
-      middlewares.push((store, next) => async (actionType, ...args) => {
+      middlewares.push(async (ctx, next) => {
         arr.push(3);
         await wait(1);
         await next();
@@ -43,7 +43,17 @@ describe('#util', () => {
         arr.push(4);
       });
 
-      await compose(middlewares, {}, '')();
+      const ctx = {
+        action: {
+          name: '',
+          arguments: [],
+        },
+        store: {
+          namespace: 'foo',
+          getState: () => { return {}; },
+        },
+      }
+      await compose(middlewares, ctx)();
       expect(arr).toEqual([1, 2, 3, 4, 5, 6]);
     });
   });

@@ -5,9 +5,6 @@ interface MethodFunc {
   (): void;
 }
 
-// all store managers defined
-const storeManagers = [];
-
 export default class Icestore {
   /** Stores registered */
   private stores: {[namespace: string]: Store} = {};
@@ -17,17 +14,6 @@ export default class Icestore {
 
   /** middleware applied to single store */
   private middlewaresMap = {};
-
-  /**
-   * Init store manager
-   * @param {string} namespace - unique name of store manager
-   */
-  public constructor(namespace?: string) {
-    storeManagers.push({
-      ...namespace !== undefined ? {namespace} : {},
-      instance: this,
-    });
-  }
 
   /**
    * Register and init store
@@ -71,21 +57,26 @@ export default class Icestore {
   /**
    * Compose middlewares and action
    */
-  private composeMiddleware(namespace: string, store: Store, action, actionType: string) {
+  private composeMiddleware(namespace: string, store: Store, action, actionName: string) {
     const storeMiddlewares = this.middlewaresMap[namespace] || [];
-    const actionMiddleware = (store, next) => async (actionType, ...args) => {
-      await action(...args);
+    const actionMiddleware = async (ctx, next) => {
+      await action(...ctx.action.arguments);
     };
     const middlewares = this.globalMiddlewares
       .concat(storeMiddlewares)
       .concat(actionMiddleware);
-    const middlewareAPI = {
-      namespace,
-      getState: store.getState,
-      storeManagers,
+    const ctx = {
+      action: {
+        name: actionName,
+        arguments: [],
+      },
+      store: {
+        namespace,
+        getState: store.getState,
+      },
     };
 
-    return compose(middlewares, middlewareAPI, actionType);
+    return compose(middlewares, ctx);
   }
 
   /**
