@@ -1,4 +1,6 @@
-import { addProxy, toJS, compose } from '../src/util';
+import addProxy from '../src/util/addProxy';
+import toJS from '../src/util/toJS';
+import compose from '../src/util/compose';
 
 describe('#util', () => {
   let handler;
