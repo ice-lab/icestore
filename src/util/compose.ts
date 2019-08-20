@@ -25,7 +25,7 @@ export default function compose(middlewares: (() => void)[], ctx: Ctx): ComposeF
 
     function goNext(middleware, next) {
       return async () => {
-        await middleware(ctx, next);
+        return await middleware(ctx, next);
       };
     }
     let next = async () => {
@@ -35,7 +35,7 @@ export default function compose(middlewares: (() => void)[], ctx: Ctx): ComposeF
       next = goNext(middleware, next);
     });
     try {
-      await next();
+      return await next();
     } catch (e) {
       console.error(e);
     }

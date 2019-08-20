@@ -61,7 +61,7 @@ export default class Icestore {
   private composeMiddleware(namespace: string, store: Store, action, actionName: string) {
     const storeMiddlewares = this.middlewaresMap[namespace] || [];
     const actionMiddleware = async (ctx, next) => {
-      await action(...ctx.action.arguments);
+      return await action(...ctx.action.arguments);
     };
     const middlewares = this.globalMiddlewares
       .concat(storeMiddlewares)

@@ -80,8 +80,9 @@ export default class Store {
       };
 
       try {
-        await result;
+        const value = await result;
         afterExec();
+        return value;
       } catch (e) {
         wrapper.error = e;
         afterExec();

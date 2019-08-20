@@ -11,8 +11,9 @@ function Todo() {
     refresh();
   }, []);
 
-  function onAdd(name) {
-    add({ name });
+  async function onAdd(name) {
+    const todo = await add({ name });
+    console.log('add result===', todo)
   }
 
   function onRemove(index) {

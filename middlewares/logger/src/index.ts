@@ -6,7 +6,7 @@ export default async (ctx, next) => {
   const { name: actionName } = ctx.action;
   const preState = toJS(getState());
 
-  await next();
+  const value = await next();
 
   const state = toJS(getState());
   const diff: any  = detailedDiff(preState, state);
@@ -30,5 +30,7 @@ export default async (ctx, next) => {
   console.log('Old State\n', preState);
   console.log('New State\n', state);
   console.groupEnd();
+
+  return value;
 }
 
