@@ -2,7 +2,7 @@
 
 # icestore
 
->  基于React Hooks实现的轻量级状态管理框架
+> 基于 React Hooks 实现的轻量级状态管理框架
 
 [![NPM version](https://img.shields.io/npm/v/@ice/store.svg?style=flat)](https://npmjs.org/package/@ice/store)
 [![Package Quality](https://npm.packagequality.com/shield/@ice%2Fstore.svg)](https://packagequality.com/#?package=@ice/store)
@@ -15,79 +15,67 @@
 ## 安装
 
 ```bash
-npm install @ice/store --save
+$ npm install @ice/store --save
 ```
 
 ## 简介
 
 `icestore` 是基于 React Hooks 实现的轻量级状态管理框架，有以下核心特点：
 
-* 极简 API : 只有 3 个 API，真正做到五分钟上手。
-* 单向数据流：与 Redux 一样使用单向数据流，便于状态的追踪与预测。
-* 性能优化：通过多 store 的去中心化设计，减少单个 state 变化触发重新渲染的组件个数，同时改变 state 时做 diff，进一步减少不必要的渲染。
-* 集成异步状态：记录异步 action 的执行状态，简化 view 组件中对于 loading 与 error 状态的渲染逻辑。
-
-`icestore` 数据流示意图如下：  
-
-<img src="https://user-images.githubusercontent.com/5419233/60956252-012f9300-a335-11e9-8667-75490ceb62b1.png" width="400" />
+* **极简 API**：只有 3 个 API，简单上手，使用方便，不需要学习 Redux 里的各种概念。
+* **React Hooks**：拥抱 Hooks 的使用体验，同时也是基于 React Hooks 实现。
+* **集成异步状态**：记录异步 action 的执行状态，简化 view 组件中对于 loading 与 error 状态的渲染逻辑。
+* **性能优化**：通过多 store 的去中心化设计，减少单个 state 变化触发重新渲染的组件个数，同时改变 state 时做 diff，进一步减少不必要的渲染。
+* **单向数据流**：与 Redux 一样使用单向数据流，便于状态的追踪与预测。
 
 ### 兼容性
 
-`icestore` 由于依赖于 React 16.8.0 提供的 Hooks 特性，因此只支持 16.8.0 及以上版本。
+`icestore` 由于依赖了 React@16.8.0+ 提供的 Hooks 特性，因此只支持 React 16.8.0 及以上版本。
 
 ## 快速开始
 
-让我们使用 `icestore` 从头开始搭建一个 todo 应用，包含以下几个步骤：
+让我们使用 `icestore` 开发一个简单的 todo 应用，包含以下几个步骤：
 
-* 定义 store 配置，store 是一个普通的 js 对象，对象上函数类型属性对应 action，非函数类型对应 state。
+* 定义 store：
 
 ```javascript
-// src/stores/todos.js
+// src/stores/todos.js，不同 store 对应不同的 js 文件
 export default {
   dataSource: [],
-  async refresh() {
-    this.dataSource = await new Promise(resolve =>
+  async fetchData() {
+    // 模拟异步请求
+    const data = await new Promise(resolve =>
       setTimeout(() => {
         resolve([
-          {
-            name: 'react'
-          },
-          {
-            name: 'vue',
-            done: true
-          },
-          {
-            name: 'angular'
-          }
+          { name: 'react' },
+          { name: 'vue', done: true},
+          { name: 'angular' },
         ]);
       }, 1000)
-    );  },
+    );
+    this.dataSource = data;
+  },
+
   add(todo) {
     this.dataSource.push(todo);
-  },
-  remove(index) {
-    this.dataSource.splice(index, 1);
-  },
-  toggle(index) {
-    this.dataSource[index].done = !this.dataSource[index].done;
   },
 };
 ```
 
-* 初始化 store 实例，并且按 namespace 将定义好的 store 配置注册到 store 实例中。
+* 注册 store：
 
 ```javascript
-// src/stores/index.js
+// src/stores/index.js，所有的 store 都在这里注册
 import todos from './todos';
-import Icestore from '@ice/store';
+import Store from '@ice/store';
 
-const icestore = new Icestore();
-icestore.registerStore('todos', todos);
+const storeManager = new Store();
+storeManager.registerStore('todos', todos);
 
-export default icestore;
+export default storeManager;
 ```
 
-* 在 view 组件中，import store 实例，通过 `useStore` hook 获取 store 配置(包含 state 和 actions)，然后在 `useEffect` hook 或者事件回调中触发 actions，最后将 state 绑定到 view 模板上。
+* 在 view 组件中，绑定 store：
 
 ```javascript
 // src/index.js
@@ -97,70 +85,122 @@ import stores from './stores';
 
 function Todo() {
   const todos = stores.useStore('todos');
-  const { dataSource, refresh, add, remove, toggle } = todos;
+  const { dataSource, fetchData, add, } = todos;
 
   useEffect(() => {
-    refresh();
+    fetchData();
   }, []);
 
-  function onAdd(name) {
+  function handleAdd(name) {
     add({ name });
   }
 
-  function onRemove(index) {
-    remove(index);
-  }
-
-  function onCheck(index) {
-    toggle(index);
-  }
-
-  const noTaskView = <span>no task</span>;
-  const loadingView = <span>loading...</span>;
-  const taskView = dataSource.length ? (
-    <ul>
-      {dataSource.map(({ name, done }, index) => (
-        <li key={index}>
-          <label>
-            <input
-              type="checkbox"
-              checked={done}
-              onClick={() => onCheck(index)}
-            />
-            {done ? <s>{name}</s> : <span>{name}</span>}
-          </label>
-          <button onClick={() => onRemove(index)}>-</button>
-        </li>
-      ))}
-    </ul>
-  ) : (
-    noTaskView
-  );
-
-  return (
-    <div>
-      <h2>Todos</h2>
-      {!refresh.loading ? taskView : loadingView}
+  if (fetchData.loading) {
+    return <span>loading...</span>;
+  } else {
+    return (
       <div>
-        <input
-          onKeyDown={event => {
-            if (event.keyCode === 13) {
-              onAdd(event.target.value);
-              event.target.value = '';
-            }
-          }}
-          placeholder="Press Enter"
-        />
+        <ul>
+          {dataSource.map(({ name, done }, index) => (
+            <li key={index}>
+              <label>
+                <input
+                  type="checkbox"
+                  checked={done}
+                  onClick={() => onCheck(index)}
+                />
+                {done ? <s>{name}</s> : <span>{name}</span>}
+              </label>
+              <button onClick={() => onRemove(index)}>-</button>
+            </li>
+          ))}
+        </ul>
+        <div>
+          <input
+            onKeyDown={event => {
+              if (event.keyCode === 13) {
+                handleAdd(event.target.value);
+                event.target.value = '';
+              }
+            }}
+            placeholder="Press Enter"
+          />
+        </div>
       </div>
-    </div>
-  );
+    )
+  }
 }
 
-const rootElement = document.getElementById('root');
-ReactDOM.render(<Todo />, rootElement);
+ReactDOM.render(<Todo />, document.getElementById('root'));
 ```
 
 完整示例展示在这个 [sandbox](https://codesandbox.io/s/icestore-hs9fe)。
+
+
+## Todos
+
+- [ ] 增加调试工具
+- [ ] 支持 middleware
+
+## 实现原理
+
+`icestore` 数据流示意图如下：
+
+<img src="https://user-images.githubusercontent.com/5419233/60956252-012f9300-a335-11e9-8667-75490ceb62b1.png" width="400" />
+
+## 最佳实践
+
+### 目录结构组织
+
+对于大多数的中小型项目，推荐将项目所有 store 集中管理在 `src/stores/` 目录下：
+
+```bash
+├── src/
+│   ├── components/
+│   │   └── NotFound/
+│   ├── pages/
+│   │   └── Home
+│   ├── stores/
+│   │   ├── storeA.js
+│   │   ├── storeB.js
+│   │   ├── storeC.js
+│   │   └── index.js
+```
+
+如果项目比较庞大或者更倾向于 store 跟随页面维护，那么可以在每个 page 目录都声明一个 store 示例，但是这种情况建立尽量避免跨页面的 store 调用。
+
+### 不要在 action 之外直接修改 state
+
+`icestore` 的架构设计中强制要求对state的变更只能在 action 中进行。在 action 之外的对 state的修改将直接 throw 错误。这个设计的原因是在 action 之外修改 state 将导致 state 变更逻辑散落在 view 中，变更逻辑将会难以追踪和调试。
+
+```javascript
+  // store.js
+  export default {
+    inited: false,
+    setInited() {
+      this.inited = true;
+    }
+  }
+
+  // view.js
+  const todos = useStore('todos');
+
+  useEffect(() => {
+    // bad
+    todos.inited = true;
+
+    // good
+    todos.setInited();
+  });
+```
+
+### 尽可能小的拆分 store
+
+从 `icestore` 的内部设计来看，当某个 store 的 state 发生变化时，所有使用 useStore 监听 store 变化的 view 组件都会触发重新渲染，这意味着一个 store 中存放的 state 越多越可能触发更多的 view 组件重新渲染。因此从性能方面考虑，建议按照功能划分将 store 拆分成一个个独立的个体。
+
+### 不要滥用 `icestore`
+
+从工程的角度来看，store 中应该只用来存放跨页面与组件的状态。将页面或者组件中的内部状态放到 store 中将会破坏组件自身的封装性，进而影响组件的复用性。对于组件内部状态完全可以使用 useState 来实现，因此如果上面的 todo app 如果是作为工程中的页面或者组件存在的话，使用 useState 而不是全局 store 来实现才是更合理的。
 
 ## API
 
@@ -306,47 +346,6 @@ describe('todos', () => {
 ```
 
 完整的测试用例请参考上面[sandbox](https://codesandbox.io/s/icestore-hs9fe)中的 `todos.spec.js` 文件。
-
-## 最佳实践
-
-### 不要在 action 之外直接修改 state
-
-`icestore` 的架构设计中强制要求对state的变更只能在 action 中进行。在 action 之外的对 state的修改将直接 throw 错误。这个设计的原因是在 action 之外修改 state 将导致 state 变更逻辑散落在 view 中，变更逻辑将会难以追踪和调试。
-
-```javascript
-  // store.js
-  export default {
-    inited: false,
-    setInited() {
-      this.inited = true;
-    }
-  }
-  
-  // view.js
-  const todos = useStore('todos');
-  
-  useEffect(() => {
-    // bad
-    todos.inited = true;
-    
-    // good
-    todos.setInited();
-  });
-```
-
-### 尽可能小的拆分 store
-
-从 `icestore` 的内部设计来看，当某个 store 的 state 发生变化时，所有使用 useStore 监听 store 变化的 view 组件都会触发重新渲染，这意味着一个 store 中存放的 state 越多越可能触发更多的 view 组件重新渲染。因此从性能方面考虑，建议按照功能划分将 store 拆分成一个个独立的个体。
-
-### 不要滥用 `icestore`
-
-从工程的角度来看，store 中应该只用来存放跨页面与组件的状态。将页面或者组件中的内部状态放到 store 中将会破坏组件自身的封装性，进而影响组件的复用性。对于组件内部状态完全可以使用 useState来实现，因此如果上面的 todo app 如果是作为工程中的页面或者组件存在的话，使用 useState 而不是全局 store 来实现才是更合理的。
-
-
-## Todos
-
-- [ ] 增加调试工具
-- [ ] 支持 middleware
 
 ## Reference
 
