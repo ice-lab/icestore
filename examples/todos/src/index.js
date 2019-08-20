@@ -1,6 +1,5 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import ReactDOM from 'react-dom';
-import { toJS } from '@ice/store';
 import stores from './stores';
 
 function Todo() {
@@ -12,7 +11,8 @@ function Todo() {
   }, []);
 
   function onAdd(name) {
-    add({ name });
+    const todo = add({ name });
+    console.log('add todo===', todo)
   }
 
   function onRemove(index) {

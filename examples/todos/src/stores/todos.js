@@ -20,6 +20,7 @@ export default {
   },
   add(todo) {
     this.dataSource.push(todo);
+    return todo;
   },
   remove(index) {
     this.dataSource.splice(index, 1);
