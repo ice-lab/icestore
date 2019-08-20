@@ -10,9 +10,9 @@ function Todo() {
     refresh();
   }, []);
 
-  function onAdd(name) {
-    const todo = add({ name });
-    console.log('add todo===', todo)
+  async function onAdd(name) {
+    const todo = await add({ name });
+    console.log('add result===', todo)
   }
 
   function onRemove(index) {
