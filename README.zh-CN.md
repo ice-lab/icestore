@@ -137,11 +137,6 @@ ReactDOM.render(<Todo />, document.getElementById('root'));
 完整示例展示在这个 [sandbox](https://codesandbox.io/s/icestore-hs9fe)。
 
 
-## Todos
-
-- [ ] 增加调试工具
-- [ ] 支持 middleware
-
 ## 实现原理
 
 `icestore` 数据流示意图如下：
@@ -171,7 +166,7 @@ ReactDOM.render(<Todo />, document.getElementById('root'));
 
 ### 不要在 action 之外直接修改 state
 
-`icestore` 的架构设计中强制要求对state的变更只能在 action 中进行。在 action 之外的对 state的修改将直接 throw 错误。这个设计的原因是在 action 之外修改 state 将导致 state 变更逻辑散落在 view 中，变更逻辑将会难以追踪和调试。
+`icestore` 的架构设计中强制要求对state的变更只能在 action 中进行。在 action 之外的对 state 的修改不生效。这个设计的原因是在 action 之外修改 state 将导致 state 变更逻辑散落在 view 中，变更逻辑将会难以追踪和调试。
 
 ```javascript
   // store.js
@@ -214,6 +209,16 @@ ReactDOM.render(<Todo />, document.getElementById('root'));
 * 返回值
   - {object} store 实例
 
+### applyMiddleware
+
+给所有 store 或者指定 namespace 的 store 注册 middleware，如果不指定第 2 个参数，给所有 store 注册 middleware，如果指定第 2 个参数，则给指定 namespace 的 store 注册 middleware，详细用法见[注册方式](#注册方式)
+
+* 参数
+  - middlewares {array} 待注册的 middleware 数组
+  - namespace {string} store 的命名空间
+* 返回值
+  - 无
+
 ### useStores
 
 同时使用多个 store 的 hook。
@@ -232,34 +237,14 @@ ReactDOM.render(<Todo />, document.getElementById('root'));
 * 返回值
   - {object} store 的配置对象
 
-### toJS
+### getState
 
-递归将 Proxy 化的 state 对象转化成普通的 javaScript 对象
+获取单个 store 的 state 对象。
 
 * 参数
-  - value {any} 任意 javaScript 类型值
+  - namespace {string} store 的命名空间
 * 返回值
-  - {any} 去 Proxy 后的 javaScript 类型
-
-#### 示例
-
-```javascript
-// store.js
-export default {
-  value: {
-    a: 1,
-    b: 2,
-  }
-};
-
-// view.jsx
-import IceStore, { toJS } from '@ice/store';
-const { value } = useStore('foo');
-
-const a = toJS(value);
-console.log(a);
-
-```
+  - {object} store 的 state 对象
 
 ## 高级用法
 
@@ -318,6 +303,140 @@ return (
   <Loading />
 );
 ```
+
+### 中间件
+
+### 背景
+
+如果你有使用过服务端的框架如 Express 或者 koa，应该已经熟悉了中间件的概念，在这些框架中，中间件用于在框架 `接收请求` 与 `产生响应` 间插入自定义代码，这类中间件的功能包含在请求未被响应之前对数据进行加工、鉴权，以及在请求被响应之后添加响应头、打印 log 等功能。
+
+
+在状态管理领域，Redux 同样实现了中间件的机制，用于在 `action 调用` 与 `到达 reducer` 之间插入自定义代码，中间件包含的功能有打印 log、提供 thunk, promise 异步机制、日志上报等。
+
+
+icestore 支持中间件的目的与 Redux 类似，也是为了在 action 调用前后增加一种扩展机制，增加诸如打印 log、埋点上报、异步请求封装等一系列能力，不同的是 icestore 相对 Redux 官方支持异步机制，因此不需要额外通过中间件方式支持。
+
+### 中间件 API
+
+在中间件 API 的设计上，`icestore` 借鉴了 koa 的 API，见如下：
+
+```javascript
+async (ctx, next) =>  {
+  // action 调用前逻辑
+  
+  const result = await next();
+  
+  // action 调用后逻辑
+  
+  return result;
+}
+```
+
+如果用户定义的 action 中有返回值，中间件函数必须将下一个中间件的执行结果返回，以保证中间件链式调用完成后能拿到 action 的返回值。
+
+#### ctx API
+
+对于中间件函数的第一个 ctx 参数，从上面能拿到当前的 store 与当前调用 action 的信息，ctx 对象中包含的详细参数如下：
+
+* ctx.action - 当前调用的 action 对象
+  * 类型：{object}
+  * 默认值：无
+* ctx.action.name - 当前调用的 action 方法名
+  * 类型：{string}
+  * 默认值：无
+* ctx.action.arguments - 当前调用的 action 方法参数数组
+  * 类型：{array}
+  * 默认值：无
+* ctx.store - 当前 store 对象
+  * 类型：{object}
+  * 默认值：无
+* ctx.store.namespace - 当前 store namespace
+  * 类型：{string}
+  * 默认值：无
+* ctx.store.getState - 获取当前 store state 方法
+  * 类型：{function}
+  * 参数：无
+
+调用方式如下：
+
+```javascript
+const {
+  action, // 当前调用的 action 对象
+  store, // 当前 store 对象
+} = ctx;
+
+const {
+  name, // 当前调用的 action 方法名
+  arguments, // 当前调用的 action 方法参数数组
+} = action;
+
+const { 
+  namespace,  // 当前 store namespace
+  getState, // 获取当前 store state 方法
+} = store;
+```
+
+### 注册方式
+
+由于 `icestore` 的多 store 设计，`icestore` 支持给不同的 store 单独注册 middleware，
+方式如下：
+
+1. 全局注册 middleware  
+  *  全局注册的 middleware 对所有 store 生效
+
+	```javascript
+	import Icestore from '@ice/store';
+	const stores = new Icestore();
+	stores.applyMiddleware([a, b]);
+	```
+
+2. 指定 store 注册 middleware  
+  * store 上最终注册的 middleware 将与全局注册 middleware 做合并
+
+	```javascript
+	stores.applyMiddleware([a, b]); 
+	stores.applyMiddleware([c, d], 'foo'); // store foo 中间件为 [a, b, c, d]
+	stores.applyMiddleware([d, c], 'bar'); // store bar 中间件为 [a, b, d, c]
+	```
+
+## 调试
+
+icestore 官方提供 logger 中间件，可以方便地跟踪触发 action 名以及 action 触发前后 state 的 diff 信息，提升问题排查效率。
+
+### 使用方式
+
+在注册 store 之前，使用 `applyMiddleware` 方法将 logger 中间件加入到中间件队列中
+
+```javascript
+import todos from './todos';
+import Icestore from '@ice/store';
+import logger from '@ice/store-logger';
+
+const icestore = new Icestore();
+
+const middlewares = [];
+
+// 线上环境不开启调试中间件
+if (process.env !== 'production') {
+  middlewares.push(logger);
+}
+
+icestore.applyMiddleware(middlewares);
+icestore.registerStore('todos', todos);
+```
+
+注册成功后，当 `store` 中的 action 被调用时，在浏览器的 DevTools 中将能看到实时的日志：
+
+<img src="https://user-images.githubusercontent.com/5419233/63344463-13184300-c383-11e9-96da-2de3b41f6e9b.png"  width="250" />
+
+日志中包含以下几个部分：
+
+* Store Name: 当前子 store 对应的 namespace
+* Action Name: 当前触发的 action 名
+* Added / Deleted / Updated: state 变化的 diff
+* Old state: 更新前的 state
+* New state: 更新后的 state
+
 
 ## 测试
 
