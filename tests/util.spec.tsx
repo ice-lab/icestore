@@ -1,4 +1,4 @@
-import { compose } from '../src/util';
+import compose from '../src/util/compose';
 
 describe('#util', () => {
   let handler;
