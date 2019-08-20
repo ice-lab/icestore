@@ -2,7 +2,7 @@ import * as isFunction from 'lodash.isfunction';
 import * as isPromise from 'is-promise';
 import * as isObject from 'lodash.isobject';
 import { useState, useEffect } from 'react';
-import { addProxy, compose } from './util';
+import addProxy from './util/addProxy';
 
 interface MethodFunc {
   (): void;
