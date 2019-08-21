@@ -1,6 +1,5 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import ReactDOM from 'react-dom';
-import { toJS } from '@ice/store';
 import stores from './stores';
 
 function Todo() {
@@ -13,7 +12,7 @@ function Todo() {
 
   async function onAdd(name) {
     const todo = await add({ name });
-    console.log('add result===', todo)
+    console.log('Newly added todo is ', todo)
   }
 
   function onRemove(index) {

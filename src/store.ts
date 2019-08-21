@@ -1,8 +1,6 @@
 import * as isFunction from 'lodash.isfunction';
 import * as isPromise from 'is-promise';
-import * as isObject from 'lodash.isobject';
 import { useState, useEffect } from 'react';
-import addProxy from './util/addProxy';
 import compose from './util/compose';
 
 interface MethodFunc {
@@ -16,12 +14,6 @@ export default class Store {
   /** Queue of setState method from useState hook */
   private queue = [];
 
-  /** Flag of whether state changed after mutation */
-  private stateChanged = false;
-
-  /** Flag of how many actions are in exection */
-  private actionExecNum = 0;
-
   /** Flag of whether disable loading effect globally */
   public disableLoading = false;
 
@@ -30,23 +22,6 @@ export default class Store {
       const value = bindings[key];
       this.bindings[key] = isFunction(value) ? this.createAction(value, key, namespace, middlewares) : value;
     });
-
-    const handler = {
-      set: (target, prop, value) => {
-        if (!this.actionExecNum) {
-          console.error('Forbid modifying state directly, use action to modify instead.');
-          return false;
-        }
-        if (target[prop] !== value) {
-          this.stateChanged = true;
-        }
-        /* eslint no-param-reassign: 0 */
-        target[prop] = isObject(value) ? addProxy(value, handler) : value;
-        return true;
-      },
-    };
-
-    this.bindings = addProxy(this.bindings, handler);
   }
 
   /**
@@ -60,7 +35,6 @@ export default class Store {
     const actionWrapper: any = async (...args) => {
       wrapper.loading = true;
       wrapper.error = null;
-      this.actionExecNum += 1;
 
       const disableLoading = wrapper.disableLoading !== undefined
         ? wrapper.disableLoading : this.disableLoading;
@@ -73,11 +47,7 @@ export default class Store {
 
       const afterExec = () => {
         wrapper.loading = false;
-        this.actionExecNum -= 1;
-        if (enableLoading || this.stateChanged) {
-          this.setState();
-        }
-        this.stateChanged = false;
+        this.setState();
       };
 
       try {
@@ -130,8 +100,7 @@ export default class Store {
    */
   private setState(): void {
     const state = this.getState();
-    const newState = { ...state };
-    this.queue.forEach(setState => setState(newState));
+    this.queue.forEach(setState => setState(state));
   }
 
   /**
@@ -148,6 +117,6 @@ export default class Store {
         this.queue.splice(index, 1);
       };
     }, []);
-    return this.bindings;
+    return { ...this.bindings };
   }
 }

@@ -1,5 +1,4 @@
 import Store from './store';
-import toJS from './util/toJS';
 
 interface MethodFunc {
   (): void;
@@ -84,4 +83,3 @@ export default class Icestore {
   }
 }
 
-export { toJS };

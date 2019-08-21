@@ -29,7 +29,8 @@
   },
   "dependencies": {
     "@ice/store": "^0.2.x",
-    "deep-object-diff": "^1.1.0"
+    "deep-object-diff": "^1.1.0",
+    "lodash.clonedeep": "^4.5.0"
   },
   "devDependencies": {
     "eslint": "^5.3.0",
