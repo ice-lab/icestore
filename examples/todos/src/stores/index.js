@@ -4,7 +4,13 @@ import todos from './todos';
 
 const icestore = new Icestore('todos');
 
-icestore.applyMiddleware([logger]);
+const middlewares = [];
+
+if (process.env !== 'production') {
+  middlewares.push(logger);
+}
+
+icestore.applyMiddleware(middlewares);
 icestore.registerStore('todos', todos);
 
 export default icestore;
