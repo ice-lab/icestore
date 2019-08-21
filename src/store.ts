@@ -32,7 +32,7 @@ export default class Store {
    * @return {function} action function
    */
   private createAction(func, actionName, namespace, middlewares): MethodFunc {
-    const wrapper: any = async (...args) => {
+    const actionWrapper: any = async (...args) => {
       wrapper.loading = true;
       wrapper.error = null;
 
@@ -72,9 +72,11 @@ export default class Store {
       },
     };
     const actionMiddleware = async (ctx, next) => {
-      return await wrapper(...ctx.action.arguments);
+      return await actionWrapper(...ctx.action.arguments);
     };
-    return compose(middlewares.concat(actionMiddleware), ctx);
+    const wrapper: any = compose(middlewares.concat(actionMiddleware), ctx);
+
+    return wrapper;
   }
 
   /**
