@@ -3,6 +3,7 @@ import * as isPromise from 'is-promise';
 import * as isObject from 'lodash.isobject';
 import { useState, useEffect } from 'react';
 import addProxy from './util/addProxy';
+import compose from './util/compose';
 
 interface MethodFunc {
   (): void;
@@ -24,10 +25,10 @@ export default class Store {
   /** Flag of whether disable loading effect globally */
   public disableLoading = false;
 
-  public constructor(namespace: string, bindings: object, composeMiddleware) {
+  public constructor(namespace: string, bindings: object, middlewares) {
     Object.keys(bindings).forEach((key) => {
       const value = bindings[key];
-      this.bindings[key] = isFunction(value) ? this.createAction(value, key, composeMiddleware) : value;
+      this.bindings[key] = isFunction(value) ? this.createAction(value, key, namespace, middlewares) : value;
     });
 
     const handler = {
@@ -52,10 +53,10 @@ export default class Store {
    * Create action which will trigger state update after mutation
    * @param {function} func - original method user defined
    * @param {string} actionName - name of action function
-   * @param {function} composeMiddleware - middleware compose function
+   * @param {array} middlewares - middleware array
    * @return {function} action function
    */
-  private createAction(func, actionName, composeMiddleware): MethodFunc {
+  private createAction(func, actionName, namespace, middlewares): MethodFunc {
     const wrapper: any = async (...args) => {
       wrapper.loading = true;
       wrapper.error = null;
@@ -90,7 +91,20 @@ export default class Store {
       }
     };
 
-    return composeMiddleware(this, wrapper, actionName);
+    const ctx = {
+      action: {
+        name: actionName,
+        arguments: [],
+      },
+      store: {
+        namespace,
+        getState: this.getState,
+      },
+    };
+    const actionMiddleware = async (ctx, next) => {
+      return await wrapper(...ctx.action.arguments);
+    };
+    return compose(middlewares.concat(actionMiddleware), ctx);
   }
 
   /**

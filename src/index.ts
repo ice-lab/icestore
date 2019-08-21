@@ -1,6 +1,5 @@
 import Store from './store';
 import toJS from './util/toJS';
-import compose from './util/compose';
 
 interface MethodFunc {
   (): void;
@@ -27,7 +26,9 @@ export default class Icestore {
       throw new Error(`Namespace have been used: ${namespace}.`);
     }
 
-    this.stores[namespace] = new Store(namespace, bindings, this.composeMiddleware.bind(this, namespace));
+    const storeMiddlewares = this.middlewaresMap[namespace] || [];
+    const middlewares = this.globalMiddlewares.concat(storeMiddlewares);
+    this.stores[namespace] = new Store(namespace, bindings, middlewares);
     return this.stores[namespace];
   }
 
@@ -53,31 +54,6 @@ export default class Icestore {
       throw new Error(`Not found namespace: ${namespace}.`);
     }
     return store;
-  }
-
-  /**
-   * Compose middlewares and action
-   */
-  private composeMiddleware(namespace: string, store: Store, action, actionName: string) {
-    const storeMiddlewares = this.middlewaresMap[namespace] || [];
-    const actionMiddleware = async (ctx, next) => {
-      return await action(...ctx.action.arguments);
-    };
-    const middlewares = this.globalMiddlewares
-      .concat(storeMiddlewares)
-      .concat(actionMiddleware);
-    const ctx = {
-      action: {
-        name: actionName,
-        arguments: [],
-      },
-      store: {
-        namespace,
-        getState: store.getState,
-      },
-    };
-
-    return compose(middlewares, ctx);
   }
 
   /**
