@@ -1,14 +1,14 @@
-import { toJS } from '@ice/store';
 import { detailedDiff } from 'deep-object-diff';
+import * as clone from 'lodash.clonedeep';
 
 export default async (ctx, next) => {
   const { namespace, getState } = ctx.store;
   const { name: actionName } = ctx.action;
-  const preState = toJS(getState());
+  const preState = clone(getState());
 
   const value = await next();
 
-  const state = toJS(getState());
+  const state = clone(getState());
   const diff: any  = detailedDiff(preState, state);
   const hasChanges = obj => Object.keys(obj).length > 0;
 

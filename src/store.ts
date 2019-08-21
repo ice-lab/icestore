@@ -84,8 +84,7 @@ export default class Store {
    */
   private setState(): void {
     const state = this.getState();
-    const newState = { ...state };
-    this.queue.forEach(setState => setState(newState));
+    this.queue.forEach(setState => setState(state));
   }
 
   /**

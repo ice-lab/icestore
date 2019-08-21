@@ -12,7 +12,7 @@ function Todo() {
 
   async function onAdd(name) {
     const todo = await add({ name });
-    console.log('add result===', todo)
+    console.log('Newly added todo is ', todo)
   }
 
   function onRemove(index) {
@@ -27,7 +27,7 @@ function Todo() {
   const loadingView = <span>loading...</span>;
   const taskView = dataSource.length ? (
     <ul>
-      {dataSource.map(({ name, done }, index) => (
+      {dataSource.map(({ name, done = false }, index) => (
         <li key={index}>
           <label>
             <input
