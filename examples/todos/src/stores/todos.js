@@ -5,15 +5,15 @@ export default {
       setTimeout(() => {
         resolve([
           {
-            name: 'react'
+            name: 'react',
           },
           {
             name: 'vue',
-            done: true
+            done: true,
           },
           {
-            name: 'angular'
-          }
+            name: 'angular',
+          },
         ]);
       }, 1000)
     );
@@ -27,5 +27,5 @@ export default {
   },
   toggle(index) {
     this.dataSource[index].done = !this.dataSource[index].done;
-  }
+  },
 };

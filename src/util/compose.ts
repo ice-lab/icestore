@@ -21,10 +21,7 @@ export default function compose(middlewares: Middleware[], ctx: Ctx): ComposeFun
     middlewares.slice().reverse().forEach((middleware) => {
       next = goNext(middleware, next);
     });
-    try {
-      return await next();
-    } catch (e) {
-      console.error(e);
-    }
+
+    return await next();
   };
 }
