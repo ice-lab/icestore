@@ -1,0 +1,40 @@
+{
+  "name": "@ice/store-logger",
+  "version": "0.1.0",
+  "description": "icestore logger middleware",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "files": [
+    "lib"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ice-lab/icestore.git"
+  },
+  "keywords": [
+    "icestore",
+    "debug"
+  ],
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ice-lab/icestore/issues"
+  },
+  "homepage": "https://github.com/ice-lab/icestore",
+  "scripts": {
+    "build": "rm -rf lib && tsc",
+    "watch": "tsc -w",
+    "lint": "npm run lint:nofix -- --fix",
+    "lint:nofix": "eslint --cache --ext .ts,.tsx ./",
+    "test": "NODE_ENV=unittest jest"
+  },
+  "dependencies": {
+    "@ice/store": "^0.2.x",
+    "deep-object-diff": "^1.1.0",
+    "lodash.clonedeep": "^4.5.0"
+  },
+  "devDependencies": {
+    "eslint": "^5.3.0",
+    "jest": "^24.7.1",
+    "typescript": "^3.4.4"
+  }
+}

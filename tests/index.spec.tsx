@@ -32,6 +32,43 @@ describe('#Icestore', () => {
     });
   });
 
+  describe('#applyMiddleware', () => {
+    let icestore;
+    const testMiddleware = async (ctx, next) => {
+      return next();
+    };
+
+    beforeEach(() => {
+      icestore = new Icestore();
+      icestore.registerStore('foo', { data: 'abc', fetchData: () => {} });
+    });
+
+    test('should apply to global success.', () => {
+      icestore.applyMiddleware([testMiddleware]);
+      expect(icestore.globalMiddlewares).toEqual([testMiddleware]);
+    });
+    test('should apply to single store success.', () => {
+      icestore.applyMiddleware([testMiddleware], 'foo');
+      expect(icestore.middlewareMap.foo).toEqual([testMiddleware]);
+    });
+  });
+
+  describe('#getState', () => {
+    let icestore;
+    const testMiddleware = async (ctx, next) => {
+      return next();
+    };
+
+    beforeEach(() => {
+      icestore = new Icestore();
+      icestore.registerStore('foo', { data: 'abc', fetchData: () => {} });
+    });
+
+    test('should get state from store success.', () => {
+      expect(icestore.getState('foo')).toEqual({ data: 'abc' });
+    });
+  });
+
   describe('#useStore', () => {
     let icestore;
 
@@ -75,7 +112,7 @@ describe('#Icestore', () => {
 
         return <div>
           <span data-testid="nameValue">{dataSource.name}</span>
-          <button data-testid="actionButton" onClick={handleClick}>
+          <button type="button" data-testid="actionButton" onClick={handleClick}>
           Click me
           </button>
         </div>;

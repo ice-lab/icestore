@@ -1,9 +1,15 @@
 import Store from './store';
-import { toJS } from './util';
+import { Middleware } from './interface';
 
 export default class Icestore {
   /** Stores registered */
   private stores: {[namespace: string]: Store} = {};
+
+  /** Global middlewares applied to all stores */
+  private globalMiddlewares: Middleware[] = [];
+
+  /** middleware applied to single store */
+  private middlewareMap: {[namespace: string]: Middleware[]} = {};
 
   /**
    * Register and init store
@@ -16,8 +22,23 @@ export default class Icestore {
       throw new Error(`Namespace have been used: ${namespace}.`);
     }
 
-    this.stores[namespace] = new Store(bindings);
+    const storeMiddlewares = this.middlewareMap[namespace] || [];
+    const middlewares = this.globalMiddlewares.concat(storeMiddlewares);
+    this.stores[namespace] = new Store(namespace, bindings, middlewares);
     return this.stores[namespace];
+  }
+
+  /**
+   * Apply middleware to stores
+   * @param {array} middlewares - middlewares queue of store
+   * @param {string} namespace - unique name of store
+   */
+  public applyMiddleware(middlewares: Middleware[], namespace: string): void {
+    if (namespace !== undefined) {
+      this.middlewareMap[namespace] = middlewares;
+    } else {
+      this.globalMiddlewares = middlewares;
+    }
   }
 
   /**
@@ -31,6 +52,15 @@ export default class Icestore {
       throw new Error(`Not found namespace: ${namespace}.`);
     }
     return store;
+  }
+
+  /**
+   * Get state of store by namespace
+   * @param {string} namespace - unique name of store
+   * @return {object} store's state
+   */
+  public getState(namespace: string): object {
+    return this.getModel(namespace).getState();
   }
 
   /**
@@ -52,4 +82,3 @@ export default class Icestore {
   }
 }
 
-export { toJS };

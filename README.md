@@ -22,9 +22,9 @@ npm install @ice/store --save
 
 `icestore` is a lightweight React state management library based on hooks. It has the following core features:
 
-* Minimal API: Contains 3 APIs, which is easily learnable in 5 minutes.
+* Minimal API: Contains 5 APIs, which is easily learnable in 5 minutes.
 * Predictable: Uses unidirectional data flow (similar to Redux) and allows state mutation only inside actions, allowing data flow to be traced easily.
-* Optimal performance: Decreases the number of view components that rerender when the state changes by creating multiple stores. Rerendering only occurs when the current state is different from the previous state.
+* Optimal performance: Decreases the number of view components that rerender when the state changes by creating multiple stores.
 * Built in async status: Records loading and error status of async actions, simplifying the rendering logic in the view layer.
 
 The data flow is as follows:  
@@ -173,6 +173,17 @@ Register store config to the global store instance.
 * Return value
   - {object} store instance
 
+### applyMiddleware
+
+Apply middleware to all the store if the second parameter is not specified,
+otherwise apply middleware the store by namespace.
+
+* Parameters
+  - middlewares {array} middleware array to be applied
+  - namespace {string} store namespace
+* Return value
+  - void
+
 ### useStores
 
 Hook to use multiple stores.
@@ -191,34 +202,15 @@ Hook to use a single store.
 * Return value
   - {object} single store instance
 
-### toJS
+### getState
 
-Recursively convert proxified state object to plain javaScript type.
+Get the latest state of individual store by namespace.
 
 * Parameters
-  - value {any} value of any javaScript type
+  - namespace {string} store namespace
 * Return value
-  - {any} javaScript value of any type
+  - {object} the latest state of the store
 
-#### Example
-
-```javascript
-// store.js
-export default {
-  value: {
-    a: 1,
-    b: 2,
-  }
-};
-
-// view.jsx
-import IceStore, { toJS } from '@ice/store';
-const { value } = useStore('foo');
-
-const a = toJS(value);
-console.log(a);
-
-```
 ## Advanced use
 
 ### async actions' executing status

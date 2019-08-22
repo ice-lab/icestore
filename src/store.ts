@@ -1,12 +1,8 @@
 import * as isFunction from 'lodash.isfunction';
 import * as isPromise from 'is-promise';
-import * as isObject from 'lodash.isobject';
 import { useState, useEffect } from 'react';
-import { addProxy } from './util';
-
-interface MethodFunc {
-  (): void;
-}
+import compose from './util/compose';
+import { ComposeFunc, Middleware } from './interface';
 
 export default class Store {
   /** Store state and actions user defined */
@@ -15,49 +11,41 @@ export default class Store {
   /** Queue of setState method from useState hook */
   private queue = [];
 
-  /** Flag of whether state changed after mutation */
-  private stateChanged = false;
+  /** Namespace of store */
+  private namespace = '';
 
-  /** Flag of how many actions are in exection */
-  private actionExecNum = 0;
+  /** Middleware queue of store */
+  private middlewares = [];
 
   /** Flag of whether disable loading effect globally */
   public disableLoading = false;
 
-  public constructor(bindings: object) {
+  /**
+   * Constuctor of Store
+   * @param {string} namespace - unique name of store
+   * @param {object} bindings - object of state and actions used to init store
+   * @param {array} middlewares - middlewares queue of store
+   */
+  public constructor(namespace: string, bindings: object, middlewares: Middleware []) {
+    this.namespace = namespace;
+    this.middlewares = middlewares;
+
     Object.keys(bindings).forEach((key) => {
       const value = bindings[key];
-      this.bindings[key] = isFunction(value) ? this.createAction(value) : value;
+      this.bindings[key] = isFunction(value) ? this.createAction(value, key) : value;
     });
-
-    const handler = {
-      set: (target, prop, value) => {
-        if (!this.actionExecNum) {
-          console.error('Forbid modifying state directly, use action to modify instead.');
-          return false;
-        }
-        if (target[prop] !== value) {
-          this.stateChanged = true;
-        }
-        /* eslint no-param-reassign: 0 */
-        target[prop] = isObject(value) ? addProxy(value, handler) : value;
-        return true;
-      },
-    };
-
-    this.bindings = addProxy(this.bindings, handler);
   }
 
   /**
    * Create action which will trigger state update after mutation
    * @param {function} func - original method user defined
+   * @param {string} actionName - name of action function
    * @return {function} action function
    */
-  private createAction(func): MethodFunc {
-    const wrapper: any = async (...args) => {
+  private createAction(func: () => any, actionName: string): ComposeFunc {
+    const actionWrapper: any = async (...args) => {
       wrapper.loading = true;
       wrapper.error = null;
-      this.actionExecNum += 1;
 
       const disableLoading = wrapper.disableLoading !== undefined
         ? wrapper.disableLoading : this.disableLoading;
@@ -70,22 +58,34 @@ export default class Store {
 
       const afterExec = () => {
         wrapper.loading = false;
-        this.actionExecNum -= 1;
-        if (enableLoading || this.stateChanged) {
-          this.setState();
-        }
-        this.stateChanged = false;
+        this.setState();
       };
 
       try {
-        await result;
+        const value = await result;
         afterExec();
+        return value;
       } catch (e) {
         wrapper.error = e;
         afterExec();
         throw e;
       }
     };
+
+    const actionMiddleware = async (ctx, next) => {
+      return await actionWrapper(...ctx.action.arguments);
+    };
+    const ctx = {
+      action: {
+        name: actionName,
+        arguments: [],
+      },
+      store: {
+        namespace: this.namespace,
+        getState: this.getState,
+      },
+    };
+    const wrapper: any = compose(this.middlewares.concat(actionMiddleware), ctx);
 
     return wrapper;
   }
@@ -94,7 +94,7 @@ export default class Store {
    * Get state from bindings
    * @return {object} state
    */
-  private getState(): object {
+  public getState = (): object => {
     const { bindings } = this;
     const state = {};
     Object.keys(bindings).forEach((key) => {
@@ -111,8 +111,7 @@ export default class Store {
    */
   private setState(): void {
     const state = this.getState();
-    const newState = { ...state };
-    this.queue.forEach(setState => setState(newState));
+    this.queue.forEach(setState => setState(state));
   }
 
   /**
@@ -129,6 +128,6 @@ export default class Store {
         this.queue.splice(index, 1);
       };
     }, []);
-    return this.bindings;
+    return { ...this.bindings };
   }
 }
