@@ -24,7 +24,7 @@ npm install @ice/store --save
 
 * Minimal API: Contains 5 APIs, which is easily learnable in 5 minutes.
 * Predictable: Uses unidirectional data flow (similar to Redux) and allows state mutation only inside actions, allowing data flow to be traced easily.
-* Optimal performance: Decreases the number of view components that rerender when the state changes by creating multiple stores. Rerendering only occurs when the current state is different from the previous state.
+* Optimal performance: Decreases the number of view components that rerender when the state changes by creating multiple stores.
 * Built in async status: Records loading and error status of async actions, simplifying the rendering logic in the view layer.
 
 The data flow is as follows:  
