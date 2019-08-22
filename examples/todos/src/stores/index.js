@@ -6,7 +6,7 @@ const icestore = new Icestore('todos');
 
 const middlewares = [];
 
-if (process.env !== 'production') {
+if (process.env.NODE_ENV !== 'production') {
   middlewares.push(logger);
 }
 

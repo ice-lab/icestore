@@ -166,7 +166,7 @@ ReactDOM.render(<Todo />, document.getElementById('root'));
 
 ### 不要在 action 之外直接修改 state
 
-`icestore` 的架构设计中强制要求对state的变更只能在 action 中进行。在 action 之外的对 state 的修改不生效。这个设计的原因是在 action 之外修改 state 将导致 state 变更逻辑散落在 view 中，变更逻辑将会难以追踪和调试。
+`icestore` 的架构设计中强制要求对 state 的变更只能在 action 中进行。在 action 之外的对 state 的修改不生效。这个设计的原因是在 action 之外修改 state 将导致 state 变更逻辑散落在 view 中，变更逻辑将会难以追踪和调试。
 
 ```javascript
   // store.js
@@ -239,7 +239,7 @@ ReactDOM.render(<Todo />, document.getElementById('root'));
 
 ### getState
 
-获取单个 store 的 state 对象。
+获取单个 store 的最新 state 对象。
 
 * 参数
   - namespace {string} store 的命名空间
@@ -311,10 +311,10 @@ return (
 如果你有使用过服务端的框架如 Express 或者 koa，应该已经熟悉了中间件的概念，在这些框架中，中间件用于在框架 `接收请求` 与 `产生响应` 间插入自定义代码，这类中间件的功能包含在请求未被响应之前对数据进行加工、鉴权，以及在请求被响应之后添加响应头、打印 log 等功能。
 
 
-在状态管理领域，Redux 同样实现了中间件的机制，用于在 `action 调用` 与 `到达 reducer` 之间插入自定义代码，中间件包含的功能有打印 log、提供 thunk, promise 异步机制、日志上报等。
+在状态管理领域，Redux 同样实现了中间件的机制，用于在 `action 调用` 与 `到达 reducer` 之间插入自定义代码，中间件包含的功能有打印 log、提供 thunk 与 promise 异步机制、日志上报等。
 
 
-icestore 支持中间件的目的与 Redux 类似，也是为了在 action 调用前后增加一种扩展机制，增加诸如打印 log、埋点上报、异步请求封装等一系列能力，不同的是 icestore 相对 Redux 官方支持异步机制，因此不需要额外通过中间件方式支持。
+icestore 支持中间件的目的与 Redux 类似，也是为了在 action 调用前后增加一种扩展机制，增加诸如打印 log、埋点上报、异步请求封装等一系列能力，不同的是 icestore 已支持异步机制，因此不需要额外通过中间件方式支持。
 
 ### 中间件 API
 
@@ -350,10 +350,10 @@ async (ctx, next) =>  {
 * ctx.store - 当前 store 对象
   * 类型：{object}
   * 默认值：无
-* ctx.store.namespace - 当前 store namespace
+* ctx.store.namespace - 当前 store 的 namespace
   * 类型：{string}
   * 默认值：无
-* ctx.store.getState - 获取当前 store state 方法
+* ctx.store.getState - 获取当前 store 最新 state 的方法
   * 类型：{function}
   * 参数：无
 
@@ -417,7 +417,7 @@ const icestore = new Icestore();
 const middlewares = [];
 
 // 线上环境不开启调试中间件
-if (process.env !== 'production') {
+if (process.env.NODE_ENV !== 'production') {
   middlewares.push(logger);
 }
 

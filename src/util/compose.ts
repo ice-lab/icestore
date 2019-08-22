@@ -1,17 +1,4 @@
-interface ComposeFunc {
-  (): void;
-}
-
-interface Ctx {
-  action: {
-    name: string;
-    arguments: any[];
-  };
-  store: {
-    namespace: string;
-    getState: () => object;
-  };
-}
+import { Ctx, Middleware, ComposeFunc } from '../interface';
 
 /**
  * Compose a middleware chain consisting of all the middlewares
@@ -19,7 +6,7 @@ interface Ctx {
  * @param {object} ctx - middleware context
  * @return {function} middleware chain
  */
-export default function compose(middlewares: (() => void)[], ctx: Ctx): ComposeFunc {
+export default function compose(middlewares: Middleware[], ctx: Ctx): ComposeFunc {
   return async (...args) => {
     ctx.action.arguments = args;
 

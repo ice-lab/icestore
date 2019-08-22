@@ -27,7 +27,7 @@ const icestore = new Icestore();
 const middlewares = [];
 
 // 线上环境不开启调试中间件
-if (process.env !== 'production') {
+if (process.env.NODE_ENV !== 'production') {
   middlewares.push(logger);
 }
 

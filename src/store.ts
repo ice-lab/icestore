@@ -2,10 +2,7 @@ import * as isFunction from 'lodash.isfunction';
 import * as isPromise from 'is-promise';
 import { useState, useEffect } from 'react';
 import compose from './util/compose';
-
-interface MethodFunc {
-  (): void;
-}
+import { ComposeFunc, Middleware } from './interface';
 
 export default class Store {
   /** Store state and actions user defined */
@@ -14,13 +11,28 @@ export default class Store {
   /** Queue of setState method from useState hook */
   private queue = [];
 
+  /** Namespace of store */
+  private namespace = '';
+
+  /** Middleware queue of store */
+  private middlewares = [];
+
   /** Flag of whether disable loading effect globally */
   public disableLoading = false;
 
-  public constructor(namespace: string, bindings: object, middlewares) {
+  /**
+   * Constuctor of Store
+   * @param {string} namespace - unique name of store
+   * @param {object} bindings - object of state and actions used to init store
+   * @param {array} middlewares - middlewares queue of store
+   */
+  public constructor(namespace: string, bindings: object, middlewares: Middleware []) {
+    this.namespace = namespace;
+    this.middlewares = middlewares;
+
     Object.keys(bindings).forEach((key) => {
       const value = bindings[key];
-      this.bindings[key] = isFunction(value) ? this.createAction(value, key, namespace, middlewares) : value;
+      this.bindings[key] = isFunction(value) ? this.createAction(value, key) : value;
     });
   }
 
@@ -28,10 +40,9 @@ export default class Store {
    * Create action which will trigger state update after mutation
    * @param {function} func - original method user defined
    * @param {string} actionName - name of action function
-   * @param {array} middlewares - middleware array
    * @return {function} action function
    */
-  private createAction(func, actionName, namespace, middlewares): MethodFunc {
+  private createAction(func: () => any, actionName: string): ComposeFunc {
     const actionWrapper: any = async (...args) => {
       wrapper.loading = true;
       wrapper.error = null;
@@ -61,20 +72,20 @@ export default class Store {
       }
     };
 
+    const actionMiddleware = async (ctx, next) => {
+      return await actionWrapper(...ctx.action.arguments);
+    };
     const ctx = {
       action: {
         name: actionName,
         arguments: [],
       },
       store: {
-        namespace,
+        namespace: this.namespace,
         getState: this.getState,
       },
     };
-    const actionMiddleware = async (ctx, next) => {
-      return await actionWrapper(...ctx.action.arguments);
-    };
-    const wrapper: any = compose(middlewares.concat(actionMiddleware), ctx);
+    const wrapper: any = compose(this.middlewares.concat(actionMiddleware), ctx);
 
     return wrapper;
   }

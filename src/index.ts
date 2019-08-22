@@ -1,18 +1,15 @@
 import Store from './store';
-
-interface MethodFunc {
-  (): void;
-}
+import { Middleware } from './interface';
 
 export default class Icestore {
   /** Stores registered */
   private stores: {[namespace: string]: Store} = {};
 
   /** Global middlewares applied to all stores */
-  private globalMiddlewares = [];
+  private globalMiddlewares: Middleware[] = [];
 
   /** middleware applied to single store */
-  private middlewaresMap = {};
+  private middlewareMap: {[namespace: string]: Middleware[]} = {};
 
   /**
    * Register and init store
@@ -25,7 +22,7 @@ export default class Icestore {
       throw new Error(`Namespace have been used: ${namespace}.`);
     }
 
-    const storeMiddlewares = this.middlewaresMap[namespace] || [];
+    const storeMiddlewares = this.middlewareMap[namespace] || [];
     const middlewares = this.globalMiddlewares.concat(storeMiddlewares);
     this.stores[namespace] = new Store(namespace, bindings, middlewares);
     return this.stores[namespace];
@@ -33,10 +30,12 @@ export default class Icestore {
 
   /**
    * Apply middleware to stores
+   * @param {array} middlewares - middlewares queue of store
+   * @param {string} namespace - unique name of store
    */
-  public applyMiddleware(middlewares: (() => void)[], namespace: string): void {
+  public applyMiddleware(middlewares: Middleware[], namespace: string): void {
     if (namespace !== undefined) {
-      this.middlewaresMap[namespace] = middlewares;
+      this.middlewareMap[namespace] = middlewares;
     } else {
       this.globalMiddlewares = middlewares;
     }
