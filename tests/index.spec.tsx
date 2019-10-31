@@ -1,11 +1,7 @@
 import * as React from 'react';
-import { render, fireEvent, getByTestId } from 'react-testing-library';
+import { render, fireEvent, getByTestId, wait } from '@testing-library/react';
 import Icestore from '../src/index';
 import Store from '../src/store';
-
-function sleep(ms) {
-  return new Promise(resolve => setTimeout(resolve, ms));
-}
 
 describe('#Icestore', () => {
   test('new Class should be defined.', () => {
@@ -127,10 +123,10 @@ describe('#Icestore', () => {
 
       fireEvent.click(actionButton);
 
-      await sleep(10);
-
-      expect(renderFn).toHaveBeenCalledTimes(2);
-      expect(nameValue.textContent).toEqual(newState.name);
+      await wait(() => {
+        expect(renderFn).toHaveBeenCalledTimes(2);
+        expect(nameValue.textContent).toEqual(newState.name);
+      })
     });
 
     test('should useStores be ok.', () => {
