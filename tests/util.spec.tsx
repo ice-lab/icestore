@@ -18,7 +18,7 @@ describe('#util', () => {
     const middlewares = [];
 
     function wait (ms) {
-      return new Promise((resolve) => setTimeout(resolve, ms || 1))
+      return new Promise((resolve) => setTimeout(resolve, ms || 1));
     }
     test('should work', async () => {
       middlewares.push(async (ctx, next) => {
@@ -52,7 +52,7 @@ describe('#util', () => {
           namespace: 'foo',
           getState: () => { return {}; },
         },
-      }
+      };
       await compose(middlewares, ctx)();
       expect(arr).toEqual([1, 2, 3, 4, 5, 6]);
     });

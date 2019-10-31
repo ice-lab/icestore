@@ -19,9 +19,9 @@ describe('#Store', () => {
     test('action excutes ok.', async () => {
       const result = await store.bindings.updateData();
       expect(result).toEqual([1, 2, 3]);
-    })
+    });
     test('action throws ok.', async () => {
       await expect(store.bindings.fetchData()).rejects.toThrow();
-    })
+    });
   });
 });

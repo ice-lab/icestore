@@ -126,7 +126,7 @@ describe('#Icestore', () => {
       await wait(() => {
         expect(renderFn).toHaveBeenCalledTimes(2);
         expect(nameValue.textContent).toEqual(newState.name);
-      })
+      });
     });
 
     test('should useStores be ok.', () => {

@@ -32,5 +32,5 @@ export default async (ctx, next) => {
   console.groupEnd();
 
   return value;
-}
+};
 
