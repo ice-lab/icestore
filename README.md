@@ -14,6 +14,8 @@ English | [简体中文](./README.zh-CN.md)
 
 ## Installation
 
+icestore requires React 16.8.0 or later.
+
 ```bash
 npm install @ice/store --save
 ```
@@ -457,6 +459,12 @@ describe('todos', () => {
 ```
 
 Please refer to the `todos.spec.js` file in the sandbox above for complete reference.
+
+## Browser Compatibility
+
+| ![Chrome](https://raw.github.com/alrra/browser-logos/master/src/chrome/chrome_48x48.png) | ![Firefox](https://raw.github.com/alrra/browser-logos/master/src/firefox/firefox_48x48.png) | ![Edge](https://raw.github.com/alrra/browser-logos/master/src/edge/edge_48x48.png) | ![IE](https://raw.github.com/alrra/browser-logos/master/src/archive/internet-explorer_9-11/internet-explorer_9-11_48x48.png) | ![Safari](https://raw.github.com/alrra/browser-logos/master/src/safari/safari_48x48.png) | ![Opera](https://raw.github.com/alrra/browser-logos/master/src/opera/opera_48x48.png) | ![UC](https://raw.github.com/alrra/browser-logos/master/src/uc/uc_48x48.png) |
+| :--------------------------------------------------------------------------------------: | :-----------------------------------------------------------------------------------------: | :--------------------------------------------------------------------------------: | :--------------------------------------------------------------------------------------------------------------------------: | :--------------------------------------------------------------------------------------: | :-----------------------------------------------------------------------------------: | :--------------------------------------------------------------------------: |
+|✔ |✔|✔|9+ ✔|✔|✔|✔|
 
 ## Reference
 
