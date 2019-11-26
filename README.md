@@ -14,6 +14,8 @@ English | [简体中文](./README.zh-CN.md)
 
 ## Installation
 
+icestore requires React 16.8.0 or later.
+
 ```bash
 npm install @ice/store --save
 ```
