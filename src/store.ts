@@ -4,15 +4,15 @@ import { useState, useEffect } from 'react';
 import compose from './util/compose';
 import { ComposeFunc, Middleware } from './interface';
 
-export default class Store {
+export default class Store<T> {
   /** Store state and actions user defined */
-  private bindings: {[name: string]: any} = {};
+  private model: any = {};
 
   /** Queue of setState method from useState hook */
   private queue = [];
 
   /** Namespace of store */
-  private namespace = '';
+  private namespace: T;
 
   /** Middleware queue of store */
   private middlewares = [];
@@ -23,16 +23,16 @@ export default class Store {
   /**
    * Constuctor of Store
    * @param {string} namespace - unique name of store
-   * @param {object} bindings - object of state and actions used to init store
+   * @param {object} model - object of state and actions used to init store
    * @param {array} middlewares - middlewares queue of store
    */
-  public constructor(namespace: string, bindings: object, middlewares: Middleware []) {
+  public constructor(namespace: T, model: any, middlewares: Middleware []) {
     this.namespace = namespace;
     this.middlewares = middlewares;
 
-    Object.keys(bindings).forEach((key) => {
-      const value = bindings[key];
-      this.bindings[key] = isFunction(value) ? this.createAction(value, key) : value;
+    Object.keys(model).forEach((key) => {
+      const value = model[key];
+      this.model[key] = isFunction(value) ? this.createAction(value, key) : value;
     });
   }
 
@@ -49,7 +49,7 @@ export default class Store {
 
       const disableLoading = wrapper.disableLoading !== undefined
         ? wrapper.disableLoading : this.disableLoading;
-      const result = func.apply(this.bindings, args);
+      const result = func.apply(this.model, args);
       const isAsync = isPromise(result);
       const enableLoading = isAsync && !disableLoading;
       if (enableLoading) {
@@ -85,20 +85,20 @@ export default class Store {
         getState: this.getState,
       },
     };
-    const wrapper: any = compose(this.middlewares.concat(actionMiddleware), ctx);
+    const wrapper = compose(this.middlewares.concat(actionMiddleware), ctx);
 
     return wrapper;
   }
 
   /**
-   * Get state from bindings
+   * Get state from model
    * @return {object} state
    */
-  public getState = (): object => {
-    const { bindings } = this;
-    const state = {};
-    Object.keys(bindings).forEach((key) => {
-      const value = bindings[key];
+  public getState<M>(): {[K in keyof M]?: M[K]} {
+    const { model } = this;
+    const state: {[K in keyof M]?: M[K]} = {};
+    Object.keys(model).forEach((key) => {
+      const value = model[key];
       if (!isFunction(value)) {
         state[key] = value;
       }
@@ -115,10 +115,10 @@ export default class Store {
   }
 
   /**
-   * Hook used to register setState and expose bindings
-   * @return {object} bindings of store
+   * Hook used to register setState and expose model
+   * @return {object} model of store
    */
-  public useStore(): object {
+  public useStore<M>(): M {
     const state = this.getState();
     const [, setState] = useState(state);
     useEffect(() => {
@@ -128,6 +128,6 @@ export default class Store {
         this.queue.splice(index, 1);
       };
     }, []);
-    return { ...this.bindings };
+    return { ...this.model };
   }
 }
