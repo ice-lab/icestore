@@ -2,7 +2,7 @@ export interface Stores {
   [namespace: string]: any;
 }
 
-type ActionProps = {
+interface ActionProps {
   loading?: boolean;
   error?: boolean;
   disableLoading?: boolean;

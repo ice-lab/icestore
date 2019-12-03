@@ -37,7 +37,7 @@ function Todo() {
             />
             {done ? <s>{name}</s> : <span>{name}</span>}
           </label>
-          <button onClick={() => onRemove(index)}>-</button>
+          <button type="submit" onClick={() => onRemove(index)}>-</button>
         </li>
       ))}
     </ul>
