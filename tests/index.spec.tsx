@@ -28,6 +28,80 @@ describe('#Icestore', () => {
     });
   });
 
+  describe('#registerStores', () => {
+    let icestore;
+    let useStore;
+    let useStores;
+    let getState;
+    let todoStore;
+    let projectStore;
+
+    beforeEach(() => {
+      icestore = new Icestore();
+      todoStore = {
+        name: 'ice',
+      };
+      projectStore = {
+        name: 'rax',
+      };
+      const stores = icestore.registerStores({
+        todo: todoStore,
+        project: projectStore,
+      });
+      useStore = stores.useStore;
+      useStores = stores.useStores;
+      getState = stores.getState;
+    });
+
+    test('should useStore be ok.', () => {
+      const App = () => {
+        const todo = useStore('todo');
+
+        return <div>
+          <span data-testid="todoName">{todo.name}</span>
+        </div>;
+      };
+
+      const { container } = render(<App />);
+      const todoName = getByTestId(container, 'todoName');
+
+      expect(todoName.textContent).toEqual(todoStore.name);
+    });
+
+    test('should useStores be ok.', () => {
+      const App = () => {
+        const {todo, project} = useStores(['todo', 'project']);
+
+        return <div>
+          <span data-testid="todoName">{todo.name}</span>
+          <span data-testid="projectName">{project.name}</span>
+        </div>;
+      };
+
+      const { container } = render(<App />);
+      const todoName = getByTestId(container, 'todoName');
+      const projectName = getByTestId(container, 'projectName');
+
+      expect(todoName.textContent).toEqual(todoStore.name);
+      expect(projectName.textContent).toEqual(projectStore.name);
+    });
+
+    test('should getState be ok.', () => {
+      const App = () => {
+        const todo = getState('todo');
+
+        return <div>
+          <span data-testid="todoName">{todo.name}</span>
+        </div>;
+      };
+
+      const { container } = render(<App />);
+      const todoName = getByTestId(container, 'todoName');
+
+      expect(todoName.textContent).toEqual(todoStore.name);
+    });
+  });
+
   describe('#applyMiddleware', () => {
     let icestore;
     const testMiddleware = async (ctx, next) => {
@@ -136,7 +210,7 @@ describe('#Icestore', () => {
       icestore.registerStore('project', projectStore);
 
       const App = () => {
-        const [todo, project] = icestore.useStores(['todo', 'project']);
+        const {todo, project} = icestore.useStores(['todo', 'project']);
 
         return <div>
           <span data-testid="todoName">{todo.name}</span>
