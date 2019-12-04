@@ -28,7 +28,7 @@ const store: TodoStore = {
             name: 'angular',
           },
         ]);
-      }, 1000)
+      }, 1000),
     );
   },
   add(todo) {
