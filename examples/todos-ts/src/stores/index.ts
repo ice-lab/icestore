@@ -4,7 +4,7 @@ import todos from './todos';
 
 const icestore = new Icestore();
 
-const middlewares = [];
+const middlewares: ((ctx, next) => {})[] = [];
 
 if (process.env.NODE_ENV !== 'production') {
   middlewares.push(logger);
@@ -12,7 +12,6 @@ if (process.env.NODE_ENV !== 'production') {
 
 icestore.applyMiddleware(middlewares);
 
-// Get store/state by pre binding types
 const { useStore, useStores, getState } = icestore.registerStores({
   todos,
 });

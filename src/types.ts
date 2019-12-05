@@ -1,7 +1,3 @@
-export interface Stores {
-  [namespace: string]: any;
-}
-
 interface ActionProps {
   loading?: boolean;
   error?: boolean;

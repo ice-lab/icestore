@@ -2,9 +2,9 @@ import * as isFunction from 'lodash.isfunction';
 import * as isPromise from 'is-promise';
 import { useState, useEffect } from 'react';
 import compose from './util/compose';
-import { ComposeFunc, Middleware } from './interface';
+import { ComposeFunc, Middleware } from './types';
 
-export default class Store<T> {
+export default class Store {
   /** Store state and actions user defined */
   private model: any = {};
 
@@ -12,7 +12,7 @@ export default class Store<T> {
   private queue = [];
 
   /** Namespace of store */
-  private namespace: T;
+  private namespace: string;
 
   /** Middleware queue of store */
   private middlewares = [];
@@ -26,7 +26,7 @@ export default class Store<T> {
    * @param {object} model - object of state and actions used to init store
    * @param {array} middlewares - middlewares queue of store
    */
-  public constructor(namespace: T, model: any, middlewares: Middleware []) {
+  public constructor(namespace: string, model: any, middlewares: Middleware []) {
     this.namespace = namespace;
     this.middlewares = middlewares;
 
