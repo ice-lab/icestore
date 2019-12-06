@@ -12,8 +12,8 @@ if (process.env.NODE_ENV !== 'production') {
 
 icestore.applyMiddleware(middlewares);
 
-const { useStore, useStores, getState } = icestore.registerStores({
+const stores = icestore.registerStores({
   todos,
 });
 
-export { useStore, useStores, getState };
+export default stores;

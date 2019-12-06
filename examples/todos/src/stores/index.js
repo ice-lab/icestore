@@ -11,6 +11,9 @@ if (process.env.NODE_ENV !== 'production') {
 }
 
 icestore.applyMiddleware(middlewares);
-icestore.registerStore('todos', todos);
 
-export default icestore;
+const stores = icestore.registerStores({
+  todos,
+});
+
+export default stores;

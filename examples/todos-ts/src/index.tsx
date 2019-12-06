@@ -1,9 +1,9 @@
 import React, { useEffect } from 'react';
 import ReactDOM from 'react-dom';
-import { useStore } from './stores';
+import stores from './stores';
 
 function Todo() {
-  const todos = useStore('todos');
+  const todos = stores.useStore('todos');
   const { dataSource, refresh, add, remove, toggle } = todos;
 
   useEffect(() => {
