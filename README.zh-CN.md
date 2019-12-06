@@ -26,6 +26,7 @@ $ npm install @ice/store --save
 
 * **极简 API**：只有 5 个 API，简单上手，使用方便，不需要学习 Redux 里的各种概念。
 * **React Hooks**：拥抱 Hooks 的使用体验，同时也是基于 React Hooks 实现。
+* **Typescript 支持**：提供完整的 Typescript 类型定义，在 VSCode 中能获得完整的类型推导的提示。
 * **集成异步状态**：记录异步 action 的执行状态，简化 view 组件中对于 loading 与 error 状态的渲染逻辑。
 * **性能优化**：通过多 store 的去中心化设计，减少单个 state 变化触发重新渲染的组件个数，从而减少不必要的渲染。
 * **单向数据流**：与 Redux 一样使用单向数据流，便于状态的追踪与预测。
@@ -72,9 +73,11 @@ import todos from './todos';
 import Store from '@ice/store';
 
 const storeManager = new Store();
-storeManager.registerStore('todos', todos);
+const stores = storeManager.registerStores({
+  todos
+});
 
-export default storeManager;
+export default stores;
 ```
 
 * 在 view 组件中，绑定 store：
@@ -136,8 +139,10 @@ function Todo() {
 ReactDOM.render(<Todo />, document.getElementById('root'));
 ```
 
-完整示例展示在这个 [sandbox](https://codesandbox.io/s/icestore-hs9fe)。
+完整示例展示在这个 [CodeSandbox](https://codesandbox.io/s/icestore-hs9fe)。
 
+## Typescript 支持
+icestore 提供了完整的 Typescript 类型定义，在 VSCode 中能获得完整的类型推导的提示，示例请参考该线上 [CodeSandbox](https://codesandbox.io/s/icestore-hs9fe) 示例。
 
 ## 实现原理
 
@@ -201,15 +206,30 @@ ReactDOM.render(<Todo />, document.getElementById('root'));
 
 ## API
 
-### registerStore
+### registerStores
 
-将 store 配置注释到全局 store 实例。
+注册多个 store 配置到全局 icestore 实例上。
 
 * 参数
-  - namespace {string} store 的命名空间
-  - bindings {object} store 配置，包含 state 和 actions
+  - stores {object} 多个 store 的配置对象，每个 store 配置中包含 state 和 action
+
 * 返回值
-  - {object} store 实例
+  - {object} stores 管理器对象，包含以下几个方法
+      - useStore {function} 使用单个 store 的 hook
+          - 参数
+             - namespace {string} store 的命名空间
+          - 返回值
+             - {object} store 的配置对象
+      - useStores {function} 同时使用多个 store 的 hook
+          - 参数
+              - namespaces {array} 多个 store 的命名空间数组
+          - 返回值
+              - {array} 多个 store 的配置对象数组
+      - getState {function} 获取单个 store 的最新 state 对象。
+          - 参数
+              - namespace {string} store 的命名空间
+          - 返回值
+              - {object} store 的 state 对象
 
 ### applyMiddleware
 
@@ -220,33 +240,6 @@ ReactDOM.render(<Todo />, document.getElementById('root'));
   - namespace {string} store 的命名空间
 * 返回值
   - 无
-
-### useStores
-
-同时使用多个 store 的 hook。
-
-* 参数
-  - namespaces {array} 多个 store 的命名空间数组
-* 返回值
-  - {array} 多个 store 的配置对象数组
-
-### useStore
-
-使用单个 store 的 hook。
-
-* 参数
-  - namespace {string} store 的命名空间
-* 返回值
-  - {object} store 的配置对象
-
-### getState
-
-获取单个 store 的最新 state 对象。
-
-* 参数
-  - namespace {string} store 的命名空间
-* 返回值
-  - {object} store 的 state 对象
 
 ## 高级用法
 

@@ -24,10 +24,11 @@ npm install @ice/store --save
 
 `icestore` is a lightweight React state management library based on hooks. It has the following core features:
 
-* Minimal API: Contains 5 APIs, which is easily learnable in 5 minutes.
-* Predictable: Uses unidirectional data flow (similar to Redux) and allows state mutation only inside actions, allowing data flow to be traced easily.
-* Optimal performance: Decreases the number of view components that rerender when the state changes by creating multiple stores.
-* Built in async status: Records loading and error status of async actions, simplifying the rendering logic in the view layer.
+* **Minimal API**: Contains 5 APIs, which is easily learnable in 5 minutes.
+* **Typescript Support**: Provide complete type definitions to support IntelliSense in VSCode.
+* **Predictable**: Uses unidirectional data flow (similar to Redux) and allows state mutation only inside actions, allowing data flow to be traced easily.
+* **Optimal performance**: Decreases the number of view components that rerender when the state changes by creating multiple stores.
+* **Built in async status**: Records loading and error status of async actions, simplifying the rendering logic in the view layer.
 
 The data flow is as follows:  
 
@@ -67,12 +68,14 @@ export default {
 ```javascript
 // src/stores/index.js
 import todos from './todos';
-import Icestore from '@ice/store';
+import Store from '@ice/store';
 
-const icestore = new Icestore();
-icestore.registerStore('todos', todos);
+const storeManager = new Store();
+const stores = storeManager.registerStores({
+  todos
+});
 
-export default icestore;
+export default stores;
 ```
 
 * In the view component, you can get the store config (including state and actions) by using the useStore hook after importing the store instance. After that, you can trigger actions through event callbacks or by using the useEffect hook, which binds the state to the view template.
@@ -148,7 +151,10 @@ const rootElement = document.getElementById('root');
 ReactDOM.render(<Todo />, rootElement);
 ```
 
-Complete example is presented in this [sandbox](https://codesandbox.io/s/icestore-hs9fe), feel free to play with it.
+Complete example is presented in this [CodeSandbox](https://codesandbox.io/s/icestore-hs9fe), feel free to play with it.
+
+## Typescript Support
+icestore provides complete type definitions to support IntelliSense in VSCode. TS example is presented in this [CodeSandbox](https://codesandbox.io/s/icestore-hs9fe).
 
 ## Best Practices
 
@@ -193,15 +199,31 @@ Putting local state in the global store will break the component's encapsulation
 
 ## API
 
-### registerStore
+### registerStores
 
-Register store config to the global store instance.
+Register multiple store configs to the global icestore instance.
 
 * Parameters
   - namespace {string} unique name of the store
-  - bindings {object} object of store config including state and actions
+  - stores {object} multiple store's config object including store's state and actions
 * Return value
-  - {object} store instance
+  - {object} store manager object which including follow methods
+      - useStore {function} Hook to use a single store.
+          - Parameters
+             - namespace {string} store namespace
+          - Return value
+             - {object} single store instance
+
+      - useStores {function} Hook to use multiple stores.
+          - Parameters
+              - namespaces {array} array of store namespaces
+          - Return value
+              - {array} array of stores' instances
+      - getState {function} Get the latest state of individual store by namespace.
+          - Parameters
+              - namespace {string} store namespace
+          - Return value
+              - {object} the latest state of the store
 
 ### applyMiddleware
 
