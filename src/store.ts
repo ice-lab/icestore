@@ -94,7 +94,7 @@ export default class Store {
    * Get state from model
    * @return {object} state
    */
-  public getState<M>(): {[K in keyof M]?: M[K]} {
+  public getState = <M>(): {[K in keyof M]?: M[K]} => {
     const { model } = this;
     const state: {[K in keyof M]?: M[K]} = {};
     Object.keys(model).forEach((key) => {

@@ -51,10 +51,10 @@ function Todo() {
       {!refresh.loading ? taskView : loadingView}
       <div>
         <input
-          onKeyDown={event => {
+          onKeyDown={(event) => {
             if (event.keyCode === 13) {
-              onAdd(event.target.value);
-              event.target.value = '';
+              onAdd(event.currentTarget.value);
+              event.currentTarget.value = '';
             }
           }}
           placeholder="Press Enter"

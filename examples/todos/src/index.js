@@ -4,7 +4,6 @@ import stores from './stores';
 
 function Todo() {
   const todos = stores.useStore('todos');
-  console.log(todos)
   const { dataSource, refresh, add, remove, toggle } = todos;
 
   useEffect(() => {
@@ -38,7 +37,7 @@ function Todo() {
             />
             {done ? <s>{name}</s> : <span>{name}</span>}
           </label>
-          <button onClick={() => onRemove(index)}>-</button>
+          <button type="submit" onClick={() => onRemove(index)}>-</button>
         </li>
       ))}
     </ul>
@@ -54,8 +53,8 @@ function Todo() {
         <input
           onKeyDown={event => {
             if (event.keyCode === 13) {
-              onAdd(event.target.value);
-              event.target.value = '';
+              onAdd(event.currentTarget.value);
+              event.currentTarget.value = '';
             }
           }}
           placeholder="Press Enter"
