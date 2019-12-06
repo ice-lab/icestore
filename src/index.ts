@@ -43,7 +43,7 @@ export default class Icestore {
     const useStores = <K extends keyof M>(namespaces: K[]): {[K in keyof M]: Wrapper<M[K]>} => {
       let result: {[K in keyof M]: Wrapper<M[K]>};
       namespaces.forEach(namespace => {
-        result[namespace] = useStore(namespace);
+        result[namespace] = getModel(namespace).useStore<Wrapper<M[K]>>();
       });
       return result;
     };
@@ -73,6 +73,7 @@ export default class Icestore {
 
   /**
    * Find store by namespace
+   * @deprecated
    * @param {string} namespace - unique name of store
    * @return {object} store instance
    */
@@ -85,7 +86,8 @@ export default class Icestore {
   }
 
   /**
-   * @deprecated Register single store
+   * Register single store
+   * @deprecated
    * @param {string} namespace - unique name of store
    * @param {object} model - store's model consists of state and actions
    * @return {object} store instance
@@ -101,7 +103,8 @@ export default class Icestore {
   }
 
   /**
-   * @deprecated Get state of store by namespace
+   * Get state of store by namespace
+   * @deprecated
    * @param {string} namespace - unique name of store
    * @return {object} store's state
    */
@@ -110,7 +113,8 @@ export default class Icestore {
   }
 
   /**
-   * @deprecated Hook of using store
+   * Hook of using store
+   * @deprecated
    * @param {string} namespace - unique name of store
    * @return {object} single store's config
    */
@@ -119,7 +123,8 @@ export default class Icestore {
   }
 
   /**
-   * @deprecated Hook of using multiple stores
+   * Hook of using multiple stores
+   * @deprecated
    * @param {string} namespace - unique name of store
    * @return {object} map of multiple store's config
    */
