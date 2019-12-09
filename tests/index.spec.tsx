@@ -214,7 +214,7 @@ describe('#Icestore', () => {
       icestore.registerStore('project', projectStore);
 
       const App = () => {
-        const {todo, project} = icestore.useStores(['todo', 'project']);
+        const [todo, project] = icestore.useStores(['todo', 'project']);
 
         return <div>
           <span data-testid="todoName">{todo.name}</span>

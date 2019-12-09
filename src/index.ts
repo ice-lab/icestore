@@ -92,6 +92,7 @@ export default class Icestore {
    * @return {object} store instance
    */
   public registerStore(namespace: string, model: {[namespace: string]: any}) {
+    console.error('Warning: registerStore API is deprecated and about to be removed in the next version. Please use registerStores API to register stores. See https://github.com/ice-lab/icestore#getting-started for further example.');
     if (this.stores[namespace]) {
       throw new Error(`Namespace have been used: ${namespace}.`);
     }
@@ -108,6 +109,7 @@ export default class Icestore {
    * @return {object} store's state
    */
   public getState(namespace: string) {
+    console.error('Warning: getState API is deprecated and about to be removed in the next version. Please use registerStores API to register stores and use getState from its return value instead. See https://github.com/ice-lab/icestore#getting-started for further example.');
     return this.getModel(namespace).getState();
   }
 
@@ -118,6 +120,7 @@ export default class Icestore {
    * @return {object} single store's config
    */
   public useStore(namespace: string) {
+    console.error('Warning: useStore API is deprecated and about to be removed in the next version. Please use registerStores API to register stores and use useStore from its return value instead. See https://github.com/ice-lab/icestore#getting-started for further example.');
     return this.getModel(namespace).useStore();
   }
 
@@ -125,14 +128,11 @@ export default class Icestore {
    * Hook of using multiple stores
    * @deprecated
    * @param {string} namespace - unique name of store
-   * @return {object} map of multiple store's config
+   * @return {array} array of multiple store's config
    */
   public useStores(namespaces: string[]) {
-    const result = {};
-    namespaces.forEach(namespace => {
-      result[namespace] = this.useStore(namespace);
-    });
-    return result;
+    console.error('Warning: useStores API is deprecated and about to be removed in the next version. Please use registerStores API to register stores and use useStores from its return value instead. See https://github.com/ice-lab/icestore#getting-started for further example.');
+    return namespaces.map(namespace => this.useStore(namespace));
   };
 }
 

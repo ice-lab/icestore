@@ -218,7 +218,7 @@ Register multiple store configs to the global icestore instance.
           - Parameters
               - namespaces {array} array of store namespaces
           - Return value
-              - {array} array of stores' instances
+              - {object} object of stores' instances divided by namespace
       - getState {function} Get the latest state of individual store by namespace.
           - Parameters
               - namespace {string} store namespace
@@ -235,33 +235,6 @@ otherwise apply middleware the store by namespace.
   - namespace {string} store namespace
 * Return value
   - void
-
-### useStores
-
-Hook to use multiple stores.
-
-* Parameters
-  - namespaces {array} array of store namespaces
-* Return value
-  - {array} array of stores' instances
-
-### useStore
-
-Hook to use a single store.
-
-* Parameters
-  - namespace {string} store namespace
-* Return value
-  - {object} single store instance
-
-### getState
-
-Get the latest state of individual store by namespace.
-
-* Parameters
-  - namespace {string} store namespace
-* Return value
-  - {object} the latest state of the store
 
 ## Advanced use
 

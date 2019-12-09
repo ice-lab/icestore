@@ -224,7 +224,7 @@ icestore 提供了完整的 Typescript 类型定义，在 VSCode 中能获得完
           - 参数
               - namespaces {array} 多个 store 的命名空间数组
           - 返回值
-              - {array} 多个 store 的配置对象数组
+              - {object} 多个 store 的配置对象，以 namespace 区分
       - getState {function} 获取单个 store 的最新 state 对象。
           - 参数
               - namespace {string} store 的命名空间
