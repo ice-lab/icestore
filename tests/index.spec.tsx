@@ -53,6 +53,10 @@ describe('#Icestore', () => {
       getState = stores.getState;
     });
 
+    test('should throw an Error when the namespace is not exist.', () => {
+      expect(() => useStore('test')).toThrowError('Not found namespace: test');
+    });
+
     test('should useStore be ok.', () => {
       const App = () => {
         const todo = useStore('todo');

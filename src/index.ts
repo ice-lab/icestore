@@ -28,13 +28,9 @@ export default class Icestore {
     }
 
     Object.keys(models).forEach((namespace) => {
-      const model = models[namespace];
-      if (stores[namespace]) {
-        throw new Error(`Namespace have been used: ${namespace}.`);
-      }
       const storeMiddlewares = this.middlewareMap[namespace] || [];
       const middlewares = this.globalMiddlewares.concat(storeMiddlewares);
-      stores[namespace] = new Store(namespace, model, middlewares);
+      stores[namespace] = new Store(namespace, models[namespace], middlewares);
     });
 
     const useStore = <K extends keyof M>(namespace: K): Wrapper<M[K]> => {
