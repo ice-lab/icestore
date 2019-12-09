@@ -142,7 +142,7 @@ ReactDOM.render(<Todo />, document.getElementById('root'));
 完整示例展示在这个 [CodeSandbox](https://codesandbox.io/s/icestore-hs9fe)。
 
 ## Typescript 支持
-icestore 提供了完整的 Typescript 类型定义，在 VSCode 中能获得完整的类型推导的提示，示例请参考该线上 [CodeSandbox](https://codesandbox.io/s/icestore-hs9fe) 示例。
+icestore 提供了完整的 Typescript 类型定义，在 VSCode 中能获得完整的类型推导的提示，示例请参考该线上 [CodeSandbox](https://codesandbox.io/s/icestore-ts-gduqw) 示例。
 
 ## 实现原理
 

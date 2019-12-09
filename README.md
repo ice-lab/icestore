@@ -154,7 +154,7 @@ ReactDOM.render(<Todo />, rootElement);
 Complete example is presented in this [CodeSandbox](https://codesandbox.io/s/icestore-hs9fe), feel free to play with it.
 
 ## Typescript Support
-icestore provides complete type definitions to support IntelliSense in VSCode. TS example is presented in this [CodeSandbox](https://codesandbox.io/s/icestore-hs9fe).
+icestore provides complete type definitions to support IntelliSense in VSCode. TS example is presented in this [CodeSandbox](https://codesandbox.io/s/icestore-ts-gduqw).
 
 ## Best Practices
 
