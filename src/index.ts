@@ -40,12 +40,15 @@ export default class Icestore {
     const useStore = <K extends keyof M>(namespace: K): Wrapper<M[K]> => {
       return getModel(namespace).useStore<Wrapper<M[K]>>();
     };
-    const useStores = <K extends keyof M>(namespaces: K[]): {[K in keyof M]: Wrapper<M[K]>} => {
-      let result: {[K in keyof M]: Wrapper<M[K]>};
+    type Models = {
+      [K in keyof M]: Wrapper<M[K]>
+    };
+    const useStores = <K extends keyof M>(namespaces: K[]): Models => {
+      const result: Partial<Models> = {};
       namespaces.forEach(namespace => {
         result[namespace] = getModel(namespace).useStore<Wrapper<M[K]>>();
       });
-      return result;
+      return result as Models;
     };
     const getState = <K extends keyof M>(namespace: K): {[K1 in keyof State<M[K]>]?: State<M[K]>[K1]} => {
       return getModel(namespace).getState<State<M[K]>>();
