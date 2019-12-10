@@ -17,11 +17,11 @@ describe('#Store', () => {
       },
     }, []);
     test('action excutes ok.', async () => {
-      const result = await store.bindings.updateData();
+      const result = await store.model.updateData();
       expect(result).toEqual([1, 2, 3]);
     });
     test('action throws ok.', async () => {
-      await expect(store.bindings.fetchData()).rejects.toThrow();
+      await expect(store.model.fetchData()).rejects.toThrow();
     });
   });
 });

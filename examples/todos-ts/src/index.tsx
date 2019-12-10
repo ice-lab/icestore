@@ -51,7 +51,7 @@ function Todo() {
       {!refresh.loading ? taskView : loadingView}
       <div>
         <input
-          onKeyDown={event => {
+          onKeyDown={(event) => {
             if (event.keyCode === 13) {
               onAdd(event.currentTarget.value);
               event.currentTarget.value = '';

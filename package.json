@@ -1,6 +1,6 @@
 {
   "name": "@ice/store",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "Lightweight React state management library based on react hooks",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
@@ -37,12 +37,12 @@
   "devDependencies": {
     "@commitlint/cli": "^8.2.0",
     "@commitlint/config-conventional": "^8.2.0",
-    "@ice/spec": "^0.1.4",
+    "@ice/spec": "^0.1.9",
     "@testing-library/react": "^9.0.0",
     "@types/jest": "^24.0.12",
     "@types/node": "^12.0.0",
     "codecov": "^3.3.0",
-    "eslint": "^6.6.0",
+    "eslint": "^6.7.2",
     "husky": "^3.0.9",
     "jest": "^24.7.1",
     "react": "^16.8.0",
