@@ -58,6 +58,7 @@ export default class Icestore {
       return (Component) => {
         const StoreContainer: FC<any> = (props) => {
           let store;
+          /* eslint-disable react-hooks/rules-of-hooks */
           if (Array.isArray(namespace)) {
             store = useStores(namespace);
           } else {
