@@ -20,6 +20,7 @@
     "importHelpers": true,
     "strictNullChecks": true,
     "suppressImplicitAnyIndexErrors": true,
+    "experimentalDecorators": true,
     "noUnusedLocals": true,
     "skipLibCheck": true,
     "paths": {

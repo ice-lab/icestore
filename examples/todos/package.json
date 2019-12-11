@@ -4,7 +4,7 @@
   "private": true,
   "main": "src/index.js",
   "dependencies": {
-    "@ice/store": "^0.3.x",
+    "@ice/store": "^0.4.x",
     "@ice/store-logger": "^0.1.x",
     "react": "16.8.6",
     "react-dom": "16.8.6"

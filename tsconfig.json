@@ -4,11 +4,12 @@
     "jsx": "react",
     "experimentalDecorators": true,
     "declaration": true,
+    "esModuleInterop": true,
     "sourceMap": true,
     "outDir": "lib"
   },
   "files": [
-    "src/index.ts"
+    "src/index.tsx"
   ],
   "exclude": [
     "node_modules"
