@@ -33,6 +33,7 @@ describe('#Icestore', () => {
     let useStore;
     let useStores;
     let getState;
+    let withStore;
     let todoStore;
     let projectStore;
 
@@ -51,6 +52,7 @@ describe('#Icestore', () => {
       useStore = stores.useStore;
       useStores = stores.useStores;
       getState = stores.getState;
+      withStore = stores.withStore;
     });
 
     test('should throw an Error when the namespace is not exist.', () => {
@@ -103,6 +105,45 @@ describe('#Icestore', () => {
       const todoName = getByTestId(container, 'todoName');
 
       expect(todoName.textContent).toEqual(todoStore.name);
+    });
+
+    test('should withStore using single namespace be ok.', () => {
+      @withStore('todo', (todo) => {
+        return {todo};
+      })
+      class App extends React.Component<{todo?: any}> {
+        render() {
+          const {todo} = this.props;
+          return <div>
+            <span data-testid="todoName">{todo.name}</span>
+          </div>;
+        }
+      }
+      const { container } = render(<App />);
+      const todoName = getByTestId(container, 'todoName');
+
+      expect(todoName.textContent).toEqual(todoStore.name);
+    });
+
+    test('should withStore using multiple namespaces be ok.', () => {
+      @withStore(['todo', 'project'], ({todo, project}) => {
+        return {todo, project};
+      })
+      class App extends React.Component<{todo?: any, project?: any}> {
+        render() {
+          const {todo, project} = this.props;
+          return <div>
+            <span data-testid="todoName">{todo.name}</span>
+            <span data-testid="projectName">{project.name}</span>
+          </div>;
+        }
+      }
+      const { container } = render(<App />);
+      const todoName = getByTestId(container, 'todoName');
+      const projectName = getByTestId(container, 'projectName');
+
+      expect(todoName.textContent).toEqual(todoStore.name);
+      expect(projectName.textContent).toEqual(projectStore.name);
     });
   });
 
