@@ -131,7 +131,7 @@ describe('#Icestore', () => {
       @withStores(['todo', 'project'], ({todo, project}) => {
         return {todo, project};
       })
-      class App extends React.Component<{todo?: any, project?: any}> {
+      class App extends React.Component<{todo?: any; project?: any;}> {
         render() {
           const {todo, project} = this.props;
           return <div>
