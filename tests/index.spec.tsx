@@ -110,10 +110,13 @@ describe('#Icestore', () => {
     });
 
     test('should withStore be ok.', () => {
+      interface PropsType {
+        todo?: any;
+      }
       @withStore('todo', (todo) => {
         return {todo};
       })
-      class App extends React.Component<{todo?: any}> {
+      class App extends React.Component<PropsType> {
         render() {
           const {todo} = this.props;
           return <div>
@@ -128,10 +131,14 @@ describe('#Icestore', () => {
     });
 
     test('should withStores be ok.', () => {
+      interface PropsType {
+        todo?: any;
+        project?: any;
+      }
       @withStores(['todo', 'project'], ({todo, project}) => {
         return {todo, project};
       })
-      class App extends React.Component<{todo?: any; project?: any;}> {
+      class App extends React.Component<PropsType> {
         render() {
           const {todo, project} = this.props;
           return <div>
