@@ -47,7 +47,7 @@ function Todo() {
 
   useEffect(() => {
     refresh();
-  }, [refresh]);
+  }, []);
 
   async function onAdd(name) {
     const todo = await add({ name });

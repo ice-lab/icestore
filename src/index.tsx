@@ -1,4 +1,4 @@
-import React, { FC, ComponentType } from 'react';
+import React, { FC } from 'react';
 import Store from './store';
 import { Store as Wrapper, State, Middleware } from './types';
 import warning from './util/warning';
@@ -52,18 +52,10 @@ export default class Icestore {
       return getModel(namespace).getState<State<M[K]>>();
     };
 
-    function withStore<K extends keyof M>(namespace: K, mapStoreToProps: (store: Wrapper<M[K]>) => object);
-    function withStore<K extends keyof M>(namespace: K[], mapStoreToProps: (store: Models) => object);
-    function withStore<K extends keyof M>(namespace: K | K[], mapStoreToProps: ((store: Wrapper<M[K]>) => object) | ((store: Models) => object)) {
+    function withStore<K extends keyof M>(namespace: K, mapStoreToProps: (store: Wrapper<M[K]>) => object) {
       return (Component) => {
         const StoreContainer: FC<any> = (props) => {
-          let store;
-          /* eslint-disable react-hooks/rules-of-hooks */
-          if (Array.isArray(namespace)) {
-            store = useStores(namespace);
-          } else {
-            store = useStore(namespace);
-          }
+          const store = useStore(namespace);
           const storeProps = mapStoreToProps(store);
           return (
             <Component
@@ -76,11 +68,27 @@ export default class Icestore {
       };
     };
 
+    function withStores<K extends keyof M>(namespace: K[], mapStoreToProps: (store: Models) => object) {
+      return (Component) => {
+        const StoreContainer: FC<any> = (props) => {
+          const stores = useStores(namespace);
+          const storeProps = mapStoreToProps(stores);
+          return (
+            <Component
+              {...props}
+              {...storeProps}
+            />
+          );
+        };
+        return StoreContainer as typeof Component;
+      };
+    };
     return {
       useStore,
       useStores,
       getState,
       withStore,
+      withStores,
     };
   }
 

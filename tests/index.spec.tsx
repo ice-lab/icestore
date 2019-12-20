@@ -34,6 +34,7 @@ describe('#Icestore', () => {
     let useStores;
     let getState;
     let withStore;
+    let withStores;
     let todoStore;
     let projectStore;
 
@@ -53,6 +54,7 @@ describe('#Icestore', () => {
       useStores = stores.useStores;
       getState = stores.getState;
       withStore = stores.withStore;
+      withStores = stores.withStores;
     });
 
     test('should throw an Error when the namespace is not exist.', () => {
@@ -107,7 +109,7 @@ describe('#Icestore', () => {
       expect(todoName.textContent).toEqual(todoStore.name);
     });
 
-    test('should withStore using single namespace be ok.', () => {
+    test('should withStore be ok.', () => {
       @withStore('todo', (todo) => {
         return {todo};
       })
@@ -125,8 +127,8 @@ describe('#Icestore', () => {
       expect(todoName.textContent).toEqual(todoStore.name);
     });
 
-    test('should withStore using multiple namespaces be ok.', () => {
-      @withStore(['todo', 'project'], ({todo, project}) => {
+    test('should withStores be ok.', () => {
+      @withStores(['todo', 'project'], ({todo, project}) => {
         return {todo, project};
       })
       class App extends React.Component<{todo?: any, project?: any}> {
