@@ -3,7 +3,6 @@ import Store from './store';
 import { Store as Wrapper, State, Middleware, Optionalize } from './types';
 import warning from './util/warning';
 
-
 export default class Icestore {
   /** Stores registered */
   private stores: {[namespace: string]: any} = {};
