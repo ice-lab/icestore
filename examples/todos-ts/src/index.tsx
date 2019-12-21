@@ -1,14 +1,15 @@
 import React, { Component, useEffect } from 'react';
 import ReactDOM from 'react-dom';
 import stores from './stores';
+import {TodoStore} from './stores/todos';
 
 const {withStore} = stores;
 
-@withStore('todos', (todos) => {
-  const {remove, toggle, dataSource} = todos;
-  return {remove, toggle, dataSource};
-})
-class TodoList extends Component<{remove: any; toggle: any; dataSource: any}> {
+interface TodoListProps extends TodoStore {
+  title: string;
+}
+
+class TodoList extends Component<TodoListProps> {
   onRemove = (index) => {
     const {remove} = this.props;
     remove(index);
@@ -20,26 +21,31 @@ class TodoList extends Component<{remove: any; toggle: any; dataSource: any}> {
   }
 
   render() {
-    const {dataSource} = this.props;
+    const {dataSource, title} = this.props;
     return (
-      <ul>
-        {dataSource.map(({ name, done = false }, index) => (
-          <li key={index}>
-            <label>
-              <input
-                type="checkbox"
-                checked={done}
-                onChange={() => this.onCheck(index)}
-              />
-              {done ? <s>{name}</s> : <span>{name}</span>}
-            </label>
-            <button type="submit" onClick={() => this.onRemove(index)}>-</button>
-          </li>
-        ))}
-      </ul>
+      <div>
+        <h2>{title}</h2>
+        <ul>
+          {dataSource.map(({ name, done = false }, index) => (
+            <li key={index}>
+              <label>
+                <input
+                  type="checkbox"
+                  checked={done}
+                  onChange={() => this.onCheck(index)}
+                />
+                {done ? <s>{name}</s> : <span>{name}</span>}
+              </label>
+              <button type="submit" onClick={() => this.onRemove(index)}>-</button>
+            </li>
+          ))}
+        </ul>
+      </div>
     );
   }
 }
+
+const TodoListWidthStore = withStore('todos')(TodoList);
 
 function Todo() {
   const todos = stores.useStore('todos');
@@ -56,7 +62,7 @@ function Todo() {
 
   const noTaskView = <span>no task</span>;
   const loadingView = <span>loading...</span>;
-  const taskView = dataSource.length ? <TodoList /> : (
+  const taskView = dataSource.length ? <TodoListWidthStore title="Title" /> : (
     noTaskView
   );
 

@@ -4,6 +4,9 @@ interface ActionProps {
   disableLoading?: boolean;
 }
 
+export type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;
+export type Optionalize<T extends K, K> = Omit<T, keyof K>;
+
 export type Store<W> = {
   [T in keyof W]: W[T] extends Function ? W[T] & ActionProps: W[T];
 }

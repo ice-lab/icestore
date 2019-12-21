@@ -1,7 +1,8 @@
-import React, { FC } from 'react';
+import React from 'react';
 import Store from './store';
-import { Store as Wrapper, State, Middleware } from './types';
+import { Store as Wrapper, State, Middleware, Optionalize } from './types';
 import warning from './util/warning';
+
 
 export default class Icestore {
   /** Stores registered */
@@ -52,37 +53,36 @@ export default class Icestore {
       return getModel(namespace).getState<State<M[K]>>();
     };
 
-    function withStore<K extends keyof M>(namespace: K, mapStoreToProps: (store: Wrapper<M[K]>) => object) {
-      return (Component) => {
-        const StoreContainer: FC<any> = (props) => {
-          const store = useStore(namespace);
-          const storeProps = mapStoreToProps(store);
+    function withStore<K extends keyof M>(namespace: K, mapStoreToProps?: (store: Wrapper<M[K]>) => Wrapper<M[K]>|object) {
+      return <P extends Wrapper<M[K]>>(Component: React.ComponentType<P>) => {
+        return (props: Optionalize<P, Wrapper<M[K]>>): React.ReactNode => {
+          const store: Wrapper<M[K]> = useStore(namespace);
+          const storeProps: Wrapper<M[K]>|object = mapStoreToProps ? mapStoreToProps(store) : store;
           return (
             <Component
-              {...props}
               {...storeProps}
+              {...(props as P)}
             />
           );
         };
-        return StoreContainer as typeof Component;
       };
     };
 
-    function withStores<K extends keyof M>(namespace: K[], mapStoreToProps: (store: Models) => object) {
-      return (Component) => {
-        const StoreContainer: FC<any> = (props) => {
-          const stores = useStores(namespace);
-          const storeProps = mapStoreToProps(stores);
+    function withStores<K extends keyof M>(namespaces: K[], mapStoresToProps?: (stores: Models) => Models|object) {
+      return <P extends Models>(Component: React.ComponentType<P>) => {
+        return (props: Optionalize<P, Models>): React.ReactNode => {
+          const stores: Models = useStores(namespaces);
+          const storesProps: Models|object = mapStoresToProps ? mapStoresToProps(stores) : stores;
           return (
             <Component
-              {...props}
-              {...storeProps}
+              {...storesProps}
+              {...(props as P)}
             />
           );
         };
-        return StoreContainer as typeof Component;
       };
     };
+
     return {
       useStore,
       useStores,
