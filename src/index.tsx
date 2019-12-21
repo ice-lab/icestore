@@ -54,7 +54,7 @@ export default class Icestore {
 
     function withStore<K extends keyof M>(namespace: K, mapStoreToProps?: (store: Wrapper<M[K]>) => Wrapper<M[K]>|object) {
       return <P extends Wrapper<M[K]>>(Component: React.ComponentType<P>) => {
-        return (props: Optionalize<P, Wrapper<M[K]>>): React.ReactNode => {
+        return (props: Optionalize<P, Wrapper<M[K]>>): React.ReactElement => {
           const store: Wrapper<M[K]> = useStore(namespace);
           const storeProps: Wrapper<M[K]>|object = mapStoreToProps ? mapStoreToProps(store) : store;
           return (
@@ -69,7 +69,7 @@ export default class Icestore {
 
     function withStores<K extends keyof M>(namespaces: K[], mapStoresToProps?: (stores: Models) => Models|object) {
       return <P extends Models>(Component: React.ComponentType<P>) => {
-        return (props: Optionalize<P, Models>): React.ReactNode => {
+        return (props: Optionalize<P, Models>): React.ReactElement => {
           const stores: Models = useStores(namespaces);
           const storesProps: Models|object = mapStoresToProps ? mapStoresToProps(stores) : stores;
           return (
