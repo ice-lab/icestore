@@ -385,17 +385,14 @@ const {
 
 Due the multiple store design of `icestore`, it supports registering middlewares for indivisual store as follows:
 
-1. Global registration 
-  *  Global registration middlewares apply to all stores.
+1. Global registration: middlewares apply to all stores.
 
 	```javascript
 	import Icestore from '@ice/store';
 	const stores = new Icestore();
 	stores.applyMiddleware([a, b]);
 	```
-
-2. Registration by namespace  
-  * The ultimate middleware queue of single store will merge global middlewares with its own middlewares.
+2. Registration by namespace: The ultimate middleware queue of single store will merge global middlewares with its own middlewares.
 
 	```javascript
 	stores.applyMiddleware([a, b]); 
