@@ -181,6 +181,12 @@ Register multiple store configs to the global icestore instance.
               - mapStoreToProps {function} optional, mapping store to props
           - Return value
               - HOC
+      - withStores {function} 
+          - Parameters
+              - namespaces {array} array of store namespaces
+              - mapStoresToProps {function} optional, mapping store to props
+          - Return value
+              - HOC
       - getState {function} Get the latest state of individual store by namespace.
           - Parameters
               - namespace {string} store namespace

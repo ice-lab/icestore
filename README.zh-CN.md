@@ -169,6 +169,12 @@ $ npm install @ice/store --save
               - mapStoreToProps {function} 选填，将 store 映射到 props 的处理函数
           - 返回值
               - HOC 高阶组件
+      - withStores {function} 
+          - 参数
+              - namespaces {array} 多个 Store 的命名空间数组
+              - mapStoresToProps {function} 选填，将 stores 映射到 props 的处理函数
+          - 返回值
+              - HOC 高阶组件
       - getState {function} 获取单个 Store 的最新 State 对象。
           - 参数
               - namespace {string} Store 的命名空间
