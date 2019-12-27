@@ -52,7 +52,7 @@ export default class Icestore {
       return getModel(namespace).getState<State<M[K]>>();
     };
 
-    function withStore<K extends keyof M>(namespace: K, mapStoreToProps?: (store: Wrapper<M[K]>) => { store: Wrapper<M[K]>|object; } ) {
+    function withStore<K extends keyof M>(namespace: K, mapStoreToProps?: (store: Wrapper<M[K]>) => { store: Wrapper<M[K]>|object } ) {
       type StoreProps = ReturnType<typeof mapStoreToProps>;
       return <P extends StoreProps>(Component: React.ComponentClass<P>) => {
         return (props: Optionalize<P, StoreProps>): React.ReactElement => {
@@ -68,7 +68,7 @@ export default class Icestore {
       };
     };
 
-    function withStores<K extends keyof M>(namespaces: K[], mapStoresToProps?: (stores: Models) => { stores: Models|object; }) {
+    function withStores<K extends keyof M>(namespaces: K[], mapStoresToProps?: (stores: Models) => { stores: Models|object }) {
       type StoresProps = ReturnType<typeof mapStoresToProps>;
       return <P extends StoresProps>(Component: React.ComponentType<P>) => {
         return (props: Optionalize<P, StoresProps>): React.ReactElement => {
