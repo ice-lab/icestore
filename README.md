@@ -26,10 +26,9 @@ npm install @ice/store --save
 
 * **Minimal & Familiar API**: No additional learning costs, just use React Hooks as intended.
 * **Enough & Extensible**: Meet 80% of scenarios, another 20%? Middleware mechanism can be used to meet the requirements.
-* **Class Component Support**: Friendly compatibility strategy can make the old project enjoy the fun of light weight state management.
+* **Class Component Support**: Friendly compatibility strategy can make the old project enjoy the fun of lightweight state management.
 * **Built in Async Status**: Records loading and error status of async actions, simplifying the rendering logic in the view layer.
-* **Typescript Support**: Provide complete type definitions to support IntelliSense in VSCode.
-* **Predictable**: Uses unidirectional data flow (similar to Redux) and allows state mutation only inside actions, allowing data flow to be traced easily.
+* **Typescript Support**: Provide complete type definitions to support intelliSense in VSCode.
 * **Optimal Performance**: Decreases the number of view components that rerender when the state changes by creating multiple stores.
 
 The data flow is as follows:  
