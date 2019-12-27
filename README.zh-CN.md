@@ -274,22 +274,22 @@ const stores = icestore.registerStores({
   todos,
 });
 
-class TodoList extends Component<TodoStore> {
+class TodoList extends Component<{store: TodoStore}> {
   onRmove = (id) => {
-    const {remove} = this.props;
-    remove(id);
+    const {store} = this.props;
+    store.remove(id);
   }
 
   componentDidMount() {
-    this.props.refresh();
+    this.props.store.refresh();
   }
 
   render() {
-    const {dataSource} = this.props;
+    const {store} = this.props;
     return (
       <div>
         {
-          dataSource.map(({id, name}) => {
+          store.dataSource.map(({id, name}) => {
             return (<p>
               {name}
               <button onClick={() => onRmove(id)} >删除</button>
@@ -303,7 +303,6 @@ class TodoList extends Component<TodoStore> {
 }
 
 const TodoListWithStore = stores.withStore('todos')(TodoList);
-
 ReactDOM.render(<TodoListWithStore />, document.body);
 ```
 
