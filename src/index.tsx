@@ -52,11 +52,12 @@ export default class Icestore {
       return getModel(namespace).getState<State<M[K]>>();
     };
 
-    function withStore<K extends keyof M>(namespace: K, mapStoreToProps?: (store: Wrapper<M[K]>) => Wrapper<M[K]>|object) {
-      return <P extends Wrapper<M[K]>>(Component: React.ComponentType<P>) => {
-        return (props: Optionalize<P, Wrapper<M[K]>>): React.ReactElement => {
+    function withStore<K extends keyof M>(namespace: K, mapStoreToProps?: (store: Wrapper<M[K]>) => { store: Wrapper<M[K]>|object; } ) {
+      type StoreProps = ReturnType<typeof mapStoreToProps>;
+      return <P extends StoreProps>(Component: React.ComponentClass<P>) => {
+        return (props: Optionalize<P, StoreProps>): React.ReactElement => {
           const store: Wrapper<M[K]> = useStore(namespace);
-          const storeProps: Wrapper<M[K]>|object = mapStoreToProps ? mapStoreToProps(store) : store;
+          const storeProps: StoreProps = mapStoreToProps ? mapStoreToProps(store) : {store};
           return (
             <Component
               {...storeProps}
@@ -67,11 +68,12 @@ export default class Icestore {
       };
     };
 
-    function withStores<K extends keyof M>(namespaces: K[], mapStoresToProps?: (stores: Models) => Models|object) {
-      return <P extends Models>(Component: React.ComponentType<P>) => {
-        return (props: Optionalize<P, Models>): React.ReactElement => {
+    function withStores<K extends keyof M>(namespaces: K[], mapStoresToProps?: (stores: Models) => { stores: Models|object; }) {
+      type StoresProps = ReturnType<typeof mapStoresToProps>;
+      return <P extends StoresProps>(Component: React.ComponentType<P>) => {
+        return (props: Optionalize<P, StoresProps>): React.ReactElement => {
           const stores: Models = useStores(namespaces);
-          const storesProps: Models|object = mapStoresToProps ? mapStoresToProps(stores) : stores;
+          const storesProps: StoresProps = mapStoresToProps ? mapStoresToProps(stores) : {stores};
           return (
             <Component
               {...storesProps}

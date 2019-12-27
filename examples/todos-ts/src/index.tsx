@@ -5,26 +5,35 @@ import {TodoStore} from './stores/todos';
 
 const {withStore} = stores;
 
-interface TodoListProps extends TodoStore {
+interface CustomTodoStore extends TodoStore {
+  customField: string;
+}
+
+interface TodoListProps {
   title: string;
+  store: CustomTodoStore;
 }
 
 class TodoList extends Component<TodoListProps> {
   onRemove = (index) => {
-    const {remove} = this.props;
+    const {remove} = this.props.store;
     remove(index);
   }
 
   onCheck = (index) => {
-    const {toggle} = this.props;
+    const {toggle} = this.props.store;
     toggle(index);
   }
 
   render() {
-    const {dataSource, title} = this.props;
+    const {title, store} = this.props;
+    const {dataSource, customField} = store;
     return (
       <div>
         <h2>{title}</h2>
+        <p>
+          {customField}
+        </p>
         <ul>
           {dataSource.map(({ name, done = false }, index) => (
             <li key={index}>
@@ -45,7 +54,10 @@ class TodoList extends Component<TodoListProps> {
   }
 }
 
-const TodoListWidthStore = withStore('todos')(TodoList);
+const connectStore = withStore('todos', (store: TodoStore): {store: CustomTodoStore} => {
+  return { store: {...store, customField: '测试的字段'} };
+});
+const TodoListWidthStore = connectStore(TodoList);
 
 function Todo() {
   const todos = stores.useStore('todos');
@@ -62,7 +74,7 @@ function Todo() {
 
   const noTaskView = <span>no task</span>;
   const loadingView = <span>loading...</span>;
-  const taskView = dataSource.length ? <TodoListWidthStore title="Title" /> : (
+  const taskView = dataSource.length ? <TodoListWidthStore title="标题" /> : (
     noTaskView
   );
 
