@@ -5,7 +5,7 @@ import warning from './util/warning';
 
 export default class Icestore {
   /** Stores registered */
-  private stores: {[namespace: string]: any} = {};
+  private stores: {[namespace: string]: Store} = {};
 
   /** Global middlewares applied to all stores */
   private globalMiddlewares: Middleware[] = [];
@@ -127,7 +127,7 @@ export default class Icestore {
    * @param {object} model - store's model consists of state and actions
    * @return {object} store instance
    */
-  public registerStore(namespace: string, model: {[namespace: string]: any}) {
+  public registerStore<T>(namespace: string, model: Wrapper<T>) {
     warning('Warning: Register store via registerStore API is deprecated and about to be removed in future version. Use the registerStores API instead. Refer to https://github.com/ice-lab/icestore#getting-started for example.');
     if (this.stores[namespace]) {
       throw new Error(`Namespace have been used: ${namespace}.`);
