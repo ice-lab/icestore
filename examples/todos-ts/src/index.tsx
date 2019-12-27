@@ -54,12 +54,11 @@ class TodoList extends Component<TodoListProps> {
   }
 }
 
-const connectStore = withStore('todos', (store: TodoStore): {store: CustomTodoStore} => {
+const TodoListWidthStore = withStore('todos', (store: TodoStore): {store: CustomTodoStore} => {
   return { store: {...store, customField: '测试的字段'} };
-});
-const TodoListWidthStore = connectStore(TodoList);
+})(TodoList);
 
-function Todo() {
+function TodoApp() {
   const todos = stores.useStore('todos');
   const { dataSource, refresh, add } = todos;
 
@@ -98,4 +97,4 @@ function Todo() {
 }
 
 const rootElement = document.getElementById('ice-container');
-ReactDOM.render(<Todo />, rootElement);
+ReactDOM.render(<TodoApp />, rootElement);
