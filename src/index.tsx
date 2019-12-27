@@ -1,12 +1,8 @@
 import React from 'react';
 import Store from './store';
 import { Store as Wrapper, State, Middleware, Optionalize } from './types';
-import warning from './util/warning';
 
 export default class Icestore {
-  /** Stores registered */
-  private stores: {[namespace: string]: Store} = {};
-
   /** Global middlewares applied to all stores */
   private globalMiddlewares: Middleware[] = [];
 
@@ -105,70 +101,5 @@ export default class Icestore {
       this.globalMiddlewares = middlewares;
     }
   }
-
-  /**
-   * Find store by namespace
-   * @deprecated
-   * @param {string} namespace - unique name of store
-   * @return {object} store instance
-   */
-  private getModel(namespace: string) {
-    const store = this.stores[namespace];
-    if (!store) {
-      throw new Error(`Not found namespace: ${namespace}.`);
-    }
-    return store;
-  }
-
-  /**
-   * Register single store
-   * @deprecated
-   * @param {string} namespace - unique name of store
-   * @param {object} model - store's model consists of state and actions
-   * @return {object} store instance
-   */
-  public registerStore<T>(namespace: string, model: Wrapper<T>) {
-    warning('Warning: Register store via registerStore API is deprecated and about to be removed in future version. Use the registerStores API instead. Refer to https://github.com/ice-lab/icestore#getting-started for example.');
-    if (this.stores[namespace]) {
-      throw new Error(`Namespace have been used: ${namespace}.`);
-    }
-    const storeMiddlewares = this.middlewareMap[namespace] || [];
-    const middlewares = this.globalMiddlewares.concat(storeMiddlewares);
-    this.stores[namespace] = new Store(namespace, model, middlewares);
-    return this.stores[namespace];
-  }
-
-  /**
-   * Get state of store by namespace
-   * @deprecated
-   * @param {string} namespace - unique name of store
-   * @return {object} store's state
-   */
-  public getState(namespace: string) {
-    warning('Warning: Get state via getState API is deprecated and about to be removed in future version. Use registerStores API to register stores and use getState from its return value instead. Refer to https://github.com/ice-lab/icestore#getting-started for example.');
-    return this.getModel(namespace).getState();
-  }
-
-  /**
-   * Hook of using store
-   * @deprecated
-   * @param {string} namespace - unique name of store
-   * @return {object} single store's config
-   */
-  public useStore(namespace: string) {
-    warning('Warning: Use store via useStore API is deprecated and about to be removed in future version. Please use registerStores API to register stores and use useStore from its return value instead. Refer to https://github.com/ice-lab/icestore#getting-started for example.');
-    return this.getModel(namespace).useStore();
-  }
-
-  /**
-   * Hook of using multiple stores
-   * @deprecated
-   * @param {string} namespace - unique name of store
-   * @return {array} array of multiple store's config
-   */
-  public useStores(namespaces: string[]) {
-    warning('Warning: Use stores via useStores API is deprecated and about to be removed in future version. Please use registerStores API to register stores and use useStores from its return value instead. Refer to https://github.com/ice-lab/icestore#getting-started for example.');
-    return namespaces.map(namespace => this.useStore(namespace));
-  };
 }
 
