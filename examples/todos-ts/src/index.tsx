@@ -1,47 +1,64 @@
 import React, { Component, useEffect } from 'react';
 import ReactDOM from 'react-dom';
 import stores from './stores';
+import {TodoStore} from './stores/todos';
 
 const {withStore} = stores;
 
-@withStore('todos', (todos) => {
-  const {remove, toggle, dataSource} = todos;
-  return {remove, toggle, dataSource};
-})
-class TodoList extends Component<{remove: any; toggle: any; dataSource: any}> {
+interface CustomTodoStore extends TodoStore {
+  customField: string;
+}
+
+interface TodoListProps {
+  title: string;
+  store: CustomTodoStore;
+}
+
+class TodoList extends Component<TodoListProps> {
   onRemove = (index) => {
-    const {remove} = this.props;
+    const {remove} = this.props.store;
     remove(index);
   }
 
   onCheck = (index) => {
-    const {toggle} = this.props;
+    const {toggle} = this.props.store;
     toggle(index);
   }
 
   render() {
-    const {dataSource} = this.props;
+    const {title, store} = this.props;
+    const {dataSource, customField} = store;
     return (
-      <ul>
-        {dataSource.map(({ name, done = false }, index) => (
-          <li key={index}>
-            <label>
-              <input
-                type="checkbox"
-                checked={done}
-                onChange={() => this.onCheck(index)}
-              />
-              {done ? <s>{name}</s> : <span>{name}</span>}
-            </label>
-            <button type="submit" onClick={() => this.onRemove(index)}>-</button>
-          </li>
-        ))}
-      </ul>
+      <div>
+        <h2>{title}</h2>
+        <p>
+          {customField}
+        </p>
+        <ul>
+          {dataSource.map(({ name, done = false }, index) => (
+            <li key={index}>
+              <label>
+                <input
+                  type="checkbox"
+                  checked={done}
+                  onChange={() => this.onCheck(index)}
+                />
+                {done ? <s>{name}</s> : <span>{name}</span>}
+              </label>
+              <button type="submit" onClick={() => this.onRemove(index)}>-</button>
+            </li>
+          ))}
+        </ul>
+      </div>
     );
   }
 }
 
-function Todo() {
+const TodoListWithStore = withStore('todos', (store: TodoStore): {store: CustomTodoStore} => {
+  return { store: {...store, customField: '测试的字段'} };
+})(TodoList);
+
+function TodoApp() {
   const todos = stores.useStore('todos');
   const { dataSource, refresh, add } = todos;
 
@@ -56,7 +73,7 @@ function Todo() {
 
   const noTaskView = <span>no task</span>;
   const loadingView = <span>loading...</span>;
-  const taskView = dataSource.length ? <TodoList /> : (
+  const taskView = dataSource.length ? <TodoListWithStore title="标题" /> : (
     noTaskView
   );
 
@@ -80,4 +97,4 @@ function Todo() {
 }
 
 const rootElement = document.getElementById('ice-container');
-ReactDOM.render(<Todo />, rootElement);
+ReactDOM.render(<TodoApp />, rootElement);

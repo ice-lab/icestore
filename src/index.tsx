@@ -1,11 +1,11 @@
-import React, { FC } from 'react';
+import React from 'react';
 import Store from './store';
-import { Store as Wrapper, State, Middleware } from './types';
+import { Store as Wrapper, State, Middleware, Optionalize } from './types';
 import warning from './util/warning';
 
 export default class Icestore {
   /** Stores registered */
-  private stores: {[namespace: string]: any} = {};
+  private stores: {[namespace: string]: Store} = {};
 
   /** Global middlewares applied to all stores */
   private globalMiddlewares: Middleware[] = [];
@@ -52,37 +52,38 @@ export default class Icestore {
       return getModel(namespace).getState<State<M[K]>>();
     };
 
-    function withStore<K extends keyof M>(namespace: K, mapStoreToProps: (store: Wrapper<M[K]>) => object) {
-      return (Component) => {
-        const StoreContainer: FC<any> = (props) => {
-          const store = useStore(namespace);
-          const storeProps = mapStoreToProps(store);
+    function withStore<K extends keyof M>(namespace: K, mapStoreToProps?: (store: Wrapper<M[K]>) => { store: Wrapper<M[K]>|object } ) {
+      type StoreProps = ReturnType<typeof mapStoreToProps>;
+      return <P extends StoreProps>(Component: React.ComponentClass<P>) => {
+        return (props: Optionalize<P, StoreProps>): React.ReactElement => {
+          const store: Wrapper<M[K]> = useStore(namespace);
+          const storeProps: StoreProps = mapStoreToProps ? mapStoreToProps(store) : {store};
           return (
             <Component
-              {...props}
               {...storeProps}
+              {...(props as P)}
             />
           );
         };
-        return StoreContainer as typeof Component;
       };
     };
 
-    function withStores<K extends keyof M>(namespace: K[], mapStoreToProps: (store: Models) => object) {
-      return (Component) => {
-        const StoreContainer: FC<any> = (props) => {
-          const stores = useStores(namespace);
-          const storeProps = mapStoreToProps(stores);
+    function withStores<K extends keyof M>(namespaces: K[], mapStoresToProps?: (stores: Models) => { stores: Models|object }) {
+      type StoresProps = ReturnType<typeof mapStoresToProps>;
+      return <P extends StoresProps>(Component: React.ComponentType<P>) => {
+        return (props: Optionalize<P, StoresProps>): React.ReactElement => {
+          const stores: Models = useStores(namespaces);
+          const storesProps: StoresProps = mapStoresToProps ? mapStoresToProps(stores) : {stores};
           return (
             <Component
-              {...props}
-              {...storeProps}
+              {...storesProps}
+              {...(props as P)}
             />
           );
         };
-        return StoreContainer as typeof Component;
       };
     };
+
     return {
       useStore,
       useStores,
@@ -126,7 +127,7 @@ export default class Icestore {
    * @param {object} model - store's model consists of state and actions
    * @return {object} store instance
    */
-  public registerStore(namespace: string, model: {[namespace: string]: any}) {
+  public registerStore<T>(namespace: string, model: Wrapper<T>) {
     warning('Warning: Register store via registerStore API is deprecated and about to be removed in future version. Use the registerStores API instead. Refer to https://github.com/ice-lab/icestore#getting-started for example.');
     if (this.stores[namespace]) {
       throw new Error(`Namespace have been used: ${namespace}.`);
