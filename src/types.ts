@@ -1,6 +1,6 @@
-interface ActionProps {
+export interface ActionProps {
   loading?: boolean;
-  error?: boolean;
+  error?: Error;
   disableLoading?: boolean;
 }
 
@@ -20,7 +20,7 @@ export interface Ctx {
     arguments: any[];
   };
   store: {
-    namespace: any;
+    namespace: string;
     getState: () => object;
   };
 }
@@ -29,10 +29,7 @@ export interface Middleware {
   (ctx: Ctx, next: Promise<any>): any;
 }
 
-export interface ComposeFunc {
+export interface ComposeFunc extends ActionProps {
   (): Promise<any>;
-  loading?: boolean;
-  disableLoading?: boolean;
-  error?: any;
 }
 

@@ -26,7 +26,7 @@ export default class Store {
    * @param {object} model - object of state and actions used to init store
    * @param {array} middlewares - middlewares queue of store
    */
-  public constructor(namespace: string, model: any, middlewares: Middleware []) {
+  public constructor(namespace: string, model: object, middlewares: Middleware []) {
     this.namespace = namespace;
     this.middlewares = middlewares;
 
@@ -43,7 +43,7 @@ export default class Store {
    * @return {function} action function
    */
   private createAction(func: () => any, actionName: string): ComposeFunc {
-    const actionWrapper: any = async (...args) => {
+    const actionWrapper = async (...args) => {
       wrapper.loading = true;
       wrapper.error = null;
 
