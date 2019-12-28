@@ -24,19 +24,16 @@ npm install @ice/store --save
 
 `icestore` is a lightweight React state management library based on hooks. It has the following core features:
 
-* **Minimal API**: Contains 5 APIs, which is easily learnable in 5 minutes.
-* **Typescript Support**: Provide complete type definitions to support IntelliSense in VSCode.
-* **Predictable**: Uses unidirectional data flow (similar to Redux) and allows state mutation only inside actions, allowing data flow to be traced easily.
-* **Optimal performance**: Decreases the number of view components that rerender when the state changes by creating multiple stores.
-* **Built in async status**: Records loading and error status of async actions, simplifying the rendering logic in the view layer.
+* **Minimal & Familiar API**: No additional learning costs, easy to get started with the knowledge of React Hooks.
+* **Enough & Extensible**: Cover 80% most common usage scenes and extend the remaining 20% scenes with builtin middleware mechanism.
+* **Class Component Support**: Make old projects enjoying the fun of lightweight state management with friendly compatibility strategy.
+* **Built in Async Status**: Records loading and error status of async actions, simplifying the rendering logic in the view layer.
+* **Typescript Support**: Provide complete type definitions to support intelliSense in VSCode.
+* **Optimal Performance**: Decreases the number of view components that rerender when the state changes by creating multiple stores.
 
 The data flow is as follows:  
 
 <img src="https://user-images.githubusercontent.com/5419233/60878757-f44a6b00-a272-11e9-8afa-d47e8493e040.png" width="400" />
-
-### Compatibility
-
-`icestore` is only compatable with React 16.8.0 and later because of its dependency on React hooks.
 
 ## Getting Started
 
@@ -44,158 +41,116 @@ Let's build a simple todo app from scatch using `icestore` which includes follow
 
 * Define a store config (a plain JavaScript object) which consists of function properties (correspond to the action) and other properties (correspond to state).
 
-```javascript
-// src/stores/todos.js
-export default {
-  dataSource: [],
-  async refresh() {
-    this.dataSource = await new Promise(resolve =>
-      setTimeout(() => {
-        resolve([
-          { name: 'react' },
-          { name: 'vue', done: true },
-          { name: 'angular' }
-        ]);
-      }, 1000)
-    );  },
-  add(todo) {
-    this.dataSource.push(todo);
-  },
-};
-```
+  ```javascript
+  // src/stores/todos.js
+  export default {
+    dataSource: [],
+    async refresh() {
+      this.dataSource = await new Promise(resolve =>
+        setTimeout(() => {
+          resolve([
+            { name: 'react' },
+            { name: 'vue', done: true },
+            { name: 'angular' }
+          ]);
+        }, 1000)
+      );  },
+    add(todo) {
+      this.dataSource.push(todo);
+    },
+  };
+  ```
 * Initialize the store instance and register the pre-defined store config using the namespace.
 
-```javascript
-// src/stores/index.js
-import todos from './todos';
-import Store from '@ice/store';
+  ```javascript
+  // src/stores/index.js
+  import todos from './todos';
+  import Store from '@ice/store';
 
-const storeManager = new Store();
-const stores = storeManager.registerStores({
-  todos
-});
+  const storeManager = new Store();
+  const stores = storeManager.registerStores({
+    todos
+  });
 
-export default stores;
-```
+  export default stores;
+  ```
 
 * In the view component, you can get the store config (including state and actions) by using the useStore hook after importing the store instance. After that, you can trigger actions through event callbacks or by using the useEffect hook, which binds the state to the view template.
 
-```javascript
-// src/index.js
-import React, { useEffect } from 'react';
-import ReactDOM from 'react-dom';
-import stores from './stores';
+  ```javascript
+  // src/index.js
+  import React, { useEffect } from 'react';
+  import ReactDOM from 'react-dom';
+  import stores from './stores';
 
-function Todo() {
-  const todos = stores.useStore('todos');
-  const { dataSource, refresh, add, remove, toggle } = todos;
+  function Todo() {
+    const todos = stores.useStore('todos');
+    const { dataSource, refresh, add, remove, toggle } = todos;
 
-  useEffect(() => {
-    refresh();
-  }, []);
+    useEffect(() => {
+      refresh();
+    }, []);
 
-  function onAdd(name) {
-    add({ name });
-  }
+    function onAdd(name) {
+      add({ name });
+    }
 
-  function onRemove(index) {
-    remove(index);
-  }
+    function onRemove(index) {
+      remove(index);
+    }
 
-  function onCheck(index) {
-    toggle(index);
-  }
+    function onCheck(index) {
+      toggle(index);
+    }
 
-  const noTaskView = <span>no task</span>;
-  const loadingView = <span>loading...</span>;
-  const taskView = dataSource.length ? (
-    <ul>
-      {dataSource.map(({ name, done }, index) => (
-        <li key={index}>
-          <label>
-            <input
-              type="checkbox"
-              checked={done}
-              onClick={() => onCheck(index)}
-            />
-            {done ? <s>{name}</s> : <span>{name}</span>}
-          </label>
-          <button onClick={() => onRemove(index)}>-</button>
-        </li>
-      ))}
-    </ul>
-  ) : (
-    noTaskView
-  );
+    const noTaskView = <span>no task</span>;
+    const loadingView = <span>loading...</span>;
+    const taskView = dataSource.length ? (
+      <ul>
+        {dataSource.map(({ name, done }, index) => (
+          <li key={index}>
+            <label>
+              <input
+                type="checkbox"
+                checked={done}
+                onClick={() => onCheck(index)}
+              />
+              {done ? <s>{name}</s> : <span>{name}</span>}
+            </label>
+            <button onClick={() => onRemove(index)}>-</button>
+          </li>
+        ))}
+      </ul>
+    ) : (
+      noTaskView
+    );
 
-  return (
-    <div>
-      <h2>Todos</h2>
-      {!refresh.loading ? taskView : loadingView}
+    return (
       <div>
-        <input
-          onKeyDown={event => {
-            if (event.keyCode === 13) {
-              onAdd(event.target.value);
-              event.target.value = '';
-            }
-          }}
-          placeholder="Press Enter"
-        />
+        <h2>Todos</h2>
+        {!refresh.loading ? taskView : loadingView}
+        <div>
+          <input
+            onKeyDown={event => {
+              if (event.keyCode === 13) {
+                onAdd(event.target.value);
+                event.target.value = '';
+              }
+            }}
+            placeholder="Press Enter"
+          />
+        </div>
       </div>
-    </div>
-  );
-}
+    );
+  }
 
-const rootElement = document.getElementById('root');
-ReactDOM.render(<Todo />, rootElement);
-```
+  const rootElement = document.getElementById('root');
+  ReactDOM.render(<Todo />, rootElement);
+  ```
 
 Complete example is presented in this [CodeSandbox](https://codesandbox.io/s/icestore-ltpuo), feel free to play with it.
 
-## Typescript Support
-icestore provides complete type definitions to support IntelliSense in VSCode. TS example is presented in this [CodeSandbox](https://codesandbox.io/s/icestore-ts-gduqw).
-
-## Best Practices
-
-### Never mutate state outside actions
-
-`icestore` enforces all the mutations to the state to occur only in action methods. Mutation occurred outside actions will not take effect (e.g. in the view component).
-
-The reason is that the mutation logic would be hard to trace and impossible to test as there might be unpredictable changes made to the view components as a result of mutations outside actions.
-
-```javascript
-  // store.js
-  export default {
-    inited: false,
-    setInited() {
-      this.inited = true;
-    }
-  }
-  
-  // view.js
-  const todos = useStore('todos');
-  
-  useEffect(() => {
-    // bad
-    todos.inited = true;
-    
-    // good
-    todos.setInited();
-  });
-```
-
-### Divide store as small as possible
-
-By design, `icestore` will trigger the rerender of all the view components subscribed to the store (by using useStore) once the state of the store has changed.
-
-This means that putting more state in one store may cause more view components to rerender, affecting the overall performance of the application. As such, it is advised to categorize your state and put them in individual stores to improve performance.
-
-### Don't overuse `icestore`
-
-From the engineering perspective, the global store should only be used to store states that are shared across multiple pages or components.
-
-Putting local state in the global store will break the component's encapsulation, affecting its reusability. Using the todo app as an example, if the app only has one page, the state of the todo app is preferred to be stored as a local state in the view component rather than in the global store.
+> icestore provides complete type definitions to support IntelliSense in VSCode. TS example is presented in this [CodeSandbox](https://codesandbox.io/s/icestore-ts-gduqw).
 
 ## API
 
@@ -219,6 +174,18 @@ Register multiple store configs to the global icestore instance.
               - namespaces {array} array of store namespaces
           - Return value
               - {object} object of stores' instances divided by namespace
+      - withStore {function} 
+          - Parameters
+              - namespace {string} store namespace
+              - mapStoreToProps {function} optional, mapping store to props
+          - Return value
+              - HOC
+      - withStores {function} 
+          - Parameters
+              - namespaces {array} array of store namespaces
+              - mapStoresToProps {function} optional, mapping store to props
+          - Return value
+              - HOC
       - getState {function} Get the latest state of individual store by namespace.
           - Parameters
               - namespace {string} store namespace
@@ -285,12 +252,70 @@ const taskView = !refresh.error ? (
   </div>
 );
 
-
 return (
   <div>
     {!refresh.loading ? taskView : loadingView}
   <Loading />
 );
+```
+
+### Class Component Support
+
+```tsx
+import React from 'react';
+import ReactDOM from 'react-dom';
+import Icestore from '@ice/store';
+
+interface Todo {
+  id: number;
+  name: string;
+}
+
+interface TodoStore {
+  dataSource: Todo[];
+  refresh: () => void;
+  remove: (id: number) => void;
+}
+
+const todos: TodoStore = {
+  // Action && State 
+};
+
+const icestore = new Icestore();
+const stores = icestore.registerStores({
+  todos,
+});
+
+class TodoList extends Component<{store: TodoStore}> {
+  onRmove = (id) => {
+    const {store} = this.props;
+    store.remove(id);
+  }
+
+  componentDidMount() {
+    this.props.store.refresh();
+  }
+
+  render() {
+    const {store} = this.props;
+    return (
+      <div>
+        {
+          store.dataSource.map(({id, name}) => {
+            return (<p>
+              {name}
+              <button onClick={() => onRmove(id)} >Delete</button>
+            </p>);
+          })
+        }
+      </div>
+      
+    );
+  }
+}
+
+const TodoListWithStore = stores.withStore('todos')(TodoList);
+ReactDOM.render(<TodoListWithStore />, document.body);
 ```
 
 ### Middleware
@@ -303,7 +328,7 @@ In state management area, Redux also implements middleware mechanism, it was use
 
 Like Redux, the purpose of `icestore` implementing middleware mechanism is to add an extensive mechanism between action was not dispatched and dispatched. The difference is that `icestore` already supports async action, so there is no need to write middleware for async support.
 
-### middleware API
+#### middleware API
 
 `icestore` takes insiprations from koa for its middleware API design as follows:
 
@@ -320,7 +345,7 @@ async (ctx, next) =>  {
 ```
 Note: If there is return value in action, all the middlewares in the chain must return the executing result of the next middleware to ensure the action's return value is correctly return from middleware chain.
 
-#### ctx API
+##### ctx API
 
 * ctx.action - the object of the action dispatched
   * Type：{object}
@@ -360,21 +385,18 @@ const {
 } = store;
 ```
 
-### Registration
+#### Registration
 
 Due the multiple store design of `icestore`, it supports registering middlewares for indivisual store as follows:
 
-1. Global registration 
-  *  Global registration middlewares apply to all stores.
+1. Global registration: middlewares apply to all stores.
 
 	```javascript
 	import Icestore from '@ice/store';
 	const stores = new Icestore();
 	stores.applyMiddleware([a, b]);
 	```
-
-2. Registration by namespace  
-  * The ultimate middleware queue of single store will merge global middlewares with its own middlewares.
+2. Registration by namespace: The ultimate middleware queue of single store will merge global middlewares with its own middlewares.
 
 	```javascript
 	stores.applyMiddleware([a, b]); 
@@ -454,6 +476,47 @@ describe('todos', () => {
 ```
 
 Please refer to the `todos.spec.js` file in the sandbox above for complete reference.
+
+## Best Practices
+
+### Never mutate state outside actions
+
+`icestore` enforces all the mutations to the state to occur only in action methods. Mutation occurred outside actions will not take effect (e.g. in the view component).
+
+The reason is that the mutation logic would be hard to trace and impossible to test as there might be unpredictable changes made to the view components as a result of mutations outside actions.
+
+```javascript
+  // store.js
+  export default {
+    inited: false,
+    setInited() {
+      this.inited = true;
+    }
+  }
+  
+  // view.js
+  const todos = useStore('todos');
+  
+  useEffect(() => {
+    // bad
+    todos.inited = true;
+    
+    // good
+    todos.setInited();
+  });
+```
+
+### Divide store as small as possible
+
+By design, `icestore` will trigger the rerender of all the view components subscribed to the store (by using useStore) once the state of the store has changed.
+
+This means that putting more state in one store may cause more view components to rerender, affecting the overall performance of the application. As such, it is advised to categorize your state and put them in individual stores to improve performance.
+
+### Don't overuse `icestore`
+
+From the engineering perspective, the global store should only be used to store states that are shared across multiple pages or components.
+
+Putting local state in the global store will break the component's encapsulation, affecting its reusability. Using the todo app as an example, if the app only has one page, the state of the todo app is preferred to be stored as a local state in the view component rather than in the global store.
 
 ## Browser Compatibility
 
