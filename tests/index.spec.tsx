@@ -33,6 +33,8 @@ describe('#Icestore', () => {
     let useStore;
     let useStores;
     let getState;
+    let withStore;
+    let withStores;
     let todoStore;
     let projectStore;
 
@@ -51,6 +53,8 @@ describe('#Icestore', () => {
       useStore = stores.useStore;
       useStores = stores.useStores;
       getState = stores.getState;
+      withStore = stores.withStore;
+      withStores = stores.withStores;
     });
 
     test('should throw an Error when the namespace is not exist.', () => {
@@ -103,6 +107,52 @@ describe('#Icestore', () => {
       const todoName = getByTestId(container, 'todoName');
 
       expect(todoName.textContent).toEqual(todoStore.name);
+    });
+
+    test('should withStore be ok.', () => {
+      interface PropsType {
+        todo?: any;
+      }
+      @withStore('todo', (todo) => {
+        return {todo};
+      })
+      class App extends React.Component<PropsType> {
+        render() {
+          const {todo} = this.props;
+          return <div>
+            <span data-testid="todoName">{todo.name}</span>
+          </div>;
+        }
+      }
+      const { container } = render(<App />);
+      const todoName = getByTestId(container, 'todoName');
+
+      expect(todoName.textContent).toEqual(todoStore.name);
+    });
+
+    test('should withStores be ok.', () => {
+      interface PropsType {
+        todo?: any;
+        project?: any;
+      }
+      @withStores(['todo', 'project'], ({todo, project}) => {
+        return {todo, project};
+      })
+      class App extends React.Component<PropsType> {
+        render() {
+          const {todo, project} = this.props;
+          return <div>
+            <span data-testid="todoName">{todo.name}</span>
+            <span data-testid="projectName">{project.name}</span>
+          </div>;
+        }
+      }
+      const { container } = render(<App />);
+      const todoName = getByTestId(container, 'todoName');
+      const projectName = getByTestId(container, 'projectName');
+
+      expect(todoName.textContent).toEqual(todoStore.name);
+      expect(projectName.textContent).toEqual(projectStore.name);
     });
   });
 

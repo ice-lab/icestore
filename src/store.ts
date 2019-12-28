@@ -1,5 +1,5 @@
-import * as isFunction from 'lodash.isfunction';
-import * as isPromise from 'is-promise';
+import isFunction from 'lodash.isfunction';
+import isPromise from 'is-promise';
 import { useState, useEffect } from 'react';
 import compose from './util/compose';
 import { ComposeFunc, Middleware } from './types';

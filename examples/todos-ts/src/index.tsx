@@ -1,10 +1,66 @@
-import React, { useEffect } from 'react';
+import React, { Component, useEffect } from 'react';
 import ReactDOM from 'react-dom';
 import stores from './stores';
+import {TodoStore} from './stores/todos';
 
-function Todo() {
+const {withStore} = stores;
+
+interface CustomTodoStore extends TodoStore {
+  customField: string;
+}
+
+interface TodoListProps {
+  title: string;
+  store: CustomTodoStore;
+}
+
+class TodoList extends Component<TodoListProps> {
+  onRemove = (index) => {
+    const {remove} = this.props.store;
+    remove(index);
+  }
+
+  onCheck = (index) => {
+    const {toggle} = this.props.store;
+    toggle(index);
+  }
+
+  render() {
+    const {title, store} = this.props;
+    const {dataSource, customField} = store;
+    return (
+      <div>
+        <h2>{title}</h2>
+        <p>
+          {customField}
+        </p>
+        <ul>
+          {dataSource.map(({ name, done = false }, index) => (
+            <li key={index}>
+              <label>
+                <input
+                  type="checkbox"
+                  checked={done}
+                  onChange={() => this.onCheck(index)}
+                />
+                {done ? <s>{name}</s> : <span>{name}</span>}
+              </label>
+              <button type="submit" onClick={() => this.onRemove(index)}>-</button>
+            </li>
+          ))}
+        </ul>
+      </div>
+    );
+  }
+}
+
+const TodoListWithStore = withStore('todos', (store: TodoStore): {store: CustomTodoStore} => {
+  return { store: {...store, customField: '测试的字段'} };
+})(TodoList);
+
+function TodoApp() {
   const todos = stores.useStore('todos');
-  const { dataSource, refresh, add, remove, toggle } = todos;
+  const { dataSource, refresh, add } = todos;
 
   useEffect(() => {
     refresh();
@@ -15,33 +71,9 @@ function Todo() {
     console.log('Newly added todo is ', todo);
   }
 
-  function onRemove(index) {
-    remove(index);
-  }
-
-  function onCheck(index) {
-    toggle(index);
-  }
-
   const noTaskView = <span>no task</span>;
   const loadingView = <span>loading...</span>;
-  const taskView = dataSource.length ? (
-    <ul>
-      {dataSource.map(({ name, done = false }, index) => (
-        <li key={index}>
-          <label>
-            <input
-              type="checkbox"
-              checked={done}
-              onChange={() => onCheck(index)}
-            />
-            {done ? <s>{name}</s> : <span>{name}</span>}
-          </label>
-          <button type="submit" onClick={() => onRemove(index)}>-</button>
-        </li>
-      ))}
-    </ul>
-  ) : (
+  const taskView = dataSource.length ? <TodoListWithStore title="标题" /> : (
     noTaskView
   );
 
@@ -65,4 +97,4 @@ function Todo() {
 }
 
 const rootElement = document.getElementById('ice-container');
-ReactDOM.render(<Todo />, rootElement);
+ReactDOM.render(<TodoApp />, rootElement);
