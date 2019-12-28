@@ -24,9 +24,9 @@ npm install @ice/store --save
 
 `icestore` is a lightweight React state management library based on hooks. It has the following core features:
 
-* **Minimal & Familiar API**: No additional learning costs, just use React Hooks as intended.
-* **Enough & Extensible**: Meet 80% of scenarios, another 20%? Middleware mechanism can be used to meet the requirements.
-* **Class Component Support**: Friendly compatibility strategy can make the old project enjoy the fun of lightweight state management.
+* **Minimal & Familiar API**: No additional learning costs, easy to get started with the knowledge of React Hooks.
+* **Enough & Extensible**: Cover 80% most common usage scenes and extend the remaining 20% scenes with builtin middleware mechanism.
+* **Class Component Support**: Make old projects enjoying the fun of lightweight state management with friendly compatibility strategy.
 * **Built in Async Status**: Records loading and error status of async actions, simplifying the rendering logic in the view layer.
 * **Typescript Support**: Provide complete type definitions to support intelliSense in VSCode.
 * **Optimal Performance**: Decreases the number of view components that rerender when the state changes by creating multiple stores.
