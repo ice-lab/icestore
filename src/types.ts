@@ -14,7 +14,7 @@ type NonFunctionPropertyNames<T> = { [K in keyof T]: T[K] extends Function ? nev
 
 export type State<T> = Pick<T, NonFunctionPropertyNames<T>>;
 
-export type Store<W> = {
+export type Model<W> = {
   [T in keyof W]: W[T] extends Function ? W[T] & ActionProps: W[T];
 }
 

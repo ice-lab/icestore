@@ -1,6 +1,5 @@
 export * from './types';
-export * from './operater';
-export * from './manager';
+export * from './wrapper';
 
-import { StoreManager } from './manager';
-export default StoreManager;
+import createStore from './createStore';
+export default createStore;

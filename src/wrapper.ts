@@ -29,7 +29,7 @@ export function compose(middlewares: Middleware[], ctx: Ctx): Action {
   };
 }
 
-export class StoreOperater {
+export class Wrapper {
   /** Store state and actions user defined */
   private store: any = {};
 
