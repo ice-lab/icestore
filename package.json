@@ -48,7 +48,7 @@
     "react": "^16.8.0",
     "react-dom": "^16.8.0",
     "ts-jest": "^24.0.2",
-    "typescript": "^3.4.4"
+    "typescript": "^3.7.4"
   },
   "dependencies": {
     "is-promise": "^2.1.0",

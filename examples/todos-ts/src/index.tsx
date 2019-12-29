@@ -1,13 +1,12 @@
 import React, { Component, useEffect } from 'react';
 import ReactDOM from 'react-dom';
+import {Store} from '@ice/store/lib/types';
 import stores from './stores';
 import {TodoStore} from './stores/todos';
 
 const {withStore} = stores;
 
-interface CustomTodoStore extends TodoStore {
-  customField: string;
-}
+type CustomTodoStore = Store<TodoStore> & { customField: string };
 
 interface TodoListProps {
   title: string;
@@ -54,7 +53,7 @@ class TodoList extends Component<TodoListProps> {
   }
 }
 
-const TodoListWidthStore = withStore('todos', (store: TodoStore): {store: CustomTodoStore} => {
+const TodoListWithStore = withStore('todos', (store: TodoStore): {store: CustomTodoStore} => {
   return { store: {...store, customField: '测试的字段'} };
 })(TodoList);
 
@@ -73,7 +72,7 @@ function TodoApp() {
 
   const noTaskView = <span>no task</span>;
   const loadingView = <span>loading...</span>;
-  const taskView = dataSource.length ? <TodoListWidthStore title="标题" /> : (
+  const taskView = dataSource.length ? <TodoListWithStore title="标题" /> : (
     noTaskView
   );
 
