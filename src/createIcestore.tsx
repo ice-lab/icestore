@@ -1,42 +1,42 @@
 import React from 'react';
 import { Wrapper } from './wrapper';
-import { Store, State, Middleware, Optionalize } from './types';
+import { Store, State, Middleware, Optionalize, Models } from './types';
 
-export default function createIcestore<M extends object>(models: M, middlewares?: Middleware[]) {
+export default function createIcestore(models: Models, middlewares?: Middleware[]) {
   type Stores = {
-    [K in keyof M]: Store<M[K]>
+    [K in keyof Models]: Store<Models[K]>
   };
 
-  const wrappers: {[K in keyof M]?: Wrapper} = {};
+  const wrappers: {[K in keyof Models]?: Wrapper} = {};
   Object.keys(models).forEach((namespace) => {
     wrappers[namespace] = new Wrapper(namespace, models[namespace], middlewares);
   });
 
-  function getWrapper<K extends keyof M>(namespace: K): Wrapper {
+  function getWrapper<K extends keyof Models>(namespace: K): Wrapper {
     const wrapper = wrappers[namespace];
     if (!wrapper) {
       throw new Error(`Not found namespace: ${namespace}.`);
     }
     return wrapper;
   }
-  function useStore<K extends keyof M>(namespace: K): Store<M[K]> {
-    return getWrapper(namespace).useStore<Store<M[K]>>();
+  function useStore<K extends keyof Models>(namespace: K): Store<Models[K]> {
+    return getWrapper(namespace).useStore<Store<Models[K]>>();
   }
-  function useStores<K extends keyof M>(namespaces: K[]): Stores {
+  function useStores<K extends keyof Models>(namespaces: K[]): Stores {
     const result: Partial<Stores> = {};
     namespaces.forEach(namespace => {
-      result[namespace] = getWrapper(namespace).useStore<Store<M[K]>>();
+      result[namespace] = getWrapper(namespace).useStore<Store<Models[K]>>();
     });
     return result as Stores;
   }
-  function getState<K extends keyof M>(namespace: K): {[K1 in keyof State<M[K]>]?: State<M[K]>[K1]} {
-    return getWrapper(namespace).getState<State<M[K]>>();
+  function getState<K extends keyof Models>(namespace: K): {[K1 in keyof State<Models[K]>]?: State<Models[K]>[K1]} {
+    return getWrapper(namespace).getState<State<Models[K]>>();
   }
-  function withStore<K extends keyof M>(namespace: K, mapStoreToProps?: (store: Store<M[K]>) => { store: Store<M[K]>|object } ) {
+  function withStore<K extends keyof Models>(namespace: K, mapStoreToProps?: (store: Store<Models[K]>) => { store: Store<Models[K]>|object } ) {
     type StoreProps = ReturnType<typeof mapStoreToProps>;
     return <P extends StoreProps>(Component: React.ComponentClass<P>) => {
       return (props: Optionalize<P, StoreProps>): React.ReactElement => {
-        const store: Store<M[K]> = useStore(namespace);
+        const store: Store<Models[K]> = useStore(namespace);
         const storeProps: StoreProps = mapStoreToProps ? mapStoreToProps(store) : {store};
         return (
           <Component
@@ -47,7 +47,7 @@ export default function createIcestore<M extends object>(models: M, middlewares?
       };
     };
   }
-  function withStores<K extends keyof M>(namespaces: K[], mapStoresToProps?: (stores: Stores) => { stores: Stores|object }) {
+  function withStores<K extends keyof Models>(namespaces: K[], mapStoresToProps?: (stores: Stores) => { stores: Stores|object }) {
     type StoresProps = ReturnType<typeof mapStoresToProps>;
     return <P extends StoresProps>(Component: React.ComponentType<P>) => {
       return (props: Optionalize<P, StoresProps>): React.ReactElement => {
