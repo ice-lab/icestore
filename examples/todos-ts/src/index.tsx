@@ -1,12 +1,12 @@
 import React, { Component, useEffect } from 'react';
 import ReactDOM from 'react-dom';
+import {Store} from '@ice/store/lib/types';
 import stores from './stores';
 import {TodoStore} from './stores/todos';
-import {Store} from '@ice/store/lib/types';
 
 const {withStore} = stores;
 
-type CustomTodoStore = Store<TodoStore> & { customField: string; };
+type CustomTodoStore = Store<TodoStore> & { customField: string };
 
 interface TodoListProps {
   title: string;
