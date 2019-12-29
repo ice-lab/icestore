@@ -1,4 +1,5 @@
 export type Optionalize<T extends K, K> = Omit<T, keyof K>;
+export type NonFunctionPropertyNames<T> = { [K in keyof T]: T[K] extends Function ? never : K }[keyof T];
 
 export interface ActionProps {
   loading?: boolean;
@@ -10,11 +11,9 @@ export interface Action extends ActionProps {
   (): Promise<any>;
 }
 
-type NonFunctionPropertyNames<T> = { [K in keyof T]: T[K] extends Function ? never : K }[keyof T];
-
 export type State<T> = Pick<T, NonFunctionPropertyNames<T>>;
 
-export type Model<W> = {
+export type Store<W> = {
   [T in keyof W]: W[T] extends Function ? W[T] & ActionProps: W[T];
 }
 
