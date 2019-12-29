@@ -1,5 +1,5 @@
 export * from './types';
 export * from './wrapper';
 
-import createIceStore from './createIceStore';
-export default createIceStore;
+import createIcestore from './createIcestore';
+export default createIcestore;

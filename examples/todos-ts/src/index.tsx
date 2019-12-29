@@ -1,6 +1,6 @@
 import React, { Component, useEffect } from 'react';
 import ReactDOM from 'react-dom';
-import {Store} from '@ice/store/lib/types';
+import {Store} from '@ice/store';
 import stores from './stores';
 import {TodoStore} from './stores/todos';
 
