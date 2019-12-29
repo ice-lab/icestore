@@ -253,28 +253,30 @@ return (
 import React from 'react';
 import ReactDOM from 'react-dom';
 import Icestore from '@ice/store';
+import {Store} from '@ice/store/lib/types';
 
-interface Todo {
-  id: number;
-  name: string;
-}
-
-interface TodoStore {
-  dataSource: Todo[];
+// 声明 Store
+interface TodosStore {
+  dataSource: Array<{
+    id: number;
+    name: string;
+  }>;
   refresh: () => void;
   remove: (id: number) => void;
 }
 
-const todos: TodoStore = {
+const todos: TodosStore = {
   // Action 和 State 声明...
 };
 
+// 注册 Store
 const icestore = new Icestore();
 const stores = icestore.registerStores({
   todos,
 });
 
-class TodoList extends Component<{store: TodoStore}> {
+// 组件声明 Props
+class TodoList extends Component<{store: Store<TodosStore>}> {
   onRmove = (id) => {
     const {store} = this.props;
     store.remove(id);
@@ -302,6 +304,7 @@ class TodoList extends Component<{store: TodoStore}> {
   }
 }
 
+// Bind Store to Component
 const TodoListWithStore = stores.withStore('todos')(TodoList);
 ReactDOM.render(<TodoListWithStore />, document.body);
 ```
