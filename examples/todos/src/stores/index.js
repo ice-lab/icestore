@@ -7,4 +7,4 @@ if (process.env.NODE_ENV !== 'production') {
   middlewares.push(logger);
 }
 
-export default createIcestore(todos, middlewares);
+export default createIcestore({todos}, middlewares);
