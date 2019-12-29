@@ -1,12 +1,37 @@
 import isFunction from 'lodash.isfunction';
 import isPromise from 'is-promise';
 import { useState, useEffect } from 'react';
-import compose from './util/compose';
-import { ComposeFunc, Middleware } from './types';
+import { Ctx, Action, Middleware } from './types';
 
-export default class Store {
+/**
+ * Compose a middleware chain consisting of all the middlewares
+ * @param {array} middlewares - middlewares user passed
+ * @param {object} ctx - middleware context
+ * @return {function} middleware chain
+ */
+export function compose(middlewares: Middleware[], ctx: Ctx): Action {
+  return async (...args) => {
+    ctx.action.arguments = args;
+
+    function goNext(middleware, next) {
+      return async () => {
+        return await middleware(ctx, next);
+      };
+    }
+    let next = async () => {
+      Promise.resolve();
+    };
+    middlewares.slice().reverse().forEach((middleware) => {
+      next = goNext(middleware, next);
+    });
+
+    return await next();
+  };
+}
+
+export class StoreOperater {
   /** Store state and actions user defined */
-  private model: any = {};
+  private store: any = {};
 
   /** Queue of setState method from useState hook */
   private queue = [];
@@ -32,7 +57,7 @@ export default class Store {
 
     Object.keys(model).forEach((key) => {
       const value = model[key];
-      this.model[key] = isFunction(value) ? this.createAction(value, key) : value;
+      this.store[key] = isFunction(value) ? this.createAction(value, key) : value;
     });
   }
 
@@ -42,14 +67,14 @@ export default class Store {
    * @param {string} actionName - name of action function
    * @return {function} action function
    */
-  private createAction(func: () => any, actionName: string): ComposeFunc {
+  private createAction(func: () => any, actionName: string): Action {
     const actionWrapper = async (...args) => {
       wrapper.loading = true;
       wrapper.error = null;
 
       const disableLoading = wrapper.disableLoading !== undefined
         ? wrapper.disableLoading : this.disableLoading;
-      const result = func.apply(this.model, args);
+      const result = func.apply(this.store, args);
       const isAsync = isPromise(result);
       const enableLoading = isAsync && !disableLoading;
       if (enableLoading) {
@@ -94,11 +119,11 @@ export default class Store {
    * Get state from model
    * @return {object} state
    */
-  public getState = <M>(): {[K in keyof M]?: M[K]} => {
-    const { model } = this;
+  public getState <M>(): {[K in keyof M]?: M[K]} {
+    const { store } = this;
     const state: {[K in keyof M]?: M[K]} = {};
-    Object.keys(model).forEach((key) => {
-      const value = model[key];
+    Object.keys(store).forEach((key) => {
+      const value = store[key];
       if (!isFunction(value)) {
         state[key] = value;
       }
@@ -128,6 +153,6 @@ export default class Store {
         this.queue.splice(index, 1);
       };
     }, []);
-    return { ...this.model };
+    return { ...this.store };
   }
 }
