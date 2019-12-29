@@ -315,7 +315,7 @@ class TodoList extends Component<{store: Store<TodosStore>}> {
   }
 }
 
-
+// Bind Store to Component
 const TodoListWithStore = stores.withStore('todos')(TodoList);
 ReactDOM.render(<TodoListWithStore />, document.body);
 ```

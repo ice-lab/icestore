@@ -304,7 +304,7 @@ class TodoList extends Component<{store: Store<TodosStore>}> {
   }
 }
 
-// Bind Store to Component
+// 绑定 Store 到组件
 const TodoListWithStore = stores.withStore('todos')(TodoList);
 ReactDOM.render(<TodoListWithStore />, document.body);
 ```
