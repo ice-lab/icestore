@@ -28,7 +28,7 @@ npm install @ice/store --save
 * **Enough & Extensible**: Cover 80% most common usage scenes and extend the remaining 20% scenes with builtin middleware mechanism.
 * **Class Component Support**: Make old projects enjoying the fun of lightweight state management with friendly compatibility strategy.
 * **Built in Async Status**: Records loading and error status of async actions, simplifying the rendering logic in the view layer.
-* **Typescript Support**: Provide complete type definitions to support intelliSense in VSCode.
+* **TypeScript Support**: Provide complete type definitions to support intelliSense in VS Code.
 * **Optimal Performance**: Decreases the number of view components that rerender when the state changes by creating multiple stores.
 
 The data flow is as follows:  
@@ -150,7 +150,7 @@ Let's build a simple todo app from scatch using `icestore` which includes follow
 
 Complete example is presented in this [CodeSandbox](https://codesandbox.io/s/icestore-ltpuo), feel free to play with it.
 
-> icestore provides complete type definitions to support IntelliSense in VSCode. TS example is presented in this [CodeSandbox](https://codesandbox.io/s/icestore-ts-gduqw).
+> icestore provides complete type definitions to support IntelliSense in VS Code. TS example is presented in this [CodeSandbox](https://codesandbox.io/s/icestore-ts-gduqw).
 
 ## API
 
