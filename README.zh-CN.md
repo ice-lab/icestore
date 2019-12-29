@@ -28,7 +28,7 @@ $ npm install @ice/store --save
 * **够用，可扩展**：满足 80% 的场景，另外 20% ？可使用中间件机制进行满足；
 * **支持组件 Class 写法**：友好的兼容策略可以让老项目享受轻量状态管理的乐趣；
 * **集成异步处理**：记录异步操作时的执行状态，简化视图中对于等待或错误的处理逻辑；
-* **良好的 Typescript 支持**：提供完整的 Typescript 类型定义，在 VSCode 中能获得完整的类型检查和推断；
+* **良好的 TypeScript 支持**：提供完整的 TypeScript 类型定义，在 VS Code 中能获得完整的类型检查和推断；
 * **性能优化**：通过多 Store 的去中心化设计，减少单个 state 变化触发重新渲染的组件个数，从而减少不必要的渲染。
 
 `icestore` 数据流示意图如下：
@@ -140,7 +140,7 @@ $ npm install @ice/store --save
 
 完整示例请参考：[CodeSandbox](https://codesandbox.io/s/icestore-ltpuo)。
 
-> icestore 提供了完整的 Typescript 类型定义，在 VSCode 中能获得完整的类型推导的提示，示例请参考：[CodeSandbox](https://codesandbox.io/s/icestore-ts-gduqw)。
+> icestore 提供了完整的 TypeScript 类型定义，在 VS Code 中能获得完整的类型推导的提示，示例请参考：[CodeSandbox](https://codesandbox.io/s/icestore-ts-gduqw)。
 
 ## API
 
