@@ -28,7 +28,7 @@ npm install @ice/store --save
 * **Enough & Extensible**: Cover 80% most common usage scenes and extend the remaining 20% scenes with builtin middleware mechanism.
 * **Class Component Support**: Make old projects enjoying the fun of lightweight state management with friendly compatibility strategy.
 * **Built in Async Status**: Records loading and error status of async actions, simplifying the rendering logic in the view layer.
-* **Typescript Support**: Provide complete type definitions to support intelliSense in VSCode.
+* **TypeScript Support**: Provide complete type definitions to support intelliSense in VS Code.
 * **Optimal Performance**: Decreases the number of view components that rerender when the state changes by creating multiple stores.
 
 The data flow is as follows:  
@@ -150,7 +150,7 @@ Let's build a simple todo app from scatch using `icestore` which includes follow
 
 Complete example is presented in this [CodeSandbox](https://codesandbox.io/s/icestore-ltpuo), feel free to play with it.
 
-> icestore provides complete type definitions to support IntelliSense in VSCode. TS example is presented in this [CodeSandbox](https://codesandbox.io/s/icestore-ts-gduqw).
+> icestore provides complete type definitions to support IntelliSense in VS Code. TS example is presented in this [CodeSandbox](https://codesandbox.io/s/icestore-ts-gduqw).
 
 ## API
 
@@ -265,28 +265,30 @@ return (
 import React from 'react';
 import ReactDOM from 'react-dom';
 import Icestore from '@ice/store';
+import {Store} from '@ice/store/lib/types';
 
-interface Todo {
-  id: number;
-  name: string;
-}
-
-interface TodoStore {
-  dataSource: Todo[];
+// Define Store
+interface TodosStore {
+  dataSource: Array<{
+    id: number;
+    name: string;
+  }>;
   refresh: () => void;
   remove: (id: number) => void;
 }
 
-const todos: TodoStore = {
+const todos: TodosStore = {
   // Action && State 
 };
 
+// Register Store
 const icestore = new Icestore();
 const stores = icestore.registerStores({
   todos,
 });
 
-class TodoList extends Component<{store: TodoStore}> {
+//  Declaration Props for Component
+class TodoList extends Component<{store: Store<TodosStore>}> {
   onRmove = (id) => {
     const {store} = this.props;
     store.remove(id);
@@ -309,11 +311,11 @@ class TodoList extends Component<{store: TodoStore}> {
           })
         }
       </div>
-      
     );
   }
 }
 
+// Bind Store to Component
 const TodoListWithStore = stores.withStore('todos')(TodoList);
 ReactDOM.render(<TodoListWithStore />, document.body);
 ```

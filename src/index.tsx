@@ -18,7 +18,7 @@ export default class Icestore {
    * @param {object} models - multiple store's model
    * @return {object} hooks which bind the user defined model used for typescript infer
    */
-  public registerStores<M>(models: M) {
+  public registerStores<M extends object>(models: M) {
     const stores: {[K in keyof M]?: Store} = {};
 
     function getModel<K extends keyof M>(namespace: K): Store {
