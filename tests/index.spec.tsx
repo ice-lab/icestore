@@ -255,6 +255,82 @@ describe('#Icestore', () => {
         expect(renderFn).toHaveBeenCalledTimes(2);
         expect(nameValue.textContent).toEqual(newState.name);
       });
+
+    });
+
+    test('should equalityFn be ok.', async () => {
+      const initState = {
+        name: 'ice',
+      };
+      const { useStore } = icestore.registerStores({
+        'todo': {
+          dataSource: initState,
+          setData(dataSource) {
+            this.dataSource = dataSource;
+          },
+        },
+      });
+
+      let renderCount = 0;
+      const renderFn = () => renderCount++;
+
+      const Todos = ({ equalityFn }) => {
+        const todo: any = useStore('todo', equalityFn);
+        const { dataSource } = todo;
+
+        renderFn();
+
+        const changeNothing = () => todo.setData(initState);
+        const changeStateRef = () => todo.setData({ ...initState });
+
+        return <div>
+          <span data-testid="nameValue">{dataSource.name}</span>
+          <button type="button" data-testid="changeNothingBtn" onClick={changeNothing}>
+          Click me
+          </button>
+          <button type="button" data-testid="changeStateRefBtn" onClick={changeStateRef}>
+          Click me
+          </button>
+        </div>;
+      };
+
+      const { container, rerender } = render(<Todos equalityFn />);
+      const nameValue = getByTestId(container, 'nameValue');
+      const changeNothingBtn = getByTestId(container, 'changeNothingBtn');
+      const changeStateRefBtn = getByTestId(container, 'changeStateRefBtn');
+
+      expect(nameValue.textContent).toEqual(initState.name);
+      expect(renderCount).toBe(1);
+
+      fireEvent.click(changeNothingBtn);
+
+      // will not rerender
+      await wait(() => {
+        expect(nameValue.textContent).toEqual(initState.name);
+        expect(renderCount).toBe(1);
+      });
+      
+      fireEvent.click(changeStateRefBtn);
+      
+      // will rerender
+      await wait(() => {
+        expect(nameValue.textContent).toEqual(initState.name);
+        expect(renderCount).toBe(2);
+      });
+
+
+      rerender(<Todos equalityFn={(a, b) => a.name === b.name} />);
+
+      expect(nameValue.textContent).toEqual(initState.name);
+      expect(renderCount).toBe(3);
+
+      fireEvent.click(changeStateRefBtn);
+
+      // will not rerender
+      await wait(() => {
+        expect(nameValue.textContent).toEqual(initState.name);
+        expect(renderCount).toBe(3);
+      });
     });
 
     test('should useStores be ok.', () => {

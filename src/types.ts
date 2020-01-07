@@ -14,6 +14,8 @@ type NonFunctionPropertyNames<T> = { [K in keyof T]: T[K] extends Function ? nev
 
 export type State<T> = Pick<T, NonFunctionPropertyNames<T>>;
 
+export type EqualityFn<M> = boolean | ((oldState: State<M>, newState: State<M>) => boolean)
+
 export interface Ctx {
   action: {
     name: string;

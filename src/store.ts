@@ -1,8 +1,14 @@
 import isFunction from 'lodash.isfunction';
 import isPromise from 'is-promise';
+import shallowequal from 'shallowequal';
 import { useState, useEffect } from 'react';
 import compose from './util/compose';
-import { ComposeFunc, Middleware } from './types';
+import { ComposeFunc, Middleware, EqualityFn } from './types';
+
+interface SetStateWithEqualityFn {
+  oldState?: {};
+  equalityFn?: EqualityFn<any>;
+}
 
 export default class Store {
   /** Store state and actions user defined */
@@ -111,17 +117,38 @@ export default class Store {
    */
   private setState(): void {
     const state = this.getState();
-    this.queue.forEach(setState => setState(state));
+    this.queue.forEach(setState => {
+      const { oldState, equalityFn } = setState;
+
+      // use shallowequal check equality when true passed in
+      if (equalityFn === true && shallowequal(oldState, state)) {
+        return;
+      }
+
+      // use equalityFn check equality when function passed in
+      if (isFunction(equalityFn) && equalityFn(oldState, state)) {
+        return;
+      }
+
+      setState.oldState = state;
+      setState(state);
+    });
   }
 
   /**
    * Hook used to register setState and expose model
    * @return {object} model of store
    */
-  public useStore<M>(): M {
+  public useStore<M>(equalityFn?: EqualityFn<M>): M {
     const state = this.getState();
     const [, setState] = useState(state);
+
     useEffect(() => {
+      (setState as SetStateWithEqualityFn).equalityFn = equalityFn;
+    }, [equalityFn]);
+
+    useEffect(() => {
+      (setState as SetStateWithEqualityFn).oldState = state;
       this.queue.push(setState);
       return () => {
         const index = this.queue.indexOf(setState);
