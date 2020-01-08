@@ -1,3 +1,5 @@
+import { Dispatch, SetStateAction } from 'react';
+
 export interface ActionProps {
   loading?: boolean;
   error?: Error;
@@ -13,6 +15,14 @@ export type Store<W> = {
 type NonFunctionPropertyNames<T> = { [K in keyof T]: T[K] extends Function ? never : K }[keyof T];
 
 export type State<T> = Pick<T, NonFunctionPropertyNames<T>>;
+
+export type EqualityFn<M> = (preState: State<M>, newState: State<M>) => boolean
+
+export interface Queue<S> {
+  preState: S;
+  setState: Dispatch<SetStateAction<S>>;
+  equalityFn?: EqualityFn<S>;
+}
 
 export interface Ctx {
   action: {

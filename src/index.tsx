@@ -1,7 +1,8 @@
 import React from 'react';
 import Store from './store';
-import { Store as Wrapper, State, Middleware, Optionalize } from './types';
+import { Store as Wrapper, State, Middleware, Optionalize, EqualityFn } from './types';
 import warning from './util/warning';
+import shallowEqual from './util/shallowEqual';
 
 export default class Icestore {
   /** Stores registered */
@@ -35,16 +36,16 @@ export default class Icestore {
       stores[namespace] = new Store(namespace, models[namespace], middlewares);
     });
 
-    const useStore = <K extends keyof M>(namespace: K): Wrapper<M[K]> => {
-      return getModel(namespace).useStore<Wrapper<M[K]>>();
+    const useStore = <K extends keyof M>(namespace: K, equalityFn?: EqualityFn<Wrapper<M[K]>>): Wrapper<M[K]> => {
+      return getModel(namespace).useStore<Wrapper<M[K]>>(equalityFn);
     };
     type Models = {
       [K in keyof M]: Wrapper<M[K]>
     };
-    const useStores = <K extends keyof M>(namespaces: K[]): Models => {
+    const useStores = <K extends keyof M>(namespaces: K[], equalityFnArr?: EqualityFn<Wrapper<M[K]>>[]): Models => {
       const result: Partial<Models> = {};
-      namespaces.forEach(namespace => {
-        result[namespace] = getModel(namespace).useStore<Wrapper<M[K]>>();
+      namespaces.forEach((namespace, i) => {
+        result[namespace] = getModel(namespace).useStore<Wrapper<M[K]>>(equalityFnArr && equalityFnArr[i]);
       });
       return result as Models;
     };
@@ -171,4 +172,6 @@ export default class Icestore {
     return namespaces.map(namespace => this.useStore(namespace));
   };
 }
+
+export { shallowEqual };
 

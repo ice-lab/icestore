@@ -2,14 +2,14 @@ import isFunction from 'lodash.isfunction';
 import isPromise from 'is-promise';
 import { useState, useEffect } from 'react';
 import compose from './util/compose';
-import { ComposeFunc, Middleware } from './types';
+import { ComposeFunc, Middleware, EqualityFn, Queue } from './types';
 
 export default class Store {
   /** Store state and actions user defined */
   private model: any = {};
 
   /** Queue of setState method from useState hook */
-  private queue = [];
+  private queue: Queue<any>[] = [];
 
   /** Namespace of store */
   private namespace: string;
@@ -111,20 +111,36 @@ export default class Store {
    */
   private setState(): void {
     const state = this.getState();
-    this.queue.forEach(setState => setState(state));
+
+    this.queue.forEach(queueItem => {
+      const { preState, setState, equalityFn } = queueItem;
+      // update preState
+      queueItem.preState = state;
+      // use equalityFn check equality when function passed in
+      if (equalityFn && equalityFn(preState, state)) {
+        return;
+      }
+      setState(state);
+    });
   }
 
   /**
    * Hook used to register setState and expose model
    * @return {object} model of store
    */
-  public useStore<M>(): M {
+  public useStore<M>(equalityFn?: EqualityFn<M>): M {
     const state = this.getState();
     const [, setState] = useState(state);
+
     useEffect(() => {
-      this.queue.push(setState);
+      const queueItem = {
+        preState: state,
+        setState,
+        equalityFn,
+      };
+      this.queue.push(queueItem);
       return () => {
-        const index = this.queue.indexOf(setState);
+        const index = this.queue.indexOf(queueItem);
         this.queue.splice(index, 1);
       };
     }, []);

@@ -166,12 +166,14 @@ Register multiple store configs to the global icestore instance.
       - useStore {function} Hook to use a single store.
           - Parameters
              - namespace {string} store namespace
+             - equalityFn {function} optional, equality check between previous and current state
           - Return value
              - {object} single store instance
 
       - useStores {function} Hook to use multiple stores.
           - Parameters
               - namespaces {array} array of store namespaces
+              - equalityFnArr {array} array of equalityFn for namespaces
           - Return value
               - {object} object of stores' instances divided by namespace
       - withStore {function} 
@@ -513,6 +515,8 @@ The reason is that the mutation logic would be hard to trace and impossible to t
 By design, `icestore` will trigger the rerender of all the view components subscribed to the store (by using useStore) once the state of the store has changed.
 
 This means that putting more state in one store may cause more view components to rerender, affecting the overall performance of the application. As such, it is advised to categorize your state and put them in individual stores to improve performance.
+
+Of course, you can also use the second parameter of the `usestore` function, `equalityfn`, to perform equality comparison of states. Then, the component will trigger rerender only when the comparison result is not true.
 
 ### Don't overuse `icestore`
 
