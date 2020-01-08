@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { render, fireEvent, getByTestId, wait } from '@testing-library/react';
-import Icestore from '../src/index';
+import Icestore, { shallowEqual } from '../src/index';
 import Store from '../src/store';
 
 describe('#Icestore', () => {
@@ -294,7 +294,7 @@ describe('#Icestore', () => {
         </div>;
       };
 
-      const { container, rerender } = render(<Todos equalityFn />);
+      const { container, unmount } = render(<Todos equalityFn={shallowEqual} />);
       const nameValue = getByTestId(container, 'nameValue');
       const changeNothingBtn = getByTestId(container, 'changeNothingBtn');
       const changeStateRefBtn = getByTestId(container, 'changeStateRefBtn');
@@ -318,17 +318,20 @@ describe('#Icestore', () => {
         expect(renderCount).toBe(2);
       });
 
+      unmount();
 
-      rerender(<Todos equalityFn={(a, b) => a.name === b.name} />);
+      const { container: container1 } = render(<Todos equalityFn={(a, b) => a.dataSource.name === b.dataSource.name} />);
+      const nameValue1 = getByTestId(container1, 'nameValue');
+      const changeStateRefBtn1 = getByTestId(container1, 'changeStateRefBtn');
 
-      expect(nameValue.textContent).toEqual(initState.name);
+      expect(nameValue1.textContent).toEqual(initState.name);
       expect(renderCount).toBe(3);
 
-      fireEvent.click(changeStateRefBtn);
+      fireEvent.click(changeStateRefBtn1);
 
       // will not rerender
       await wait(() => {
-        expect(nameValue.textContent).toEqual(initState.name);
+        expect(nameValue1.textContent).toEqual(initState.name);
         expect(renderCount).toBe(3);
       });
     });

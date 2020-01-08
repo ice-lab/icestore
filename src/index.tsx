@@ -2,6 +2,7 @@ import React from 'react';
 import Store from './store';
 import { Store as Wrapper, State, Middleware, Optionalize, EqualityFn } from './types';
 import warning from './util/warning';
+import shallowEqual from './util/shallowEqual';
 
 export default class Icestore {
   /** Stores registered */
@@ -171,4 +172,6 @@ export default class Icestore {
     return namespaces.map(namespace => this.useStore(namespace));
   };
 }
+
+export { shallowEqual };
 

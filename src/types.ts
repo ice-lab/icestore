@@ -14,10 +14,11 @@ type NonFunctionPropertyNames<T> = { [K in keyof T]: T[K] extends Function ? nev
 
 export type State<T> = Pick<T, NonFunctionPropertyNames<T>>;
 
-export type EqualityFn<M> = boolean | ((oldState: State<M>, newState: State<M>) => boolean)
+export type EqualityFn<M> = (preState: State<M>, newState: State<M>) => boolean
 
-export interface SetStateWithEqualityFn {
-  oldState?: {};
+export interface Queue {
+  preState: any;
+  setState: React.Dispatch<React.SetStateAction<any>>;
   equalityFn?: EqualityFn<any>;
 }
 
