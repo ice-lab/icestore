@@ -16,6 +16,11 @@ export type State<T> = Pick<T, NonFunctionPropertyNames<T>>;
 
 export type EqualityFn<M> = boolean | ((oldState: State<M>, newState: State<M>) => boolean)
 
+export interface SetStateWithEqualityFn {
+  oldState?: {};
+  equalityFn?: EqualityFn<any>;
+}
+
 export interface Ctx {
   action: {
     name: string;

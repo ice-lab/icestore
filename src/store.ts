@@ -1,14 +1,9 @@
 import isFunction from 'lodash.isfunction';
 import isPromise from 'is-promise';
-import shallowequal from 'shallowequal';
 import { useState, useEffect } from 'react';
 import compose from './util/compose';
-import { ComposeFunc, Middleware, EqualityFn } from './types';
-
-interface SetStateWithEqualityFn {
-  oldState?: {};
-  equalityFn?: EqualityFn<any>;
-}
+import shallowEqual from './util/shallowEqual';
+import { ComposeFunc, Middleware, EqualityFn, SetStateWithEqualityFn } from './types';
 
 export default class Store {
   /** Store state and actions user defined */
@@ -120,8 +115,8 @@ export default class Store {
     this.queue.forEach(setState => {
       const { oldState, equalityFn } = setState;
 
-      // use shallowequal check equality when true passed in
-      if (equalityFn === true && shallowequal(oldState, state)) {
+      // use shallowEqual check equality when true passed in
+      if (equalityFn === true && shallowEqual(oldState, state)) {
         return;
       }
 
