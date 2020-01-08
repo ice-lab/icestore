@@ -9,7 +9,7 @@ export default class Store {
   private model: any = {};
 
   /** Queue of setState method from useState hook */
-  private queue: Queue[] = [];
+  private queue: Queue<any>[] = [];
 
   /** Namespace of store */
   private namespace: string;
@@ -112,17 +112,16 @@ export default class Store {
   private setState(): void {
     const state = this.getState();
 
-    this.queue.forEach(({ preState, setState, equalityFn }) => {
+    this.queue.forEach(queueItem => {
+      const { preState, setState, equalityFn } = queueItem;
+      // update preState
+      queueItem.preState = state;
       // use equalityFn check equality when function passed in
-      if (isFunction(equalityFn) && equalityFn(preState, state)) {
+      if (equalityFn && equalityFn(preState, state)) {
         return;
       }
       setState(state);
     });
-
-    // update preState
-    this.queue = this.queue
-      .map(item => ({ ...item, preState: state }));
   }
 
   /**

@@ -156,11 +156,13 @@ $ npm install @ice/store --save
       - useStore {function} 使用单个 Store 的 hook
           - 参数
              - namespace {string} Store 的命名空间
+             - equalityFn {function} 选填，前一次和当前最新的 State 相等性对比函数
           - 返回值
              - {object} Store 的配置对象
       - useStores {function} 同时使用多个 Store 的 hook
           - 参数
               - namespaces {array} 多个 Store 的命名空间数组
+              - equalityFnArr {array} 多个命名空间 State 的相等性对比函数
           - 返回值
               - {object} 多个 Store 的配置对象，以 namespace 区分
       - withStore {function} 
@@ -517,6 +519,8 @@ describe('todos', () => {
 ### 尽可能地拆分 Store
 
 从 `icestore` 的内部设计来看，当某个 Store 的 State 发生变化时，所有使用 useStore 监听 Store 变化的 View 组件都会触发重新渲染，这意味着一个 Store 中存放的 State 越多越可能触发更多的 Store 组件重新渲染。因此从性能方面考虑，建议按照功能划分将 Store 拆分成一个个独立的个体。
+
+当然，也可以使用 `useStore` 函数的第二个参数 `equalityFn` 进行 State 的相等性对比，那么仅当对比结果不为真时，组件才会重新触发渲染。
 
 ### 不要滥用 `icestore`
 
