@@ -1,6 +1,6 @@
 {
   "name": "@ice/store",
-  "version": "0.4.3",
+  "version": "0.4.4",
   "description": "Lightweight React state management library based on react hooks",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
@@ -28,7 +28,7 @@
   "scripts": {
     "build": "rm -rf lib && tsc",
     "watch": "tsc -w",
-    "prepublishOnly": "npm run lint && npm run test && npm run build",
+    "prepublishOnly": "npm run lint:nofix && npm run test && npm run build",
     "lint": "npm run lint:nofix -- --fix",
     "lint:nofix": "eslint --cache --ext .ts,.tsx ./",
     "test": "NODE_ENV=unittest jest",
@@ -53,8 +53,7 @@
   "dependencies": {
     "is-promise": "^2.1.0",
     "lodash.foreach": "^4.5.0",
-    "lodash.isfunction": "^3.0.9",
-    "lodash.isobject": "^3.0.2"
+    "lodash.isfunction": "^3.0.9"
   },
   "peerDependencies": {
     "react": "^16.8.0"
