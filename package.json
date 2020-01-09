@@ -1,6 +1,6 @@
 {
   "name": "@ice/store",
-  "version": "0.4.4",
+  "version": "0.4.5",
   "description": "Lightweight React state management library based on react hooks",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
@@ -52,7 +52,6 @@
   },
   "dependencies": {
     "is-promise": "^2.1.0",
-    "lodash.foreach": "^4.5.0",
     "lodash.isfunction": "^3.0.9"
   },
   "peerDependencies": {
