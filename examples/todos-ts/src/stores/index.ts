@@ -10,6 +10,9 @@ if (process.env.NODE_ENV !== 'production') {
   middlewares.push(logger);
 }
 
+// icestore.applyOption({
+//   disableLoading: true
+// });
 icestore.applyMiddleware(middlewares);
 
 const stores = icestore.registerStores({

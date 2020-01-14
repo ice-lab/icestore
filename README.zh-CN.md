@@ -69,10 +69,10 @@ $ npm install @ice/store --save
   ```javascript
   // src/stores/index.js
   import todos from './todos';
-  import Store from '@ice/store';
+  import Icestore from '@ice/store';
 
-  const storeManager = new Store();
-  const stores = storeManager.registerStores({
+  const icestore = new Icestore();
+  const stores = icestore.registerStores({
     todos
   });
 
@@ -210,43 +210,93 @@ $ npm install @ice/store --save
 * `action.disableLoading` - 是否关闭 Action loading 效果的开关, 如果设置为 true, 当 loading 标志位变化时，关联的 view 组件将不会重新渲染
   - Type: {boolean}
   - Default: false
-* `store.disableLoading` - 是否全局关闭所有 Action 的 loading 效果. 注意当全局与 Action 上的该标志位均设置时，action 上标志位优先级高
-  - Type: {boolean}
-  - Default: false
 
 #### 示例
 
+```jsx
+function Foo() {
+  const todos = stores.useStore('todos');
+  const { refresh, dataSource } = todos;
+
+  useEffect(() => {
+    refresh();
+  }, []);
+
+  const loadingView = (
+    <div>
+      loading.......
+    </div>
+  );
+
+  const taskView = !refresh.error ? (
+    <ul>
+    {dataSource.map(({ name }) => (
+      <li>{name}</li>
+    ))}
+    </ul>
+  ) : (
+    <div>
+      {refresh.error.message}
+    </div>
+  );
+
+  return (
+    <div>
+      {!refresh.loading ? taskView : loadingView}
+    </div>
+  );
+}
+```
+
+#### 禁用异步状态
+
+如果您不需要异步状态，可以禁用以减少重绘次数。
+
+禁用单个 Action 的异步状态：
+
+```jsx
+function Foo() {
+  const todos = stores.useStore('todos');
+  const { refresh, dataSource } = todos;
+  refresh.disableLoading = true;
+
+  useEffect(() => {
+    refresh();
+  }, []);
+
+  return (
+    <div>
+      <ul>
+        {dataSource.map(({ name }) => (
+          <li>{name}</li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+```
+
+禁用 Store 的异步状态：
+
 ```javascript
-const todos = store.useStore('todos');
-const { refresh, dataSource } = todos;
+import Icestore from '@ice/store';
+import todos from './store/todos';
+import foo from './store/foo';
 
-useEffect(() => {
-  refresh();
-}, []);
+const icestore = new Icestore();
 
-const loadingView = (
-  <div>
-    loading.......
-  </div>
-);
+// 禁用所有 Store 的异步状态
+icestore.applyOption({
+  disableLoading: true
+});
 
-const taskView = !refresh.error ? (
-  <ul>
-   {dataSource.map(({ name }) => (
-     <li>{name}</li>
-   ))}
-  </ul>
-) : (
-  <div>
-    {refresh.error.message}
-  </div>
-);
+// 禁用单个 Store 的异步状态
+icestore.applyOption({ disableLoading: true }, 'todos');
 
-return (
-  <div>
-    {!refresh.loading ? taskView : loadingView}
-  <Loading />
-);
+icestore.registerStores({
+  todos,
+  foo
+});
 ```
 
 ### 在 Class 组件中使用
@@ -272,7 +322,7 @@ const todos: TodosStore = {
 };
 
 // 注册 Store
-const icestore = new Icestore();
+const icestore = new cz();
 const stores = icestore.registerStores({
   todos,
 });
@@ -391,16 +441,16 @@ const {
 
 	```javascript
 	import Icestore from '@ice/store';
-	const stores = new Icestore();
-	stores.applyMiddleware([a, b]);
+	const icestore = new Icestore();
+	icestore.applyMiddleware([a, b]);
 	```
 2. 指定 Store 注册 middleware  
   Store 上最终注册的 middleware 将与全局注册 middleware 做合并
 
 	```javascript
-	stores.applyMiddleware([a, b]); 
-	stores.applyMiddleware([c, d], 'foo'); // store foo 中间件为 [a, b, c, d]
-	stores.applyMiddleware([d, c], 'bar'); // store bar 中间件为 [a, b, d, c]
+	icestore.applyMiddleware([a, b]); 
+	icestore.applyMiddleware([c, d], 'foo'); // store foo 中间件为 [a, b, c, d]
+	icestore.applyMiddleware([d, c], 'bar'); // store bar 中间件为 [a, b, d, c]
 	```
 
 ## 调试
@@ -440,7 +490,6 @@ icestore.registerStore('todos', todos);
 * Added / Deleted / Updated: State 变化的 diff
 * Old State: 更新前的 State
 * New State: 更新后的 State
-
 
 ## 测试
 
