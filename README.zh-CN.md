@@ -322,7 +322,7 @@ const todos: TodosStore = {
 };
 
 // 注册 Store
-const icestore = new cz();
+const icestore = new Icestore();
 const stores = icestore.registerStores({
   todos,
 });
