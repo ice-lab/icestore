@@ -8,7 +8,7 @@ export interface ActionProps {
 
 export type Optionalize<T extends K, K> = Omit<T, keyof K>;
 
-export interface StoreOption {
+export interface StoreOptions {
   disableLoading?: boolean;
 }
 

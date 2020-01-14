@@ -286,12 +286,12 @@ import foo from './store/foo';
 const icestore = new Icestore();
 
 // 禁用所有 Store 的异步状态
-icestore.applyOption({
+icestore.applyOptions({
   disableLoading: true
 });
 
-// 禁用单个 Store 的异步状态
-icestore.applyOption({ disableLoading: true }, 'todos');
+// 或者禁用单个 Store 的异步状态
+icestore.applyOptions({ disableLoading: true }, 'todos');
 
 icestore.registerStores({
   todos,

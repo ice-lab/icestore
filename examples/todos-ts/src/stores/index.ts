@@ -10,7 +10,7 @@ if (process.env.NODE_ENV !== 'production') {
   middlewares.push(logger);
 }
 
-// icestore.applyOption({
+// icestore.applyOptions({
 //   disableLoading: true
 // });
 icestore.applyMiddleware(middlewares);

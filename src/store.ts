@@ -2,7 +2,7 @@ import isFunction from 'lodash.isfunction';
 import isPromise from 'is-promise';
 import { useState, useEffect } from 'react';
 import compose from './util/compose';
-import { ComposeFunc, Middleware, EqualityFn, Queue, StoreOption } from './types';
+import { ComposeFunc, Middleware, EqualityFn, Queue, StoreOptions } from './types';
 
 export default class Store {
   /** Store state and actions user defined */
@@ -26,7 +26,7 @@ export default class Store {
    * @param {object} model - object of state and actions used to init store
    * @param {array} middlewares - middlewares queue of store
    */
-  public constructor(namespace: string, model: object, middlewares: Middleware [], options?: StoreOption) {
+  public constructor(namespace: string, model: object, middlewares: Middleware [], options?: StoreOptions) {
     this.namespace = namespace;
     this.middlewares = middlewares;
     if (options) {

@@ -288,7 +288,7 @@ function Foo() {
 }
 ```
 
-Disable asyn state of store:
+Disable async state of store:
 
 ```javascript
 import Icestore from '@ice/store';
@@ -298,12 +298,12 @@ import foo from './store/foo';
 const icestore = new Icestore();
 
 // disable all stores
-icestore.applyOption({
+icestore.applyOptions({
   disableLoading: true
 });
 
-// disable single store
-icestore.applyOption({ disableLoading: true }, 'todos');
+// or disable single store
+icestore.applyOptions({ disableLoading: true }, 'todos');
 
 icestore.registerStores({
   todos,
