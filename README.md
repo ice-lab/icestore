@@ -65,10 +65,10 @@ Let's build a simple todo app from scatch using `icestore` which includes follow
   ```javascript
   // src/stores/index.js
   import todos from './todos';
-  import Store from '@ice/store';
+  import Icestore from '@ice/store';
 
-  const storeManager = new Store();
-  const stores = storeManager.registerStores({
+  const icestore = new Icestore();
+  const stores = icestore.registerStores({
     todos
   });
 
@@ -222,43 +222,93 @@ otherwise apply middleware the store by namespace.
 * `action.disableLoading` - flag to disable the loading effect of the action. If this is set to true, relevant view components would not rerender when their loading status changes
   - Type: {boolean}
   - Default: false
-* `store.disableLoading` - flag to disable the loading effect at global level. An action's disableLoading flag will always take priority when both values are set.
-  - Type: {boolean}
-  - Default: false
 
 #### Example
 
 ```javascript
-const todos = store.useStore('todos');
-const { refresh, dataSource } = todos;
+function Foo() {
+  const todos = stores.useStore('todos');
+  const { refresh, dataSource } = todos;
 
-useEffect(() => {
-  refresh();
-}, []);
+  useEffect(() => {
+    refresh();
+  }, []);
 
-const loadingView = (
-  <div>
-    loading.......
-  </div>
-);
+  const loadingView = (
+    <div>
+      loading.......
+    </div>
+  );
 
-const taskView = !refresh.error ? (
-  <ul>
-   {dataSource.map(({ name }) => (
-     <li>{name}</li>
-   ))}
-  </ul>
-) : (
-  <div>
-    {refresh.error.message}
-  </div>
-);
+  const taskView = !refresh.error ? (
+    <ul>
+    {dataSource.map(({ name }) => (
+      <li>{name}</li>
+    ))}
+    </ul>
+  ) : (
+    <div>
+      {refresh.error.message}
+    </div>
+  );
 
-return (
-  <div>
-    {!refresh.loading ? taskView : loadingView}
-  <Loading />
-);
+  return (
+    <div>
+      {!refresh.loading ? taskView : loadingView}
+    </div>
+  );
+}
+```
+
+#### Disable async state
+
+If you do not need async state, you can disable to reduce render.
+
+Disable async state of a single action:
+
+```jsx
+function Foo() {
+  const todos = stores.useStore('todos');
+  const { refresh, dataSource } = todos;
+  refresh.disableLoading = true;
+
+  useEffect(() => {
+    refresh();
+  }, []);
+
+  return (
+    <div>
+      <ul>
+        {dataSource.map(({ name }) => (
+          <li>{name}</li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+```
+
+Disable async state of store:
+
+```javascript
+import Icestore from '@ice/store';
+import todos from './store/todos';
+import foo from './store/foo';
+
+const icestore = new Icestore();
+
+// disable all stores
+icestore.applyOptions({
+  disableLoading: true
+});
+
+// or disable single store
+icestore.applyOptions({ disableLoading: true }, 'todos');
+
+icestore.registerStores({
+  todos,
+  foo
+});
 ```
 
 ### Class Component Support
@@ -397,15 +447,15 @@ Due the multiple store design of `icestore`, it supports registering middlewares
 
 	```javascript
 	import Icestore from '@ice/store';
-	const stores = new Icestore();
-	stores.applyMiddleware([a, b]);
+	const icestore = new Icestore();
+	icestore.applyMiddleware([a, b]);
 	```
 2. Registration by namespace: The ultimate middleware queue of single store will merge global middlewares with its own middlewares.
 
 	```javascript
-	stores.applyMiddleware([a, b]); 
-	stores.applyMiddleware([c, d], 'foo'); // store foo middleware is [a, b, c, d]
-	stores.applyMiddleware([d, c], 'bar'); // store bar middleware is [a, b, d, c]
+	icestore.applyMiddleware([a, b]); 
+	icestore.applyMiddleware([c, d], 'foo'); // store foo middleware is [a, b, c, d]
+	icestore.applyMiddleware([d, c], 'bar'); // store bar middleware is [a, b, d, c]
 	```
 
 ## Debug

@@ -1,6 +1,6 @@
 import React from 'react';
 import Store from './store';
-import { Store as Wrapper, State, Middleware, Optionalize, EqualityFn } from './types';
+import { Store as Wrapper, State, Middleware, Optionalize, EqualityFn, StoreOptions } from './types';
 import warning from './util/warning';
 import shallowEqual from './util/shallowEqual';
 
@@ -13,6 +13,12 @@ export default class Icestore {
 
   /** middleware applied to single store */
   private middlewareMap: {[namespace: string]: Middleware[]} = {};
+
+  /** Global options applied to all stores */
+  private globalOptions: StoreOptions = {};
+
+  /** options applied to single store */
+  private optionsMap: {[namespace: string]: StoreOptions} = {};
 
   /**
    * Register multiple stores
@@ -31,9 +37,9 @@ export default class Icestore {
     }
 
     Object.keys(models).forEach((namespace) => {
-      const storeMiddlewares = this.middlewareMap[namespace] || [];
-      const middlewares = this.globalMiddlewares.concat(storeMiddlewares);
-      stores[namespace] = new Store(namespace, models[namespace], middlewares);
+      const middlewares = this.getMiddlewares(namespace);
+      const options = this.getOption(namespace);
+      stores[namespace] = new Store(namespace, models[namespace], middlewares, options);
     });
 
     const useStore = <K extends keyof M>(namespace: K, equalityFn?: EqualityFn<Wrapper<M[K]>>): Wrapper<M[K]> => {
@@ -95,6 +101,16 @@ export default class Icestore {
   }
 
   /**
+   *  Get middlewares
+   * @param namespace - unique name of store
+   */
+  private getMiddlewares(namespace?: string): Middleware[] {
+    const storeMiddlewares = this.middlewareMap[namespace] || [];
+    const middlewares = this.globalMiddlewares.concat(storeMiddlewares);
+    return middlewares;
+  }
+
+  /**
    * Apply middleware to stores
    * @param {array} middlewares - middlewares queue of store
    * @param {string} namespace - unique name of store
@@ -104,6 +120,31 @@ export default class Icestore {
       this.middlewareMap[namespace] = middlewares;
     } else {
       this.globalMiddlewares = middlewares;
+    }
+  }
+
+  /**
+   * Get options for store
+   * @param namespace - unique name of store
+   */
+  private getOption(namespace?: string): StoreOptions {
+    const storeOption = this.optionsMap[namespace] || {};
+    return {
+      ...this.globalOptions,
+      ...storeOption,
+    };
+  }
+
+  /**
+   * Apply options to stores
+   * @param {array} options - options of store
+   * @param {string} namespace - unique name of store
+   */
+  public applyOptions(options: StoreOptions, namespace?: string) {
+    if (namespace !== undefined) {
+      this.optionsMap[namespace] = options;
+    } else {
+      this.globalOptions = options;
     }
   }
 
@@ -133,9 +174,9 @@ export default class Icestore {
     if (this.stores[namespace]) {
       throw new Error(`Namespace have been used: ${namespace}.`);
     }
-    const storeMiddlewares = this.middlewareMap[namespace] || [];
-    const middlewares = this.globalMiddlewares.concat(storeMiddlewares);
-    this.stores[namespace] = new Store(namespace, model, middlewares);
+    const middlewares = this.getMiddlewares(namespace);
+    const options = this.getOption(namespace);
+    this.stores[namespace] = new Store(namespace, model, middlewares, options);
     return this.stores[namespace];
   }
 

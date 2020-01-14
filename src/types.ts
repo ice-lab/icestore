@@ -8,6 +8,10 @@ export interface ActionProps {
 
 export type Optionalize<T extends K, K> = Omit<T, keyof K>;
 
+export interface StoreOptions {
+  disableLoading?: boolean;
+}
+
 export type Store<W> = {
   [T in keyof W]: W[T] extends Function ? W[T] & ActionProps: W[T];
 }
