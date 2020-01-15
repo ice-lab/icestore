@@ -35,8 +35,9 @@ export default class Store {
 
     Object.keys(model).forEach((key) => {
       const value = model[key];
-      this.model[key] = isFunction(value) ? this.createAction(value, key) : value;
+      model[key] = isFunction(value) ? this.createAction(value, key) : value;
     });
+    this.model = model;
   }
 
   /**

@@ -95,5 +95,34 @@ function TodoApp() {
   );
 }
 
+function UserApp() {
+  const user = stores.useStore('user');
+  const { dataSource, auth, login, todos } = user;
+  const { name, age } = dataSource;
+
+  useEffect(() => {
+    login();
+  }, []);
+
+  return (
+    auth ? <div>
+      <div>名称：{name}</div>
+      <div>年龄：{age}</div>
+      <div>持有任务：{todos || 0}</div>
+    </div> : <div>
+      未登录
+    </div>
+  );
+}
+
+function App() {
+  return (
+    <div>
+      <TodoApp />
+      <UserApp />
+    </div>
+  );
+}
+
 const rootElement = document.getElementById('ice-container');
-ReactDOM.render(<TodoApp />, rootElement);
+ReactDOM.render(<App />, rootElement);
