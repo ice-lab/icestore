@@ -27,6 +27,10 @@ class TodoList extends Component<TodoListProps> {
   render() {
     const {title, store} = this.props;
     const {dataSource, customField} = store;
+    const { remove: {loading} } = store;
+
+    console.log('remove loading:', loading);
+
     return (
       <div>
         <h2>{title}</h2>
