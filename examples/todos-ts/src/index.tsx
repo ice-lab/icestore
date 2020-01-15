@@ -80,18 +80,24 @@ function TodoApp() {
     <div>
       <h2>Todos</h2>
       {!refresh.loading ? taskView : loadingView}
-      <div>
-        <input
-          onKeyDown={(event) => {
-            if (event.keyCode === 13) {
-              onAdd(event.currentTarget.value);
-              event.currentTarget.value = '';
-            }
-          }}
-          placeholder="Press Enter"
-        />
-      </div>
     </div>
+  );
+}
+
+function AddTodo() {
+  console.log('input rending...');
+  return (
+    <input
+      onKeyDown={(event) => {
+        if (event.keyCode === 13) {
+          stores.getStore('todos').add({
+            name: event.currentTarget.value
+          });
+          event.currentTarget.value = '';
+        }
+      }}
+      placeholder="Press Enter"
+    />
   );
 }
 
@@ -119,6 +125,7 @@ function App() {
   return (
     <div>
       <TodoApp />
+      <AddTodo />
       <UserApp />
     </div>
   );

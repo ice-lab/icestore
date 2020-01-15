@@ -111,6 +111,14 @@ export default class Store {
   }
 
   /**
+   * Get model
+   * @return {object} state
+   */
+  public getModel = <M>(): M => {
+    return this.model;
+  }
+
+  /**
    * Trigger setState method in queue
    */
   private setState(): void {
