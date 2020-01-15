@@ -91,7 +91,7 @@ function AddTodo() {
       onKeyDown={(event) => {
         if (event.keyCode === 13) {
           stores.getStore('todos').add({
-            name: event.currentTarget.value
+            name: event.currentTarget.value,
           });
           event.currentTarget.value = '';
         }

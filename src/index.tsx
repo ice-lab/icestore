@@ -102,7 +102,7 @@ export default class Icestore {
       getState,
       withStore,
       withStores,
-      getStore: getModel
+      getStore: getModel,
     };
   }
 

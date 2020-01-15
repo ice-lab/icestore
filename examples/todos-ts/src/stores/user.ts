@@ -29,7 +29,7 @@ const store: UserStore = {
   },
   setTodos(todos: number) {
     this.todos = todos;
-  }
+  },
 };
 
 export default store;
