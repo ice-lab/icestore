@@ -38,7 +38,12 @@ const store: TodoStore = {
     this.dataSource.push(todo);
     user.setTodos(this.dataSource.length);
   },
-  remove(index) {
+  async remove(index) {
+    await new Promise(resolve =>
+      setTimeout(() => {
+        resolve();
+      }, 1000),
+    )
     this.dataSource.splice(index, 1);
     user.setTodos(this.dataSource.length);
   },

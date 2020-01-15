@@ -44,7 +44,9 @@ class TodoList extends Component<TodoListProps> {
                 />
                 {done ? <s>{name}</s> : <span>{name}</span>}
               </label>
-              <button type="submit" onClick={() => this.onRemove(index)}>-</button>
+              {
+                store.remove.loading ? ' 删除中...' : <button type="submit" onClick={() => this.onRemove(index)}>-</button>
+              }
             </li>
           ))}
         </ul>
@@ -65,10 +67,10 @@ function TodoApp() {
     refresh();
   }, []);
 
-  async function onAdd(name) {
-    const todo = await add({ name });
-    console.log('Newly added todo is ', todo);
-  }
+  // async function onAdd(name) {
+  //   const todo = await add({ name });
+  //   console.log('Newly added todo is ', todo);
+  // }
 
   const noTaskView = <span>no task</span>;
   const loadingView = <span>loading...</span>;
