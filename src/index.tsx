@@ -28,7 +28,7 @@ export default class Icestore {
   public registerStores<M extends object>(models: M) {
     const stores: {[K in keyof M]?: Store} = {};
 
-    function getModel<K extends keyof M>(namespace: K): Store {
+    function getStore<K extends keyof M>(namespace: K): Store {
       const store = stores[namespace];
       if (!store) {
         throw new Error(`Not found namespace: ${namespace}.`);
@@ -42,8 +42,13 @@ export default class Icestore {
       stores[namespace] = new Store(namespace, models[namespace], middlewares, options);
     });
 
+    function getModel<K extends keyof M>(namespace: K) {
+      const store = getStore(namespace);
+      return store.getModel<Wrapper<M[K]>>();
+    }
+
     const useStore = <K extends keyof M>(namespace: K, equalityFn?: EqualityFn<Wrapper<M[K]>>): Wrapper<M[K]> => {
-      return getModel(namespace).useStore<Wrapper<M[K]>>(equalityFn);
+      return getStore(namespace).useStore<Wrapper<M[K]>>(equalityFn);
     };
     type Models = {
       [K in keyof M]: Wrapper<M[K]>
@@ -51,12 +56,12 @@ export default class Icestore {
     const useStores = <K extends keyof M>(namespaces: K[], equalityFnArr?: EqualityFn<Wrapper<M[K]>>[]): Models => {
       const result: Partial<Models> = {};
       namespaces.forEach((namespace, i) => {
-        result[namespace] = getModel(namespace).useStore<Wrapper<M[K]>>(equalityFnArr && equalityFnArr[i]);
+        result[namespace] = getStore(namespace).useStore<Wrapper<M[K]>>(equalityFnArr && equalityFnArr[i]);
       });
       return result as Models;
     };
     const getState = <K extends keyof M>(namespace: K): {[K1 in keyof State<M[K]>]?: State<M[K]>[K1]} => {
-      return getModel(namespace).getState<State<M[K]>>();
+      return getStore(namespace).getState<State<M[K]>>();
     };
 
     function withStore<K extends keyof M>(namespace: K, mapStoreToProps?: (store: Wrapper<M[K]>) => { store: Wrapper<M[K]>|object } ) {
@@ -97,6 +102,7 @@ export default class Icestore {
       getState,
       withStore,
       withStores,
+      getStore: getModel,
     };
   }
 
@@ -154,7 +160,7 @@ export default class Icestore {
    * @param {string} namespace - unique name of store
    * @return {object} store instance
    */
-  private getModel(namespace: string) {
+  private getStore(namespace: string) {
     const store = this.stores[namespace];
     if (!store) {
       throw new Error(`Not found namespace: ${namespace}.`);
@@ -188,7 +194,7 @@ export default class Icestore {
    */
   public getState(namespace: string) {
     warning('Warning: Get state via getState API is deprecated and about to be removed in future version. Use registerStores API to register stores and use getState from its return value instead. Refer to https://github.com/ice-lab/icestore#getting-started for example.');
-    return this.getModel(namespace).getState();
+    return this.getStore(namespace).getState();
   }
 
   /**
@@ -199,7 +205,7 @@ export default class Icestore {
    */
   public useStore(namespace: string) {
     warning('Warning: Use store via useStore API is deprecated and about to be removed in future version. Please use registerStores API to register stores and use useStore from its return value instead. Refer to https://github.com/ice-lab/icestore#getting-started for example.');
-    return this.getModel(namespace).useStore();
+    return this.getStore(namespace).useStore();
   }
 
   /**

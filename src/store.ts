@@ -35,8 +35,9 @@ export default class Store {
 
     Object.keys(model).forEach((key) => {
       const value = model[key];
-      this.model[key] = isFunction(value) ? this.createAction(value, key) : value;
+      model[key] = isFunction(value) ? this.createAction(value, key) : value;
     });
+    this.model = model;
   }
 
   /**
@@ -107,6 +108,14 @@ export default class Store {
       }
     });
     return state;
+  }
+
+  /**
+   * Get model
+   * @return {object} state
+   */
+  public getModel = <M>(): M => {
+    return this.model;
   }
 
   /**
