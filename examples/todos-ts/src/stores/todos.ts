@@ -43,7 +43,7 @@ const store: TodoStore = {
       setTimeout(() => {
         resolve();
       }, 1000),
-    )
+    );
     this.dataSource.splice(index, 1);
     user.setTodos(this.dataSource.length);
   },
