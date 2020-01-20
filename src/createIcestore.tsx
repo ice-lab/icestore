@@ -7,16 +7,51 @@ interface Config {
   middlewares?: Middleware[];
 }
 
+interface ModelConfig extends Config {
+  model: object;
+}
+
+interface ModelsConfig {
+  [namespace: string]: ModelConfig;
+}
+
 function createIcestore(models: Models, config?: Config);
+function createIcestore(models: ModelsConfig, config?: Config);
 function createIcestore(models, config) {
-  const { middlewares, options } = config || {};
+  let { middlewares = [], options = {} } = config || {};
+
+  const middlewareMap: {[namespace: string]: Middleware[]} = {};
+  const optionsMap: {[namespace: string]: StoreOptions} = {};
+  Object.keys(models).forEach((namespace) => {
+    const modelConfig = models[namespace];
+    const { model, options: storeOption, middlewares: storeMiddlewares }  = modelConfig;
+    if (model && (storeOption || Array.isArray(middlewares))) {
+      optionsMap[namespace] = storeOption;
+      middlewareMap[namespace] = middlewares;
+      models[namespace] = model;
+    }
+  });
+
   type Stores = {
     [K in keyof Models]: Store<Models[K]>
   };
+  function getMiddlewares(namespace?: string): Middleware[] {
+    const storeMiddlewares = middlewareMap[namespace] || [];
+    return middlewares.concat(storeMiddlewares);
+  }
+  function getOption(namespace?: string): StoreOptions {
+    const storeOption = optionsMap[namespace] || {};
+    return {
+      ...options,
+      ...storeOption,
+    };
+  }
 
   const wrappers: {[K in keyof Models]?: Wrapper} = {};
   Object.keys(models).forEach((namespace) => {
-    wrappers[namespace] = new Wrapper(namespace, models[namespace], middlewares, options);
+    const storeMiddlewares = getMiddlewares(namespace);
+    const storeOption = getOption(namespace);
+    wrappers[namespace] = new Wrapper(namespace, models[namespace], storeMiddlewares, storeOption);
   });
   function getWrapper<K extends keyof Models>(namespace: K): Wrapper {
     const wrapper = wrappers[namespace];
