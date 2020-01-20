@@ -206,7 +206,7 @@ $ npm install @ice/store --save
 
 #### 示例
 
-假设您有一个 User 的 Store，里面记录了用户的任务数；还有一个 Tasks 的 Store，里面记录了系统的任务列表。每当用户添加了一个任务后，其任务数信息就会变更。
+假设您有一个 User 的 Store，里面记录了用户的任务数。还有一个 Tasks 的 Store，里面记录了系统的任务列表。每当用户添加了一个任务后，用户的任务数信息就会更新。
 
 ```tsx
 // src/store/user
