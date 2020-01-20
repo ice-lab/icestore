@@ -27,7 +27,7 @@ function createIcestore(models, config) {
     const { model, options: storeOption, middlewares: storeMiddlewares }  = modelConfig;
     if (model && (storeOption || Array.isArray(middlewares))) {
       optionsMap[namespace] = storeOption;
-      middlewareMap[namespace] = middlewares;
+      middlewareMap[namespace] = storeMiddlewares;
       models[namespace] = model;
     }
   });
