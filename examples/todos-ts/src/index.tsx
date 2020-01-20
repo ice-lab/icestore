@@ -27,6 +27,10 @@ class TodoList extends Component<TodoListProps> {
   render() {
     const {title, store} = this.props;
     const {dataSource, customField} = store;
+    const { remove: {loading} } = store;
+
+    console.log('remove loading:', loading);
+
     return (
       <div>
         <h2>{title}</h2>
@@ -44,7 +48,9 @@ class TodoList extends Component<TodoListProps> {
                 />
                 {done ? <s>{name}</s> : <span>{name}</span>}
               </label>
-              <button type="submit" onClick={() => this.onRemove(index)}>-</button>
+              {
+                store.remove.loading ? ' 删除中...' : <button type="submit" onClick={() => this.onRemove(index)}>-</button>
+              }
             </li>
           ))}
         </ul>
@@ -65,10 +71,10 @@ function TodoApp() {
     refresh();
   }, []);
 
-  async function onAdd(name) {
-    const todo = await add({ name });
-    console.log('Newly added todo is ', todo);
-  }
+  // async function onAdd(name) {
+  //   const todo = await add({ name });
+  //   console.log('Newly added todo is ', todo);
+  // }
 
   const noTaskView = <span>no task</span>;
   const loadingView = <span>loading...</span>;
@@ -80,20 +86,56 @@ function TodoApp() {
     <div>
       <h2>Todos</h2>
       {!refresh.loading ? taskView : loadingView}
-      <div>
-        <input
-          onKeyDown={(event) => {
-            if (event.keyCode === 13) {
-              onAdd(event.currentTarget.value);
-              event.currentTarget.value = '';
-            }
-          }}
-          placeholder="Press Enter"
-        />
-      </div>
+    </div>
+  );
+}
+
+function AddTodo() {
+  console.log('input rending...');
+  return (
+    <input
+      onKeyDown={(event) => {
+        if (event.keyCode === 13) {
+          stores.getStore('todos').add({
+            name: event.currentTarget.value,
+          });
+          event.currentTarget.value = '';
+        }
+      }}
+      placeholder="Press Enter"
+    />
+  );
+}
+
+function UserApp() {
+  const user = stores.useStore('user');
+  const { dataSource, auth, login, todos } = user;
+  const { name, age } = dataSource;
+
+  useEffect(() => {
+    login();
+  }, []);
+
+  return (
+    auth ? <div>
+      <div>名称：{name}</div>
+      <div>年龄：{age}</div>
+      <div>持有任务：{todos || 0}</div>
+    </div> : <div>
+      未登录
+    </div>
+  );
+}
+
+function App() {
+  return (
+    <div>
+      <TodoApp />
+      <AddTodo />
+      <UserApp />
     </div>
   );
 }
 
 const rootElement = document.getElementById('ice-container');
-ReactDOM.render(<TodoApp />, rootElement);
+ReactDOM.render(<App />, rootElement);

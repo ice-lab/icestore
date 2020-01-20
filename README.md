@@ -65,10 +65,10 @@ Let's build a simple todo app from scatch using `icestore` which includes follow
   ```javascript
   // src/stores/index.js
   import todos from './todos';
-  import Store from '@ice/store';
+  import Icestore from '@ice/store';
 
-  const storeManager = new Store();
-  const stores = storeManager.registerStores({
+  const icestore = new Icestore();
+  const stores = icestore.registerStores({
     todos
   });
 
@@ -166,12 +166,14 @@ Register multiple store configs to the global icestore instance.
       - useStore {function} Hook to use a single store.
           - Parameters
              - namespace {string} store namespace
+             - equalityFn {function} optional, equality check between previous and current state
           - Return value
              - {object} single store instance
 
       - useStores {function} Hook to use multiple stores.
           - Parameters
               - namespaces {array} array of store namespaces
+              - equalityFnArr {array} array of equalityFn for namespaces
           - Return value
               - {object} object of stores' instances divided by namespace
       - withStore {function} 
@@ -186,6 +188,11 @@ Register multiple store configs to the global icestore instance.
               - mapStoresToProps {function} optional, mapping store to props
           - Return value
               - HOC
+      - getStore {function} Get the store by namespace.
+          - Parameters
+              - namespace {string} store namespace
+          - Return value
+              - {object} store
       - getState {function} Get the latest state of individual store by namespace.
           - Parameters
               - namespace {string} store namespace
@@ -203,9 +210,75 @@ otherwise apply middleware the store by namespace.
 * Return value
   - void
 
-## Advanced use
+## Advanced Use
 
-### async actions' executing status
+### Chain react of State
+
+The chain react is a common requirement, you can implement it by calling other Store in Store.
+
+#### Example
+
+Suppose you have a User Store, which records the number of tasks of the user. And a Tasks Store, which records the task list of the system. Every time a user adds a task, user's task number needs to be updated.
+
+```tsx
+// src/store/user
+export interface User {
+  name: string;
+  tasks: number;
+}
+export const user: User = {
+  dataSource: {
+    name: '',
+    tasks: 0,
+  },
+  async refresh() {
+    this.dataSource = await fetch('/user');
+  },
+};
+
+// src/store/tasks
+import { user }  from './user';
+
+export interface Task {
+  title: string;
+  done?: boolean;
+}
+export const tasks = {
+  dataSource: [],
+  async refresh() {
+    this.dataSource = await fetch('/tasks');
+  },
+  async add(task: Task) {
+    this.dataSource = await fetch('/tasks/add', task);
+
+    // Retrieve user information after adding tasks
+    await user.refresh();
+  },
+};
+
+// src/store/index
+import Icestore from '@ice/store';
+import { task } from './task';
+import { user } from './user';
+
+const icestore = new Icestore();
+const stores = icestore.registerStores({
+  task,
+  user,
+});
+
+export default stores;
+```
+
+#### Pay attention to circular calling
+
+Please pay attention to circular calling when call each other between Stores. 
+
+For example, the a method in Store A calls the b method in Store B, and the b method in Store B calls the a method in Store A, which will form a dead cycle.
+
+If multiple stores call each other, the occurrence probability of the dead cycle problem will increase.
+
+### Async actions' executing status
 
 `icestore` has built-in support to access the executing status of async actions. This enables users to have access to the loading and error executing status of async actions without defining extra state, making the code more consise and clean.
 
@@ -220,43 +293,93 @@ otherwise apply middleware the store by namespace.
 * `action.disableLoading` - flag to disable the loading effect of the action. If this is set to true, relevant view components would not rerender when their loading status changes
   - Type: {boolean}
   - Default: false
-* `store.disableLoading` - flag to disable the loading effect at global level. An action's disableLoading flag will always take priority when both values are set.
-  - Type: {boolean}
-  - Default: false
 
 #### Example
 
 ```javascript
-const todos = store.useStore('todos');
-const { refresh, dataSource } = todos;
+function Foo() {
+  const todos = stores.useStore('todos');
+  const { refresh, dataSource } = todos;
 
-useEffect(() => {
-  refresh();
-}, []);
+  useEffect(() => {
+    refresh();
+  }, []);
 
-const loadingView = (
-  <div>
-    loading.......
-  </div>
-);
+  const loadingView = (
+    <div>
+      loading.......
+    </div>
+  );
 
-const taskView = !refresh.error ? (
-  <ul>
-   {dataSource.map(({ name }) => (
-     <li>{name}</li>
-   ))}
-  </ul>
-) : (
-  <div>
-    {refresh.error.message}
-  </div>
-);
+  const taskView = !refresh.error ? (
+    <ul>
+    {dataSource.map(({ name }) => (
+      <li>{name}</li>
+    ))}
+    </ul>
+  ) : (
+    <div>
+      {refresh.error.message}
+    </div>
+  );
 
-return (
-  <div>
-    {!refresh.loading ? taskView : loadingView}
-  <Loading />
-);
+  return (
+    <div>
+      {!refresh.loading ? taskView : loadingView}
+    </div>
+  );
+}
+```
+
+#### Disable async state
+
+If you do not need async state, you can disable to reduce render.
+
+Disable async state of a single action:
+
+```jsx
+function Foo() {
+  const todos = stores.useStore('todos');
+  const { refresh, dataSource } = todos;
+  refresh.disableLoading = true;
+
+  useEffect(() => {
+    refresh();
+  }, []);
+
+  return (
+    <div>
+      <ul>
+        {dataSource.map(({ name }) => (
+          <li>{name}</li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+```
+
+Disable async state of store:
+
+```javascript
+import Icestore from '@ice/store';
+import todos from './store/todos';
+import foo from './store/foo';
+
+const icestore = new Icestore();
+
+// disable all stores
+icestore.applyOptions({
+  disableLoading: true
+});
+
+// or disable single store
+icestore.applyOptions({ disableLoading: true }, 'todos');
+
+icestore.registerStores({
+  todos,
+  foo
+});
 ```
 
 ### Class Component Support
@@ -395,15 +518,15 @@ Due the multiple store design of `icestore`, it supports registering middlewares
 
 	```javascript
 	import Icestore from '@ice/store';
-	const stores = new Icestore();
-	stores.applyMiddleware([a, b]);
+	const icestore = new Icestore();
+	icestore.applyMiddleware([a, b]);
 	```
 2. Registration by namespace: The ultimate middleware queue of single store will merge global middlewares with its own middlewares.
 
 	```javascript
-	stores.applyMiddleware([a, b]); 
-	stores.applyMiddleware([c, d], 'foo'); // store foo middleware is [a, b, c, d]
-	stores.applyMiddleware([d, c], 'bar'); // store bar middleware is [a, b, d, c]
+	icestore.applyMiddleware([a, b]); 
+	icestore.applyMiddleware([c, d], 'foo'); // store foo middleware is [a, b, c, d]
+	icestore.applyMiddleware([d, c], 'bar'); // store bar middleware is [a, b, d, c]
 	```
 
 ## Debug
@@ -513,6 +636,8 @@ The reason is that the mutation logic would be hard to trace and impossible to t
 By design, `icestore` will trigger the rerender of all the view components subscribed to the store (by using useStore) once the state of the store has changed.
 
 This means that putting more state in one store may cause more view components to rerender, affecting the overall performance of the application. As such, it is advised to categorize your state and put them in individual stores to improve performance.
+
+Of course, you can also use the second parameter of the `usestore` function, `equalityfn`, to perform equality comparison of states. Then, the component will trigger rerender only when the comparison result is not true.
 
 ### Don't overuse `icestore`
 

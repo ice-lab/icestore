@@ -69,10 +69,10 @@ $ npm install @ice/store --save
   ```javascript
   // src/stores/index.js
   import todos from './todos';
-  import Store from '@ice/store';
+  import Icestore from '@ice/store';
 
-  const storeManager = new Store();
-  const stores = storeManager.registerStores({
+  const icestore = new Icestore();
+  const stores = icestore.registerStores({
     todos
   });
 
@@ -156,11 +156,13 @@ $ npm install @ice/store --save
       - useStore {function} 使用单个 Store 的 hook
           - 参数
              - namespace {string} Store 的命名空间
+             - equalityFn {function} 选填，前一次和当前最新的 State 相等性对比函数
           - 返回值
              - {object} Store 的配置对象
       - useStores {function} 同时使用多个 Store 的 hook
           - 参数
               - namespaces {array} 多个 Store 的命名空间数组
+              - equalityFnArr {array} 多个命名空间 State 的相等性对比函数
           - 返回值
               - {object} 多个 Store 的配置对象，以 namespace 区分
       - withStore {function} 
@@ -175,6 +177,11 @@ $ npm install @ice/store --save
               - mapStoresToProps {function} 选填，将 stores 映射到 props 的处理函数
           - 返回值
               - HOC 高阶组件
+      - getStore {function} 获取单个 Store
+          - 参数
+             - namespace {string} Store 的命名空间
+          - 返回值
+             - {object} Store
       - getState {function} 获取单个 Store 的最新 State 对象。
           - 参数
               - namespace {string} Store 的命名空间
@@ -193,9 +200,73 @@ $ npm install @ice/store --save
 
 ## 高级用法
 
-### 异步 Action 执行状态
+### Store 联动
 
-`icestore` 内部集成了对于异步 Action 的异步状态记录，方便用户在不增加额外的 State 的前提下访问异步 Action 的执行状态（loading 与 error），从而使状态的渲染逻辑更简洁。
+状态联动是一个常见的需求，您可以通过在 Store 中调用其他 Store 的方法来实现。
+
+#### 示例
+
+假设您有一个 User 的 Store，里面记录了用户的任务数。还有一个 Tasks 的 Store，里面记录了系统的任务列表。每当用户添加了一个任务后，用户的任务数信息就会更新。
+
+```tsx
+// src/store/user
+export interface User {
+  name: string;
+  tasks: number;
+}
+export const user: User = {
+  dataSource: {
+    name: '',
+    tasks: 0,
+  },
+  async refresh() {
+    this.dataSource = await fetch('/user');
+  },
+};
+
+// src/store/tasks
+import { user }  from './user';
+
+export interface Task {
+  title: string;
+  done?: boolean;
+}
+export const tasks = {
+  dataSource: [],
+  async refresh() {
+    this.dataSource = await fetch('/tasks');
+  },
+  async add(task: Task) {
+    this.dataSource = await fetch('/tasks/add', task);
+
+    // 添加任务后重新获取用户信息
+    await user.refresh();
+  },
+};
+
+// src/store/index
+import Icestore from '@ice/store';
+import { task } from './task';
+import { user } from './user';
+
+const icestore = new Icestore();
+const stores = icestore.registerStores({
+  task,
+  user,
+});
+
+export default stores;
+```
+
+#### 注意循环调用问题
+
+Store 间允许相互调用，需注意循环调用的问题。例如，Store A 中的 a 方法调用了 Store B 中的 b 方法，Store B 中的 b 方法又调用 Store A 中的 a 方法，就会形成死循环。
+
+如果是多个 Store 间相互调用，死循环问题的出现概率就会提升。
+
+### 异步 Action 的执行状态
+
+`icestore` 内部集成了对于异步 Action 的状态记录，方便您在不增加额外的 State 的前提下访问异步 Action 的执行状态（loading 与 error），从而使状态的渲染的处理逻辑更加简洁。
 
 #### API
 
@@ -208,43 +279,95 @@ $ npm install @ice/store --save
 * `action.disableLoading` - 是否关闭 Action loading 效果的开关, 如果设置为 true, 当 loading 标志位变化时，关联的 view 组件将不会重新渲染
   - Type: {boolean}
   - Default: false
-* `store.disableLoading` - 是否全局关闭所有 Action 的 loading 效果. 注意当全局与 Action 上的该标志位均设置时，action 上标志位优先级高
-  - Type: {boolean}
-  - Default: false
 
 #### 示例
 
+```jsx
+function Foo() {
+  const todos = stores.useStore('todos');
+  const { refresh, dataSource } = todos;
+
+  useEffect(() => {
+    refresh();
+  }, []);
+
+  const loadingView = (
+    <div>
+      loading.......
+    </div>
+  );
+
+  const taskView = !refresh.error ? (
+    <ul>
+    {dataSource.map(({ name }) => (
+      <li>{name}</li>
+    ))}
+    </ul>
+  ) : (
+    <div>
+      {refresh.error.message}
+    </div>
+  );
+
+  return (
+    <div>
+      {!refresh.loading ? taskView : loadingView}
+    </div>
+  );
+}
+```
+
+#### 禁用异步状态
+
+在 icestore 中，所有异步 Action 默认都会被记录执行的状态。如果您不需要这个记录，可以通过禁用它以减少重绘次数。
+
+禁用单个 Action 的异步状态：
+
+```jsx
+function Foo() {
+  const todos = stores.useStore('todos');
+  const { refresh, dataSource } = todos;
+
+  // 设置 Action 的属性 disableLoading 为 true
+  refresh.disableLoading = true;
+
+  useEffect(() => {
+    refresh();
+  }, []);
+
+  return (
+    <div>
+      <ul>
+        {dataSource.map(({ name }) => (
+          <li>{name}</li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+```
+
+禁用 Store 的异步状态：
+
 ```javascript
-const todos = store.useStore('todos');
-const { refresh, dataSource } = todos;
+import Icestore from '@ice/store';
+import todos from './store/todos';
+import foo from './store/foo';
 
-useEffect(() => {
-  refresh();
-}, []);
+const icestore = new Icestore();
 
-const loadingView = (
-  <div>
-    loading.......
-  </div>
-);
+// 禁用所有 Store 的异步状态
+icestore.applyOptions({
+  disableLoading: true
+});
 
-const taskView = !refresh.error ? (
-  <ul>
-   {dataSource.map(({ name }) => (
-     <li>{name}</li>
-   ))}
-  </ul>
-) : (
-  <div>
-    {refresh.error.message}
-  </div>
-);
+// 或者禁用单个 Store 的异步状态
+icestore.applyOptions({ disableLoading: true }, 'todos');
 
-return (
-  <div>
-    {!refresh.loading ? taskView : loadingView}
-  <Loading />
-);
+icestore.registerStores({
+  todos,
+  foo
+});
 ```
 
 ### 在 Class 组件中使用
@@ -313,7 +436,7 @@ ReactDOM.render(<TodoListWithStore />, document.body);
 
 #### 背景
 
-如果你有使用过服务端的框架如 Express 或者 koa，应该已经熟悉了中间件的概念，在这些框架中，中间件用于在框架 `接收请求` 与 `产生响应` 间插入自定义代码，这类中间件的功能包含在请求未被响应之前对数据进行加工、鉴权，以及在请求被响应之后添加响应头、打印 log 等功能。
+如果您有使用过服务端的框架如 Express 或者 koa，应该已经熟悉了中间件的概念，在这些框架中，中间件用于在框架 `接收请求` 与 `产生响应` 间插入自定义代码，这类中间件的功能包含在请求未被响应之前对数据进行加工、鉴权，以及在请求被响应之后添加响应头、打印 log 等功能。
 
 在状态管理领域，Redux 同样实现了中间件的机制，用于在 `action 调用` 与 `到达 reducer` 之间插入自定义代码，中间件包含的功能有打印 log、提供 thunk 与 promise 异步机制、日志上报等。
 
@@ -389,16 +512,16 @@ const {
 
 	```javascript
 	import Icestore from '@ice/store';
-	const stores = new Icestore();
-	stores.applyMiddleware([a, b]);
+	const icestore = new Icestore();
+	icestore.applyMiddleware([a, b]);
 	```
 2. 指定 Store 注册 middleware  
   Store 上最终注册的 middleware 将与全局注册 middleware 做合并
 
 	```javascript
-	stores.applyMiddleware([a, b]); 
-	stores.applyMiddleware([c, d], 'foo'); // store foo 中间件为 [a, b, c, d]
-	stores.applyMiddleware([d, c], 'bar'); // store bar 中间件为 [a, b, d, c]
+	icestore.applyMiddleware([a, b]); 
+	icestore.applyMiddleware([c, d], 'foo'); // store foo 中间件为 [a, b, c, d]
+	icestore.applyMiddleware([d, c], 'bar'); // store bar 中间件为 [a, b, d, c]
 	```
 
 ## 调试
@@ -438,7 +561,6 @@ icestore.registerStore('todos', todos);
 * Added / Deleted / Updated: State 变化的 diff
 * Old State: 更新前的 State
 * New State: 更新后的 State
-
 
 ## 测试
 
@@ -517,6 +639,8 @@ describe('todos', () => {
 ### 尽可能地拆分 Store
 
 从 `icestore` 的内部设计来看，当某个 Store 的 State 发生变化时，所有使用 useStore 监听 Store 变化的 View 组件都会触发重新渲染，这意味着一个 Store 中存放的 State 越多越可能触发更多的 Store 组件重新渲染。因此从性能方面考虑，建议按照功能划分将 Store 拆分成一个个独立的个体。
+
+当然，也可以使用 `useStore` 函数的第二个参数 `equalityFn` 进行 State 的相等性对比，那么仅当对比结果不为真时，组件才会重新触发渲染。
 
 ### 不要滥用 `icestore`
 

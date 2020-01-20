@@ -1,23 +1,33 @@
 import React from 'react';
 import { Wrapper } from './wrapper';
-import { Store, State, Middleware, Optionalize, Models } from './types';
+import { Store, State, Middleware, Optionalize, Models, StoreOptions } from './types';
 
-export default function createIcestore(models: Models, middlewares?: Middleware[]) {
+interface Config {
+  options?: StoreOptions;
+  middlewares?: Middleware[];
+}
+
+function createIcestore(models: Models, config?: Config);
+function createIcestore(models, config) {
+  const { middlewares, options } = config || {};
   type Stores = {
     [K in keyof Models]: Store<Models[K]>
   };
 
   const wrappers: {[K in keyof Models]?: Wrapper} = {};
   Object.keys(models).forEach((namespace) => {
-    wrappers[namespace] = new Wrapper(namespace, models[namespace], middlewares);
+    wrappers[namespace] = new Wrapper(namespace, models[namespace], middlewares, options);
   });
-
   function getWrapper<K extends keyof Models>(namespace: K): Wrapper {
     const wrapper = wrappers[namespace];
     if (!wrapper) {
       throw new Error(`Not found namespace: ${namespace}.`);
     }
     return wrapper;
+  }
+  function getStore<K extends keyof Models>(namespace: K): Store<Models[K]> {
+    const store = getWrapper(namespace);
+    return store.getStore<Store<Models[K]>>();
   }
   function useStore<K extends keyof Models>(namespace: K): Store<Models[K]> {
     return getWrapper(namespace).useStore<Store<Models[K]>>();
@@ -69,5 +79,8 @@ export default function createIcestore(models: Models, middlewares?: Middleware[
     getState,
     withStore,
     withStores,
+    getStore,
   };
 }
+
+export default createIcestore;

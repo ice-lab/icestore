@@ -1,7 +1,7 @@
 import isFunction from 'lodash.isfunction';
 import isPromise from 'is-promise';
 import { useState, useEffect } from 'react';
-import { Ctx, Action, Middleware } from './types';
+import { Ctx, Action, Middleware, EqualityFn, Queue, StoreOptions } from './types';
 
 /**
  * Compose a middleware chain consisting of all the middlewares
@@ -34,7 +34,7 @@ export class Wrapper {
   private store: any = {};
 
   /** Queue of setState method from useState hook */
-  private queue = [];
+  private queue: Queue<any>[] = [];
 
   /** Namespace of store */
   private namespace: string;
@@ -51,14 +51,18 @@ export class Wrapper {
    * @param {object} model - object of state and actions used to init store
    * @param {array} middlewares - middlewares queue of store
    */
-  public constructor(namespace: string, model: object, middlewares: Middleware []) {
+  public constructor(namespace: string, model: object, middlewares: Middleware [], options?: StoreOptions) {
     this.namespace = namespace;
     this.middlewares = middlewares;
+    if (options) {
+      this.disableLoading = options.disableLoading;
+    }
 
     Object.keys(model).forEach((key) => {
       const value = model[key];
-      this.store[key] = isFunction(value) ? this.createAction(value, key) : value;
+      model[key] = isFunction(value) ? this.createAction(value, key) : value;
     });
+    this.store = model;
   }
 
   /**
@@ -116,7 +120,7 @@ export class Wrapper {
   }
 
   /**
-   * Get state from model
+   * Get state from store
    * @return {object} state
    */
   public getState <M>(): {[K in keyof M]?: M[K]} {
@@ -132,24 +136,48 @@ export class Wrapper {
   }
 
   /**
+   * Get store
+   * @return {object} state
+   */
+  public getStore = <M>(): M => {
+    return this.store;
+  }
+
+  /**
    * Trigger setState method in queue
    */
   private setState(): void {
     const state = this.getState();
-    this.queue.forEach(setState => setState(state));
+
+    this.queue.forEach(queueItem => {
+      const { preState, setState, equalityFn } = queueItem;
+      // update preState
+      queueItem.preState = state;
+      // use equalityFn check equality when function passed in
+      if (equalityFn && equalityFn(preState, state)) {
+        return;
+      }
+      setState(state);
+    });
   }
 
   /**
-   * Hook used to register setState and expose model
-   * @return {object} model of store
+   * Hook used to register setState and expose store
+   * @return {object} wrapper of store
    */
-  public useStore<M>(): M {
+  public useStore<M>(equalityFn?: EqualityFn<M>): M {
     const state = this.getState();
     const [, setState] = useState(state);
+
     useEffect(() => {
-      this.queue.push(setState);
+      const queueItem = {
+        preState: state,
+        setState,
+        equalityFn,
+      };
+      this.queue.push(queueItem);
       return () => {
-        const index = this.queue.indexOf(setState);
+        const index = this.queue.indexOf(queueItem);
         this.queue.splice(index, 1);
       };
     }, []);
