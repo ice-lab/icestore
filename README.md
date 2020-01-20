@@ -188,6 +188,11 @@ Register multiple store configs to the global icestore instance.
               - mapStoresToProps {function} optional, mapping store to props
           - Return value
               - HOC
+      - getStore {function} Get the store by namespace.
+          - Parameters
+              - namespace {string} store namespace
+          - Return value
+              - {object} store
       - getState {function} Get the latest state of individual store by namespace.
           - Parameters
               - namespace {string} store namespace
@@ -205,9 +210,75 @@ otherwise apply middleware the store by namespace.
 * Return value
   - void
 
-## Advanced use
+## Advanced Use
 
-### async actions' executing status
+### Chain react of State
+
+The chain react is a common requirement, you can implement it by calling other Store in Store.
+
+#### Example
+
+Suppose you have a User Store, which records the number of tasks of the user. And a Tasks Store, which records the task list of the system. Every time a user adds a task, user's task number needs to be updated.
+
+```tsx
+// src/store/user
+export interface User {
+  name: string;
+  tasks: number;
+}
+export const user: User = {
+  dataSource: {
+    name: '',
+    tasks: 0,
+  },
+  async refresh() {
+    this.dataSource = await fetch('/user');
+  },
+};
+
+// src/store/tasks
+import { user }  from './user';
+
+export interface Task {
+  title: string;
+  done?: boolean;
+}
+export const tasks = {
+  dataSource: [],
+  async refresh() {
+    this.dataSource = await fetch('/tasks');
+  },
+  async add(task: Task) {
+    this.dataSource = await fetch('/tasks/add', task);
+
+    // Retrieve user information after adding tasks
+    await user.refresh();
+  },
+};
+
+// src/store/index
+import Icestore from '@ice/store';
+import { task } from './task';
+import { user } from './user';
+
+const icestore = new Icestore();
+const stores = icestore.registerStores({
+  task,
+  user,
+});
+
+export default stores;
+```
+
+#### Pay attention to circular calling
+
+Please pay attention to circular calling when call each other between Stores. 
+
+For example, the a method in Store A calls the b method in Store B, and the b method in Store B calls the a method in Store A, which will form a dead cycle.
+
+If multiple stores call each other, the occurrence probability of the dead cycle problem will increase.
+
+### Async actions' executing status
 
 `icestore` has built-in support to access the executing status of async actions. This enables users to have access to the loading and error executing status of async actions without defining extra state, making the code more consise and clean.
 

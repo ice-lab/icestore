@@ -177,6 +177,11 @@ $ npm install @ice/store --save
               - mapStoresToProps {function} 选填，将 stores 映射到 props 的处理函数
           - 返回值
               - HOC 高阶组件
+      - getStore {function} 获取单个 Store
+          - 参数
+             - namespace {string} Store 的命名空间
+          - 返回值
+             - {object} Store
       - getState {function} 获取单个 Store 的最新 State 对象。
           - 参数
               - namespace {string} Store 的命名空间
@@ -195,9 +200,73 @@ $ npm install @ice/store --save
 
 ## 高级用法
 
-### 异步 Action 执行状态
+### Store 联动
 
-`icestore` 内部集成了对于异步 Action 的异步状态记录，方便用户在不增加额外的 State 的前提下访问异步 Action 的执行状态（loading 与 error），从而使状态的渲染逻辑更简洁。
+状态联动是一个常见的需求，您可以通过在 Store 中调用其他 Store 的方法来实现。
+
+#### 示例
+
+假设您有一个 User 的 Store，里面记录了用户的任务数；还有一个 Tasks 的 Store，里面记录了系统的任务列表。每当用户添加了一个任务后，其任务数信息就会变更。
+
+```tsx
+// src/store/user
+export interface User {
+  name: string;
+  tasks: number;
+}
+export const user: User = {
+  dataSource: {
+    name: '',
+    tasks: 0,
+  },
+  async refresh() {
+    this.dataSource = await fetch('/user');
+  },
+};
+
+// src/store/tasks
+import { user }  from './user';
+
+export interface Task {
+  title: string;
+  done?: boolean;
+}
+export const tasks = {
+  dataSource: [],
+  async refresh() {
+    this.dataSource = await fetch('/tasks');
+  },
+  async add(task: Task) {
+    this.dataSource = await fetch('/tasks/add', task);
+
+    // 添加任务后重新获取用户信息
+    await user.refresh();
+  },
+};
+
+// src/store/index
+import Icestore from '@ice/store';
+import { task } from './task';
+import { user } from './user';
+
+const icestore = new Icestore();
+const stores = icestore.registerStores({
+  task,
+  user,
+});
+
+export default stores;
+```
+
+#### 注意循环调用问题
+
+Store 间允许相互调用，需注意循环调用的问题。例如，Store A 中的 a 方法调用了 Store B 中的 b 方法，Store B 中的 b 方法又调用 Store A 中的 a 方法，就会形成死循环。
+
+如果是多个 Store 间相互调用，死循环问题的出现概率就会提升。
+
+### 异步 Action 的执行状态
+
+`icestore` 内部集成了对于异步 Action 的状态记录，方便您在不增加额外的 State 的前提下访问异步 Action 的执行状态（loading 与 error），从而使状态的渲染的处理逻辑更加简洁。
 
 #### API
 
@@ -250,7 +319,7 @@ function Foo() {
 
 #### 禁用异步状态
 
-如果您不需要异步状态，可以禁用以减少重绘次数。
+在 icestore 中，所有异步 Action 默认都会被记录执行的状态。如果您不需要这个记录，可以通过禁用它以减少重绘次数。
 
 禁用单个 Action 的异步状态：
 
@@ -258,6 +327,8 @@ function Foo() {
 function Foo() {
   const todos = stores.useStore('todos');
   const { refresh, dataSource } = todos;
+
+  // 设置 Action 的属性 disableLoading 为 true
   refresh.disableLoading = true;
 
   useEffect(() => {
@@ -365,7 +436,7 @@ ReactDOM.render(<TodoListWithStore />, document.body);
 
 #### 背景
 
-如果你有使用过服务端的框架如 Express 或者 koa，应该已经熟悉了中间件的概念，在这些框架中，中间件用于在框架 `接收请求` 与 `产生响应` 间插入自定义代码，这类中间件的功能包含在请求未被响应之前对数据进行加工、鉴权，以及在请求被响应之后添加响应头、打印 log 等功能。
+如果您有使用过服务端的框架如 Express 或者 koa，应该已经熟悉了中间件的概念，在这些框架中，中间件用于在框架 `接收请求` 与 `产生响应` 间插入自定义代码，这类中间件的功能包含在请求未被响应之前对数据进行加工、鉴权，以及在请求被响应之后添加响应头、打印 log 等功能。
 
 在状态管理领域，Redux 同样实现了中间件的机制，用于在 `action 调用` 与 `到达 reducer` 之间插入自定义代码，中间件包含的功能有打印 log、提供 thunk 与 promise 异步机制、日志上报等。
 
