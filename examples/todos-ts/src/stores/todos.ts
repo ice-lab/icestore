@@ -1,3 +1,5 @@
+import user from './user';
+
 interface Todo {
   name: string;
   done?: boolean;
@@ -6,7 +8,7 @@ interface Todo {
 export interface TodoStore {
   dataSource: Todo[];
   refresh: () => void;
-  add: (todo: Todo) => Todo;
+  add: (todo: Todo) => void;
   remove: (index: number) => void;
   toggle: (index: number) => void;
 }
@@ -30,13 +32,20 @@ const store: TodoStore = {
         ]);
       }, 1000),
     );
+    user.setTodos(this.dataSource.length);
   },
   add(todo) {
     this.dataSource.push(todo);
-    return todo;
+    user.setTodos(this.dataSource.length);
   },
-  remove(index) {
+  async remove(index) {
+    await new Promise(resolve =>
+      setTimeout(() => {
+        resolve();
+      }, 1000),
+    );
     this.dataSource.splice(index, 1);
+    user.setTodos(this.dataSource.length);
   },
   toggle(index) {
     this.dataSource[index].done = !this.dataSource[index].done;
