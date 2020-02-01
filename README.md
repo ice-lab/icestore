@@ -212,9 +212,9 @@ otherwise apply middleware the store by namespace.
 
 ## Advanced Use
 
-### Chain react of State
+### Store interaction
 
-The chain react is a common requirement, you can implement it by calling other Store in Store.
+Store interaction is a common usage scene which can be implemented by calling actions from other store in a store's action.
 
 #### Example
 
@@ -270,13 +270,13 @@ const stores = icestore.registerStores({
 export default stores;
 ```
 
-#### Pay attention to circular calling
+#### Pay attention to circular dependencies
 
-Please pay attention to circular calling when call each other between Stores. 
+Please pay attention to circular dependencies problem when actions calling each other between stores.
 
-For example, the a method in Store A calls the b method in Store B, and the b method in Store B calls the a method in Store A, which will form a dead cycle.
+For example, the action A in Store A calls the action B in Store B and the action B in Store B calls the action A in Store A will results into an endless loop.
 
-If multiple stores call each other, the occurrence probability of the dead cycle problem will increase.
+Be careful the possibility of endless loop problem will arise when methods from different stores call each other.
 
 ### Async actions' executing status
 
