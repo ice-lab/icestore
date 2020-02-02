@@ -3,7 +3,7 @@ import { Dispatch, SetStateAction } from 'react';
 export type Optionalize<T extends K, K> = Omit<T, keyof K>;
 export type NonFunctionPropertyNames<T> = { [K in keyof T]: T[K] extends Function ? never : K }[keyof T];
 
-export type Models = {
+export interface Models {
   [namespace: string]: object;
 }
 export interface ActionProps {

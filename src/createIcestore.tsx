@@ -1,6 +1,6 @@
 import React from 'react';
 import { Wrapper } from './wrapper';
-import { Store, State, Middleware, Optionalize, Models, StoreOptions } from './types';
+import { Store, State, Middleware, Optionalize, Models, StoreOptions, EqualityFn } from './types';
 
 interface Config {
   options?: StoreOptions;
@@ -17,8 +17,8 @@ interface ModelsConfig {
 
 function createIcestore(models: Models, config?: Config);
 function createIcestore(models: ModelsConfig, config?: Config);
-function createIcestore(models, config) {
-  let { middlewares = [], options = {} } = config || {};
+function createIcestore(models, config?) {
+  const { middlewares = [], options = {} } = config || {};
 
   const middlewareMap: {[namespace: string]: Middleware[]} = {};
   const optionsMap: {[namespace: string]: StoreOptions} = {};
@@ -64,13 +64,13 @@ function createIcestore(models, config) {
     const store = getWrapper(namespace);
     return store.getStore<Store<Models[K]>>();
   }
-  function useStore<K extends keyof Models>(namespace: K): Store<Models[K]> {
-    return getWrapper(namespace).useStore<Store<Models[K]>>();
+  function useStore<K extends keyof Models>(namespace: K, equalityFn?: EqualityFn<Store<Models[K]>>): Store<Models[K]> {
+    return getWrapper(namespace).useStore<Store<Models[K]>>(equalityFn);
   }
-  function useStores<K extends keyof Models>(namespaces: K[]): Stores {
+  function useStores<K extends keyof Models>(namespaces: K[], equalityFnArr?: EqualityFn<Store<Models[K]>>[]): Stores {
     const result: Partial<Stores> = {};
-    namespaces.forEach(namespace => {
-      result[namespace] = getWrapper(namespace).useStore<Store<Models[K]>>();
+    namespaces.forEach((namespace, i) => {
+      result[namespace] = getWrapper(namespace).useStore<Store<Models[K]>>(equalityFnArr && equalityFnArr[i]);
     });
     return result as Stores;
   }

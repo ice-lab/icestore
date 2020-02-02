@@ -1,35 +1,9 @@
 import * as React from 'react';
 import { render, fireEvent, getByTestId, wait } from '@testing-library/react';
-import Icestore, { shallowEqual } from '../src/index';
-import Store from '../src/store';
+import createIcestore, { shallowEqual } from '../src/index';
 
 describe('#Icestore', () => {
-  test('new Class should be defined.', () => {
-    expect(new Icestore()).toBeDefined();
-  });
-
-  describe('#registerStore', () => {
-    let icestore;
-
-    beforeEach(() => {
-      icestore = new Icestore();
-    });
-
-    test('should return a Store.', () => {
-      const store = icestore.registerStore('test', {
-        name: 'ice',
-      });
-      expect(store instanceof Store).toBe(true);
-    });
-
-    test('should throw an Error when the same namespace is registered.', () => {
-      icestore.registerStore('test', {});
-      expect(() => icestore.registerStore('test', {})).toThrowError('Namespace have been used: test');
-    });
-  });
-
-  describe('#registerStores', () => {
-    let icestore;
+  describe('#createIcestore', () => {
     let useStore;
     let useStores;
     let getState;
@@ -39,22 +13,21 @@ describe('#Icestore', () => {
     let projectStore;
 
     beforeEach(() => {
-      icestore = new Icestore();
       todoStore = {
         name: 'ice',
       };
       projectStore = {
         name: 'rax',
       };
-      const stores = icestore.registerStores({
+      const icestore = createIcestore({
         todo: todoStore,
         project: projectStore,
       });
-      useStore = stores.useStore;
-      useStores = stores.useStores;
-      getState = stores.getState;
-      withStore = stores.withStore;
-      withStores = stores.withStores;
+      useStore = icestore.useStore;
+      useStores = icestore.useStores;
+      getState = icestore.getState;
+      withStore = icestore.withStore;
+      withStores = icestore.withStores;
     });
 
     test('should throw an Error when the namespace is not exist.', () => {
@@ -156,36 +129,11 @@ describe('#Icestore', () => {
     });
   });
 
-  describe('#applyMiddleware', () => {
-    let icestore;
-    const testMiddleware = async (ctx, next) => {
-      return next();
-    };
-
-    beforeEach(() => {
-      icestore = new Icestore();
-      icestore.registerStore('foo', { data: 'abc', fetchData: () => {} });
-    });
-
-    test('should apply to global success.', () => {
-      icestore.applyMiddleware([testMiddleware]);
-      expect(icestore.globalMiddlewares).toEqual([testMiddleware]);
-    });
-    test('should apply to single store success.', () => {
-      icestore.applyMiddleware([testMiddleware], 'foo');
-      expect(icestore.middlewareMap.foo).toEqual([testMiddleware]);
-    });
-  });
-
   describe('#getState', () => {
     let icestore;
-    const testMiddleware = async (ctx, next) => {
-      return next();
-    };
 
     beforeEach(() => {
-      icestore = new Icestore();
-      icestore.registerStore('foo', { data: 'abc', fetchData: () => {} });
+      icestore = createIcestore({foo: { data: 'abc', fetchData: () => {} }});
     });
 
     test('should get state from store success.', () => {
@@ -194,17 +142,10 @@ describe('#Icestore', () => {
   });
 
   describe('#useStore', () => {
-    let icestore;
-
-    beforeEach(() => {
-      icestore = new Icestore();
-    });
-
-    afterEach(() => {
-      icestore = null;
-    });
-
     test('should throw an Error when the namespace is not exist.', () => {
+      const icestore = createIcestore({
+        todo: { foo: 123 },
+      });
       expect(() => icestore.useStore('test')).toThrowError('Not found namespace: test');
     });
 
@@ -215,12 +156,12 @@ describe('#Icestore', () => {
       const newState = {
         name: 'rax',
       };
-      icestore.registerStore('todo', {
+      const icestore = createIcestore({todo:  {
         dataSource: initState,
         setData(dataSource) {
           this.dataSource = dataSource;
         },
-      });
+      }});
 
       const renderFn = jest.fn();
 
@@ -258,11 +199,33 @@ describe('#Icestore', () => {
 
     });
 
+    test('should useStores be ok.', () => {
+      const todoStore = { name: 'ice' };
+      const projectStore = { name: 'rax' };
+      const icestore = createIcestore({ todo: todoStore, project: projectStore });
+
+      const App = () => {
+        const {todo, project} = icestore.useStores(['todo', 'project']);
+
+        return <div>
+          <span data-testid="todoName">{todo.name}</span>
+          <span data-testid="projectName">{project.name}</span>
+        </div>;
+      };
+
+      const { container } = render(<App />);
+      const todoName = getByTestId(container, 'todoName');
+      const projectName = getByTestId(container, 'projectName');
+
+      expect(todoName.textContent).toEqual(todoStore.name);
+      expect(projectName.textContent).toEqual(projectStore.name);
+    });
+
     test('should equalityFn be ok.', async () => {
       const initState = {
         name: 'ice',
       };
-      const { useStore } = icestore.registerStores({
+      const { useStore } = createIcestore({
         'todo': {
           dataSource: initState,
           setData(dataSource) {
@@ -286,10 +249,10 @@ describe('#Icestore', () => {
         return <div>
           <span data-testid="nameValue">{dataSource.name}</span>
           <button type="button" data-testid="changeNothingBtn" onClick={changeNothing}>
-          Click me
+            Click me
           </button>
           <button type="button" data-testid="changeStateRefBtn" onClick={changeStateRef}>
-          Click me
+            Click me
           </button>
         </div>;
       };
@@ -309,9 +272,9 @@ describe('#Icestore', () => {
         expect(nameValue.textContent).toEqual(initState.name);
         expect(renderCount).toBe(1);
       });
-      
+
       fireEvent.click(changeStateRefBtn);
-      
+
       // will rerender
       await wait(() => {
         expect(nameValue.textContent).toEqual(initState.name);
@@ -334,29 +297,6 @@ describe('#Icestore', () => {
         expect(nameValue1.textContent).toEqual(initState.name);
         expect(renderCount).toBe(3);
       });
-    });
-
-    test('should useStores be ok.', () => {
-      const todoStore = { name: 'ice' };
-      const projectStore = { name: 'rax' };
-      icestore.registerStore('todo', todoStore);
-      icestore.registerStore('project', projectStore);
-
-      const App = () => {
-        const [todo, project] = icestore.useStores(['todo', 'project']);
-
-        return <div>
-          <span data-testid="todoName">{todo.name}</span>
-          <span data-testid="projectName">{project.name}</span>
-        </div>;
-      };
-
-      const { container } = render(<App />);
-      const todoName = getByTestId(container, 'todoName');
-      const projectName = getByTestId(container, 'projectName');
-
-      expect(todoName.textContent).toEqual(todoStore.name);
-      expect(projectName.textContent).toEqual(projectStore.name);
     });
   });
 });
