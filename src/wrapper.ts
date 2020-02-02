@@ -43,7 +43,7 @@ export class Wrapper {
   private middlewares = [];
 
   /** Flag of whether disable loading effect globally */
-  public disableLoading = false;
+  private disableLoading = false;
 
   /**
    * Constuctor of Store
@@ -120,6 +120,24 @@ export class Wrapper {
   }
 
   /**
+   * Trigger setState method in queue
+   */
+  private setState(): void {
+    const state = this.getState();
+
+    this.queue.forEach(queueItem => {
+      const { preState, setState, equalityFn } = queueItem;
+      // update preState
+      queueItem.preState = state;
+      // use equalityFn check equality when function passed in
+      if (equalityFn && equalityFn(preState, state)) {
+        return;
+      }
+      setState(state);
+    });
+  }
+
+  /**
    * Get state from store
    * @return {object} state
    */
@@ -141,24 +159,6 @@ export class Wrapper {
    */
   public getStore = <M>(): M => {
     return this.store;
-  }
-
-  /**
-   * Trigger setState method in queue
-   */
-  private setState(): void {
-    const state = this.getState();
-
-    this.queue.forEach(queueItem => {
-      const { preState, setState, equalityFn } = queueItem;
-      // update preState
-      queueItem.preState = state;
-      // use equalityFn check equality when function passed in
-      if (equalityFn && equalityFn(preState, state)) {
-        return;
-      }
-      setState(state);
-    });
   }
 
   /**
