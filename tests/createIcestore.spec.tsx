@@ -130,14 +130,16 @@ describe('#Icestore', () => {
   });
 
   describe('#getState', () => {
-    let icestore;
-
-    beforeEach(() => {
-      icestore = createIcestore({foo: { data: 'abc', fetchData: () => {} }});
-    });
-
     test('should get state from store success.', () => {
+      const icestore = createIcestore({foo: { data: 'abc', fetchData: () => {} }});
       expect(icestore.getState('foo')).toEqual({ data: 'abc' });
+    });
+  });
+
+  describe('#getStore', () => {
+    test('should get store success.', () => {
+      const icestore = createIcestore({foo: { data: 'abc', fetchData: () => {} }});
+      expect(icestore.getStore('foo').data).toEqual('abc');
     });
   });
 
