@@ -33,7 +33,7 @@ class TodoList extends Component<TodoListProps> {
 
     return (
       <div>
-        <h2>{title}</h2>
+        <h2>class: {title}</h2>
         <p>
           {customField}
         </p>
@@ -63,11 +63,55 @@ const TodoListWithStore = withStore('todos', (store: TodoStore): {store: CustomT
   return { store: {...store, customField: '测试的字段'} };
 })(TodoList);
 
+// function TodoListWithStore ({title}) {
+//   const todos = stores.useStore('todos');
+//   const { dataSource, toggle, remove, add } = todos;
+
+//   function onCheck(index) {
+//     toggle(index);
+//   }
+
+//   function onRemove(index) {
+//     remove(index);
+//   }
+
+//   useEffect(() => {
+//     console.log('adddd...');
+//     add({ name: 123 });
+//   }, []);
+
+//   console.log('list', dataSource);
+
+//   return (
+//     <div>
+//       <h2>function: {title}</h2>
+//       <ul>
+//         {dataSource.map(({ name, done = false }, index) => (
+//           <li key={index}>
+//             <label>
+//               <input
+//                 type="checkbox"
+//                 checked={done}
+//                 onChange={() => onCheck(index)}
+//               />
+//               {done ? <s>{name}</s> : <span>{name}</span>}
+//             </label>
+//             {
+//               todos.remove.loading ? ' 删除中...' : <button type="submit" onClick={() => onRemove(index)}>-</button>
+//             }
+//           </li>
+//         ))}
+//       </ul>
+//     </div>
+//   )
+// }
+
 function TodoApp() {
   const todos = stores.useStore('todos');
   const { dataSource, refresh, add } = todos;
 
   useEffect(() => {
+    console.log('refresh...');
     refresh();
   }, []);
 
@@ -78,14 +122,13 @@ function TodoApp() {
 
   const noTaskView = <span>no task</span>;
   const loadingView = <span>loading...</span>;
-  const taskView = dataSource.length ? <TodoListWithStore title="标题" /> : (
-    noTaskView
-  );
+  const taskView = <TodoListWithStore title="标题" />;
+  const taskResultView = dataSource.length ? taskView : noTaskView;
 
   return (
     <div>
       <h2>Todos</h2>
-      {!refresh.loading ? taskView : loadingView}
+      {!refresh.loading ? taskResultView : loadingView}
     </div>
   );
 }
