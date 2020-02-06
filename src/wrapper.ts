@@ -166,8 +166,7 @@ export class Wrapper {
    * @return {object} wrapper of store
    */
   public useStore<M>(equalityFn?: EqualityFn<M>): M {
-    const state = this.getState();
-    const [, setState] = useState(state);
+    const [state, setState] = useState(() => this.getState());
 
     useEffect(() => {
       const queueItem = {
