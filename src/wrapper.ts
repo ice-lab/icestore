@@ -141,7 +141,7 @@ export class Wrapper {
    * Get state from store
    * @return {object} state
    */
-  public getState <M>(): {[K in keyof M]?: M[K]} {
+  public getState = <M>(): {[K in keyof M]?: M[K]} => {
     const { store } = this;
     const state: {[K in keyof M]?: M[K]} = {};
     Object.keys(store).forEach((key) => {
