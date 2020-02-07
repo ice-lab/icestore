@@ -54,7 +54,7 @@ export function createStore(models) {
       children = <ModelProvider>{children}</ModelProvider>
     });
     return <>{children}</>
-  };
+  }
 
   function useStore(namespace) {
     const { useContainer } = containers[namespace];
