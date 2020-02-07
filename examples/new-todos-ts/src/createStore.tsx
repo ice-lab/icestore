@@ -17,7 +17,11 @@ export function createContainer<Value, State = void>(
 
   function Provider(props: ContainerProviderProps<State>) {
     const value = useHook(props.initialState);
-    return <Context.Provider value={value}>{props.children}</Context.Provider>;
+    return (
+      <Context.Provider value={value}>
+        {props.children}
+      </Context.Provider>
+    );
   }
 
   function useContainer(): Value {
@@ -34,15 +38,21 @@ export function createContainer<Value, State = void>(
 export function createStore(models) {
   const containers = {};
   Object.keys(models).forEach(namespace => {
-    const { state, actions } = models[namespace];
+    const { state, reducers, effects } = models[namespace];
     function useModel() {
       const [data, setData] = useState(state);
-      const fns = {};
-      Object.keys(actions).forEach((name) => {
-        const fn = actions[name];
-        fns[name] = (...args) => setData((prevState) => fn(prevState, ...args))
+      const actions = {};
+      Object.keys(reducers).forEach((name) => {
+        const fn = reducers[name];
+        actions[name] = (...args) => setData((prevState) => fn(prevState, ...args));
       });
-      return { data, ...fns };
+      Object.keys(effects).forEach((name) => {
+        const fn = effects[name];
+        actions[name] = async (...args) => {
+          await fn(actions, ...args);
+        };
+      });
+      return { data, ...actions };
     }
 
     containers[namespace] = createContainer(useModel);

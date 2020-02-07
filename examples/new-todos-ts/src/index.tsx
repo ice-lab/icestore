@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import ReactDOM from 'react-dom';
 import { createStore } from './createStore';
 
@@ -10,11 +10,35 @@ const todosModel = {
       done: false
     }
   ],
-  actions: {
+  reducers: {
     add(prevState, todo) {
       // prevState.push(todo);
       return [ ...prevState, todo ];
     },
+    setState(prevState, todos) {
+      return todos;
+    }
+  },
+  effects: {
+    async refresh(actions) {
+      const newState = await new Promise(resolve =>
+        setTimeout(() => {
+          resolve([
+            {
+              title: 'react',
+            },
+            {
+              title: 'vue',
+              done: true,
+            },
+            {
+              title: 'angular',
+            },
+          ]);
+        }, 1000),
+      );
+      actions.setState(newState);
+    }
   }
 };
 
@@ -42,10 +66,14 @@ function Count() {
   return <span>{data.length}</span>;
 }
 
-// Wrap your application
-function App() {
+function Main() {
+  const { refresh } = useStore('todos');
+  useEffect(() => {
+    refresh();
+  }, []);
+
   return (
-    <Provider>
+    <div>
       <div>
         <Count />
         <Button />
@@ -53,6 +81,15 @@ function App() {
       <div>
         <Count />
       </div>
+    </div>
+  );
+}
+
+// Wrap your application
+function App() {
+  return (
+    <Provider>
+      <Main />
     </Provider>
   );
 }
