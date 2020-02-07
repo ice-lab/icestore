@@ -11,9 +11,9 @@ const todosModel = {
     }
   ],
   actions: {
-    add(preState, todo) {
-      // preState.push(todo);
-      return [ ...preState, todo ];
+    add(prevState, todo) {
+      // prevState.push(todo);
+      return [ ...prevState, todo ];
     },
   }
 };

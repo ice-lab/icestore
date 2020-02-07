@@ -40,7 +40,7 @@ export function createStore(models) {
       const fns = {};
       Object.keys(actions).forEach((name) => {
         const fn = actions[name];
-        fns[name] = (...args) => setData((preState) => fn(preState, ...args))
+        fns[name] = (...args) => setData((prevState) => fn(prevState, ...args))
       });
       return { data, ...fns };
     }
