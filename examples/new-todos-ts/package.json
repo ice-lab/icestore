@@ -1,0 +1,17 @@
+{
+  "name": "todos",
+  "version": "1.0.0",
+  "private": true,
+  "dependencies": {
+    "react": "16.8.6",
+    "react-dom": "16.8.6"
+  },
+  "devDependencies": {
+    "ice-scripts": "^2.0.0"
+  },
+  "scripts": {
+    "start": "ice-scripts dev",
+    "build": "ice-scripts build",
+    "test": "ice-scripts test"
+  }
+}
