@@ -13,15 +13,15 @@ export interface Container<Value, State = void> {
 export function createContainer<Value, State = void>(
 	useHook: (initialState?: State) => Value,
 ): Container<Value, State> {
-	let Context = React.createContext<Value | null>(null)
+	const Context = React.createContext<Value | null>(null)
 
 	function Provider(props: ContainerProviderProps<State>) {
-		let value = useHook(props.initialState)
+		const value = useHook(props.initialState)
 		return <Context.Provider value={value}>{props.children}</Context.Provider>
 	}
 
 	function useContainer(): Value {
-		let value = React.useContext(Context)
+		const value = React.useContext(Context)
 		if (value === null) {
 			throw new Error("Component must be wrapped with <Container.Provider>")
 		}
@@ -50,7 +50,7 @@ export function createStore(models) {
 
   function Provider({ children }) {
     Object.keys(containers).forEach(namespace => {
-      const { Provider: ModelProvider} = containers[namespace];
+      const { Provider: ModelProvider } = containers[namespace];
       children = <ModelProvider>{children}</ModelProvider>
     });
     return <>{children}</>
