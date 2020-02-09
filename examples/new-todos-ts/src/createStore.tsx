@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 
 export interface ContainerProviderProps<State = void> {
   initialState?: State;
@@ -44,18 +44,24 @@ export function createStore(models) {
 
     function useModel() {
       const [data, setData] = useState(state);
-      const actions = {};
-      Object.keys(reducers).forEach((name) => {
-        const fn = reducers[name];
-        actions[name] = (...args) => setData((prevState) => fn(prevState, ...args));
-      });
-      Object.keys(effects).forEach((name) => {
-        const fn = effects[name];
-        actions[name] = async (...args) => {
-          await fn(actions, ...args, modelActions);
-        };
-      });
+
+      const actions = useMemo(() => {
+        const setActions = {};
+        Object.keys(reducers).forEach((name) => {
+          const fn = reducers[name];
+          setActions[name] = (...args) => setData((prevState) => fn(prevState, ...args));
+        });
+        Object.keys(effects).forEach((name) => {
+          const fn = effects[name];
+          setActions[name] = async (...args) => {
+            await fn(setActions, ...args, modelActions);
+          };
+        });
+        return setActions;
+      }, [])
+
       modelActions[namespace] = actions;
+
       return [data, actions];
     }
 
