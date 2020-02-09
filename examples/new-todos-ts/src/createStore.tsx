@@ -37,8 +37,11 @@ export function createContainer<Value, State = void>(
 
 export function createStore(models) {
   const containers = {};
+  const modelActions = {};
   Object.keys(models).forEach(namespace => {
     const { state, reducers, effects } = models[namespace];
+    modelActions[namespace] = {};
+
     function useModel() {
       const [data, setData] = useState(state);
       const actions = {};
@@ -49,10 +52,11 @@ export function createStore(models) {
       Object.keys(effects).forEach((name) => {
         const fn = effects[name];
         actions[name] = async (...args) => {
-          await fn(actions, ...args);
+          await fn(actions, ...args, modelActions);
         };
       });
-      return { data, ...actions };
+      modelActions[namespace] = actions;
+      return [data, actions];
     }
 
     containers[namespace] = createContainer(useModel);

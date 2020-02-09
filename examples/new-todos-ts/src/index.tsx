@@ -51,7 +51,7 @@ const { Provider, useStore } = createStore(storeModels);
 
 // Consume model
 function Button() {
-  const { add } = useStore('todos');
+  const [, { add }] = useStore('todos');
   function onClick() {
     add({
       title: 'Testing',
@@ -62,12 +62,12 @@ function Button() {
 }
 
 function Count() {
-  const { data } = useStore('todos');
+  const [data] = useStore('todos');
   return <span>{data.length}</span>;
 }
 
 function Main() {
-  const { refresh } = useStore('todos');
+  const [, { refresh }] = useStore('todos');
   useEffect(() => {
     refresh();
   }, []);
