@@ -45,21 +45,24 @@ export function createStore(models) {
     function useModel() {
       const [data, setData] = useState(state);
 
-      const actions = useMemo(() => {
+      const reducerActions = useMemo(() => {
         const setActions = {};
         Object.keys(reducers).forEach((name) => {
           const fn = reducers[name];
           setActions[name] = (...args) => setData((prevState) => fn(prevState, ...args));
         });
-        Object.keys(effects).forEach((name) => {
-          const fn = effects[name];
-          setActions[name] = async (...args) => {
-            await fn(setActions, ...args, modelActions);
-          };
-        });
         return setActions;
-      }, [])
+      }, []);
 
+      const effectActions = {};
+      Object.keys(effects).forEach((name) => {
+        const fn = effects[name];
+        effectActions[name] = async (...args) => {
+          await fn(...args, data, modelActions);
+        };
+      });
+
+      const actions = { ...reducerActions, ...effectActions };
       modelActions[namespace] = actions;
 
       return [data, actions];
@@ -76,13 +79,13 @@ export function createStore(models) {
     return <>{children}</>;
   }
 
-  function useStore(namespace) {
+  function useModel(namespace) {
     const { useContainer } = containers[namespace];
     return useContainer();
   }
 
   return {
     Provider,
-    useStore,
+    useModel,
   };
 }

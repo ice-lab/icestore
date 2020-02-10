@@ -1,96 +1,184 @@
-import React, { useEffect } from 'react';
+import React, { Component, useEffect } from 'react';
 import ReactDOM from 'react-dom';
-import { createStore } from './createStore';
+// import {Store} from '@ice/store';
+// import {TodoStore} from './stores/todos';
+import stores from './stores';
 
-// Use a model to define your store:
-const todosModel = {
-  state: [
-    {
-      title: 'a',
-      done: false
-    }
-  ],
-  reducers: {
-    add(prevState, todo) {
-      // prevState.push(todo);
-      return [ ...prevState, todo ];
-    },
-    setState(prevState, todos) {
-      return todos;
-    }
-  },
-  effects: {
-    async refresh(actions) {
-      const newState = await new Promise(resolve =>
-        setTimeout(() => {
-          resolve([
-            {
-              title: 'react',
-            },
-            {
-              title: 'vue',
-              done: true,
-            },
-            {
-              title: 'angular',
-            },
-          ]);
-        }, 1000),
-      );
-      actions.setState(newState);
-    }
+// const {withStore} = stores;
+
+// type CustomTodoStore = Store<TodoStore> & { customField: string };
+
+// interface TodoListProps {
+//   title: string;
+//   store: CustomTodoStore;
+// }
+
+// class TodoList extends Component<TodoListProps> {
+//   onRemove = (index) => {
+//     const {remove} = this.props.store;
+//     remove(index);
+//   }
+
+//   onCheck = (index) => {
+//     const {toggle} = this.props.store;
+//     toggle(index);
+//   }
+
+//   render() {
+//     const {title, store} = this.props;
+//     const {dataSource, customField} = store;
+//     const { remove: {loading} } = store;
+
+//     console.log('remove loading:', loading);
+
+//     return (
+//       <div>
+//         <h2>class: {title}</h2>
+//         <p>
+//           {customField}
+//         </p>
+//         <ul>
+//           {dataSource.map(({ name, done = false }, index) => (
+//             <li key={index}>
+//               <label>
+//                 <input
+//                   type="checkbox"
+//                   checked={done}
+//                   onChange={() => this.onCheck(index)}
+//                 />
+//                 {done ? <s>{name}</s> : <span>{name}</span>}
+//               </label>
+//               {
+//                 store.remove.loading ? ' 删除中...' : <button type="submit" onClick={() => this.onRemove(index)}>-</button>
+//               }
+//             </li>
+//           ))}
+//         </ul>
+//       </div>
+//     );
+//   }
+// }
+
+// const TodoListWithStore = withStore('todos', (store: TodoStore): {store: CustomTodoStore} => {
+//   return { store: {...store, customField: '测试的字段'} };
+// })(TodoList);
+
+function TodoListWithStore ({title}) {
+  const [todos, {toggle, remove, add}] = stores.useModel('todos');
+  const { dataSource } = todos;
+
+  function onCheck(index) {
+    toggle(index);
   }
-};
 
-const storeModels = {
-  todos: todosModel,
-};
-
-// Create the store
-const { Provider, useStore } = createStore(storeModels);
-
-// Consume model
-function Button() {
-  const [, { add }] = useStore('todos');
-  function onClick() {
-    add({
-      title: 'Testing',
-      done: false,
-    });
+  function onRemove(index) {
+    remove(index);
   }
-  return <button onClick={onClick}>+</button>;
-}
 
-function Count() {
-  const [data] = useStore('todos');
-  return <span>{data.length}</span>;
-}
-
-function Main() {
-  const [, { refresh }] = useStore('todos');
   useEffect(() => {
+    console.log('TodoListWithStore:action - adddd...');
+    add({ name: 123 });
+  }, []);
+
+  console.log('TodoList rending... dataSource:', dataSource);
+  return (
+    <div>
+      <h2>function: {title}</h2>
+      <ul>
+        {dataSource.map(({ name, done = false }, index) => (
+          <li key={index}>
+            <label>
+              <input
+                type="checkbox"
+                checked={done}
+                onChange={() => onCheck(index)}
+              />
+              {done ? <s>{name}</s> : <span>{name}</span>}
+            </label>
+            {
+              remove.loading ? ' 删除中...' : <button type="submit" onClick={() => onRemove(index)}>-</button>
+            }
+          </li>
+        ))}
+      </ul>
+    </div>
+  )
+}
+
+function TodoApp() {
+  const todos = stores.useModel('todos');
+  const [{dataSource}, {refresh, add}] = todos;
+  useEffect(() => {
+    console.log('TodoApp:action - refresh...');
     refresh();
   }, []);
 
+  // async function onAdd(name) {
+  //   const todo = await add({ name });
+  //   console.log('Newly added todo is ', todo);
+  // }
+
+  const noTaskView = <span>no task</span>;
+  const loadingView = <span>loading...</span>;
+  const taskView = <TodoListWithStore title="标题" />;
+  const taskResultView = dataSource.length ? taskView : noTaskView;
+
+  console.log('TodoApp rending... ');
   return (
     <div>
-      <div>
-        <Count />
-        <Button />
-      </div>
-      <div>
-        <Count />
-      </div>
+      <h2>Todos</h2>
+      {!refresh.loading ? taskResultView : loadingView}
     </div>
   );
 }
 
-// Wrap your application
+function AddTodo() {
+  const [, { add }] = stores.useModel('todos');
+
+  console.log('AddTodo rending...');
+  return (
+    <input
+      onKeyDown={(event) => {
+        if (event.keyCode === 13) {
+          add({
+            name: event.currentTarget.value,
+          });
+          event.currentTarget.value = '';
+        }
+      }}
+      placeholder="Press Enter"
+    />
+  );
+}
+
+function UserApp() {
+  const [{ dataSource, auth, todos }, {login}] = stores.useModel('user');
+  const { name, age } = dataSource;
+
+  useEffect(() => {
+    console.log('UserApp:action - login...');
+    login();
+  }, []);
+
+  console.log('UserApp rending...');
+  return (
+    auth ? <div>
+      <div>名称：{name}</div>
+      <div>年龄：{age}</div>
+      <div>持有任务：{todos || 0}</div>
+    </div> : <div>
+      未登录
+    </div>
+  );
+}
+
 function App() {
   return (
-    <Provider>
-      <Main />
-    </Provider>
+    <stores.Provider>
+      <TodoApp />
+      <AddTodo />
+      <UserApp />
+    </stores.Provider>
   );
 }
 
