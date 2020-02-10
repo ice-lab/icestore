@@ -4,8 +4,6 @@ import ReactDOM from 'react-dom';
 // import {TodoStore} from './stores/todos';
 import stores from './stores';
 
-// const {withStore} = stores;
-
 // type CustomTodoStore = Store<TodoStore> & { customField: string };
 
 // interface TodoListProps {
@@ -13,97 +11,99 @@ import stores from './stores';
 //   store: CustomTodoStore;
 // }
 
-// class TodoList extends Component<TodoListProps> {
-//   onRemove = (index) => {
-//     const {remove} = this.props.store;
-//     remove(index);
-//   }
-
-//   onCheck = (index) => {
-//     const {toggle} = this.props.store;
-//     toggle(index);
-//   }
-
-//   render() {
-//     const {title, store} = this.props;
-//     const {dataSource, customField} = store;
-//     const { remove: {loading} } = store;
-
-//     console.log('remove loading:', loading);
-
-//     return (
-//       <div>
-//         <h2>class: {title}</h2>
-//         <p>
-//           {customField}
-//         </p>
-//         <ul>
-//           {dataSource.map(({ name, done = false }, index) => (
-//             <li key={index}>
-//               <label>
-//                 <input
-//                   type="checkbox"
-//                   checked={done}
-//                   onChange={() => this.onCheck(index)}
-//                 />
-//                 {done ? <s>{name}</s> : <span>{name}</span>}
-//               </label>
-//               {
-//                 store.remove.loading ? ' 删除中...' : <button type="submit" onClick={() => this.onRemove(index)}>-</button>
-//               }
-//             </li>
-//           ))}
-//         </ul>
-//       </div>
-//     );
-//   }
-// }
-
-// const TodoListWithStore = withStore('todos', (store: TodoStore): {store: CustomTodoStore} => {
-//   return { store: {...store, customField: '测试的字段'} };
-// })(TodoList);
-
-function TodoListWithStore ({title}) {
-  const [todos, {toggle, remove, add}] = stores.useModel('todos');
-  const { dataSource } = todos;
-
-  function onCheck(index) {
-    toggle(index);
-  }
-
-  function onRemove(index) {
+class TodoList extends Component<{model: any; title: string;}> {
+  onRemove = (index) => {
+    const [, {remove}] = this.props.model;
     remove(index);
   }
 
-  useEffect(() => {
-    console.log('TodoListWithStore:action - adddd...');
-    add({ name: 123 });
-  }, []);
+  onCheck = (index) => {
+    const [, {toggle}] = this.props.model;
+    toggle(index);
+  }
 
-  console.log('TodoList rending... dataSource:', dataSource);
-  return (
-    <div>
-      <h2>function: {title}</h2>
-      <ul>
-        {dataSource.map(({ name, done = false }, index) => (
-          <li key={index}>
-            <label>
-              <input
-                type="checkbox"
-                checked={done}
-                onChange={() => onCheck(index)}
-              />
-              {done ? <s>{name}</s> : <span>{name}</span>}
-            </label>
-            {
-              remove.loading ? ' 删除中...' : <button type="submit" onClick={() => onRemove(index)}>-</button>
-            }
-          </li>
-        ))}
-      </ul>
-    </div>
-  )
+  render() {
+    const {title, model} = this.props;
+    const [ {dataSource, customField}, { remove } ] = model;
+
+    const {loading} = remove;
+
+    console.log('remove loading:', loading);
+
+    return (
+      <div>
+        <h2>class: {title}</h2>
+        <p>
+          {customField}
+        </p>
+        <ul>
+          {dataSource.map(({ name, done = false }, index) => (
+            <li key={index}>
+              <label>
+                <input
+                  type="checkbox"
+                  checked={done}
+                  onChange={() => this.onCheck(index)}
+                />
+                {done ? <s>{name}</s> : <span>{name}</span>}
+              </label>
+              {
+                remove.loading ? ' 删除中...' : <button type="submit" onClick={() => this.onRemove(index)}>-</button>
+              }
+            </li>
+          ))}
+        </ul>
+      </div>
+    );
+  }
 }
+
+const TodoListWithStore = stores.connect('todos', (model): {model} => {
+  model[0] = {...model[0], customField: '测试的字段'};
+  return { model };
+})(TodoList);
+
+// function TodoListWithStore ({title}) {
+//   const [todos, {toggle, remove, add}] = stores.useModel('todos');
+//   const { dataSource } = todos;
+
+//   function onCheck(index) {
+//     toggle(index);
+//   }
+
+//   function onRemove(index) {
+//     remove(index);
+//   }
+
+//   useEffect(() => {
+//     console.log('TodoListWithStore:action - adddd...');
+//     add({ name: 123 });
+//   }, []);
+
+//   console.log('TodoList rending... dataSource:', dataSource);
+//   return (
+//     <div>
+//       <h2>function: {title}</h2>
+//       <ul>
+//         {dataSource.map(({ name, done = false }, index) => (
+//           <li key={index}>
+//             <label>
+//               <input
+//                 type="checkbox"
+//                 checked={done}
+//                 onChange={() => onCheck(index)}
+//               />
+//               {done ? <s>{name}</s> : <span>{name}</span>}
+//             </label>
+//             {
+//               remove.loading ? ' 删除中...' : <button type="submit" onClick={() => onRemove(index)}>-</button>
+//             }
+//           </li>
+//         ))}
+//       </ul>
+//     </div>
+//   )
+// }
 
 function TodoApp() {
   const todos = stores.useModel('todos');

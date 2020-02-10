@@ -84,8 +84,24 @@ export function createStore(models) {
     return useContainer();
   }
 
+  function connect(namespace, mapModelToProps) {
+    return (Component) => {
+      return (props): React.ReactElement => {
+        const model = useModel(namespace);
+        const storeProps = mapModelToProps ? mapModelToProps(model) : {model};
+        return (
+          <Component
+            {...storeProps}
+            {...props}
+          />
+        );
+      };
+    };
+  }
+
   return {
     Provider,
     useModel,
+    connect,
   };
 }
