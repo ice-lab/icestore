@@ -39,17 +39,17 @@ export function createStore(models) {
   const containers = {};
   const modelActions = {};
   Object.keys(models).forEach(namespace => {
-    const { state, reducers = [], effects = [] } = models[namespace];
+    const { state: initialState, reducers = [], effects = [] } = models[namespace];
     modelActions[namespace] = {};
 
     function useModel() {
-      const [data, setData] = useState(state);
+      const [state, setState] = useState(initialState);
 
       const reducerActions = useMemo(() => {
         const setActions = {};
         Object.keys(reducers).forEach((name) => {
           const fn = reducers[name];
-          setActions[name] = (...args) => setData((prevState) => fn(prevState, ...args));
+          setActions[name] = (...args) => setState((prevState) => fn(prevState, ...args));
         });
         return setActions;
       }, []);
@@ -58,14 +58,14 @@ export function createStore(models) {
       Object.keys(effects).forEach((name) => {
         const fn = effects[name];
         effectActions[name] = async (...args) => {
-          await fn(...args, data, modelActions);
+          await fn(...args, state, modelActions);
         };
       });
 
       const actions = { ...reducerActions, ...effectActions };
       modelActions[namespace] = actions;
 
-      return [data, actions];
+      return [state, actions];
     }
 
     containers[namespace] = createContainer(useModel);
