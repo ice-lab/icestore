@@ -39,7 +39,7 @@ export function createStore(models) {
   const containers = {};
   const modelActions = {};
   Object.keys(models).forEach(namespace => {
-    const { state, reducers, effects } = models[namespace];
+    const { state, reducers = [], effects = [] } = models[namespace];
     modelActions[namespace] = {};
 
     function useModel() {
