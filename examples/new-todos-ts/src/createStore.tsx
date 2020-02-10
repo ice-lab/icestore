@@ -35,16 +35,17 @@ export function createContainer<Value, State = void>(
   return { Provider, useContainer };
 }
 
-export function createStore(models, initialStates?) {
+export function createStore(models, preloadedStates?) {
   const containers = {};
   const modelActions = {};
   Object.keys(models).forEach(namespace => {
     const { state: defineState, reducers = [], effects = [] } = models[namespace];
-    const initialState = initialStates && initialStates[namespace];
+    const preloadedState = preloadedStates && preloadedStates[namespace];
     modelActions[namespace] = {};
 
     function useModel() {
-      const [state, setState] = useState(initialState || defineState);
+      const initialState = preloadedState || defineState;
+      const [state, setState] = useState(initialState);
 
       const reducerActions = useMemo(() => {
         const setActions = {};
