@@ -53,16 +53,16 @@ export type ContextHookReturn<
   ? ContextHookTuple<P, V>
   : ContextHookMultipleTuple<P, S>);
 
-  export type Effect = (...args: any) => any;
+export type Effect = (...args: any) => any;
 
-  export type Reducer = (...args: any) => any;
+export type Reducer = (...args: any) => any;
 
 export interface Model {
   state: any;
   reducers: {
-    [name: string]: Reducer
+    [name: string]: Reducer;
   };
   effects?: {
-    [name: string]: Effect
+    [name: string]: Effect;
   };
 };
