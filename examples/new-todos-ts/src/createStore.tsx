@@ -1,39 +1,5 @@
 import React, { useState, useMemo } from 'react';
-
-export interface ContainerProviderProps<State = void> {
-  initialState?: State;
-  children: React.ReactNode;
-}
-
-export interface Container<Value, State = void> {
-  Provider: React.ComponentType<ContainerProviderProps<State>>;
-  useContainer: () => Value;
-}
-
-export function createContainer<Value, State = void>(
-  useHook: (initialState?: State) => Value,
-): Container<Value, State> {
-  const Context = React.createContext<Value | null>(null);
-
-  function Provider(props: ContainerProviderProps<State>) {
-    const value = useHook(props.initialState);
-    return (
-      <Context.Provider value={value}>
-        {props.children}
-      </Context.Provider>
-    );
-  }
-
-  function useContainer(): Value {
-    const value = React.useContext(Context);
-    if (value === null) {
-      throw new Error('Component must be wrapped with <Container.Provider>');
-    }
-    return value;
-  }
-
-  return { Provider, useContainer };
-}
+import createContainer from './createContainer';
 
 export function createStore(models, preloadedStates?) {
   const containers = {};
@@ -47,43 +13,51 @@ export function createStore(models, preloadedStates?) {
       const initialState = preloadedState || defineState;
       const [state, setState] = useState(initialState);
 
-      const reducerActions = useMemo(() => {
-        const setActions = {};
+      const actions = useMemo(() => {
+        const reducerActions = {};
         Object.keys(reducers).forEach((name) => {
           const fn = reducers[name];
-          setActions[name] = (...args) => setState((prevState) => fn(prevState, ...args));
+          reducerActions[name] = (...args) => setState((prevState) => fn(prevState, ...args));
         });
-        return setActions;
+
+        const effectActions = {};
+        Object.keys(effects).forEach((name) => {
+          const fn = effects[name];
+          effectActions[name] = async (...args) => {
+            await fn(...args, modelActions);
+          };
+        });
+        return { ...reducerActions, ...effectActions };
       }, []);
 
-      const effectActions = {};
-      Object.keys(effects).forEach((name) => {
-        const fn = effects[name];
-        effectActions[name] = async (...args) => {
-          await fn(...args, state, modelActions);
-        };
-      });
-
-      const actions = { ...reducerActions, ...effectActions };
       modelActions[namespace] = actions;
 
       return [state, actions];
     }
 
-    containers[namespace] = createContainer(useModel);
+    containers[namespace] = createContainer(useModel, value => value[0], value => value[1]);
   });
 
   function Provider({ children }) {
     Object.keys(containers).forEach(namespace => {
-      const { Provider: ModelProvider } = containers[namespace];
+      const [ ModelProvider ] = containers[namespace];
       children = <ModelProvider>{children}</ModelProvider>;
     });
     return <>{children}</>;
   }
 
+  function useModelState(namespace) {
+    const [, useModelState ] = containers[namespace];
+    return useModelState();
+  }
+
+  function useModelAction(namespace) {
+    const [, , useModelAction ] = containers[namespace];
+    return useModelAction();
+  }
+
   function useModel(namespace) {
-    const { useContainer } = containers[namespace];
-    return useContainer();
+    return [useModelState(namespace), useModelAction(namespace)];
   }
 
   function connect(namespace, mapModelToProps) {
@@ -104,6 +78,8 @@ export function createStore(models, preloadedStates?) {
   return {
     Provider,
     useModel,
+    useModelState,
+    useModelAction,
     connect,
   };
 }

@@ -133,7 +133,7 @@ function TodoApp() {
 }
 
 function AddTodo() {
-  const [, { add }] = stores.useModel('todos');
+  const { add } = stores.useModelAction('todos');
 
   console.log('AddTodo rending...');
   return (

@@ -19,7 +19,7 @@ const store = {
     auth: false,
   },
   effects: {
-    async login(rootState, actions) {
+    async login(actions) {
       const dataSource = await new Promise(resolve =>
         setTimeout(() => {
           resolve({
@@ -38,6 +38,12 @@ const store = {
   reducers: {
     setTodos(prevState, todos: number) {
       return { ...prevState, todos };
+    },
+    increaseTodos(prevState, value: number) {
+      return { ...prevState, todos: prevState.todos + value };
+    },
+    reduceTodos(prevState, value: number) {
+      return { ...prevState, todos: prevState.todos - value };
     },
     setState(prevState, nextState) {
       return {

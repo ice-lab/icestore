@@ -27,17 +27,27 @@ const store = {
       return {
         dataSource: todos,
       }
+    },
+    addData(prevState, todo) {
+      return {
+        dataSource: [...prevState.dataSource, todo],
+      }
+    },
+    removeData(prevState, index) {
+      prevState.dataSource.splice(index, 1);
+      return {
+        ...prevState
+      };
     }
   },
 
   effects: {
-    add(todo, rootState, actions) {
-      rootState.dataSource.push(todo);
-      actions.todos.setDataSource(rootState.dataSource);
-      actions.user.setTodos(rootState.dataSource.length);
+    add(todo, actions) {
+      actions.todos.addData(todo);
+      actions.user.increaseTodos(1);
     },
 
-    async refresh(rootState, actions) {
+    async refresh(actions) {
       const dataSource: any[] = await new Promise(resolve =>
         setTimeout(() => {
           resolve([
@@ -58,15 +68,14 @@ const store = {
       actions.user.setTodos(dataSource.length);
     },
 
-    async remove(index, rootState, actions) {
+    async remove(index, actions) {
       await new Promise(resolve =>
         setTimeout(() => {
           resolve();
         }, 1000),
       );
-      rootState.dataSource.splice(index, 1);
-      actions.todos.setDataSource(rootState.dataSource);
-      actions.user.setTodos(rootState.dataSource.length);
+      actions.todos.removeData(index);
+      actions.user.reduceTodos(1);
     },
   }
 };
