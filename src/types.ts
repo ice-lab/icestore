@@ -15,15 +15,6 @@ export type ContextHookFunction<V> = () => V;
  * @template P Props
  * @template V Value
  */
-export interface ContextHookObject<P, V> {
-  Context: React.Context<V>;
-  Provider: React.FunctionComponent<P>;
-}
-
-/**
- * @template P Props
- * @template V Value
- */
 export type ContextHookTuple<P, V> = [
   React.FunctionComponent<P>,
   ContextHookFunction<V>
@@ -61,3 +52,17 @@ export type ContextHookReturn<
 > = (S['length'] extends 0
   ? ContextHookTuple<P, V>
   : ContextHookMultipleTuple<P, S>);
+
+  export type Effect = (...args: any) => any;
+
+  export type Reducer = (...args: any) => any;
+
+export interface Model {
+  state: any;
+  reducers: {
+    [name: string]: Reducer
+  };
+  effects?: {
+    [name: string]: Effect
+  };
+};

@@ -1,9 +1,10 @@
 import React, { useState, useMemo } from 'react';
 import { createContainer } from './createContainer';
+import { Model } from './types';
 
 const isDev = process.env.NODE_ENV !== 'production';
 
-export function createStore(models, preloadedStates?) {
+export function createStore(models: {[namespace: string]: Model}, preloadedStates?) {
   const containers = {};
   const modelActions = {};
   Object.keys(models).forEach(namespace => {
@@ -52,21 +53,21 @@ export function createStore(models, preloadedStates?) {
     return <>{children}</>;
   }
 
-  function useModelState(namespace) {
+  function useModelState(namespace: string) {
     const [, useModelState ] = containers[namespace];
     return useModelState();
   }
 
-  function useModelAction(namespace) {
+  function useModelAction(namespace: string) {
     const [, , useModelAction ] = containers[namespace];
     return useModelAction();
   }
 
-  function useModel(namespace) {
+  function useModel(namespace: string) {
     return [useModelState(namespace), useModelAction(namespace)];
   }
 
-  function connect(namespace, mapStateToProps?, mapActionsToProps?) {
+  function connect(namespace: string, mapStateToProps?, mapActionsToProps?) {
     return (Component) => {
       return (props): React.ReactElement => {
         const stateProps = mapStateToProps ? mapStateToProps(useModelState(namespace)) : {};
