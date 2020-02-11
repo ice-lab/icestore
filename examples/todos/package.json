@@ -2,14 +2,15 @@
   "name": "todos",
   "version": "1.0.0",
   "private": true,
-  "main": "src/index.js",
   "dependencies": {
-    "@ice/store": "^0.4.x",
-    "@ice/store-logger": "^0.1.x",
+    "@ice/store": "^1.0.0",
     "react": "16.8.6",
     "react-dom": "16.8.6"
   },
   "devDependencies": {
+    "css-modules-typescript-loader": "^2.0.4",
+    "ice-plugin-fusion": "^0.1.4",
+    "ice-plugin-moment-locales": "^0.1.0",
     "ice-scripts": "^2.0.0"
   },
   "scripts": {

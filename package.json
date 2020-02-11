@@ -50,10 +50,6 @@
     "ts-jest": "^24.0.2",
     "typescript": "^3.7.4"
   },
-  "dependencies": {
-    "is-promise": "^2.1.0",
-    "lodash.isfunction": "^3.0.9"
-  },
   "peerDependencies": {
     "react": "^16.8.0"
   },
