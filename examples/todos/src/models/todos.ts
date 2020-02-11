@@ -26,19 +26,19 @@ const store = {
     setDataSource(prevState, todos) {
       return {
         dataSource: todos,
-      }
+      };
     },
     addData(prevState, todo) {
       return {
         dataSource: [...prevState.dataSource, todo],
-      }
+      };
     },
     removeData(prevState, index) {
       prevState.dataSource.splice(index, 1);
       return {
-        ...prevState
+        ...prevState,
       };
-    }
+    },
   },
 
   effects: {
@@ -77,7 +77,7 @@ const store = {
       actions.todos.removeData(index);
       actions.user.reduceTodos(1);
     },
-  }
+  },
 };
 
 export default store;

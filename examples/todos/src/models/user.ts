@@ -33,7 +33,7 @@ const store = {
         dataSource,
         auth,
       });
-    }
+    },
   },
   reducers: {
     setTodos(prevState, todos: number) {
