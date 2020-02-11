@@ -66,14 +66,15 @@ export function createStore(models, preloadedStates?) {
     return [useModelState(namespace), useModelAction(namespace)];
   }
 
-  function connect(namespace, mapModelToProps) {
+  function connect(namespace, mapStateToProps?, mapActionsToProps?) {
     return (Component) => {
       return (props): React.ReactElement => {
-        const model = useModel(namespace);
-        const storeProps = mapModelToProps ? mapModelToProps(model) : {model};
+        const stateProps = mapStateToProps ? mapStateToProps(useModelState(namespace)) : {};
+        const actionsProps = mapActionsToProps ? mapActionsToProps(useModelAction(namespace)) : {};
         return (
           <Component
-            {...storeProps}
+            {...stateProps}
+            {...actionsProps}
             {...props}
           />
         );

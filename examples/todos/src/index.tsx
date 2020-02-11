@@ -13,24 +13,22 @@ import models from './models';
 
 const store = createStore(models);
 
-class TodoList extends Component<{model: any; title: string;}> {
+class TodoList extends Component<any> {
   onRemove = (index) => {
-    const [, {remove}] = this.props.model;
+    const { remove } = this.props;
     remove(index);
   }
 
   onCheck = (index) => {
-    const [, {toggle}] = this.props.model;
+    const { toggle } = this.props;
     toggle(index);
   }
 
   render() {
-    const {title, model} = this.props;
-    const [ {dataSource, customField}, { remove } ] = model;
+    const {title, dataSource, customField, remove} = this.props;
+    // const {loading} = remove;
 
-    const {loading} = remove;
-
-    console.log('remove loading:', loading);
+    // console.log('remove loading:', loading);
 
     return (
       <div>
@@ -49,9 +47,7 @@ class TodoList extends Component<{model: any; title: string;}> {
                 />
                 {done ? <s>{name}</s> : <span>{name}</span>}
               </label>
-              {
-                remove.loading ? ' 删除中...' : <button type="submit" onClick={() => this.onRemove(index)}>-</button>
-              }
+              <button type="submit" onClick={() => this.onRemove(index)}>-</button>
             </li>
           ))}
         </ul>
@@ -60,10 +56,11 @@ class TodoList extends Component<{model: any; title: string;}> {
   }
 }
 
-const TodoListWithStore = store.connect('todos', (model): {model} => {
-  model[0] = {...model[0], customField: '测试的字段'};
-  return { model };
-})(TodoList);
+const TodoListWithStore = store.connect(
+  'todos',
+  (state) => ({ ...state, customField: '测试的字段' }),
+  (actions) => actions,
+)(TodoList);
 
 // function TodoListWithStore ({title}) {
 //   const [todos, {toggle, remove, add}] = store.useModel('todos');
@@ -129,7 +126,7 @@ function TodoApp() {
   return (
     <div>
       <h2>Todos</h2>
-      {!refresh.loading ? taskResultView : loadingView}
+      {taskResultView}
     </div>
   );
 }
