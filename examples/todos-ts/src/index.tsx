@@ -1,39 +1,40 @@
 import React, { Component, useEffect } from 'react';
 import ReactDOM from 'react-dom';
-import {Store} from '@ice/store/lib/types';
-import stores from './stores';
-import {TodoStore} from './stores/todos';
+import { createStore } from '@ice/store';
+import models from './models';
+// import {TodoStore} from './stores/todos';
 
-const {withStore} = stores;
+// type CustomTodoStore = Store<TodoStore> & { customField: string };
 
-type CustomTodoStore = Store<TodoStore> & { customField: string };
+// interface TodoListProps {
+//   title: string;
+//   store: CustomTodoStore;
+// }
 
-interface TodoListProps {
-  title: string;
-  store: CustomTodoStore;
-}
+const store = createStore(models);
 
-class TodoList extends Component<TodoListProps> {
+class TodoList extends Component<{model: any; title: string;}> {
   onRemove = (index) => {
-    const {remove} = this.props.store;
+    const [, {remove}] = this.props.model;
     remove(index);
   }
 
   onCheck = (index) => {
-    const {toggle} = this.props.store;
+    const [, {toggle}] = this.props.model;
     toggle(index);
   }
 
   render() {
-    const {title, store} = this.props;
-    const {dataSource, customField} = store;
-    const { remove: {loading} } = store;
+    const {title, model} = this.props;
+    const [ {dataSource, customField}, { remove } ] = model;
+
+    const {loading} = remove;
 
     console.log('remove loading:', loading);
 
     return (
       <div>
-        <h2>{title}</h2>
+        <h2>class: {title}</h2>
         <p>
           {customField}
         </p>
@@ -49,7 +50,7 @@ class TodoList extends Component<TodoListProps> {
                 {done ? <s>{name}</s> : <span>{name}</span>}
               </label>
               {
-                store.remove.loading ? ' 删除中...' : <button type="submit" onClick={() => this.onRemove(index)}>-</button>
+                remove.loading ? ' 删除中...' : <button type="submit" onClick={() => this.onRemove(index)}>-</button>
               }
             </li>
           ))}
@@ -59,15 +60,58 @@ class TodoList extends Component<TodoListProps> {
   }
 }
 
-const TodoListWithStore = withStore('todos', (store: TodoStore): {store: CustomTodoStore} => {
-  return { store: {...store, customField: '测试的字段'} };
+const TodoListWithStore = store.connect('todos', (model): {model} => {
+  model[0] = {...model[0], customField: '测试的字段'};
+  return { model };
 })(TodoList);
 
-function TodoApp() {
-  const todos = stores.useStore('todos');
-  const { dataSource, refresh, add } = todos;
+// function TodoListWithStore ({title}) {
+//   const [todos, {toggle, remove, add}] = store.useModel('todos');
+//   const { dataSource } = todos;
 
+//   function onCheck(index) {
+//     toggle(index);
+//   }
+
+//   function onRemove(index) {
+//     remove(index);
+//   }
+
+//   useEffect(() => {
+//     console.log('TodoListWithStore:action - adddd...');
+//     add({ name: 123 });
+//   }, []);
+
+//   console.log('TodoList rending... dataSource:', dataSource);
+//   return (
+//     <div>
+//       <h2>function: {title}</h2>
+//       <ul>
+//         {dataSource.map(({ name, done = false }, index) => (
+//           <li key={index}>
+//             <label>
+//               <input
+//                 type="checkbox"
+//                 checked={done}
+//                 onChange={() => onCheck(index)}
+//               />
+//               {done ? <s>{name}</s> : <span>{name}</span>}
+//             </label>
+//             {
+//               remove.loading ? ' 删除中...' : <button type="submit" onClick={() => onRemove(index)}>-</button>
+//             }
+//           </li>
+//         ))}
+//       </ul>
+//     </div>
+//   )
+// }
+
+function TodoApp() {
+  const todos = store.useModel('todos');
+  const [{dataSource}, {refresh, add}] = todos;
   useEffect(() => {
+    console.log('TodoApp:action - refresh...');
     refresh();
   }, []);
 
@@ -78,25 +122,27 @@ function TodoApp() {
 
   const noTaskView = <span>no task</span>;
   const loadingView = <span>loading...</span>;
-  const taskView = dataSource.length ? <TodoListWithStore title="标题" /> : (
-    noTaskView
-  );
+  const taskView = <TodoListWithStore title="标题" />;
+  const taskResultView = dataSource.length ? taskView : noTaskView;
 
+  console.log('TodoApp rending... ');
   return (
     <div>
       <h2>Todos</h2>
-      {!refresh.loading ? taskView : loadingView}
+      {!refresh.loading ? taskResultView : loadingView}
     </div>
   );
 }
 
 function AddTodo() {
-  console.log('input rending...');
+  const { add } = store.useModelAction('todos');
+
+  console.log('AddTodo rending...');
   return (
     <input
       onKeyDown={(event) => {
         if (event.keyCode === 13) {
-          stores.getStore('todos').add({
+          add({
             name: event.currentTarget.value,
           });
           event.currentTarget.value = '';
@@ -108,14 +154,15 @@ function AddTodo() {
 }
 
 function UserApp() {
-  const user = stores.useStore('user');
-  const { dataSource, auth, login, todos } = user;
+  const [{ dataSource, auth, todos }, {login}] = store.useModel('user');
   const { name, age } = dataSource;
 
   useEffect(() => {
+    console.log('UserApp:action - login...');
     login();
   }, []);
 
+  console.log('UserApp rending...');
   return (
     auth ? <div>
       <div>名称：{name}</div>
@@ -129,11 +176,11 @@ function UserApp() {
 
 function App() {
   return (
-    <div>
+    <store.Provider>
       <TodoApp />
       <AddTodo />
       <UserApp />
-    </div>
+    </store.Provider>
   );
 }
 
