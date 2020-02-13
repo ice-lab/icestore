@@ -26,7 +26,7 @@ export function createStore(models: {[namespace: string]: Model}) {
         Object.keys(effects).forEach((name) => {
           const fn = effects[name];
           effectActions[name] = async (...args) => {
-            await fn(...args, modelActions).bind(actions);
+            await fn.apply(actions, [...args, modelActions]);
           };
         });
         return { ...reducerActions, ...effectActions };
