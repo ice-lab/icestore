@@ -42,12 +42,14 @@ const store = {
   },
 
   effects: {
-    add(todo, actions) {
+    add(todo, state, actions) {
+      console.log('state', state);
       (this as any).addData(todo);
       actions.user.increaseTodos(1);
     },
 
-    async refresh(actions) {
+    async refresh(state, actions) {
+      console.log('effects-refresh');
       const dataSource: any[] = await new Promise(resolve =>
         setTimeout(() => {
           resolve([
@@ -68,7 +70,7 @@ const store = {
       actions.user.setTodos(dataSource.length);
     },
 
-    async remove(index, actions) {
+    async remove(index, state, actions) {
       await new Promise(resolve =>
         setTimeout(() => {
           resolve();

@@ -19,7 +19,7 @@ const store = {
     auth: false,
   },
   effects: {
-    async login(actions) {
+    async login(state, actions) {
       const dataSource = await new Promise(resolve =>
         setTimeout(() => {
           resolve({

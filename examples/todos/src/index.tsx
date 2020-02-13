@@ -25,10 +25,10 @@ class TodoList extends Component<any> {
   }
 
   render() {
-    const {title, dataSource, customField, remove} = this.props;
-    // const {loading} = remove;
+    const {title, dataSource, customField, effects} = this.props;
 
-    // console.log('remove loading:', loading);
+    const {isLoading} = effects.remove;
+    console.log('remove isLoading:', isLoading);
 
     return (
       <div>

@@ -57,5 +57,8 @@
     "coverageDirectory": "./coverage/",
     "collectCoverage": true,
     "preset": "ts-jest"
+  },
+  "dependencies": {
+    "lodash.transform": "^4.6.0"
   }
 }
