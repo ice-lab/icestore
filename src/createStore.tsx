@@ -4,17 +4,16 @@ import { Model } from './types';
 
 const isDev = process.env.NODE_ENV !== 'production';
 
-export function createStore(models: {[namespace: string]: Model}, preloadedStates?) {
+export function createStore(models: {[namespace: string]: Model}) {
   const containers = {};
   const modelActions = {};
   Object.keys(models).forEach(namespace => {
     const { state: defineState, reducers = [], effects = [] } = models[namespace];
-    const preloadedState = preloadedStates && preloadedStates[namespace];
     modelActions[namespace] = {};
 
-    function useModel() {
-      const initialState = preloadedState || defineState;
-      const [state, setState] = useState(initialState);
+    function useModel({ initialState }) {
+      const preloadedState = initialState || defineState;
+      const [state, setState] = useState(preloadedState);
 
       const actions = useMemo(() => {
         const reducerActions = {};
@@ -27,7 +26,7 @@ export function createStore(models: {[namespace: string]: Model}, preloadedState
         Object.keys(effects).forEach((name) => {
           const fn = effects[name];
           effectActions[name] = async (...args) => {
-            await fn(...args, modelActions);
+            await fn(...args, modelActions).bind(actions);
           };
         });
         return { ...reducerActions, ...effectActions };
@@ -42,13 +41,19 @@ export function createStore(models: {[namespace: string]: Model}, preloadedState
       useModel.displayName = namespace;
     }
 
-    containers[namespace] = createContainer(useModel, value => value[0], value => value[1]);
+    containers[namespace] = createContainer(
+      useModel,
+      value => value[0], // state
+      value => value[1]  // actions
+    );
   });
 
-  function Provider({ children }) {
+  function Provider({ children, initialStates = {} }) {
     Object.keys(containers).forEach(namespace => {
       const [ ModelProvider ] = containers[namespace];
-      children = <ModelProvider>{children}</ModelProvider>;
+      children = <ModelProvider initialState={initialStates[namespace]}>
+        {children}
+      </ModelProvider>;
     });
     return <>{children}</>;
   }
