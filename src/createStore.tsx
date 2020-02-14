@@ -9,7 +9,6 @@ export function createStore(models: {[namespace: string]: Model}) {
   const modelActions = {};
   const containers = transform(models, (result, model, namespace) => {
     const { state: defineState = {}, reducers = [], effects = [] } = model;
-    modelActions[namespace] = {};
 
     function useModel({ initialState }) {
       const preloadedState = initialState || defineState;
