@@ -7,9 +7,19 @@ import User from './components/User';
 
 const { Provider } = store;
 
+const initialStates = {
+  user: {
+    dataSource: {
+      name: 'Tom',
+    },
+    auth: true,
+    todos: 0,
+  },
+};
+
 function App() {
   return (
-    <Provider>
+    <Provider initialStates={initialStates}>
       <Todos />
       <TodoAdd />
       <User />
