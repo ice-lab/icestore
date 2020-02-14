@@ -19,7 +19,7 @@ export function createStore(models: {[namespace: string]: Model}) {
           const state = {
             isLoading: false,
             error: null,
-            playload: [],
+            args: [],
             identifier: 0
           };
           result[0][name] = state;
@@ -27,29 +27,29 @@ export function createStore(models: {[namespace: string]: Model}) {
         }, [{}, {}]),
         [effects]
       );
-      const [effectsState, setEffectsState] = useState(() => (effectsInitialState));
-      const setEffectState = useCallback((name, nextState) => {
-        setEffectsState(prevState => ({
+      const [effectsState, setEffectsState] = useState(() => effectsInitialState);
+      const setEffectState = useCallback(
+        (name, nextState) => setEffectsState(prevState => ({
           ...prevState,
           [name]: {
             ...prevState[name],
             ...nextState(prevState[name]),
           }
-        }));
-      }, []);
-
+        })),
+        []
+      );
       const effectsIdentifier = useRef(effectsInitialIdentifier);
       const effectsIdentifierState = Object.keys(effectsState).map((name) => effectsState[name].identifier);
 
       useEffect(() => {
         Object.keys(effectsState).forEach((name) => {
-          const { identifier, playload } = effectsState[name];
+          const { identifier, args } = effectsState[name];
           if (identifier && identifier !== effectsIdentifier.current[name].identifier) {
             effectsIdentifier.current = {
               ...effectsIdentifier.current,
               [name]: { identifier, },
             };
-            (async (...args) => {
+            (async () => {
               setEffectState(name, () => ({
                 isLoading: true,
                 error: null,
@@ -66,7 +66,7 @@ export function createStore(models: {[namespace: string]: Model}) {
                   error,
                 }));
               }
-            })(...playload)
+            })()
           }
         });
       }, [effectsIdentifierState]);
@@ -76,7 +76,7 @@ export function createStore(models: {[namespace: string]: Model}) {
           result[name] = (...args) => setState((prevState) => fn(prevState, ...args));
         }),
         ...transform(effects, (result, fn, name) => {
-          result[name] = (...args) => setEffectState(name, ({ identifier }) => ({ playload: args, identifier: identifier + 1, }));
+          result[name] = (...args) => setEffectState(name, ({ identifier }) => ({ args, identifier: identifier + 1, }));
         })
       }), [reducers, effects]);
 
