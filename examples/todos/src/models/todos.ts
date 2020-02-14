@@ -35,7 +35,7 @@ const store = {
     add(todo, state, actions) {
       state.dataSource.push(todo);
       (this as any).setDataSource(state.dataSource);
-      actions.user.setTodos(state.dataSource.length);
+      // actions.user.setTodos(state.dataSource.length);
     },
 
     async refresh(state, actions) {

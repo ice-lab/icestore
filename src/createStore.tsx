@@ -5,83 +5,113 @@ import { Model } from './types';
 
 const isDev = process.env.NODE_ENV !== 'production';
 
-export function createStore(models: {[namespace: string]: Model}) {
+export function createStore(models: { [namespace: string]: Model }) {
   const modelActions = {};
   const containers = transform(models, (result, model, namespace) => {
     const { state: defineState = {}, reducers = [], effects = [] } = model;
 
-    function useModel({ initialState }) {
-      const preloadedState = initialState || defineState;
-      const [state, setState] = useState(preloadedState);
-
-      const [effectsInitialState, effectsInitialIdentifier] = useMemo(
-        () => transform(effects, (result, effect, name) => {
-          const state = {
+    function useFunctionsState(functions) {
+      const functionsInitialState = useMemo(
+        () => transform(functions, (result, value, name) => {
+          result[name] = {
             isLoading: false,
             error: null,
+          };
+        }, {}),
+        [functions]
+      );
+      const [ functionsState, setFunctionsState ] = useState(() => functionsInitialState);
+      const setFunctionState = useCallback(
+        (name, args) => setFunctionsState(prevState => ({
+          ...prevState,
+          [name]: {
+            ...prevState[name],
+            ...args,
+          }
+        })),
+        []
+      );
+      return [ functionsState, setFunctionsState, setFunctionState ];
+    }
+
+    function useEffects(state, actions) {
+      const [ effectsState, , setEffectState ] = useFunctionsState(effects);
+      const [ effectsInitialPayload, effectsInitialIdentifier ] = useMemo(
+        () => transform(effects, (result, effect, name) => {
+          const state = {
             args: [],
             identifier: 0
           };
           result[0][name] = state;
           result[1][name] = state.identifier;
-        }, [{}, {}]),
+        }, [ {}, {} ]),
         [effects]
       );
-      const [effectsState, setEffectsState] = useState(() => effectsInitialState);
-      const setEffectState = useCallback(
-        (name, nextState) => setEffectsState(prevState => ({
+      const [ effectsPayload, setEffectsPayload ] = useState(() => effectsInitialPayload);
+      const setEffectPayload = useCallback(
+        (name, args) => setEffectsPayload(prevState => ({
           ...prevState,
           [name]: {
             ...prevState[name],
-            ...nextState(prevState[name]),
+            args,
+            identifier: prevState[name].identifier + 1,
           }
         })),
         []
       );
+
       const effectsIdentifier = useRef(effectsInitialIdentifier);
-      const effectsIdentifierState = Object.keys(effectsState).map((name) => effectsState[name].identifier);
+      const effectsPayloadIdentifier = Object.keys(effectsPayload).map((name) => effectsPayload[name].identifier);
 
       useEffect(() => {
-        Object.keys(effectsState).forEach((name) => {
-          const { identifier, args } = effectsState[name];
-          if (identifier && identifier !== effectsIdentifier.current[name].identifier) {
+        Object.keys(effectsPayload).forEach((name) => {
+          const { identifier, args } = effectsPayload[name];
+          if (identifier && identifier !== effectsIdentifier.current[name]) {
             effectsIdentifier.current = {
               ...effectsIdentifier.current,
-              [name]: { identifier, },
+              [name]: identifier,
             };
             (async () => {
-              setEffectState(name, () => ({
+              setEffectState(name, {
                 isLoading: true,
                 error: null,
-              }));
+              });
               try {
                 await effects[name].apply(actions, [...args, state, modelActions]);
-                setEffectState(name, () => ({
+                setEffectState(name, {
                   isLoading: false,
                   error: null,
-                }));
+                });
               } catch (error) {
-                setEffectState(name, () => ({
+                setEffectState(name, {
                   isLoading: false,
                   error,
-                }));
+                });
               }
             })()
           }
         });
-      }, [effectsIdentifierState]);
+      }, [ effectsPayloadIdentifier ]);
+
+      return [ effectsPayload, setEffectPayload, effectsState ];
+    }
+
+    function useModel({ initialState }) {
+      const preloadedState = initialState || defineState;
+      const [ state, setState ] = useState(preloadedState);
 
       const actions = useMemo(() => ({
         ...transform(reducers, (result, fn, name) => {
           result[name] = (...args) => setState((prevState) => fn(prevState, ...args));
         }),
         ...transform(effects, (result, fn, name) => {
-          result[name] = (...args) => setEffectState(name, ({ identifier }) => ({ args, identifier: identifier + 1, }));
+          result[name] = (...args) => executeEffect(name, args);
         })
-      }), [reducers, effects]);
+      }), [ reducers, effects ]);
+      const [ , executeEffect, effectsState ] = useEffects(state, actions);
 
       modelActions[namespace] = actions;
-      return [{...state, effects: effectsState}, actions];
+      return [ state, actions, effectsState ];
     }
 
     if (isDev) {
@@ -91,7 +121,8 @@ export function createStore(models: {[namespace: string]: Model}) {
     result[namespace] = createContainer(
       useModel,
       value => value[0], // state
-      value => value[1]  // actions
+      value => value[1], // actions
+      value => value[2]  // effectsState
     );
   });
 
@@ -115,19 +146,26 @@ export function createStore(models: {[namespace: string]: Model}) {
     return useModelAction();
   }
 
-  function useModel(namespace: string) {
-    return [useModelState(namespace), useModelAction(namespace)];
+  function useModelEffectState(namespace: string) {
+    const [, , , useModelEffectState ] = containers[namespace];
+    return useModelEffectState();
   }
 
-  function connect(namespace: string, mapStateToProps?, mapActionsToProps?) {
+  function useModel(namespace: string) {
+    return [ useModelState(namespace), useModelAction(namespace) ];
+  }
+
+  function connect(namespace: string, mapStateToProps?, mapActionsToProps?, mapEffectsState?) {
     return (Component) => {
       return (props): React.ReactElement => {
         const stateProps = mapStateToProps ? mapStateToProps(useModelState(namespace)) : {};
         const actionsProps = mapActionsToProps ? mapActionsToProps(useModelAction(namespace)) : {};
+        const effectsStateProps = mapEffectsState ? mapEffectsState(useModelEffectState(namespace)) : {};
         return (
           <Component
-            {...stateProps}
-            {...actionsProps}
+            state={stateProps}
+            actions={actionsProps}
+            effectsState={effectsStateProps}
             {...props}
           />
         );
@@ -140,6 +178,7 @@ export function createStore(models: {[namespace: string]: Model}) {
     useModel,
     useModelState,
     useModelAction,
+    useModelEffectState,
     connect,
   };
 }
