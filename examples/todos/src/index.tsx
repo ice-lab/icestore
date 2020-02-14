@@ -105,23 +105,16 @@ const TodoListWithStore = store.connect(
 function TodoApp() {
   const [ state, actions ] = store.useModel('todos');
   const {dataSource, effects} = state;
-  const {refresh, add} = actions;
+  const {refresh} = actions;
 
   useEffect(() => {
     console.log('TodoApp:action - refresh...');
     refresh();
   }, []);
 
-  // async function onAdd(name) {
-  //   const todo = await add({ name });
-  //   console.log('Newly added todo is ', todo);
-  // }
-
   const noTaskView = <span>no task</span>;
   const loadingView = <span>loading...</span>;
-  const taskView = dataSource.length ? <TodoListWithStore title="标题" /> : (
-    noTaskView
-  );
+  const taskView = dataSource.length ? <TodoListWithStore title="标题" /> : noTaskView;
 
   console.log('TodoApp rending... ');
   return (
