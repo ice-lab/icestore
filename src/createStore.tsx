@@ -15,22 +15,19 @@ export function createStore(models: {[namespace: string]: Model}) {
       const preloadedState = initialState || defineState;
       const [state, setState] = useState(preloadedState);
 
-      const [effectsInitialState, effectsInitialIdentifier] = useMemo(() => {
-        const states = {};
-        const identifiers = {};
-        Object.keys(effects).forEach((name) => {
+      const [effectsInitialState, effectsInitialIdentifier] = useMemo(
+        () => transform(effects, (result, effect, name) => {
           const state = {
             isLoading: false,
             error: null,
             playload: [],
             identifier: 0
           };
-          states[name] = state;
-          identifiers[name] = state.identifier;
-        });
-        return [states, identifiers];
-      }, []);
-      const effectsIdentifier = useRef(effectsInitialIdentifier);
+          result[0][name] = state;
+          result[1][name] = state.identifier;
+        }, [{}, {}]),
+        []
+      );
       const [effectsState, setEffectsState] = useState(() => (effectsInitialState));
       const setEffectState = useCallback((name, nextState) => {
         setEffectsState(prevState => ({
@@ -41,6 +38,8 @@ export function createStore(models: {[namespace: string]: Model}) {
           }
         }));
       }, []);
+
+      const effectsIdentifier = useRef(effectsInitialIdentifier);
       const effectsIdentifierState = Object.keys(effectsState).map((name) => effectsState[name].identifier);
 
       useEffect(() => {
@@ -73,21 +72,14 @@ export function createStore(models: {[namespace: string]: Model}) {
         });
       }, [effectsIdentifierState]);
 
-      const actions = useMemo(() => {
-        const reducerActions = {};
-        Object.keys(reducers).forEach((name) => {
-          const fn = reducers[name];
-          reducerActions[name] = (...args) => setState((prevState) => fn(prevState, ...args));
-        });
-
-        const effectActions = {};
-        Object.keys(effects).forEach((name) => {
-          effectActions[name] = function(...args) {
-            setEffectState(name, ({ identifier }) => ({ playload: args, identifier: identifier + 1, }));
-          };
-        });
-        return { ...reducerActions, ...effectActions };
-      }, []);
+      const actions = useMemo(() => ({
+        ...transform(reducers, (result, fn, name) => {
+          result[name] = (...args) => setState((prevState) => fn(prevState, ...args));
+        }),
+        ...transform(effects, (result, fn, name) => {
+          result[name] = (...args) => setEffectState(name, ({ identifier }) => ({ playload: args, identifier: identifier + 1, }));
+        })
+      }), []);
 
       modelActions[namespace] = actions;
       return [{...state, effects: effectsState}, actions];
@@ -102,7 +94,7 @@ export function createStore(models: {[namespace: string]: Model}) {
       value => value[0], // state
       value => value[1]  // actions
     );
-  }, {});
+  });
 
   function Provider({ children, initialStates = {} }) {
     Object.keys(containers).forEach(namespace => {

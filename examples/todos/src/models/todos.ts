@@ -43,7 +43,6 @@ const store = {
 
   effects: {
     add(todo, state, actions) {
-      console.log('state', state);
       (this as any).addData(todo);
       actions.user.increaseTodos(1);
     },
