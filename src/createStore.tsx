@@ -26,7 +26,7 @@ export function createStore(models: {[namespace: string]: Model}) {
           result[0][name] = state;
           result[1][name] = state.identifier;
         }, [{}, {}]),
-        []
+        [effects]
       );
       const [effectsState, setEffectsState] = useState(() => (effectsInitialState));
       const setEffectState = useCallback((name, nextState) => {
@@ -79,7 +79,7 @@ export function createStore(models: {[namespace: string]: Model}) {
         ...transform(effects, (result, fn, name) => {
           result[name] = (...args) => setEffectState(name, ({ identifier }) => ({ playload: args, identifier: identifier + 1, }));
         })
-      }), []);
+      }), [reducers, effects]);
 
       modelActions[namespace] = actions;
       return [{...state, effects: effectsState}, actions];
