@@ -17,7 +17,7 @@ export function createStore(models: { [namespace: string]: Model }) {
             error: null,
           };
         }, {}),
-        [functions]
+        [functions],
       );
       const [ functionsState, setFunctionsState ] = useState(() => functionsInitialState);
       const setFunctionState = useCallback(
@@ -26,9 +26,9 @@ export function createStore(models: { [namespace: string]: Model }) {
           [name]: {
             ...prevState[name],
             ...args,
-          }
+          },
         })),
-        []
+        [],
       );
       return [ functionsState, setFunctionsState, setFunctionState ];
     }
@@ -39,12 +39,12 @@ export function createStore(models: { [namespace: string]: Model }) {
         () => transform(effects, (result, effect, name) => {
           const state = {
             args: [],
-            identifier: 0
+            identifier: 0,
           };
           result[0][name] = state;
           result[1][name] = state.identifier;
         }, [ {}, {} ]),
-        [effects]
+        [],
       );
       const [ effectsPayload, setEffectsPayload ] = useState(() => effectsInitialPayload);
       const setEffectPayload = useCallback(
@@ -54,9 +54,9 @@ export function createStore(models: { [namespace: string]: Model }) {
             ...prevState[name],
             args,
             identifier: prevState[name].identifier + 1,
-          }
+          },
         })),
-        []
+        [],
       );
 
       const effectsIdentifier = useRef(effectsInitialIdentifier);
@@ -87,7 +87,7 @@ export function createStore(models: { [namespace: string]: Model }) {
                   error,
                 });
               }
-            })()
+            })();
           }
         });
       }, [ effectsPayloadIdentifier ]);
@@ -105,8 +105,8 @@ export function createStore(models: { [namespace: string]: Model }) {
         }),
         ...transform(effects, (result, fn, name) => {
           result[name] = (...args) => executeEffect(name, args);
-        })
-      }), [ reducers, effects ]);
+        }),
+      }), []);
       const [ , executeEffect, effectsState ] = useEffects(state, actions);
 
       modelsActions[namespace] = actions;
@@ -121,7 +121,7 @@ export function createStore(models: { [namespace: string]: Model }) {
       useModel,
       value => value[0], // state
       value => value[1], // actions
-      value => value[2]  // effectsState
+      value => value[2],  // effectsState
     );
   }
 
