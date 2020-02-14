@@ -33,7 +33,7 @@ export function createStore(models: { [namespace: string]: Model }) {
       return [ functionsState, setFunctionsState, setFunctionState ];
     }
 
-    function useEffects(state, actions) {
+    function useEffects(state) {
       const [ effectsState, , setEffectState ] = useFunctionsState(effects);
       const [ effectsInitialPayload, effectsInitialIdentifier ] = useMemo(
         () => transform(effects, (result, effect, name) => {
@@ -76,7 +76,7 @@ export function createStore(models: { [namespace: string]: Model }) {
                 error: null,
               });
               try {
-                await effects[name].apply(actions, [...args, state, modelsActions]);
+                await effects[name](...args, state, modelsActions);
                 setEffectState(name, {
                   isLoading: false,
                   error: null,
@@ -98,6 +98,7 @@ export function createStore(models: { [namespace: string]: Model }) {
     function useModel({ initialState }) {
       const preloadedState = initialState || defineState;
       const [ state, setState ] = useState(preloadedState);
+      const [ , executeEffect, effectsState ] = useEffects(state);
 
       const actions = useMemo(() => ({
         ...transform(reducers, (result, fn, name) => {
@@ -107,7 +108,6 @@ export function createStore(models: { [namespace: string]: Model }) {
           result[name] = (...args) => executeEffect(name, args);
         }),
       }), []);
-      const [ , executeEffect, effectsState ] = useEffects(state, actions);
 
       modelsActions[namespace] = actions;
       return [ state, actions, effectsState ];

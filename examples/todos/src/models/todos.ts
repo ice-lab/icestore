@@ -34,8 +34,8 @@ const store = {
   effects: {
     add(todo, state, actions) {
       state.dataSource.push(todo);
-      (this as any).setDataSource(state.dataSource);
-      // actions.user.setTodos(state.dataSource.length);
+      actions.todos.setDataSource(state.dataSource);
+      actions.user.setTodos(state.dataSource.length);
     },
 
     async refresh(state, actions) {
