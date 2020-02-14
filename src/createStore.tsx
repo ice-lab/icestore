@@ -6,8 +6,7 @@ import { Model } from './types';
 const isDev = process.env.NODE_ENV !== 'production';
 
 export function createStore(models: { [namespace: string]: Model }) {
-  const modelActions = {};
-  const containers = transform(models, (result, model, namespace) => {
+  function createModelContainer(namespace: string, model: Model) {
     const { state: defineState = {}, reducers = [], effects = [] } = model;
 
     function useFunctionsState(functions) {
@@ -77,7 +76,7 @@ export function createStore(models: { [namespace: string]: Model }) {
                 error: null,
               });
               try {
-                await effects[name].apply(actions, [...args, state, modelActions]);
+                await effects[name].apply(actions, [...args, state, modelsActions]);
                 setEffectState(name, {
                   isLoading: false,
                   error: null,
@@ -110,7 +109,7 @@ export function createStore(models: { [namespace: string]: Model }) {
       }), [ reducers, effects ]);
       const [ , executeEffect, effectsState ] = useEffects(state, actions);
 
-      modelActions[namespace] = actions;
+      modelsActions[namespace] = actions;
       return [ state, actions, effectsState ];
     }
 
@@ -118,17 +117,17 @@ export function createStore(models: { [namespace: string]: Model }) {
       useModel.displayName = namespace;
     }
 
-    result[namespace] = createContainer(
+    return createContainer(
       useModel,
       value => value[0], // state
       value => value[1], // actions
       value => value[2]  // effectsState
     );
-  });
+  }
 
   function Provider({ children, initialStates = {} }) {
-    Object.keys(containers).forEach(namespace => {
-      const [ ModelProvider ] = containers[namespace];
+    Object.keys(modelContainers).forEach(namespace => {
+      const [ ModelProvider ] = modelContainers[namespace];
       children = <ModelProvider initialState={initialStates[namespace]}>
         {children}
       </ModelProvider>;
@@ -137,17 +136,17 @@ export function createStore(models: { [namespace: string]: Model }) {
   }
 
   function useModelState(namespace: string) {
-    const [, useModelState ] = containers[namespace];
+    const [, useModelState ] = modelContainers[namespace];
     return useModelState();
   }
 
   function useModelAction(namespace: string) {
-    const [, , useModelAction ] = containers[namespace];
+    const [, , useModelAction ] = modelContainers[namespace];
     return useModelAction();
   }
 
   function useModelEffectState(namespace: string) {
-    const [, , , useModelEffectState ] = containers[namespace];
+    const [, , , useModelEffectState ] = modelContainers[namespace];
     return useModelEffectState();
   }
 
@@ -172,6 +171,11 @@ export function createStore(models: { [namespace: string]: Model }) {
       };
     };
   }
+
+  const modelsActions = {};
+  const modelContainers = transform(models, (result, model, namespace) => {
+    result[namespace] = createModelContainer(namespace, model);
+  });
 
   return {
     Provider,
