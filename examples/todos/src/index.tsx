@@ -26,10 +26,6 @@ class TodoList extends Component<any> {
 
   render() {
     const {title, dataSource, customField, effects} = this.props;
-
-    const {isLoading} = effects.remove;
-    console.log('remove isLoading:', isLoading);
-
     return (
       <div>
         <h2>class: {title}</h2>
@@ -47,7 +43,9 @@ class TodoList extends Component<any> {
                 />
                 {done ? <s>{name}</s> : <span>{name}</span>}
               </label>
-              <button type="submit" onClick={() => this.onRemove(index)}>-</button>
+              {
+                effects.remove.isLoading ? ' 删除中...' : <button type="submit" onClick={() => this.onRemove(index)}>-</button>
+              }
             </li>
           ))}
         </ul>
@@ -105,8 +103,10 @@ const TodoListWithStore = store.connect(
 // }
 
 function TodoApp() {
-  const todos = store.useModel('todos');
-  const [{dataSource}, {refresh, add}] = todos;
+  const [ state, actions ] = store.useModel('todos');
+  const {dataSource, effects} = state;
+  const {refresh, add} = actions;
+
   useEffect(() => {
     console.log('TodoApp:action - refresh...');
     refresh();
@@ -119,14 +119,15 @@ function TodoApp() {
 
   const noTaskView = <span>no task</span>;
   const loadingView = <span>loading...</span>;
-  const taskView = <TodoListWithStore title="标题" />;
-  const taskResultView = dataSource.length ? taskView : noTaskView;
+  const taskView = dataSource.length ? <TodoListWithStore title="标题" /> : (
+    noTaskView
+  );
 
   console.log('TodoApp rending... ');
   return (
     <div>
       <h2>Todos</h2>
-      {taskResultView}
+      {!effects.refresh.isLoading ? taskView : loadingView}
     </div>
   );
 }

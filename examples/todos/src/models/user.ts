@@ -1,3 +1,5 @@
+import { delay } from '../utils';
+
 export interface User {
   name?: string;
   age?: number;
@@ -20,14 +22,11 @@ const store = {
   },
   effects: {
     async login(state, actions) {
-      const dataSource = await new Promise(resolve =>
-        setTimeout(() => {
-          resolve({
-            name: 'Alvin',
-            age: 18,
-          });
-        }, 1000),
-      );
+      await delay(1000);
+      const dataSource = {
+        name: 'Alvin',
+        age: 18,
+      };
       const auth = true;
       actions.user.setState({
         dataSource,
@@ -38,12 +37,6 @@ const store = {
   reducers: {
     setTodos(prevState, todos: number) {
       return { ...prevState, todos };
-    },
-    increaseTodos(prevState, value: number) {
-      return { ...prevState, todos: prevState.todos + value };
-    },
-    reduceTodos(prevState, value: number) {
-      return { ...prevState, todos: prevState.todos - value };
     },
     setState(prevState, nextState) {
       return {
