@@ -56,7 +56,7 @@ class TodoList extends Component<any> {
 
 const TodoListWithStore = connect(
   'todos',
-  (state) => ({ ...state, subTitle: '测试的字段' }),
+  (state) => ({ ...state, subTitle: 'SubTitle' }),
   (actions) => actions,
 )(TodoList);
 
@@ -74,11 +74,10 @@ const TodoListWithStore = connect(
 //   }
 
 //   useEffect(() => {
-//     console.debug('TodoListWithStore:action - adddd...');
 //     add({ name: 123 });
 //   }, []);
 
-//   console.debug('TodoList rending... dataSource:', dataSource);
+//   console.debug('TodoList rending');
 //   return (
 //     <div>
 //       <h2>{title}</h2>
@@ -112,17 +111,12 @@ function TodoApp() {
     refresh();
   }, []);
 
-  const noTaskView = <span>no task</span>;
-  const loadingView = <span>loading...</span>;
-  const taskView = dataSource.length ? <TodoListWithStore title="标题" /> : noTaskView;
+  const noTaskView = <div>no task</div>;
+  const loadingView = <div>loading...</div>;
+  const taskView = dataSource.length ? <TodoListWithStore title="Todos" /> : noTaskView;
 
   console.debug('TodoApp rending... ');
-  return (
-    <div>
-      <h2>Todos</h2>
-      {!effects.refresh.isLoading ? taskView : loadingView}
-    </div>
-  );
+  return !effects.refresh.isLoading ? taskView : loadingView;
 }
 
 function AddTodo() {
@@ -148,7 +142,7 @@ function UserApp() {
   const [ state, actions ] = useModel('user');
   const { dataSource, auth, todos } = state;
   const { login } = actions;
-  const { name, age } = dataSource;
+  const { name } = dataSource;
 
   useEffect(() => {
     login();
@@ -157,12 +151,16 @@ function UserApp() {
   console.debug('UserApp rending...');
   return auth ?
     (<div>
-      <div>名称：{name}</div>
-      <div>年龄：{age}</div>
-      <div>持有任务：{todos}</div>
+      <h2>
+        User Information
+      </h2>
+      <ul>
+        <li>Name：{name}</li>
+        <li>Todos：{todos}</li>
+      </ul>
     </div>) :
     (<div>
-      未登录
+      Not logged in
     </div>);
 }
 

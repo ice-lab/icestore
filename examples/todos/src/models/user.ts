@@ -25,7 +25,6 @@ const store = {
       await delay(1000);
       const dataSource = {
         name: 'Alvin',
-        age: 18,
       };
       const auth = true;
       actions.user.setState({
