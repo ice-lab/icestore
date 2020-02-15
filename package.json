@@ -59,6 +59,7 @@
     "preset": "ts-jest"
   },
   "dependencies": {
+    "is-promise": "^2.1.0",
     "lodash.transform": "^4.6.0"
   }
 }

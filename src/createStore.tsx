@@ -1,4 +1,5 @@
 import React, { useState, useMemo, useEffect, useRef, useCallback } from 'react';
+import isPromise from 'is-promise';
 import transform from 'lodash.transform';
 import { createContainer } from './createContainer';
 import { Config } from './types';
@@ -6,7 +7,7 @@ import { Config } from './types';
 const isDev = process.env.NODE_ENV !== 'production';
 
 export function createModel(config: Config, namespace?: string, modelsActions?) {
-  const { state: defineState = {}, reducers = [], effects = [] } = config;
+  const { state: defineState = {}, actions: defineActions = [] } = config;
 
   function useFunctionsState(functions) {
     const functionsInitialState = useMemo(
@@ -32,10 +33,10 @@ export function createModel(config: Config, namespace?: string, modelsActions?) 
     return [ functionsState, setFunctionsState, setFunctionState ];
   }
 
-  function useEffects(state) {
-    const [ effectsState, , setEffectState ] = useFunctionsState(effects);
+  function useEffects(state, setState) {
+    const [ effectsState, , setEffectState ] = useFunctionsState(defineActions);
     const [ effectsInitialPayload, effectsInitialIdentifier ] = useMemo(
-      () => transform(effects, (result, effect, name) => {
+      () => transform(defineActions, (result, effect, name) => {
         const state = {
           args: [],
           identifier: 0,
@@ -70,21 +71,26 @@ export function createModel(config: Config, namespace?: string, modelsActions?) 
             [name]: identifier,
           };
           (async () => {
-            setEffectState(name, {
-              isLoading: true,
-              error: null,
-            });
-            try {
-              await effects[name](...args, state, modelsActions);
+            const nextState = defineActions[name](state, ...args, modelsActions);
+            if (isPromise(nextState)) {
               setEffectState(name, {
-                isLoading: false,
+                isLoading: true,
                 error: null,
               });
-            } catch (error) {
-              setEffectState(name, {
-                isLoading: false,
-                error,
-              });
+              try {
+                setState(await nextState);
+                setEffectState(name, {
+                  isLoading: false,
+                  error: null,
+                });
+              } catch (error) {
+                setEffectState(name, {
+                  isLoading: false,
+                  error,
+                });
+              }
+            } else {
+              setState(nextState);
             }
           })();
         }
@@ -97,15 +103,10 @@ export function createModel(config: Config, namespace?: string, modelsActions?) 
   function useModel({ initialState }) {
     const preloadedState = initialState || defineState;
     const [ state, setState ] = useState(preloadedState);
-    const [ , executeEffect, effectsState ] = useEffects(state);
+    const [ , executeEffect, effectsState ] = useEffects(state, setState);
 
-    const actions = useMemo(() => ({
-      ...transform(reducers, (result, fn, name) => {
-        result[name] = (...args) => setState((prevState) => fn(prevState, ...args));
-      }),
-      ...transform(effects, (result, fn, name) => {
-        result[name] = (...args) => executeEffect(name, args);
-      }),
+    const actions = useMemo(() => transform(defineActions, (result, fn, name) => {
+      result[name] = (...args) => executeEffect(name, args);
     }), []);
 
     if (namespace && modelsActions) {
@@ -120,9 +121,9 @@ export function createModel(config: Config, namespace?: string, modelsActions?) 
 
   return createContainer(
     useModel,
-    value => value[0], // state
-    value => value[1], // actions
-    value => value[2], // effectsState
+    value => value[0],
+    value => value[1],
+    value => value[2],
   );
 }
 

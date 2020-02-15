@@ -17,29 +17,10 @@ const store = {
     dataSource: [],
   },
 
-  reducers: {
-    toggle(prevState, index) {
-      prevState.dataSource[index].done = !prevState.dataSource[index].done;
-      return {
-        ...prevState,
-      };
-    },
-    setDataSource(prevState, todos) {
-      return {
-        dataSource: todos,
-      };
-    },
-  },
-
-  effects: {
-    add(todo, state, actions) {
-      state.dataSource.push(todo);
-      actions.todos.setDataSource(state.dataSource);
-      actions.user.setTodos(state.dataSource.length);
-    },
-
-    async refresh(state, actions) {
+  actions: {
+    async refresh(prevState, actions) {
       await delay(2000);
+
       const dataSource: any[] = [
         {
           name: 'react',
@@ -52,16 +33,33 @@ const store = {
           name: 'angular',
         },
       ];
-      actions.todos.setDataSource(dataSource);
       actions.user.setTodos(dataSource.length);
+      return {
+        ...prevState,
+        dataSource,
+      };
     },
-
-    async remove(index, state, actions) {
+    toggle(prevState, index) {
+      prevState.dataSource[index].done = !prevState.dataSource[index].done;
+      return {
+        ...prevState,
+      };
+    },
+    add(prevState, todo, actions) {
+      prevState.dataSource.push(todo);
+      actions.user.setTodos(prevState.dataSource.length);
+      return {
+        ...prevState,
+      };
+    },
+    async remove(prevState, index, actions) {
       await delay(1000);
 
-      state.dataSource.splice(index, 1);
-      actions.todos.setDataSource(state.dataSource);
-      actions.user.setTodos(state.dataSource.length);
+      prevState.dataSource.splice(index, 1);
+      actions.user.setTodos(prevState.dataSource.length);
+      return {
+        ...prevState,
+      }
     },
   },
 };

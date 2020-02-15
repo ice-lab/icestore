@@ -20,28 +20,22 @@ const store = {
     todos: 0,
     auth: false,
   },
-  effects: {
-    async login(state, actions) {
+  actions: {
+    async login(prevState) {
       await delay(1000);
       const dataSource = {
         name: 'Alvin',
       };
       const auth = true;
-      actions.user.setState({
-        dataSource,
-        auth,
-      });
-    },
-  },
-  reducers: {
-    setTodos(prevState, todos: number) {
-      return { ...prevState, todos };
-    },
-    setState(prevState, nextState) {
+
       return {
         ...prevState,
-        ...nextState,
+        dataSource,
+        auth,
       };
+    },
+    setTodos(prevState, todos: number) {
+      return { ...prevState, todos };
     },
   },
 };
