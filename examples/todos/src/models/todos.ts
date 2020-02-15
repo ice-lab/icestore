@@ -60,7 +60,7 @@ const store = {
       await delay(1000);
 
       state.dataSource.splice(index, 1);
-      (this as any).setDataSource(state.dataSource);
+      actions.todos.setDataSource(state.dataSource);
       actions.user.setTodos(state.dataSource.length);
     },
   },

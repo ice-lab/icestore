@@ -57,7 +57,7 @@ export type Effect = (...args: any) => any;
 
 export type Reducer = (...args: any) => any;
 
-export interface Model {
+export interface Config {
   state: any;
   reducers: {
     [name: string]: Reducer;
