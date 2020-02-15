@@ -18,7 +18,7 @@ const store = {
   },
 
   actions: {
-    async refresh(prevState, actions) {
+    async refresh(prevState, actions, globalActions) {
       await delay(2000);
 
       const dataSource: any[] = [
@@ -33,7 +33,7 @@ const store = {
           name: 'angular',
         },
       ];
-      actions.user.setTodos(dataSource.length);
+      globalActions.user.setTodos(dataSource.length);
       return {
         ...prevState,
         dataSource,
@@ -45,18 +45,18 @@ const store = {
         ...prevState,
       };
     },
-    add(prevState, todo, actions) {
+    add(prevState, todo, actions, globalActions) {
       prevState.dataSource.push(todo);
-      actions.user.setTodos(prevState.dataSource.length);
+      globalActions.user.setTodos(prevState.dataSource.length);
       return {
         ...prevState,
       };
     },
-    async remove(prevState, index, actions) {
+    async remove(prevState, index, globalActions) {
       await delay(1000);
 
       prevState.dataSource.splice(index, 1);
-      actions.user.setTodos(prevState.dataSource.length);
+      globalActions.user.setTodos(prevState.dataSource.length);
       return {
         ...prevState,
       }

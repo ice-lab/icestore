@@ -8,6 +8,7 @@ const isDev = process.env.NODE_ENV !== 'production';
 
 export function createModel(config: Config, namespace?: string, modelsActions?) {
   const { state: defineState = {}, actions: defineActions = [] } = config;
+  let actions;
 
   function useFunctionsState(functions) {
     const functionsInitialState = useMemo(
@@ -71,7 +72,7 @@ export function createModel(config: Config, namespace?: string, modelsActions?) 
             [name]: identifier,
           };
           (async () => {
-            const nextState = defineActions[name](state, ...args, modelsActions);
+            const nextState = defineActions[name](state, ...args, actions, modelsActions);
             if (isPromise(nextState)) {
               setEffectState(name, {
                 isLoading: true,
@@ -105,9 +106,9 @@ export function createModel(config: Config, namespace?: string, modelsActions?) 
     const [ state, setState ] = useState(preloadedState);
     const [ , executeEffect, effectsState ] = useEffects(state, setState);
 
-    const actions = useMemo(() => transform(defineActions, (result, fn, name) => {
+    actions = useMemo(() => transform(defineActions, (result, fn, name) => {
       result[name] = (...args) => executeEffect(name, args);
-    }), []);
+    }), [defineActions]);
 
     if (namespace && modelsActions) {
       modelsActions[namespace] = actions;
