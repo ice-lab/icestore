@@ -34,10 +34,10 @@ export function createModel(config: Config, namespace?: string, modelsActions?) 
     return [ functionsState, setFunctionsState, setFunctionState ];
   }
 
-  function useEffects(state, setState) {
-    const [ effectsState, , setEffectState ] = useFunctionsState(defineActions);
-    const [ effectsInitialPayload, effectsInitialIdentifier ] = useMemo(
-      () => transform(defineActions, (result, effect, name) => {
+  function useActions(state, setState) {
+    const [ actionsState, , setActionsState ] = useFunctionsState(defineActions);
+    const [ actionsInitialPayload, actionsInitialIdentifier ] = useMemo(
+      () => transform(defineActions, (result, action, name) => {
         const state = {
           args: [],
           identifier: 0,
@@ -47,9 +47,9 @@ export function createModel(config: Config, namespace?: string, modelsActions?) 
       }, [ {}, {} ]),
       [],
     );
-    const [ effectsPayload, setEffectsPayload ] = useState(() => effectsInitialPayload);
+    const [ actionsPayload, setActionsPayload ] = useState(() => actionsInitialPayload);
     const setEffectPayload = useCallback(
-      (name, args) => setEffectsPayload(prevState => ({
+      (name, args) => setActionsPayload(prevState => ({
         ...prevState,
         [name]: {
           ...prevState[name],
@@ -60,32 +60,32 @@ export function createModel(config: Config, namespace?: string, modelsActions?) 
       [],
     );
 
-    const effectsIdentifier = useRef(effectsInitialIdentifier);
-    const effectsPayloadIdentifier = Object.keys(effectsPayload).map((name) => effectsPayload[name].identifier);
+    const actionsIdentifier = useRef(actionsInitialIdentifier);
+    const actionsPayloadIdentifier = Object.keys(actionsPayload).map((name) => actionsPayload[name].identifier);
 
     useEffect(() => {
-      Object.keys(effectsPayload).forEach((name) => {
-        const { identifier, args } = effectsPayload[name];
-        if (identifier && identifier !== effectsIdentifier.current[name]) {
-          effectsIdentifier.current = {
-            ...effectsIdentifier.current,
+      Object.keys(actionsPayload).forEach((name) => {
+        const { identifier, args } = actionsPayload[name];
+        if (identifier && identifier !== actionsIdentifier.current[name]) {
+          actionsIdentifier.current = {
+            ...actionsIdentifier.current,
             [name]: identifier,
           };
           (async () => {
             const nextState = defineActions[name](state, ...args, actions, modelsActions);
             if (isPromise(nextState)) {
-              setEffectState(name, {
+              setActionsState(name, {
                 isLoading: true,
                 error: null,
               });
               try {
                 setState(await nextState);
-                setEffectState(name, {
+                setActionsState(name, {
                   isLoading: false,
                   error: null,
                 });
               } catch (error) {
-                setEffectState(name, {
+                setActionsState(name, {
                   isLoading: false,
                   error,
                 });
@@ -96,15 +96,15 @@ export function createModel(config: Config, namespace?: string, modelsActions?) 
           })();
         }
       });
-    }, [ effectsPayloadIdentifier ]);
+    }, [ actionsPayloadIdentifier ]);
 
-    return [ effectsPayload, setEffectPayload, effectsState ];
+    return [ actionsPayload, setEffectPayload, actionsState ];
   }
 
   function useModel({ initialState }) {
     const preloadedState = initialState || defineState;
     const [ state, setState ] = useState(preloadedState);
-    const [ , executeEffect, effectsState ] = useEffects(state, setState);
+    const [ , executeEffect, actionsState ] = useActions(state, setState);
 
     actions = useMemo(() => transform(defineActions, (result, fn, name) => {
       result[name] = (...args) => executeEffect(name, args);
@@ -113,7 +113,7 @@ export function createModel(config: Config, namespace?: string, modelsActions?) 
     if (namespace && modelsActions) {
       modelsActions[namespace] = actions;
     }
-    return [ state, actions, effectsState ];
+    return [ state, actions, actionsState ];
   }
 
   if (isDev && namespace) {
@@ -157,35 +157,35 @@ export function createStore(configs: { [namespace: string]: Config }) {
     return useModelActions();
   }
 
-  function useModelEffectState(namespace: string) {
-    const [, , , useModelEffectState ] = getModel(namespace);
-    return useModelEffectState();
+  function useModelActionsState(namespace: string) {
+    const [, , , useModelActionsState ] = getModel(namespace);
+    return useModelActionsState();
   }
 
-  function useModel(namespace: string, mapState?, mapActions?, mapEffectsState?) {
+  function useModel(namespace: string, mapState?, mapActions?, mapActionsState?) {
     mapState = typeof mapState !== 'undefined' ? mapState : (state) => state;
     mapActions = typeof mapActions !== 'undefined' ? mapActions : (actions) => actions;
 
     return [
       mapState && mapState(useModelState(namespace)),
       mapActions && mapActions(useModelActions(namespace)),
-      mapEffectsState && mapEffectsState(useModelEffectState(namespace))
+      mapActionsState && mapActionsState(useModelActionsState(namespace))
     ];
   }
 
-  function useModels(namespaces: string[], createMapState?, createMapActions?, createMapEffectsState?) {
+  function useModels(namespaces: string[], createMapState?, createMapActions?, createMapActionsState?) {
     return namespaces.map((namespace) => useModel(
       namespace,
       createMapState && createMapState(namespace),
       createMapActions && createMapActions(namespace),
-      createMapEffectsState && createMapEffectsState(namespace),
+      createMapActionsState && createMapActionsState(namespace),
     ));
   }
 
-  function withModel(namespace: string, mapStateToModel?, mapActionsToModel?, mapEffectsStateToModel?) {
+  function withModel(namespace: string, mapStateToModel?, mapActionsToModel?, mapActionsStateToModel?) {
     return (Component) => {
       return (props): React.ReactElement => {
-        const model = useModel(namespace, mapStateToModel, mapActionsToModel, mapEffectsStateToModel);
+        const model = useModel(namespace, mapStateToModel, mapActionsToModel, mapActionsStateToModel);
         return (
           <Component
             model={model}
@@ -196,10 +196,10 @@ export function createStore(configs: { [namespace: string]: Config }) {
     };
   }
 
-  function withModels(namespaces: string[], createMapState?, createMapActions?, createMapEffectsState?) {
+  function withModels(namespaces: string[], createMapState?, createMapActions?, createMapActionsState?) {
     return (Component) => {
       return (props): React.ReactElement => {
-        const models = useModels(namespaces, createMapState, createMapActions, createMapEffectsState);
+        const models = useModels(namespaces, createMapState, createMapActions, createMapActionsState);
         return (
           <Component
             models={models}
@@ -221,7 +221,7 @@ export function createStore(configs: { [namespace: string]: Config }) {
     useModels,
     useModelState,
     useModelActions,
-    useModelEffectState,
+    useModelActionsState,
     withModel,
     withModels,
   };

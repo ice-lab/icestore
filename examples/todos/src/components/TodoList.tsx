@@ -16,7 +16,7 @@ class TodoList extends Component<any> {
 
   render() {
     const { title, model } = this.props;
-    const [ state, , effectsState ] = model;
+    const [ state, , actionsState ] = model;
     const { dataSource, subTitle } = state;
     return (
       <div>
@@ -36,7 +36,7 @@ class TodoList extends Component<any> {
                 {done ? <s>{name}</s> : <span>{name}</span>}
               </label>
               {
-                effectsState.remove.isLoading ?
+                actionsState.remove.isLoading ?
                   '...deleting...' :
                   <button type="submit" onClick={() => this.onRemove(index)}>-</button>
               }
@@ -52,5 +52,5 @@ export default withModel(
   'todos',
   (state) => ({ ...state, subTitle: 'SubTitle' }),
   (actions) => actions,
-  (effectsState) => effectsState,
+  (actionsState) => actionsState,
 )(TodoList);

@@ -42,7 +42,19 @@ $ npm install @ice/store --save
       dataSource: [],
     },
 
-    reducers: {
+    actions: {
+      async fetch(prevState, actions) {
+        await delay(1000);
+        const dataSource = [
+          { name: 'react' },
+          { name: 'vue', done: true},
+          { name: 'angular' },
+        ];
+        return {
+          ...prevState,
+          dataSource,
+        }
+      },
       addData(prevState, todo) {
         return {
           ...prevState,
@@ -50,25 +62,7 @@ $ npm install @ice/store --save
             ...prevState.dataSource,
             todo,
           ]
-        }
-      },
-      setData(prevState, todos) {
-        return {
-          ...prevState,
-          dataSource: todos,
         };
-      }
-    },
-
-    effects: {
-      async fetchData(actions) {
-        await delay(1000);
-        const data = [
-          { name: 'react' },
-          { name: 'vue', done: true},
-          { name: 'angular' },
-        ];
-        actions.todos.setData(data);
       },
     },
   };
@@ -94,10 +88,10 @@ $ npm install @ice/store --save
   function Todos() {
     const [ state, actions ] = useModel('todos');
     const { dataSource } = state;
-    const { fetchData, add } = actions;
+    const { fetch, add } = actions;
 
     useEffect(() => {
-      fetchData();
+      fetch();
     }, []);
 
     function handleAdd(name) {
