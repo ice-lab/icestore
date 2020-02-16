@@ -1,10 +1,10 @@
 import React from 'react';
 import store from '../store';
 
-const { useModelAction } = store;
+const { useModelActions } = store;
 
 export default function TodoAdd() {
-  const { add } = useModelAction('todos');
+  const { add } = useModelActions('todos');
 
   console.debug('TodoAdd rending...');
   return (

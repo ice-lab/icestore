@@ -152,9 +152,9 @@ export function createStore(configs: { [namespace: string]: Config }) {
     return useModelState();
   }
 
-  function useModelAction(namespace: string) {
-    const [, , useModelAction ] = getModel(namespace);
-    return useModelAction();
+  function useModelActions(namespace: string) {
+    const [, , useModelActions ] = getModel(namespace);
+    return useModelActions();
   }
 
   function useModelEffectState(namespace: string) {
@@ -162,19 +162,47 @@ export function createStore(configs: { [namespace: string]: Config }) {
     return useModelEffectState();
   }
 
-  function useModel(namespace: string) {
-    return [ useModelState(namespace), useModelAction(namespace) ];
+  function useModel(namespace: string, mapState?, mapActions?, mapEffectsState?) {
+    mapState = typeof mapState !== 'undefined' ? mapState : (state) => state;
+    mapActions = typeof mapActions !== 'undefined' ? mapActions : (actions) => actions;
+
+    return [
+      mapState && mapState(useModelState(namespace)),
+      mapActions && mapActions(useModelActions(namespace)),
+      mapEffectsState && mapEffectsState(useModelEffectState(namespace))
+    ];
   }
 
-  function withStore(namespace: string, mapStateToProps?, mapActionsToProps?, mapEffectsState?) {
+  function useModels(namespaces: string[], createMapState?, createMapActions?, createMapEffectsState?) {
+    return namespaces.map((namespace) => useModel(
+      namespace,
+      createMapState && createMapState(namespace),
+      createMapActions && createMapActions(namespace),
+      createMapEffectsState && createMapEffectsState(namespace),
+    ));
+  }
+
+  function withModel(namespace: string, mapStateToModel?, mapActionsToModel?, mapEffectsStateToModel?) {
     return (Component) => {
       return (props): React.ReactElement => {
-        const state = mapStateToProps ? mapStateToProps(useModelState(namespace)) : {};
-        const actions = mapActionsToProps ? mapActionsToProps(useModelAction(namespace)) : {};
-        const effectsState = mapEffectsState ? mapEffectsState(useModelEffectState(namespace)) : {};
+        const model = useModel(namespace, mapStateToModel, mapActionsToModel, mapEffectsStateToModel);
         return (
           <Component
-            store={[state, actions, effectsState]}
+            model={model}
+            {...props}
+          />
+        );
+      };
+    };
+  }
+
+  function withModels(namespaces: string[], createMapState?, createMapActions?, createMapEffectsState?) {
+    return (Component) => {
+      return (props): React.ReactElement => {
+        const models = useModels(namespaces, createMapState, createMapActions, createMapEffectsState);
+        return (
+          <Component
+            models={models}
             {...props}
           />
         );
@@ -190,9 +218,11 @@ export function createStore(configs: { [namespace: string]: Config }) {
   return {
     Provider,
     useModel,
+    useModels,
     useModelState,
-    useModelAction,
+    useModelActions,
     useModelEffectState,
-    withStore,
+    withModel,
+    withModels,
   };
 }
