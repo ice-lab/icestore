@@ -15,14 +15,14 @@ export function createUseContainer(context: React.Context<any>): any {
   };
 }
 
-export function createContainer<P, V, S extends SplitValueFunction<V>[]>(
-  useValue: (props?: P) => V,
-  ...splitValues: S
-): ContextHookReturn<P, V, S> {
-  const Context = React.createContext(NO_PROVIDER as V);
-  const useName = (useValue as any).displayName || useValue.name;
+export function createContainer<Prop, Value, SplitValues extends SplitValueFunction<Value>[]>(
+  useValue: (props?: Prop) => Value,
+  ...splitValues: SplitValues
+): ContextHookReturn<Prop, Value, SplitValues> {
+  const Context = React.createContext(NO_PROVIDER as Value);
+  const useName: string = (useValue as any).displayName || useValue.name;
 
-  const Provider: React.FunctionComponent<P> = props => {
+  const Provider: React.FunctionComponent<Prop> = props => {
     const value = useValue(props);
     return (
       <Context.Provider value={value}>
@@ -44,7 +44,7 @@ export function createContainer<P, V, S extends SplitValueFunction<V>[]>(
   } else {
     const contexts = [] as React.Context<any>[];
 
-    const SplitProvider: React.FunctionComponent<P> = props => {
+    const SplitProvider: React.FunctionComponent<Prop> = props => {
       const value = useValue(props);
       let children = props.children as React.ReactElement;
 
