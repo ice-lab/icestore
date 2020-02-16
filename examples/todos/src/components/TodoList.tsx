@@ -30,7 +30,7 @@ export function TodoList({ title, subTitle, dataSource }, { toggle, remove }, ac
         ))}
       </ul>
     </div>
-  )
+  );
 }
 
 export default function({ title }) {
@@ -39,6 +39,6 @@ export default function({ title }) {
   return TodoList(
     { ...state, title, subTitle: 'Function Component' },
     actions,
-    actionsState
+    actionsState,
   );
 }

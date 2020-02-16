@@ -59,7 +59,7 @@ const store = {
       globalActions.user.setTodos(prevState.dataSource.length);
       return {
         ...prevState,
-      }
+      };
     },
   },
 };

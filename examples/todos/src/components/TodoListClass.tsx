@@ -22,7 +22,7 @@ class TodoListClass extends Component<any> {
     return TodoList(
       { title, subTitle, dataSource },
       { toggle: this.onToggle, remove: this.onRemove },
-      actionsState
+      actionsState,
     );
   }
 }
