@@ -48,7 +48,7 @@ export function createModel(config: Config, namespace?: string, modelsActions?) 
       [],
     );
     const [ actionsPayload, setActionsPayload ] = useState(() => actionsInitialPayload);
-    const setEffectPayload = useCallback(
+    const setActionPayload = useCallback(
       (name, args) => setActionsPayload(prevState => ({
         ...prevState,
         [name]: {
@@ -98,16 +98,16 @@ export function createModel(config: Config, namespace?: string, modelsActions?) 
       });
     }, [ actionsPayloadIdentifier ]);
 
-    return [ actionsPayload, setEffectPayload, actionsState ];
+    return [ actionsPayload, setActionPayload, actionsState ];
   }
 
   function useModel({ initialState }) {
     const preloadedState = initialState || defineState;
     const [ state, setState ] = useState(preloadedState);
-    const [ , executeEffect, actionsState ] = useActions(state, setState);
+    const [ , executeAction, actionsState ] = useActions(state, setState);
 
     actions = useMemo(() => transform(defineActions, (result, fn, name) => {
-      result[name] = (...args) => executeEffect(name, args);
+      result[name] = (...args) => executeAction(name, args);
     }), [defineActions]);
 
     if (namespace && modelsActions) {
