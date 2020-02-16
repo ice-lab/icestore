@@ -129,9 +129,17 @@ export function createModel(config: Config, namespace?: string, modelsActions?) 
 }
 
 export function createStore(configs: { [namespace: string]: Config }) {
+  function getModel(namespace: string) {
+    const model = models[namespace];
+    if (!model) {
+      throw new Error(`Not found model by namespace: ${namespace}.`);
+    }
+    return model;
+  }
+
   function Provider({ children, initialStates = {} }) {
     Object.keys(models).forEach(namespace => {
-      const [ ModelProvider ] = models[namespace];
+      const [ ModelProvider ] = getModel(namespace);
       children = <ModelProvider initialState={initialStates[namespace]}>
         {children}
       </ModelProvider>;
@@ -140,17 +148,17 @@ export function createStore(configs: { [namespace: string]: Config }) {
   }
 
   function useModelState(namespace: string) {
-    const [, useModelState ] = models[namespace];
+    const [, useModelState ] = getModel(namespace);
     return useModelState();
   }
 
   function useModelAction(namespace: string) {
-    const [, , useModelAction ] = models[namespace];
+    const [, , useModelAction ] = getModel(namespace);
     return useModelAction();
   }
 
   function useModelEffectState(namespace: string) {
-    const [, , , useModelEffectState ] = models[namespace];
+    const [, , , useModelEffectState ] = getModel(namespace);
     return useModelEffectState();
   }
 
@@ -158,17 +166,15 @@ export function createStore(configs: { [namespace: string]: Config }) {
     return [ useModelState(namespace), useModelAction(namespace) ];
   }
 
-  function connect(namespace: string, mapStateToProps?, mapActionsToProps?, mapEffectsState?) {
+  function withStore(namespace: string, mapStateToProps?, mapActionsToProps?, mapEffectsState?) {
     return (Component) => {
       return (props): React.ReactElement => {
-        const stateProps = mapStateToProps ? mapStateToProps(useModelState(namespace)) : {};
-        const actionsProps = mapActionsToProps ? mapActionsToProps(useModelAction(namespace)) : {};
-        const effectsStateProps = mapEffectsState ? mapEffectsState(useModelEffectState(namespace)) : {};
+        const state = mapStateToProps ? mapStateToProps(useModelState(namespace)) : {};
+        const actions = mapActionsToProps ? mapActionsToProps(useModelAction(namespace)) : {};
+        const effectsState = mapEffectsState ? mapEffectsState(useModelEffectState(namespace)) : {};
         return (
           <Component
-            state={stateProps}
-            actions={actionsProps}
-            effectsState={effectsStateProps}
+            store={[state, actions, effectsState]}
             {...props}
           />
         );
@@ -187,6 +193,6 @@ export function createStore(configs: { [namespace: string]: Config }) {
     useModelState,
     useModelAction,
     useModelEffectState,
-    connect,
+    withStore,
   };
 }

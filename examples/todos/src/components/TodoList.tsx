@@ -1,19 +1,22 @@
 import React, { Component } from 'react';
 import store from '../store';
 
-const { connect } = store;
+const { withStore } = store;
 
 class TodoList extends Component<any> {
   onRemove = (index) => {
-    this.props.actions.remove(index);
+    const [, actions] = this.props.store;
+    actions.remove(index);
   }
 
   onToggle = (index) => {
-    this.props.actions.toggle(index);
+    const [, actions] = this.props.store;
+    actions.toggle(index);
   }
 
   render() {
-    const { title, state, effectsState } = this.props;
+    const { title, store } = this.props;
+    const [ state, , effectsState ] = store;
     const { dataSource, subTitle } = state;
     return (
       <div>
@@ -45,7 +48,7 @@ class TodoList extends Component<any> {
   }
 }
 
-export default connect(
+export default withStore(
   'todos',
   (state) => ({ ...state, subTitle: 'SubTitle' }),
   (actions) => actions,
