@@ -182,7 +182,7 @@ export function createStore(configs: { [namespace: string]: Config }) {
           );
         };
       };
-    }
+    };
   }
 
   function withModel(namespace: string, mapModelToProps?) {
@@ -193,7 +193,7 @@ export function createStore(configs: { [namespace: string]: Config }) {
     return createWithUse(useModelActions)(namespace, mapModelActionsToProps);
   }
 
-  function withModelActionsState(namespace?:string, mapModelActionsStateToProps?) {
+  function withModelActionsState(namespace?: string, mapModelActionsStateToProps?) {
     return createWithUse(useModelActionsState)(namespace, mapModelActionsStateToProps);
   }
 

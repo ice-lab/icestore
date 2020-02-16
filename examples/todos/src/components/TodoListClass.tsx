@@ -28,5 +28,5 @@ class TodoListClass extends Component<any> {
 }
 
 export default withModelActionsState('todos')(
-  withModel('todos')(TodoListClass)
+  withModel('todos')(TodoListClass),
 );
