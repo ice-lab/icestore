@@ -1,35 +1,32 @@
-import React, { Component } from 'react';
+import { Component } from 'react';
 import store from '../store';
 import { TodoList } from './TodoList';
 
-const { withModel } = store;
+const { withModel, withModelActionsState } = store;
 
 class TodoListClass extends Component<any> {
   onRemove = (index) => {
-    const [, actions] = this.props.model;
+    const [, actions] = this.props.todos;
     actions.remove(index);
   }
 
   onToggle = (index) => {
-    const [, actions] = this.props.model;
+    const [, actions] = this.props.todos;
     actions.toggle(index);
   }
 
   render() {
-    const { title, model } = this.props;
-    const [ state, , actionsState ] = model;
-    const { dataSource, subTitle } = state;
+    const { title, todos, todosActionsState } = this.props;
+    const [ state ] = todos;
+    const { dataSource } = state;
     return TodoList(
-      { title, subTitle, dataSource },
+      { title, dataSource, subTitle: 'Class Component' },
       { toggle: this.onToggle, remove: this.onRemove },
-      actionsState,
+      todosActionsState,
     );
   }
 }
 
-export default withModel(
-  'todos',
-  (state) => ({ ...state, subTitle: 'Class Component' }),
-  (actions) => actions,
-  (actionsState) => actionsState,
-)(TodoListClass);
+export default withModelActionsState('todos')(
+  withModel('todos')(TodoListClass)
+);

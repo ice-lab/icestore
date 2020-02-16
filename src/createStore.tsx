@@ -162,52 +162,39 @@ export function createStore(configs: { [namespace: string]: Config }) {
     return useModelActionsState();
   }
 
-  function useModel(namespace: string, mapState?, mapActions?, mapActionsState?) {
-    mapState = typeof mapState !== 'undefined' ? mapState : (state) => state;
-    mapActions = typeof mapActions !== 'undefined' ? mapActions : (actions) => actions;
-
-    return [
-      mapState && mapState(useModelState(namespace)),
-      mapActions && mapActions(useModelActions(namespace)),
-      mapActionsState && mapActionsState(useModelActionsState(namespace))
-    ];
+  function useModel(namespace: string) {
+    return [ useModelState(namespace), useModelActions(namespace) ];
   }
 
-  function useModels(namespaces: string[], createMapState?, createMapActions?, createMapActionsState?) {
-    return namespaces.map((namespace) => useModel(
-      namespace,
-      createMapState && createMapState(namespace),
-      createMapActions && createMapActions(namespace),
-      createMapActionsState && createMapActionsState(namespace),
-    ));
-  }
-
-  function withModel(namespace: string, mapStateToModel?, mapActionsToModel?, mapActionsStateToModel?) {
-    return (Component) => {
-      return (props): React.ReactElement => {
-        const model = useModel(namespace, mapStateToModel, mapActionsToModel, mapActionsStateToModel);
-        return (
-          <Component
-            model={model}
-            {...props}
-          />
-        );
+  function createWithUse(useFun) {
+    const fnName = useFun.name;
+    return function withModel(namespace: string, mapDataToProps?) {
+      const propName = fnName === useModel.name ? namespace : `${namespace}${fnName.slice(8)}`;
+      return (Component) => {
+        return (props): React.ReactElement => {
+          const model = useFun(namespace);
+          const modelProps = mapDataToProps ? mapDataToProps(model) : { [propName]: model };
+          return (
+            <Component
+              {...modelProps}
+              {...props}
+            />
+          );
+        };
       };
-    };
+    }
   }
 
-  function withModels(namespaces: string[], createMapState?, createMapActions?, createMapActionsState?) {
-    return (Component) => {
-      return (props): React.ReactElement => {
-        const models = useModels(namespaces, createMapState, createMapActions, createMapActionsState);
-        return (
-          <Component
-            models={models}
-            {...props}
-          />
-        );
-      };
-    };
+  function withModel(namespace: string, mapModelToProps?) {
+    return createWithUse(useModel)(namespace, mapModelToProps);
+  }
+
+  function withModelActions(namespace: string, mapModelActionsToProps?) {
+    return createWithUse(useModelActions)(namespace, mapModelActionsToProps);
+  }
+
+  function withModelActionsState(namespace?:string, mapModelActionsStateToProps?) {
+    return createWithUse(useModelActionsState)(namespace, mapModelActionsStateToProps);
   }
 
   const modelsActions = {};
@@ -218,11 +205,10 @@ export function createStore(configs: { [namespace: string]: Config }) {
   return {
     Provider,
     useModel,
-    useModels,
-    useModelState,
     useModelActions,
     useModelActionsState,
     withModel,
-    withModels,
+    withModelActions,
+    withModelActionsState,
   };
 }
