@@ -1,6 +1,6 @@
 {
   "name": "@ice/store",
-  "version": "1.0.0",
+  "version": "1.0.0-beta.1",
   "description": "Lightweight React state management library based on react hooks",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
@@ -50,10 +50,6 @@
     "ts-jest": "^24.0.2",
     "typescript": "^3.7.4"
   },
-  "dependencies": {
-    "is-promise": "^2.1.0",
-    "lodash.isfunction": "^3.0.9"
-  },
   "peerDependencies": {
     "react": "^16.8.0"
   },
@@ -61,5 +57,9 @@
     "coverageDirectory": "./coverage/",
     "collectCoverage": true,
     "preset": "ts-jest"
+  },
+  "dependencies": {
+    "is-promise": "^2.1.0",
+    "lodash.transform": "^4.6.0"
   }
 }

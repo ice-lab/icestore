@@ -1,49 +1,64 @@
-import { Dispatch, SetStateAction } from 'react';
+import * as React from 'react';
 
-export interface ActionProps {
-  loading?: boolean;
-  error?: Error;
-  disableLoading?: boolean;
-}
+/**
+ * @template V Value
+ */
+export type SplitValueFunction<V> = (v: V) => any;
 
-export type Optionalize<T extends K, K> = Omit<T, keyof K>;
+/**
+ * @template P Props
+ * @template V Value
+ */
+export type ContextHookFunction<V> = () => V;
 
-export interface StoreOptions {
-  disableLoading?: boolean;
-}
+/**
+ * @template P Props
+ * @template V Value
+ */
+export type ContextHookTuple<P, V> = [
+  React.FunctionComponent<P>,
+  ContextHookFunction<V>
+];
 
-export type Store<W> = {
-  [T in keyof W]: W[T] extends Function ? W[T] & ActionProps: W[T];
-}
+/**
+ * @template P Props
+ * @template S SplitValues
+ */
+export type ContextHookMultipleTuple<
+  P,
+  S extends SplitValueFunction<any>[]
+> = [
+  React.FunctionComponent<P>,
+  S[0] extends (...args: any[]) => infer U ? ContextHookFunction<U> : never,
+  S[1] extends (...args: any[]) => infer U ? ContextHookFunction<U> : never,
+  S[2] extends (...args: any[]) => infer U ? ContextHookFunction<U> : never,
+  S[3] extends (...args: any[]) => infer U ? ContextHookFunction<U> : never,
+  S[4] extends (...args: any[]) => infer U ? ContextHookFunction<U> : never,
+  S[5] extends (...args: any[]) => infer U ? ContextHookFunction<U> : never,
+  S[6] extends (...args: any[]) => infer U ? ContextHookFunction<U> : never,
+  S[7] extends (...args: any[]) => infer U ? ContextHookFunction<U> : never,
+  S[8] extends (...args: any[]) => infer U ? ContextHookFunction<U> : never
+];
 
-type NonFunctionPropertyNames<T> = { [K in keyof T]: T[K] extends Function ? never : K }[keyof T];
+/**
+ * @template P Props
+ * @template V Value
+ * @template S SplitValues
+ */
+export type ContextHookReturn<
+  P,
+  V,
+  S extends SplitValueFunction<V>[]
+> = (S['length'] extends 0
+  ? ContextHookTuple<P, V>
+  : ContextHookMultipleTuple<P, S>);
 
-export type State<T> = Pick<T, NonFunctionPropertyNames<T>>;
 
-export type EqualityFn<M> = (preState: State<M>, newState: State<M>) => boolean
+export type Action = (...args: any) => any;
 
-export interface Queue<S> {
-  preState: S;
-  setState: Dispatch<SetStateAction<S>>;
-  equalityFn?: EqualityFn<S>;
-}
-
-export interface Ctx {
-  action: {
-    name: string;
-    arguments: any[];
+export interface Config {
+  state: any;
+  actions: {
+    [name: string]: Action;
   };
-  store: {
-    namespace: string;
-    getState: () => object;
-  };
-}
-
-export interface Middleware {
-  (ctx: Ctx, next: Promise<any>): any;
-}
-
-export interface ComposeFunc extends ActionProps {
-  (): Promise<any>;
-}
-
+};
