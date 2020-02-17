@@ -1,5 +1,9 @@
 import * as React from 'react';
 
+export type PropType<TObj, TProp extends keyof TObj> = TObj[TProp];
+
+export type ReactSetState<S> = React.Dispatch<React.SetStateAction<S>>;
+
 /**
  * @template V Value
  */

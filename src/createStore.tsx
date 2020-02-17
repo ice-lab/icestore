@@ -2,13 +2,9 @@ import React, { useState, useMemo, useEffect, useRef, useCallback } from 'react'
 import isPromise from 'is-promise';
 import transform from 'lodash.transform';
 import { createContainer } from './createContainer';
-import { ContextHookReturn } from './types';
+import { PropType, ReactSetState, ContextHookReturn } from './types';
 
 const isDev = process.env.NODE_ENV !== 'production';
-
-export type PropType<TObj, TProp extends keyof TObj> = TObj[TProp];
-
-export type ReactSetState<S> = React.Dispatch<React.SetStateAction<S>>;
 
 export type ModelConfigAction<S = any> = (prevState: S, payload?: any, actions?: any, globalActions?: any) => S | Promise<S>;
 
