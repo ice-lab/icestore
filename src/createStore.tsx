@@ -1,4 +1,5 @@
 import React from 'react';
+import transform from 'lodash.transform';
 import { createModel } from './createModel';
 import {
   ModelConfigs,
@@ -78,10 +79,8 @@ export function createStore<C extends ModelConfigs>(configs: C) {
   }
 
   const modelsActions = {};
-  const models: { [K in keyof C]?: TModel<C[K]> } = {};
-  Object.keys(configs).forEach(namespace => {
-    const config = configs[namespace];
-    models[namespace as (keyof C)] = createModel(config, namespace, modelsActions);
+  const models: { [K in keyof C]?: TModel<C[K]> } = transform(configs, (result, config, namespace) => {
+    result[namespace] = createModel(config, namespace, modelsActions);
   });
 
   return {
