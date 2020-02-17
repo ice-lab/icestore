@@ -155,7 +155,7 @@ Let's build a simple todo app from scatch using `icestore` which includes follow
 
 ## Inspiration
 
-Rematch refines and builds upon the ideas of [constate](https://github.com/diegohaz/constate) & [rematch](https://github.com/rematch/rematch).
+icestore refines and builds upon the ideas of [constate](https://github.com/diegohaz/constate) & [rematch](https://github.com/rematch/rematch).
 
 ## Contributors
 
