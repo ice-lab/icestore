@@ -79,7 +79,7 @@ export function createStore<C extends ModelConfigs>(configs: C) {
 
   const modelsActions = {};
   const models: { [K in keyof C]?: TModel<C[K]> } = {};
-  Object.keys(configs).map(namespace => {
+  Object.keys(configs).forEach(namespace => {
     const config = configs[namespace];
     models[namespace as (keyof C)] = createModel(config, namespace, modelsActions);
   });

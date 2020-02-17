@@ -18,7 +18,7 @@ import {
   TModelActionsState,
   SetFunctionsState,
   TUseModelValue,
- } from './types';
+} from './types';
 
 const isDev = process.env.NODE_ENV !== 'production';
 
@@ -148,8 +148,8 @@ export function createModel<M extends ModelConfig, K = string>(config: M, namesp
 
   return createContainer(
     useModel,
-  value => value[0],
-  value => value[1],
-  value => value[2],
+    value => value[0],
+    value => value[1],
+    value => value[2],
   );
 }
