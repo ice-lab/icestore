@@ -52,13 +52,3 @@ export type ContextHookReturn<
 > = (S['length'] extends 0
   ? ContextHookTuple<P, V>
   : ContextHookMultipleTuple<P, S>);
-
-
-export type Action = (...args: any) => any;
-
-export interface Config {
-  state: any;
-  actions: {
-    [name: string]: Action;
-  };
-};

@@ -18,7 +18,7 @@ const store = {
   },
 
   actions: {
-    async refresh(prevState, actions, globalActions) {
+    async refresh(prevState, args, actions, globalActions) {
       await delay(2000);
 
       const dataSource: any[] = [
@@ -52,7 +52,7 @@ const store = {
         ...prevState,
       };
     },
-    async remove(prevState, index, globalActions) {
+    async remove(prevState, index, actions, globalActions) {
       await delay(1000);
 
       prevState.dataSource.splice(index, 1);

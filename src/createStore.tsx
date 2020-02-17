@@ -2,17 +2,80 @@ import React, { useState, useMemo, useEffect, useRef, useCallback } from 'react'
 import isPromise from 'is-promise';
 import transform from 'lodash.transform';
 import { createContainer } from './createContainer';
-import { Config } from './types';
 
 const isDev = process.env.NODE_ENV !== 'production';
 
-export function createModel(config: Config, namespace?: string, modelsActions?) {
+export type PropType<TObj, TProp extends keyof TObj> = TObj[TProp];
+
+export type ReactSetState<S> = React.Dispatch<React.SetStateAction<S>>;
+
+export type ModelConfigAction<S = any> = (prevState: S, payload: any, actions?: any, globalActions?: any) => S | Promise<S>;
+
+export type ModelConfigActions<S = any> = {
+  [name: string]: ModelConfigAction<S>;
+};
+
+export interface ModelConfig<S = any> {
+  state: S;
+  actions?: ModelConfigActions<S>;
+};
+
+export type ModelConfigs = {
+  [namespace: string]: ModelConfig;
+};
+
+export interface ModelProps<S = any> {
+  initialState?: S;
+}
+
+export interface FunctionState {
+  isLoading: boolean;
+  error: Error;
+}
+
+export type FunctionsState<Functions> = {
+  [K in keyof Functions]: FunctionState;
+}
+
+export type SetFunctionsState<Functions> = ReactSetState<FunctionsState<Functions>>;
+
+export type ActionIdentifier = number;
+
+export type ActionsIdentifier<ConfigActions> = {
+  [K in keyof ConfigActions]: ActionIdentifier;
+}
+
+export interface ActionPayload {
+  payload: any;
+  identifier: ActionIdentifier;
+}
+
+export type ActionsPayload<ConfigActions> = {
+  [K in keyof ConfigActions]: ActionPayload;
+}
+
+export type SetActionsPayload<ConfigActions> = ReactSetState<ActionsPayload<ConfigActions>>;
+
+export type Actions<ConfigActions extends ModelConfigActions> = {
+  [K in keyof ConfigActions]: (payload: Parameters<ConfigActions[K]>[1]) => void;
+}
+
+export function createModel<S = any, M extends ModelConfig<S> = ModelConfig, K = string>(config: M, namespace?: K, modelsActions?) {
+  type ModelConfigActions = PropType<M, 'actions'>;
+  type ModelConfigActionsKey = keyof ModelConfigActions;
+  type ModelState = PropType<M, 'state'>;
+  type ModelActions = Actions<ModelConfigActions>;
+  type ModelActionsState = FunctionsState<ModelConfigActions>;
+  type SetModelFunctionsState = SetFunctionsState<ModelConfigActions>;
+  type Model = [ ModelState, ModelActions, ModelActionsState ];
+
   const { state: defineState = {}, actions: defineActions = [] } = config;
   let actions;
 
-  function useFunctionsState(functions) {
-    const functionsInitialState = useMemo(
-      () => transform(functions, (result, value, name) => {
+  function useFunctionsState(functions: ModelConfigActionsKey[]):
+    [ ModelActionsState, SetModelFunctionsState, (name: ModelConfigActionsKey, args: FunctionState) => void ] {
+    const functionsInitialState = useMemo<ModelActionsState>(
+      () => transform(functions, (result, name) => {
         result[name] = {
           isLoading: false,
           error: null,
@@ -20,9 +83,9 @@ export function createModel(config: Config, namespace?: string, modelsActions?) 
       }, {}),
       [functions],
     );
-    const [ functionsState, setFunctionsState ] = useState(() => functionsInitialState);
+    const [ functionsState, setFunctionsState ] = useState<ModelActionsState>(() => functionsInitialState);
     const setFunctionState = useCallback(
-      (name, args) => setFunctionsState(prevState => ({
+      (name: ModelConfigActionsKey, args: FunctionState) => setFunctionsState(prevState => ({
         ...prevState,
         [name]: {
           ...prevState[name],
@@ -34,12 +97,13 @@ export function createModel(config: Config, namespace?: string, modelsActions?) 
     return [ functionsState, setFunctionsState, setFunctionState ];
   }
 
-  function useActions(state, setState) {
-    const [ actionsState, , setActionsState ] = useFunctionsState(defineActions);
-    const [ actionsInitialPayload, actionsInitialIdentifier ] = useMemo(
+  function useActions(state: ModelState, setState: ReactSetState<ModelState>):
+    [ ActionsPayload<ModelActions>, (name: ModelConfigActionsKey, payload: any) => void, ModelActionsState ] {
+    const [ actionsState, , setActionsState ] = useFunctionsState(Object.keys(defineActions));
+    const [ actionsInitialPayload, actionsInitialIdentifier ]: [ActionsPayload<ModelActions>, ActionsIdentifier<ModelActions>] = useMemo(
       () => transform(defineActions, (result, action, name) => {
         const state = {
-          args: [],
+          payload: null,
           identifier: 0,
         };
         result[0][name] = state;
@@ -47,13 +111,13 @@ export function createModel(config: Config, namespace?: string, modelsActions?) 
       }, [ {}, {} ]),
       [],
     );
-    const [ actionsPayload, setActionsPayload ] = useState(() => actionsInitialPayload);
+    const [ actionsPayload, setActionsPayload ]: [ ActionsPayload<ModelActions>, SetActionsPayload<ModelActions> ] = useState(() => actionsInitialPayload);
     const setActionPayload = useCallback(
-      (name, args) => setActionsPayload(prevState => ({
+      (name, payload) => setActionsPayload(prevState => ({
         ...prevState,
         [name]: {
           ...prevState[name],
-          args,
+          payload,
           identifier: prevState[name].identifier + 1,
         },
       })),
@@ -65,14 +129,14 @@ export function createModel(config: Config, namespace?: string, modelsActions?) 
 
     useEffect(() => {
       Object.keys(actionsPayload).forEach((name) => {
-        const { identifier, args } = actionsPayload[name];
+        const { identifier, payload } = actionsPayload[name];
         if (identifier && identifier !== actionsIdentifier.current[name]) {
           actionsIdentifier.current = {
             ...actionsIdentifier.current,
             [name]: identifier,
           };
           (async () => {
-            const nextState = defineActions[name](state, ...args, actions, modelsActions);
+            const nextState = defineActions[name](state, payload, actions, modelsActions);
             if (isPromise(nextState)) {
               setActionsState(name, {
                 isLoading: true,
@@ -101,13 +165,13 @@ export function createModel(config: Config, namespace?: string, modelsActions?) 
     return [ actionsPayload, setActionPayload, actionsState ];
   }
 
-  function useModel({ initialState }) {
-    const preloadedState = initialState || defineState;
-    const [ state, setState ] = useState(preloadedState);
+  function useModel({ initialState }: ModelProps<ModelState>): Model {
+    const preloadedState = initialState || (defineState as ModelState);
+    const [ state, setState ] = useState<ModelState>(preloadedState);
     const [ , executeAction, actionsState ] = useActions(state, setState);
 
     actions = useMemo(() => transform(defineActions, (result, fn, name) => {
-      result[name] = (...args) => executeAction(name, args);
+      result[name] = (payload) => executeAction(name, payload);
     }), [defineActions]);
 
     if (namespace && modelsActions) {
@@ -120,7 +184,7 @@ export function createModel(config: Config, namespace?: string, modelsActions?) 
     useModel.displayName = namespace;
   }
 
-  return createContainer(
+  return createContainer<ModelProps<ModelState>, Model, [(model: Model) => ModelState, (model: Model) => ModelActions, (model: Model) => ModelActionsState]>(
     useModel,
     value => value[0],
     value => value[1],
@@ -128,8 +192,9 @@ export function createModel(config: Config, namespace?: string, modelsActions?) 
   );
 }
 
-export function createStore(configs: { [namespace: string]: Config }) {
-  function getModel(namespace: string) {
+export function createStore<C extends ModelConfigs>(configs: C) {
+  type K = keyof C;
+  function getModel(namespace: K) {
     const model = models[namespace];
     if (!model) {
       throw new Error(`Not found model by namespace: ${namespace}.`);
@@ -138,8 +203,8 @@ export function createStore(configs: { [namespace: string]: Config }) {
   }
 
   function Provider({ children, initialStates = {} }) {
-    Object.keys(models).forEach(namespace => {
-      const [ ModelProvider ] = getModel(namespace);
+    Object.keys(models).forEach((namespace) => {
+      const [ ModelProvider ] = getModel(namespace as K);
       children = <ModelProvider initialState={initialStates[namespace]}>
         {children}
       </ModelProvider>;
@@ -147,28 +212,28 @@ export function createStore(configs: { [namespace: string]: Config }) {
     return <>{children}</>;
   }
 
-  function useModelState(namespace: string) {
+  function useModelState(namespace: K) {
     const [, useModelState ] = getModel(namespace);
     return useModelState();
   }
 
-  function useModelActions(namespace: string) {
+  function useModelActions(namespace: K) {
     const [, , useModelActions ] = getModel(namespace);
     return useModelActions();
   }
 
-  function useModelActionsState(namespace: string) {
+  function useModelActionsState(namespace: K) {
     const [, , , useModelActionsState ] = getModel(namespace);
     return useModelActionsState();
   }
 
-  function useModel(namespace: string) {
+  function useModel(namespace: K) {
     return [ useModelState(namespace), useModelActions(namespace) ];
   }
 
   function createWithUse(useFun) {
     const fnName = useFun.name;
-    return function withModel(namespace: string, mapDataToProps?) {
+    return function withModel(namespace: K, mapDataToProps?) {
       const propName = fnName === useModel.name ? namespace : `${namespace}${fnName.slice(8)}`;
       return (Component) => {
         return (props): React.ReactElement => {
@@ -185,20 +250,20 @@ export function createStore(configs: { [namespace: string]: Config }) {
     };
   }
 
-  function withModel(namespace: string, mapModelToProps?) {
+  function withModel(namespace: K, mapModelToProps?) {
     return createWithUse(useModel)(namespace, mapModelToProps);
   }
 
-  function withModelActions(namespace: string, mapModelActionsToProps?) {
+  function withModelActions(namespace: K, mapModelActionsToProps?) {
     return createWithUse(useModelActions)(namespace, mapModelActionsToProps);
   }
 
-  function withModelActionsState(namespace?: string, mapModelActionsStateToProps?) {
+  function withModelActionsState(namespace?: K, mapModelActionsStateToProps?) {
     return createWithUse(useModelActionsState)(namespace, mapModelActionsStateToProps);
   }
 
   const modelsActions = {};
-  const models = transform(configs, (result, config, namespace) => {
+  const models = transform(configs, (result, config: C[K], namespace: K) => {
     result[namespace] = createModel(config, namespace, modelsActions);
   });
 
