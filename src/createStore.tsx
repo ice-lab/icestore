@@ -2,6 +2,7 @@ import React, { useState, useMemo, useEffect, useRef, useCallback } from 'react'
 import isPromise from 'is-promise';
 import transform from 'lodash.transform';
 import { createContainer } from './createContainer';
+import { ContextHookReturn } from './types';
 
 const isDev = process.env.NODE_ENV !== 'production';
 
@@ -9,7 +10,7 @@ export type PropType<TObj, TProp extends keyof TObj> = TObj[TProp];
 
 export type ReactSetState<S> = React.Dispatch<React.SetStateAction<S>>;
 
-export type ModelConfigAction<S = any> = (prevState: S, payload: any, actions?: any, globalActions?: any) => S | Promise<S>;
+export type ModelConfigAction<S = any> = (prevState: S, payload?: any, actions?: any, globalActions?: any) => S | Promise<S>;
 
 export interface ModelConfigActions<S = any> {
   [name: string]: ModelConfigAction<S>;
@@ -57,17 +58,25 @@ export type ActionsPayload<ConfigActions> = {
 export type SetActionsPayload<ConfigActions> = ReactSetState<ActionsPayload<ConfigActions>>;
 
 export type Actions<ConfigActions extends ModelConfigActions> = {
-  [K in keyof ConfigActions]: (payload: Parameters<ConfigActions[K]>[1]) => void;
+  [K in keyof ConfigActions]: (payload?: Parameters<ConfigActions[K]>[1]) => void;
 }
 
-export function createModel<S = any, M extends ModelConfig<S> = ModelConfig, K = string>(config: M, namespace?: K, modelsActions?) {
-  type ModelConfigActions = PropType<M, 'actions'>;
+export type TModelConfigState<M extends ModelConfig> = PropType<M, 'state'>;
+export type TModelConfigActions<M extends ModelConfig> = PropType<M, 'actions'>;
+export type TModelActions<M extends ModelConfig> = Actions<TModelConfigActions<M>>;
+export type TModelActionsState<M extends ModelConfig> = FunctionsState<TModelConfigActions<M>>;
+export type TUseModelValue<M extends ModelConfig> = [ TModelConfigState<M>, TModelActions<M>, TModelActionsState<M> ];
+export type TModel<M extends ModelConfig> =
+  ContextHookReturn<TModelConfigState<M>, TUseModelValue<M>, [(model: TUseModelValue<M>) => TModelConfigState<M>, (model: TUseModelValue<M>) => TModelActions<M>, (model: TUseModelValue<M>) => TModelActionsState<M>]>;
+
+export function createModel<M extends ModelConfig, K = string>(config: M, namespace?: K, modelsActions?): TModel<M> {
+  type ModelState = TModelConfigState<M>;
+  type ModelConfigActions = TModelConfigActions<M>;
   type ModelConfigActionsKey = keyof ModelConfigActions;
-  type ModelState = PropType<M, 'state'>;
-  type ModelActions = Actions<ModelConfigActions>;
-  type ModelActionsState = FunctionsState<ModelConfigActions>;
+  type ModelActions = TModelActions<M>;
+  type ModelActionsState = TModelActionsState<M>;
   type SetModelFunctionsState = SetFunctionsState<ModelConfigActions>;
-  type Model = [ ModelState, ModelActions, ModelActionsState ];
+  type UseModelValue = TUseModelValue<M>;
 
   const { state: defineState = {}, actions: defineActions = [] } = config;
   let actions;
@@ -165,7 +174,7 @@ export function createModel<S = any, M extends ModelConfig<S> = ModelConfig, K =
     return [ actionsPayload, setActionPayload, actionsState ];
   }
 
-  function useModel({ initialState }: ModelProps<ModelState>): Model {
+  function useModel({ initialState }: ModelProps<ModelState>): UseModelValue {
     const preloadedState = initialState || (defineState as ModelState);
     const [ state, setState ] = useState<ModelState>(preloadedState);
     const [ , executeAction, actionsState ] = useActions(state, setState);
@@ -184,7 +193,7 @@ export function createModel<S = any, M extends ModelConfig<S> = ModelConfig, K =
     useModel.displayName = namespace;
   }
 
-  return createContainer<ModelProps<ModelState>, Model, [(model: Model) => ModelState, (model: Model) => ModelActions, (model: Model) => ModelActionsState]>(
+  return createContainer(
     useModel,
   value => value[0],
   value => value[1],
@@ -193,8 +202,7 @@ export function createModel<S = any, M extends ModelConfig<S> = ModelConfig, K =
 }
 
 export function createStore<C extends ModelConfigs>(configs: C) {
-  type K = keyof C;
-  function getModel(namespace: K) {
+  function getModel<K extends keyof C>(namespace: K): TModel<C[K]> {
     const model = models[namespace];
     if (!model) {
       throw new Error(`Not found model by namespace: ${namespace}.`);
@@ -204,7 +212,7 @@ export function createStore<C extends ModelConfigs>(configs: C) {
 
   function Provider({ children, initialStates = {} }) {
     Object.keys(models).forEach((namespace) => {
-      const [ ModelProvider ] = getModel(namespace as K);
+      const [ ModelProvider ] = getModel(namespace);
       children = <ModelProvider initialState={initialStates[namespace]}>
         {children}
       </ModelProvider>;
@@ -212,28 +220,28 @@ export function createStore<C extends ModelConfigs>(configs: C) {
     return <>{children}</>;
   }
 
-  function useModelState(namespace: K) {
+  function useModelState<K extends keyof C>(namespace: K): TModelConfigState<C[K]> {
     const [, useModelState ] = getModel(namespace);
     return useModelState();
   }
 
-  function useModelActions(namespace: K) {
+  function useModelActions<K extends keyof C>(namespace: K): TModelActions<C[K]> {
     const [, , useModelActions ] = getModel(namespace);
     return useModelActions();
   }
 
-  function useModelActionsState(namespace: K) {
+  function useModelActionsState<K extends keyof C>(namespace: K): TModelActionsState<C[K]> {
     const [, , , useModelActionsState ] = getModel(namespace);
     return useModelActionsState();
   }
 
-  function useModel(namespace: K) {
+  function useModel<K extends keyof C>(namespace: K): [TModelConfigState<C[K]>, TModelActions<C[K]>] {
     return [ useModelState(namespace), useModelActions(namespace) ];
   }
 
   function createWithUse(useFun) {
     const fnName = useFun.name;
-    return function withModel(namespace: K, mapDataToProps?) {
+    return function withModel(namespace, mapDataToProps?) {
       const propName = fnName === useModel.name ? namespace : `${namespace}${fnName.slice(8)}`;
       return (Component) => {
         return (props): React.ReactElement => {
@@ -250,21 +258,23 @@ export function createStore<C extends ModelConfigs>(configs: C) {
     };
   }
 
-  function withModel(namespace: K, mapModelToProps?) {
+  function withModel<K extends keyof C>(namespace: K, mapModelToProps?) {
     return createWithUse(useModel)(namespace, mapModelToProps);
   }
 
-  function withModelActions(namespace: K, mapModelActionsToProps?) {
+  function withModelActions<K extends keyof C>(namespace: K, mapModelActionsToProps?) {
     return createWithUse(useModelActions)(namespace, mapModelActionsToProps);
   }
 
-  function withModelActionsState(namespace?: K, mapModelActionsStateToProps?) {
+  function withModelActionsState<K extends keyof C>(namespace?: K, mapModelActionsStateToProps?) {
     return createWithUse(useModelActionsState)(namespace, mapModelActionsStateToProps);
   }
 
   const modelsActions = {};
-  const models = transform(configs, (result, config: C[K], namespace: K) => {
-    result[namespace] = createModel(config, namespace, modelsActions);
+  const models: { [K in keyof C]?: TModel<C[K]> } = {};
+  Object.keys(configs).map(namespace => {
+    const config = configs[namespace];
+    models[namespace as (keyof C)] = createModel(config, namespace, modelsActions);
   });
 
   return {
