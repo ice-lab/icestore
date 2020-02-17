@@ -22,7 +22,7 @@ npm install @ice/store --save
 
 ## Introduction
 
-`icestore` is a lightweight React state management library based on hooks. It has the following core features:
+icestore is a lightweight React state management library based on hooks. It has the following core features:
 
 * **Minimal & Familiar API**: No additional learning costs, easy to get started with the knowledge of React Hooks.
 * **Class Component Support**: Make old projects enjoying the fun of lightweight state management with friendly compatibility strategy.
@@ -31,7 +31,7 @@ npm install @ice/store --save
 
 ## Getting Started
 
-Let's build a simple todo app from scatch using `icestore` which includes following steps:
+Let's build a simple todo app from scatch using icestore which includes following steps:
 
 * Use a model to define your store：
 
@@ -156,9 +156,9 @@ icestore refines and builds upon the ideas of [constate](https://github.com/dieg
 
 ## Contributors
 
-Feel free to report any questions as an [issue](https://github.com/alibaba/ice/issues/new), we'd love to have your helping hand on `icestore`.
+Feel free to report any questions as an [issue](https://github.com/alibaba/ice/issues/new), we'd love to have your helping hand on icestore.
 
-If you're interested in `icestore`, see [CONTRIBUTING.md](https://github.com/alibaba/ice/blob/master/.github/CONTRIBUTING.md) for more information to learn how to get started.
+If you're interested in icestore, see [CONTRIBUTING.md](https://github.com/alibaba/ice/blob/master/.github/CONTRIBUTING.md) for more information to learn how to get started.
 
 ## License
 

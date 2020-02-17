@@ -22,7 +22,7 @@ $ npm install @ice/store --save
 
 ## 简介
 
-`icestore` 是基于 React Hooks 实现的轻量级状态管理框架，具有以下特征：
+icestore 是基于 React Hooks 实现的轻量级状态管理框架，具有以下特征：
 
 * **简单、熟悉的 API**：不需要额外的学习成本，只需要声明模型，然后 useModel；
 * **支持组件 Class 写法**：友好的兼容策略可以让老项目享受轻量状态管理的乐趣；
@@ -31,7 +31,7 @@ $ npm install @ice/store --save
 
 ## 快速开始
 
-让我们使用 `icestore` 开发一个简单的 Todo 应用，包含以下几个步骤：
+让我们使用 icestore 开发一个简单的 Todo 应用，包含以下几个步骤：
 
 * 定义模型：
 
@@ -161,8 +161,7 @@ $ npm install @ice/store --save
 
 ## 贡献
 
-欢迎反馈问题 [issue 链接](https://github.com/alibaba/ice/issues/new)
-如果对 `icestore` 感兴趣，欢迎参考 [CONTRIBUTING.md](https://github.com/alibaba/ice/blob/master/.github/CONTRIBUTING.md) 学习如何贡献代码。
+欢迎[反馈问题](https://github.com/alibaba/ice/issues/new)。如果对 icestore 感兴趣，请参考 [CONTRIBUTING.md](https://github.com/alibaba/ice/blob/master/.github/CONTRIBUTING.md) 学习如何贡献代码。
 
 ## 协议
 
