@@ -109,8 +109,11 @@ function Todos() {
     fetch();
   }, []);
 
-  function handleAdd(name) {
-    add({ name });
+  function onAdd(event, name) {
+    if (event.keyCode === 13) {
+      add({ name: event.target.value });
+      event.target.value = '';
+    }
   }
 
   return (
@@ -119,25 +122,14 @@ function Todos() {
         {dataSource.map(({ name, done }, index) => (
           <li key={index}>
             <label>
-              <input
-                type="checkbox"
-                checked={done}
-                onClick={() => onCheck(index)}
-              />
               {done ? <s>{name}</s> : <span>{name}</span>}
             </label>
-            <button onClick={() => onRemove(index)}>-</button>
           </li>
         ))}
       </ul>
       <div>
         <input
-          onKeyDown={event => {
-            if (event.keyCode === 13) {
-              handleAdd(event.target.value);
-              event.target.value = '';
-            }
-          }}
+          onKeyDown={onAdd}
           placeholder="Press Enter"
         />
       </div>
@@ -156,6 +148,7 @@ The function called to create a store.
 
 ```js
 import { createStore } from '@ice/store';
+
 const store = createStore(models);
 const { Provider, useModel, withModel } = store;
 ```
