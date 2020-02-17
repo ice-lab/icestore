@@ -6,7 +6,8 @@ import TodoList from './TodoList';
 const { useModel, useModelActionsState } = store;
 
 export default function Todos() {
-  const [ state, actions ] = useModel('todos');
+  const todos = useModel('todos');
+  const [ state, actions ] = todos;
   const actionsState = useModelActionsState('todos');
   const { dataSource } = state;
   const { refresh } = actions;

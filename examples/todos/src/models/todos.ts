@@ -4,13 +4,6 @@ interface Todo {
   name: string;
   done?: boolean;
 }
-export interface TodoStore {
-  dataSource: Todo[];
-  refresh: () => void;
-  add: (todo: Todo) => void;
-  remove: (index: number) => void;
-  toggle: (index: number) => void;
-}
 
 const store = {
   state: {
@@ -18,7 +11,7 @@ const store = {
   },
 
   actions: {
-    async refresh(prevState, actions, globalActions) {
+    async refresh(prevState, args, actions, globalActions) {
       await delay(2000);
 
       const dataSource: any[] = [
@@ -39,20 +32,20 @@ const store = {
         dataSource,
       };
     },
-    toggle(prevState, index) {
+    toggle(prevState, index: number) {
       prevState.dataSource[index].done = !prevState.dataSource[index].done;
       return {
         ...prevState,
       };
     },
-    add(prevState, todo, actions, globalActions) {
+    add(prevState, todo: Todo, actions, globalActions) {
       prevState.dataSource.push(todo);
       globalActions.user.setTodos(prevState.dataSource.length);
       return {
         ...prevState,
       };
     },
-    async remove(prevState, index, globalActions) {
+    async remove(prevState, index: number, actions, globalActions) {
       await delay(1000);
 
       prevState.dataSource.splice(index, 1);
