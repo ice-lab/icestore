@@ -36,7 +36,6 @@ Let's build a simple todo app from scatch using `icestore` which includes follow
 * Use a model to define your store：
 
   ```javascript
-  // src/models.js
   const todosModel = {
     state: {
       dataSource: [],
@@ -74,7 +73,6 @@ Let's build a simple todo app from scatch using `icestore` which includes follow
 * Create the store:
 
   ```javascript
-  // src/store.js
   import { createStore } from '@ice/store';
   import models from './models';
   export default createStore(models);
@@ -82,8 +80,8 @@ Let's build a simple todo app from scatch using `icestore` which includes follow
 * Wrap your application:
 
   ```jsx
-  import stores from 'easy-peasy';
-  const { Provider } = stores;
+  import store from './store';
+  const { Provider } = store;
   ReactDOM.render(
     <Provider>
       <App />
@@ -94,7 +92,6 @@ Let's build a simple todo app from scatch using `icestore` which includes follow
 * Consume Model:
 
   ```jsx
-  // src/index.js
   import React, { useEffect } from 'react';
   import ReactDOM from 'react-dom';
   import store from './store';

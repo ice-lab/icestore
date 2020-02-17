@@ -24,7 +24,7 @@ $ npm install @ice/store --save
 
 `icestore` 是基于 React Hooks 实现的轻量级状态管理框架，具有以下特征：
 
-* **简单、熟悉的 API**：不需要额外的学习成本，只需要声明 Model，然后 useModel；
+* **简单、熟悉的 API**：不需要额外的学习成本，只需要声明模型，然后 useModel；
 * **支持组件 Class 写法**：友好的兼容策略可以让老项目享受轻量状态管理的乐趣；
 * **集成异步处理**：记录异步操作时的执行状态，简化视图中对于等待或错误的处理逻辑；
 * **良好的 TypeScript 支持**：提供完整的 TypeScript 类型定义，在 VS Code 中能获得完整的类型检查和推断；
@@ -33,10 +33,9 @@ $ npm install @ice/store --save
 
 让我们使用 `icestore` 开发一个简单的 Todo 应用，包含以下几个步骤：
 
-* 定义 Model：
+* 定义模型：
 
   ```javascript
-  // src/models.js
   const todosModel = {
     state: {
       dataSource: [],
@@ -74,15 +73,26 @@ $ npm install @ice/store --save
 * 创建 Store：
 
   ```javascript
-  // src/store.js
   import { createStore } from '@ice/store';
   import models from './models';
   export default createStore(models);
   ```
-* 在 View 中，消费 Model：
+* 连接视图：
 
   ```jsx
-  // src/index.js
+
+  import store from './store';
+  const { Provider } = store;
+  ReactDOM.render(
+    <Provider>
+      <App />
+    </Provider>,
+    rootEl
+  ); 
+  ```
+* 消费模型：
+
+  ```jsx
   import React, { useEffect } from 'react';
   import ReactDOM from 'react-dom';
   import store from './store';
