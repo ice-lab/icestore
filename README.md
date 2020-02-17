@@ -1,8 +1,8 @@
-[English](./README.md) | 简体中文
+English | [简体中文](./README.zh-CN.md)
 
 # icestore
 
-> 基于 React Hooks 实现的轻量级状态管理框架
+> Lightweight React state management library based on react hooks
 
 [![NPM version](https://img.shields.io/npm/v/@ice/store.svg?style=flat)](https://npmjs.org/package/@ice/store)
 [![Package Quality](https://npm.packagequality.com/shield/@ice%2Fstore.svg)](https://packagequality.com/#?package=@ice/store)
@@ -12,28 +12,28 @@
 [![Known Vulnerabilities](https://snyk.io/test/npm/@ice/store/badge.svg)](https://snyk.io/test/npm/@ice/store)
 [![David deps](https://img.shields.io/david/ice-lab/icestore.svg?style=flat-square)](https://david-dm.org/ice-lab/icestore)
 
-## 安装
+## Installation
 
-使用 icestore 需要 React 在 16.8.0 版本以上。
+icestore requires React 16.8.0 or later.
 
 ```bash
-$ npm install @ice/store --save
+npm install @ice/store --save
 ```
 
-## 简介
+## Introduction
 
-`icestore` 是基于 React Hooks 实现的轻量级状态管理框架，具有以下特征：
+`icestore` is a lightweight React state management library based on hooks. It has the following core features:
 
-* **简单、熟悉的 API**：不需要额外的学习成本，只需要声明 Model，然后 useModel；
-* **支持组件 Class 写法**：友好的兼容策略可以让老项目享受轻量状态管理的乐趣；
-* **集成异步处理**：记录异步操作时的执行状态，简化视图中对于等待或错误的处理逻辑；
-* **良好的 TypeScript 支持**：提供完整的 TypeScript 类型定义，在 VS Code 中能获得完整的类型检查和推断；
+* **Minimal & Familiar API**: No additional learning costs, easy to get started with the knowledge of React Hooks.
+* **Class Component Support**: Make old projects enjoying the fun of lightweight state management with friendly compatibility strategy.
+* **Built in Async Status**: Records loading and error status of async actions, simplifying the rendering logic in the view layer.
+* **TypeScript Support**: Provide complete type definitions to support intelliSense in VS Code.
 
-## 快速开始
+## Getting Started
 
-让我们使用 `icestore` 开发一个简单的 Todo 应用，包含以下几个步骤：
+Let's build a simple todo app from scatch using `icestore` which includes following steps:
 
-* 定义 Model：
+* Use a model to define your store：
 
   ```javascript
   // src/models.js
@@ -71,7 +71,7 @@ $ npm install @ice/store --save
     todos: todosModel
   };
   ```
-* 创建 Store：
+* Create the store:
 
   ```javascript
   // src/store.js
@@ -79,7 +79,19 @@ $ npm install @ice/store --save
   import models from './models';
   export default createStore(models);
   ```
-* 在 View 中，消费 Model：
+* Wrap your application:
+
+  ```jsx
+  import stores from 'easy-peasy';
+  const { Provider } = stores;
+  ReactDOM.render(
+    <Provider>
+      <App />
+    </Provider>,
+    rootEl
+  ); 
+  ```
+* Consume Model:
 
   ```jsx
   // src/index.js
@@ -87,7 +99,7 @@ $ npm install @ice/store --save
   import ReactDOM from 'react-dom';
   import store from './store';
   
-  const { Provider, useModel } = store;
+  const { useModel } = store;
 
   function Todos() {
     const [ state, actions ] = useModel('todos');
@@ -133,28 +145,24 @@ $ npm install @ice/store --save
       </div>
     );
   }
-
-  ReactDOM.render(<Provider>
-    <Todos />
-  </Provider>, document.getElementById('root'));
   ```
 
-## 浏览器支持
+## Browser Compatibility
 
 | ![Chrome](https://raw.github.com/alrra/browser-logos/master/src/chrome/chrome_48x48.png) | ![Firefox](https://raw.github.com/alrra/browser-logos/master/src/firefox/firefox_48x48.png) | ![Edge](https://raw.github.com/alrra/browser-logos/master/src/edge/edge_48x48.png) | ![IE](https://raw.github.com/alrra/browser-logos/master/src/archive/internet-explorer_9-11/internet-explorer_9-11_48x48.png) | ![Safari](https://raw.github.com/alrra/browser-logos/master/src/safari/safari_48x48.png) | ![Opera](https://raw.github.com/alrra/browser-logos/master/src/opera/opera_48x48.png) | ![UC](https://raw.github.com/alrra/browser-logos/master/src/uc/uc_48x48.png) |
 | :--------------------------------------------------------------------------------------: | :-----------------------------------------------------------------------------------------: | :--------------------------------------------------------------------------------: | :--------------------------------------------------------------------------------------------------------------------------: | :--------------------------------------------------------------------------------------: | :-----------------------------------------------------------------------------------: | :--------------------------------------------------------------------------: |
 |✔ |✔|✔|9+ ✔|✔|✔|✔|
 
-## 灵感
+## Inspiration
 
-创造 icestore 的灵感来源于 [constate](https://github.com/diegohaz/constate) 和 [rematch](https://github.com/rematch/rematch)。
+Rematch refines and builds upon the ideas of [constate](https://github.com/diegohaz/constate) & [rematch](https://github.com/rematch/rematch).
 
-## 贡献
+## Contributors
 
-欢迎反馈问题 [issue 链接](https://github.com/alibaba/ice/issues/new)
-如果对 `icestore` 感兴趣，欢迎参考 [CONTRIBUTING.md](https://github.com/alibaba/ice/blob/master/.github/CONTRIBUTING.md) 学习如何贡献代码。
+Feel free to report any questions as an [issue](https://github.com/alibaba/ice/issues/new), we'd love to have your helping hand on `icestore`.
 
-## 协议
+If you're interested in `icestore`, see [CONTRIBUTING.md](https://github.com/alibaba/ice/blob/master/.github/CONTRIBUTING.md) for more information to learn how to get started.
+
+## License
 
 [MIT](LICENSE)
-
