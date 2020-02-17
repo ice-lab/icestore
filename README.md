@@ -40,7 +40,6 @@ Let's build a simple todo app from scatch using icestore which includes followin
     state: {
       dataSource: [],
     },
-
     actions: {
       async fetch(prevState, actions) {
         await delay(1000);
@@ -75,12 +74,16 @@ Let's build a simple todo app from scatch using icestore which includes followin
   ```javascript
   import { createStore } from '@ice/store';
   import models from './models';
+
   export default createStore(models);
   ```
 * Wrap your application:
 
   ```jsx
+  import React from 'react';
+  import ReactDOM from 'react-dom';
   import store from './store';
+
   const { Provider } = store;
   ReactDOM.render(
     <Provider>
@@ -93,11 +96,9 @@ Let's build a simple todo app from scatch using icestore which includes followin
 
   ```jsx
   import React, { useEffect } from 'react';
-  import ReactDOM from 'react-dom';
   import store from './store';
   
   const { useModel } = store;
-
   function Todos() {
     const [ state, actions ] = useModel('todos');
     const { dataSource } = state;

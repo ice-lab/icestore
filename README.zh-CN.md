@@ -40,7 +40,6 @@ icestore 是基于 React Hooks 实现的轻量级状态管理框架，具有以�
     state: {
       dataSource: [],
     },
-
     actions: {
       async fetch(prevState, actions) {
         await delay(1000);
@@ -75,13 +74,16 @@ icestore 是基于 React Hooks 实现的轻量级状态管理框架，具有以�
   ```javascript
   import { createStore } from '@ice/store';
   import models from './models';
+
   export default createStore(models);
   ```
 * 连接视图：
 
   ```jsx
-
+  import React from 'react';
+  import ReactDOM from 'react-dom';
   import store from './store';
+
   const { Provider } = store;
   ReactDOM.render(
     <Provider>
@@ -94,11 +96,9 @@ icestore 是基于 React Hooks 实现的轻量级状态管理框架，具有以�
 
   ```jsx
   import React, { useEffect } from 'react';
-  import ReactDOM from 'react-dom';
   import store from './store';
   
-  const { Provider, useModel } = store;
-
+  const { useModel } = store;
   function Todos() {
     const [ state, actions ] = useModel('todos');
     const { dataSource } = state;
@@ -143,10 +143,6 @@ icestore 是基于 React Hooks 实现的轻量级状态管理框架，具有以�
       </div>
     );
   }
-
-  ReactDOM.render(<Provider>
-    <Todos />
-  </Provider>, document.getElementById('root'));
   ```
 
 ## 浏览器支持
