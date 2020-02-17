@@ -33,113 +33,118 @@ icestore is a lightweight React state management library based on hooks. It has 
 
 Let's build a simple todo app from scatch using icestore which includes following steps:
 
-* Use a model to define your store：
+### Step 1 - Use a model to define your store：
 
-  ```javascript
-  export const todos = {
-    state: {
-      dataSource: [],
+```javascript
+export const todos = {
+  state: {
+    dataSource: [],
+  },
+  actions: {
+    async fetch(prevState, actions) {
+      await delay(1000);
+      const dataSource = [
+        { name: 'react' },
+        { name: 'vue', done: true},
+        { name: 'angular' },
+      ];
+      return {
+        ...prevState,
+        dataSource,
+      }
     },
-    actions: {
-      async fetch(prevState, actions) {
-        await delay(1000);
-        const dataSource = [
-          { name: 'react' },
-          { name: 'vue', done: true},
-          { name: 'angular' },
-        ];
-        return {
-          ...prevState,
-          dataSource,
-        }
-      },
-      add(prevState, todo) {
-        return {
-          ...prevState,
-          dataSource: [
-            ...prevState.dataSource,
-            todo,
-          ]
-        };
-      },
+    add(prevState, todo) {
+      return {
+        ...prevState,
+        dataSource: [
+          ...prevState.dataSource,
+          todo,
+        ]
+      };
     },
-  };
-  ```
-* Create the store:
+  },
+};
+```
 
-  ```javascript
-  import { createStore } from '@ice/store';
-  import * as models from './models';
+### Step 2 - Create the store
 
-  export default createStore(models);
-  ```
-* Wrap your application:
+```javascript
+import { createStore } from '@ice/store';
+import * as models from './models';
 
-  ```jsx
-  import React from 'react';
-  import ReactDOM from 'react-dom';
-  import store from './store';
+export default createStore(models);
+```
 
-  const { Provider } = store;
-  ReactDOM.render(
-    <Provider>
-      <App />
-    </Provider>,
-    rootEl
-  ); 
-  ```
-* Consume Model:
+### Step 3 - Wrap your application
 
-  ```jsx
-  import React, { useEffect } from 'react';
-  import store from './store';
-  
-  const { useModel } = store;
-  function Todos() {
-    const [ state, actions ] = useModel('todos');
-    const { dataSource } = state;
-    const { fetch, add } = actions;
+```jsx
+import React from 'react';
+import ReactDOM from 'react-dom';
+import store from './store';
 
-    useEffect(() => {
-      fetch();
-    }, []);
+const { Provider } = store;
 
-    function handleAdd(name) {
-      add({ name });
-    }
+ReactDOM.render(
+  <Provider>
+    <App />
+  </Provider>,
+  rootEl
+); 
+```
 
-    return (
-      <div>
-        <ul>
-          {dataSource.map(({ name, done }, index) => (
-            <li key={index}>
-              <label>
-                <input
-                  type="checkbox"
-                  checked={done}
-                  onClick={() => onCheck(index)}
-                />
-                {done ? <s>{name}</s> : <span>{name}</span>}
-              </label>
-              <button onClick={() => onRemove(index)}>-</button>
-            </li>
-          ))}
-        </ul>
-        <div>
-          <input
-            onKeyDown={event => {
-              if (event.keyCode === 13) {
-                handleAdd(event.target.value);
-                event.target.value = '';
-              }
-            }}
-            placeholder="Press Enter"
-          />
-        </div>
-      </div>
-    );
+### Step 4 - Consume model
+
+```jsx
+import React, { useEffect } from 'react';
+import store from './store';
+
+const { useModel } = store;
+
+function Todos() {
+  const [ state, actions ] = useModel('todos');
+  const { dataSource } = state;
+  const { fetch, add } = actions;
+
+  useEffect(() => {
+    fetch();
+  }, []);
+
+  function handleAdd(name) {
+    add({ name });
   }
-  ```
+
+  return (
+    <div>
+      <ul>
+        {dataSource.map(({ name, done }, index) => (
+          <li key={index}>
+            <label>
+              <input
+                type="checkbox"
+                checked={done}
+                onClick={() => onCheck(index)}
+              />
+              {done ? <s>{name}</s> : <span>{name}</span>}
+            </label>
+            <button onClick={() => onRemove(index)}>-</button>
+          </li>
+        ))}
+      </ul>
+      <div>
+        <input
+          onKeyDown={event => {
+            if (event.keyCode === 13) {
+              handleAdd(event.target.value);
+              event.target.value = '';
+            }
+          }}
+          placeholder="Press Enter"
+        />
+      </div>
+    </div>
+  );
+}
+```
 
 ## API
 

@@ -33,113 +33,116 @@ icestore 是基于 React Hooks 实现的轻量级状态管理框架，具有以�
 
 让我们使用 icestore 开发一个简单的 Todo 应用，包含以下几个步骤：
 
-* 定义模型：
+### 第一步：定义模型
 
-  ```javascript
-  export const todos = {
-    state: {
-      dataSource: [],
+```javascript
+export const todos = {
+  state: {
+    dataSource: [],
+  },
+  actions: {
+    async fetch(prevState, actions) {
+      await delay(1000);
+      const dataSource = [
+        { name: 'react' },
+        { name: 'vue', done: true},
+        { name: 'angular' },
+      ];
+      return {
+        ...prevState,
+        dataSource,
+      }
     },
-    actions: {
-      async fetch(prevState, actions) {
-        await delay(1000);
-        const dataSource = [
-          { name: 'react' },
-          { name: 'vue', done: true},
-          { name: 'angular' },
-        ];
-        return {
-          ...prevState,
-          dataSource,
-        }
-      },
-      add(prevState, todo) {
-        return {
-          ...prevState,
-          dataSource: [
-            ...prevState.dataSource,
-            todo,
-          ]
-        };
-      },
+    add(prevState, todo) {
+      return {
+        ...prevState,
+        dataSource: [
+          ...prevState.dataSource,
+          todo,
+        ]
+      };
     },
-  };
-  ```
-* 创建 Store：
+  },
+};
+```
 
-  ```javascript
-  import { createStore } from '@ice/store';
-  import * as models from './models';
+### 第二步：创建 Store
 
-  export default createStore(models);
-  ```
-* 挂载 Store：
+```javascript
+import { createStore } from '@ice/store';
+import * as models from './models';
 
-  ```jsx
-  import React from 'react';
-  import ReactDOM from 'react-dom';
-  import store from './store';
+export default createStore(models);
+```
 
-  const { Provider } = store;
-  ReactDOM.render(
-    <Provider>
-      <App />
-    </Provider>,
-    rootEl
-  ); 
-  ```
-* 消费模型：
+### 第三步：挂载 Store
 
-  ```jsx
-  import React, { useEffect } from 'react';
-  import store from './store';
-  
-  const { useModel } = store;
-  function Todos() {
-    const [ state, actions ] = useModel('todos');
-    const { dataSource } = state;
-    const { fetch, add } = actions;
+```jsx
+import React from 'react';
+import ReactDOM from 'react-dom';
+import store from './store';
 
-    useEffect(() => {
-      fetch();
-    }, []);
+const { Provider } = store;
+ReactDOM.render(
+  <Provider>
+    <App />
+  </Provider>,
+  rootEl
+); 
+```
 
-    function handleAdd(name) {
-      add({ name });
-    }
+### 第四步：消费模型
 
-    return (
-      <div>
-        <ul>
-          {dataSource.map(({ name, done }, index) => (
-            <li key={index}>
-              <label>
-                <input
-                  type="checkbox"
-                  checked={done}
-                  onClick={() => onCheck(index)}
-                />
-                {done ? <s>{name}</s> : <span>{name}</span>}
-              </label>
-              <button onClick={() => onRemove(index)}>-</button>
-            </li>
-          ))}
-        </ul>
-        <div>
-          <input
-            onKeyDown={event => {
-              if (event.keyCode === 13) {
-                handleAdd(event.target.value);
-                event.target.value = '';
-              }
-            }}
-            placeholder="Press Enter"
-          />
-        </div>
-      </div>
-    );
+```jsx
+import React, { useEffect } from 'react';
+import store from './store';
+
+const { useModel } = store;
+function Todos() {
+  const [ state, actions ] = useModel('todos');
+  const { dataSource } = state;
+  const { fetch, add } = actions;
+
+  useEffect(() => {
+    fetch();
+  }, []);
+
+  function handleAdd(name) {
+    add({ name });
   }
-  ```
+
+  return (
+    <div>
+      <ul>
+        {dataSource.map(({ name, done }, index) => (
+          <li key={index}>
+            <label>
+              <input
+                type="checkbox"
+                checked={done}
+                onClick={() => onCheck(index)}
+              />
+              {done ? <s>{name}</s> : <span>{name}</span>}
+            </label>
+            <button onClick={() => onRemove(index)}>-</button>
+          </li>
+        ))}
+      </ul>
+      <div>
+        <input
+          onKeyDown={event => {
+            if (event.keyCode === 13) {
+              handleAdd(event.target.value);
+              event.target.value = '';
+            }
+          }}
+          placeholder="Press Enter"
+        />
+      </div>
+    </div>
+  );
+}
+```
 
 ## API
 
@@ -179,7 +182,7 @@ createStore(models)
 
 `state: any`：必填
 
-该 model 的初始 state
+该模型的初始 state。
 
 ```js
 const example = {
@@ -191,7 +194,7 @@ const example = {
 
 `actions: { [string]: (prevState, payload, actions, globalActions) => any }`
 
-一个改变该 model state 的所有函数的对象。这些函数采用 model 的上一次 state 和一个 payload 作为形参，并且返回 model 的下一个装态。
+一个改变该模型 state 的所有函数的对象。这些函数采用模型的上一次 state 和一个 payload 作为形参，并且返回模型的下一个装态。
 
 ```js
 const counter = {
@@ -214,7 +217,7 @@ const counter = {
 };
 ```
 
-可以在返回前执行另一个 action 或者另一个 model 的 actions：
+可以在返回前执行另一个 action 或者另一个模型的 actions：
 
 ```js
 const user = {
@@ -234,7 +237,7 @@ const user = {
     },
     foo(prevState, id) {
       // 做一些操作
-      
+
       return {
         ...prevState,
       };
@@ -269,7 +272,7 @@ ReactDOM.render(
 
 `useModel(name: string): [ state, actions ]`
 
-在组件内将挂载 Model 实例。
+在组件内挂载模型实例。
 
 ```jsx
 const counter = {
