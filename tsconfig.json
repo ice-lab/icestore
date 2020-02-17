@@ -10,7 +10,7 @@
     "lib": ["es5", "dom"]
   },
   "files": [
-    "src/index.tsx"
+    "src/index.ts"
   ],
   "exclude": [
     "node_modules"
