@@ -11,18 +11,18 @@ export type ReactSetState<S> = React.Dispatch<React.SetStateAction<S>>;
 
 export type ModelConfigAction<S = any> = (prevState: S, payload: any, actions?: any, globalActions?: any) => S | Promise<S>;
 
-export type ModelConfigActions<S = any> = {
+export interface ModelConfigActions<S = any> {
   [name: string]: ModelConfigAction<S>;
-};
+}
 
 export interface ModelConfig<S = any> {
   state: S;
   actions?: ModelConfigActions<S>;
 };
 
-export type ModelConfigs = {
+export interface ModelConfigs {
   [namespace: string]: ModelConfig;
-};
+}
 
 export interface ModelProps<S = any> {
   initialState?: S;
@@ -73,7 +73,7 @@ export function createModel<S = any, M extends ModelConfig<S> = ModelConfig, K =
   let actions;
 
   function useFunctionsState(functions: ModelConfigActionsKey[]):
-    [ ModelActionsState, SetModelFunctionsState, (name: ModelConfigActionsKey, args: FunctionState) => void ] {
+  [ ModelActionsState, SetModelFunctionsState, (name: ModelConfigActionsKey, args: FunctionState) => void ] {
     const functionsInitialState = useMemo<ModelActionsState>(
       () => transform(functions, (result, name) => {
         result[name] = {
@@ -98,7 +98,7 @@ export function createModel<S = any, M extends ModelConfig<S> = ModelConfig, K =
   }
 
   function useActions(state: ModelState, setState: ReactSetState<ModelState>):
-    [ ActionsPayload<ModelActions>, (name: ModelConfigActionsKey, payload: any) => void, ModelActionsState ] {
+  [ ActionsPayload<ModelActions>, (name: ModelConfigActionsKey, payload: any) => void, ModelActionsState ] {
     const [ actionsState, , setActionsState ] = useFunctionsState(Object.keys(defineActions));
     const [ actionsInitialPayload, actionsInitialIdentifier ]: [ActionsPayload<ModelActions>, ActionsIdentifier<ModelActions>] = useMemo(
       () => transform(defineActions, (result, action, name) => {
@@ -186,9 +186,9 @@ export function createModel<S = any, M extends ModelConfig<S> = ModelConfig, K =
 
   return createContainer<ModelProps<ModelState>, Model, [(model: Model) => ModelState, (model: Model) => ModelActions, (model: Model) => ModelActionsState]>(
     useModel,
-    value => value[0],
-    value => value[1],
-    value => value[2],
+  value => value[0],
+  value => value[1],
+  value => value[2],
   );
 }
 
