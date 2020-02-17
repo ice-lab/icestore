@@ -180,7 +180,7 @@ createStore(models)
 该模型的初始 state。
 
 ```js
-const example = {
+const model = {
   state: { loading: false },
 };
 ```
@@ -189,10 +189,11 @@ const example = {
 
 `actions: { [string]: (prevState, payload, actions, globalActions) => any }`
 
-一个改变该模型 state 的所有函数的对象。这些函数采用模型的上一次 state 和一个 payload 作为形参，并且返回模型的下一个装态。
+一个改变该模型 state 的所有函数的对象。这些函数采用模型的上一次 state 和一个 payload 作为形参，并且返回模型的下一个状态。
 
 ```js
 const counter = {
+  state: 0,
   actions: {
     add: (prevState, payload) => prevState + payload,
   }
@@ -267,7 +268,7 @@ ReactDOM.render(
 
 `useModel(name: string): [ state, actions ]`
 
-在组件内挂载模型实例。
+在组件内使用模型实例。
 
 ```jsx
 const counter = {
@@ -281,7 +282,7 @@ const counter = {
 
 const { userModel } = createStore({ counter });
 
-functio FunctionComponent() {
+function FunctionComponent() {
   const [ state, actions ] = userModel('name');
 
   state.value; // 0
@@ -297,7 +298,7 @@ functio FunctionComponent() {
 useModelActions 提供了一种只使用模型的 actions 但不订阅模型更新的的方式。
 
 ```js
-functio FunctionComponent() {
+function FunctionComponent() {
   const actions = useModelActions('name');
   actions.add(1);
 }
@@ -310,7 +311,7 @@ functio FunctionComponent() {
 使用 useModelActionsState 来获取模型异步 Action 的执行状态。
 
 ```js
-functio FunctionComponent() {
+function FunctionComponent() {
   const actions = useModelActions('name');
   const actionsState = useModelActionsState('name');
 

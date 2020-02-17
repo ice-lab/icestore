@@ -180,7 +180,7 @@ createStore(models)
 The initial state of the model.
 
 ```js
-const example = {
+const model = {
   state: { loading: false },
 };
 ```
@@ -193,6 +193,7 @@ An object of functions that change the model's state. These functions take the m
 
 ```js
 const counter = {
+  state: 0,
   actions: {
     add: (prevState, payload) => prevState + payload,
   }
@@ -281,7 +282,7 @@ const counter = {
 
 const { userModel } = createStore({ counter });
 
-functio FunctionComponent() {
+function FunctionComponent() {
   const [ state, actions ] = userModel('name');
 
   state.value; // 0
@@ -297,7 +298,7 @@ functio FunctionComponent() {
 A hook granting your components access to the model actions.
 
 ```js
-functio FunctionComponent() {
+function FunctionComponent() {
   const actions = useModelActions('name');
   actions.add(1);
 }
@@ -310,7 +311,7 @@ functio FunctionComponent() {
 A hook granting your components access to the action state of the model.
 
 ```js
-functio FunctionComponent() {
+function FunctionComponent() {
   const actions = useModelActions('name');
   const actionsState = useModelActionsState('name');
 
@@ -327,7 +328,7 @@ functio FunctionComponent() {
 
 `withModel(name: string, mapModelToProps?: (model: [state, actions]) => Object = (model) => ({ [name]: model }) ): (React.Component) => React.Component`
 
-Use withmodel to connect the model and class component:
+Use withModel to connect the model and class component:
 
 ```jsx
 class TodoList extends Component {
