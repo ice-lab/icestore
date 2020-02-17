@@ -1,8 +1,8 @@
-[English](./README.md) | 简体中文
+English | [简体中文](./README.zh-CN.md)
 
 # icestore
 
-> 基于 React Hooks 实现的轻量级状态管理框架
+> Lightweight React state management library based on react hooks
 
 [![NPM version](https://img.shields.io/npm/v/@ice/store.svg?style=flat)](https://npmjs.org/package/@ice/store)
 [![Package Quality](https://npm.packagequality.com/shield/@ice%2Fstore.svg)](https://packagequality.com/#?package=@ice/store)
@@ -12,28 +12,28 @@
 [![Known Vulnerabilities](https://snyk.io/test/npm/@ice/store/badge.svg)](https://snyk.io/test/npm/@ice/store)
 [![David deps](https://img.shields.io/david/ice-lab/icestore.svg?style=flat-square)](https://david-dm.org/ice-lab/icestore)
 
-## 安装
+## Installation
 
-使用 icestore 需要 React 在 16.8.0 版本以上。
+icestore requires React 16.8.0 or later.
 
 ```bash
-$ npm install @ice/store --save
+npm install @ice/store --save
 ```
 
-## 简介
+## Introduction
 
-icestore 是基于 React Hooks 实现的轻量级状态管理框架，具有以下特征：
+icestore is a lightweight React state management library based on hooks. It has the following core features:
 
-* **简单、熟悉的 API**：不需要额外的学习成本，只需要声明模型，然后 `useModel`；
-* **支持组件 Class 写法**：友好的兼容策略可以让老项目享受轻量状态管理的乐趣；
-* **集成异步处理**：记录异步操作时的执行状态，简化视图中对于等待或错误的处理逻辑；
-* **良好的 TypeScript 支持**：提供完整的 TypeScript 类型定义，在 VS Code 中能获得完整的类型检查和推断。
+* **Minimal & Familiar API**: No additional learning costs, easy to get started with the knowledge of React Hooks.
+* **Class Component Support**: Make old projects enjoying the fun of lightweight state management with friendly compatibility strategy.
+* **Built in Async Status**: Records loading and error status of async actions, simplifying the rendering logic in the view layer.
+* **TypeScript Support**: Provide complete type definitions to support intelliSense in VS Code.
 
-## 快速开始
+## Getting Started
 
-让我们使用 icestore 开发一个简单的 Todo 应用，包含以下几个步骤：
+Let's build a simple todo app from scatch using icestore which includes following steps:
 
-### 第一步：定义模型
+### Step 1 - Use a model to define your store：
 
 ```javascript
 export const todos = {
@@ -66,7 +66,7 @@ export const todos = {
 };
 ```
 
-### 第二步：创建 Store
+### Step 2 - Create the store
 
 ```javascript
 import { createStore } from '@ice/store';
@@ -75,7 +75,7 @@ import * as models from './models';
 export default createStore(models);
 ```
 
-### 第三步：挂载 Store
+### Step 3 - Wrap your application
 
 ```jsx
 import React from 'react';
@@ -92,7 +92,7 @@ ReactDOM.render(
 ); 
 ```
 
-### 第四步：消费模型
+### Step 4 - Consume model
 
 ```jsx
 import React, { useEffect } from 'react';
@@ -144,7 +144,7 @@ function Todos() {
 
 `createStore(models)`
 
-该函数用于创建 Store，将返回一个 Provider 和一些 Hooks。
+The function called to create a store.
 
 ```js
 import { createStore } from '@ice/store';
@@ -153,7 +153,7 @@ const store = createStore(models);
 const { Provider, useModel, withModel } = store;
 ```
 
-### 入参
+### Parameters
 
 **models**
 
@@ -175,9 +175,9 @@ createStore(models)
 
 #### state
 
-`state: any`：必填
+`state: any`: Required
 
-该模型的初始 state。
+The initial state of the model.
 
 ```js
 const model = {
@@ -189,7 +189,7 @@ const model = {
 
 `actions: { [string]: (prevState, payload, actions, globalActions) => any }`
 
-一个改变该模型 state 的所有函数的对象。这些函数采用模型的上一次 state 和一个 payload 作为形参，并且返回模型的下一个状态。
+An object of functions that change the model's state. These functions take the model's previous state and a payload, and return the model's next state. 
 
 ```js
 const counter = {
@@ -200,7 +200,7 @@ const counter = {
 };
 ```
 
-action 可以是异步的：
+Actions provide a simple way of handling async actions when used with async/await:
 
 ```js
 const counter = {
@@ -213,7 +213,7 @@ const counter = {
 };
 ```
 
-可以在返回前执行另一个 action 或者另一个模型的 actions：
+You can call another action by useing `actions` or `globalActions`:
 
 ```js
 const user = {
@@ -222,17 +222,17 @@ const user = {
   }
   actions: {
     like(prevState, payload, actions, globalActions) => {
-      actions.foo(payload); // 调用本模型的 foo
-      globalActions.user.foo(payload); // 调用其他模型的 foo
+      actions.foo(payload); // call user's actions
+      globalActions.user.foo(payload); // call actions of another model
       
-      // 做一些操作
+      // do something...
 
       return {
         ...prevState,
       };
     },
     foo(prevState, id) {
-      // 做一些操作
+      // do something...
 
       return {
         ...prevState,
@@ -242,13 +242,13 @@ const user = {
 };
 ```
 
-### 返回值
+### Return
 
 #### Provider
 
 `Provider(props: { children, initialStates })`
 
-将 Store 挂载到 React 应用，以便组件能够通过 Hooks 使用 Store 并与 Store 进行交互。
+Exposes the store to your React application, so that your components will be able to consume and interact with the store via the hooks.
 
 ```jsx
 import React from 'react';
@@ -268,7 +268,7 @@ ReactDOM.render(
 
 `useModel(name: string): [ state, actions ]`
 
-在组件内使用模型实例。
+A hook granting your components access to the model instance.
 
 ```jsx
 const counter = {
@@ -295,7 +295,7 @@ function FunctionComponent() {
 
 `useModelActions(name: string): actions`
 
-useModelActions 提供了一种只使用模型的 actions 但不订阅模型更新的的方式。
+A hook granting your components access to the model actions.
 
 ```js
 function FunctionComponent() {
@@ -308,7 +308,7 @@ function FunctionComponent() {
 
 `useModelActionsState(name: string): { [actionName: string]: { isLoading: boolean, error: Error } } `
 
-使用 useModelActionsState 来获取模型异步 Action 的执行状态。
+A hook granting your components access to the action state of the model.
 
 ```js
 function FunctionComponent() {
@@ -319,8 +319,8 @@ function FunctionComponent() {
     actions.fetch();
   }, []);
 
-  actionsState.fetch.isLoading // 异步 Action 是否在执行中
-  actionsState.fetch.error // 异步 Action 执行是否有误，注意仅当 isLoading 为 false 时这个值才有意义
+  actionsState.fetch.isLoading;
+  actionsState.fetch.error;
 }
 ```
 
@@ -328,7 +328,7 @@ function FunctionComponent() {
 
 `withModel(name: string, mapModelToProps?: (model: [state, actions]) => Object = (model) => ({ [name]: model }) ): (React.Component) => React.Component`
 
-使用 withModel 来连接模型和 Class Component。
+Use withModel to connect the model and class component:
 
 ```jsx
 class TodoList extends Component {
@@ -346,21 +346,22 @@ class TodoList extends Component {
 export default withModel('counter')(TodoList);
 ```
 
-## 浏览器支持
+## Browser Compatibility
 
 | ![Chrome](https://raw.github.com/alrra/browser-logos/master/src/chrome/chrome_48x48.png) | ![Firefox](https://raw.github.com/alrra/browser-logos/master/src/firefox/firefox_48x48.png) | ![Edge](https://raw.github.com/alrra/browser-logos/master/src/edge/edge_48x48.png) | ![IE](https://raw.github.com/alrra/browser-logos/master/src/archive/internet-explorer_9-11/internet-explorer_9-11_48x48.png) | ![Safari](https://raw.github.com/alrra/browser-logos/master/src/safari/safari_48x48.png) | ![Opera](https://raw.github.com/alrra/browser-logos/master/src/opera/opera_48x48.png) | ![UC](https://raw.github.com/alrra/browser-logos/master/src/uc/uc_48x48.png) |
 | :--------------------------------------------------------------------------------------: | :-----------------------------------------------------------------------------------------: | :--------------------------------------------------------------------------------: | :--------------------------------------------------------------------------------------------------------------------------: | :--------------------------------------------------------------------------------------: | :-----------------------------------------------------------------------------------: | :--------------------------------------------------------------------------: |
 |✔ |✔|✔|9+ ✔|✔|✔|✔|
 
-## 灵感
+## Inspiration
 
-创造 icestore 的灵感来源于 [constate](https://github.com/diegohaz/constate) 和 [rematch](https://github.com/rematch/rematch)。
+icestore refines and builds upon the ideas of [constate](https://github.com/diegohaz/constate) & [rematch](https://github.com/rematch/rematch).
 
-## 贡献
+## Contributors
 
-欢迎[反馈问题](https://github.com/alibaba/ice/issues/new)。如果对 icestore 感兴趣，请参考 [CONTRIBUTING.md](https://github.com/alibaba/ice/blob/master/.github/CONTRIBUTING.md) 学习如何贡献代码。
+Feel free to report any questions as an [issue](https://github.com/alibaba/ice/issues/new), we'd love to have your helping hand on icestore.
 
-## 协议
+If you're interested in icestore, see [CONTRIBUTING.md](https://github.com/alibaba/ice/blob/master/.github/CONTRIBUTING.md) for more information to learn how to get started.
+
+## License
 
 [MIT](LICENSE)
-

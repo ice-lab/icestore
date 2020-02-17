@@ -1,5 +1,5 @@
 
 import { createStore } from '@ice/store';
-import models from './models';
+import * as models from './models';
 
 export default createStore(models);
