@@ -36,7 +36,7 @@ Let's build a simple todo app from scatch using icestore which includes followin
 * Use a model to define your store：
 
   ```javascript
-  const todosModel = {
+  export const todos = {
     state: {
       dataSource: [],
     },
@@ -64,16 +64,12 @@ Let's build a simple todo app from scatch using icestore which includes followin
       },
     },
   };
-
-  export default {
-    todos: todosModel
-  };
   ```
 * Create the store:
 
   ```javascript
   import { createStore } from '@ice/store';
-  import models from './models';
+  import * as models from './models';
 
   export default createStore(models);
   ```
@@ -144,6 +140,212 @@ Let's build a simple todo app from scatch using icestore which includes followin
     );
   }
   ```
+
+## API
+
+**createStore**
+
+`createStore(models)`
+
+The function called to create a store.
+
+```js
+import { createStore } from '@ice/store';
+const store = createStore(models);
+const { Provider, useModel, withModel } = store;
+```
+
+### Parameters
+
+**models**
+
+```js
+import { createStore } from '@ice/store'
+
+const counterModel = {
+  state: {
+    value: 0
+  },
+};
+
+const models = {
+  counter: counterModel
+};
+
+createStore(models)
+```
+
+#### state
+
+`state: any`: Required
+
+The initial state of the model.
+
+```js
+const example = {
+  state: { loading: false },
+};
+```
+
+#### actions
+
+`actions: { [string]: (prevState, payload, actions, globalActions) => any }`
+
+An object of functions that change the model's state. These functions take the model's previous state and a payload, and return the model's next state. 
+
+```js
+const counter = {
+  actions: {
+    add: (prevState, payload) => prevState + payload,
+  }
+};
+```
+
+Actions provide a simple way of handling async actions when used with async/await:
+
+```js
+const counter = {
+  actions: {
+    async addAsync(prevState, payload) => {
+      await delay(1000);
+      return prevState + payload;
+    },
+  }
+};
+```
+
+You can call another action by useing `actions` or `globalActions`:
+
+```js
+const user = {
+  state: {
+    foo: [],
+  }
+  actions: {
+    like(prevState, payload, actions, globalActions) => {
+      actions.foo(payload); // call user's actions
+      globalActions.user.foo(payload); // call actions of another model
+      
+      // do something...
+
+      return {
+        ...prevState,
+      };
+    },
+    foo(prevState, id) {
+      // do something...
+
+      return {
+        ...prevState,
+      };
+    },
+  }
+};
+```
+
+### Return
+
+#### Provider
+
+`Provider(props: { children, initialStates })`
+
+Exposes the store to your React application, so that your components will be able to consume and interact with the store via the hooks.
+
+```jsx
+import React from 'react';
+import ReactDOM from 'react-dom';
+import { createStore } from '@ice/store';
+
+const { Provider } = createStore(models);
+ReactDOM.render(
+  <Provider>
+    <App />
+  </Provider>,
+  rootEl
+); 
+```
+
+#### useModel
+
+`useModel(name: string): [ state, actions ]`
+
+A hook granting your components access to the model instance.
+
+```jsx
+const counter = {
+  state: {
+    value: 0
+  },
+  actions: {
+    add: (prevState, payload) => ({...prevState, value: prevState.value + payload}),
+  }
+};
+
+const { userModel } = createStore({ counter });
+
+functio FunctionComponent() {
+  const [ state, actions ] = userModel('name');
+
+  state.value; // 0
+
+  actions.add(1); // state.value === 1
+}
+```
+
+#### useModelActions
+
+`useModelActions(name: string): actions`
+
+A hook granting your components access to the model actions.
+
+```js
+functio FunctionComponent() {
+  const actions = useModelActions('name');
+  actions.add(1);
+}
+```
+
+#### useModelActionsState
+
+`useModelActionsState(name: string): { [actionName: string]: { isLoading: boolean, error: Error } } `
+
+A hook granting your components access to the action state of the model.
+
+```js
+functio FunctionComponent() {
+  const actions = useModelActions('name');
+  const actionsState = useModelActionsState('name');
+
+  useEffect(() => {
+    actions.fetch();
+  }, []);
+
+  actionsState.fetch.isLoading;
+  actionsState.fetch.error;
+}
+```
+
+#### withModel
+
+`withModel(name: string, mapModelToProps?: (model: [state, actions]) => Object = (model) => ({ [name]: model }) ): (React.Component) => React.Component`
+
+Use withmodel to connect the model and class component:
+
+```jsx
+class TodoList extends Component {
+  render() {
+    const { counter } = this.props;
+    const [ state, actions ] = counter;
+    const { dataSource } = state;
+    
+    state.value; // 0
+
+    actions.add(1);
+  }
+} 
+
+export default withModel('counter')(TodoList);
+```
 
 ## Browser Compatibility
 

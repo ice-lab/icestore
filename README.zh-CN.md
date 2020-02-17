@@ -36,7 +36,7 @@ icestore 是基于 React Hooks 实现的轻量级状态管理框架，具有以�
 * 定义模型：
 
   ```javascript
-  const todosModel = {
+  export const todos = {
     state: {
       dataSource: [],
     },
@@ -64,20 +64,16 @@ icestore 是基于 React Hooks 实现的轻量级状态管理框架，具有以�
       },
     },
   };
-
-  export default {
-    todos: todosModel
-  };
   ```
 * 创建 Store：
 
   ```javascript
   import { createStore } from '@ice/store';
-  import models from './models';
+  import * as models from './models';
 
   export default createStore(models);
   ```
-* 连接视图：
+* 挂载 Store：
 
   ```jsx
   import React from 'react';
@@ -144,6 +140,212 @@ icestore 是基于 React Hooks 实现的轻量级状态管理框架，具有以�
     );
   }
   ```
+
+## API
+
+**createStore**
+
+`createStore(models)`
+
+该函数用于创建 Store，将返回一个 Provider 和一些 Hooks。
+
+```js
+import { createStore } from '@ice/store';
+const store = createStore(models);
+const { Provider, useModel, withModel } = store;
+```
+
+### 入参
+
+**models**
+
+```js
+import { createStore } from '@ice/store'
+
+const counterModel = {
+  state: {
+    value: 0
+  },
+};
+
+const models = {
+  counter: counterModel
+};
+
+createStore(models)
+```
+
+#### state
+
+`state: any`：必填
+
+该 model 的初始 state
+
+```js
+const example = {
+  state: { loading: false },
+};
+```
+
+#### actions
+
+`actions: { [string]: (prevState, payload, actions, globalActions) => any }`
+
+一个改变该 model state 的所有函数的对象。这些函数采用 model 的上一次 state 和一个 payload 作为形参，并且返回 model 的下一个装态。
+
+```js
+const counter = {
+  actions: {
+    add: (prevState, payload) => prevState + payload,
+  }
+};
+```
+
+action 可以是异步的：
+
+```js
+const counter = {
+  actions: {
+    async addAsync(prevState, payload) => {
+      await delay(1000);
+      return prevState + payload;
+    },
+  }
+};
+```
+
+可以在返回前执行另一个 action 或者另一个 model 的 actions：
+
+```js
+const user = {
+  state: {
+    foo: [],
+  }
+  actions: {
+    like(prevState, payload, actions, globalActions) => {
+      actions.foo(payload); // 调用本模型的 foo
+      globalActions.user.foo(payload); // 调用其他模型的 foo
+      
+      // 做一些操作
+
+      return {
+        ...prevState,
+      };
+    },
+    foo(prevState, id) {
+      // 做一些操作
+      
+      return {
+        ...prevState,
+      };
+    },
+  }
+};
+```
+
+### 返回值
+
+#### Provider
+
+`Provider(props: { children, initialStates })`
+
+将 Store 挂载到 React 应用，以便组件能够通过 Hooks 使用 Store 并与 Store 进行交互。
+
+```jsx
+import React from 'react';
+import ReactDOM from 'react-dom';
+import { createStore } from '@ice/store';
+
+const { Provider } = createStore(models);
+ReactDOM.render(
+  <Provider>
+    <App />
+  </Provider>,
+  rootEl
+); 
+```
+
+#### useModel
+
+`useModel(name: string): [ state, actions ]`
+
+在组件内将挂载 Model 实例。
+
+```jsx
+const counter = {
+  state: {
+    value: 0
+  },
+  actions: {
+    add: (prevState, payload) => ({...prevState, value: prevState.value + payload}),
+  }
+};
+
+const { userModel } = createStore({ counter });
+
+functio FunctionComponent() {
+  const [ state, actions ] = userModel('name');
+
+  state.value; // 0
+
+  actions.add(1); // state.value === 1
+}
+```
+
+#### useModelActions
+
+`useModelActions(name: string): actions`
+
+useModelActions 提供了一种只使用模型的 actions 但不订阅模型更新的的方式。
+
+```js
+functio FunctionComponent() {
+  const actions = useModelActions('name');
+  actions.add(1);
+}
+```
+
+#### useModelActionsState
+
+`useModelActionsState(name: string): { [actionName: string]: { isLoading: boolean, error: Error } } `
+
+使用 useModelActionsState 来获取模型异步 Action 的执行状态。
+
+```js
+functio FunctionComponent() {
+  const actions = useModelActions('name');
+  const actionsState = useModelActionsState('name');
+
+  useEffect(() => {
+    actions.fetch();
+  }, []);
+
+  actionsState.fetch.isLoading // 异步 Action 是否在执行中
+  actionsState.fetch.error // 异步 Action 执行是否有误，注意仅当 isLoading 为 false 时这个值才有意义
+}
+```
+
+#### withModel
+
+`withModel(name: string, mapModelToProps?: (model: [state, actions]) => Object = (model) => ({ [name]: model }) ): (React.Component) => React.Component`
+
+使用 withModel 来连接模型和 Class Component。
+
+```jsx
+class TodoList extends Component {
+  render() {
+    const { counter } = this.props;
+    const [ state, actions ] = counter;
+    const { dataSource } = state;
+    
+    state.value; // 0
+
+    actions.add(1);
+  }
+} 
+
+export default withModel('counter')(TodoList);
+```
 
 ## 浏览器支持
 
