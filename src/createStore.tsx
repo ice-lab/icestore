@@ -19,7 +19,7 @@ export function createStore<C extends ModelConfigs>(configs: C) {
   }
 
   function Provider({ children, initialStates = {} }) {
-    Object.keys(models).forEach((namespace) => {
+    Object.keys(models).forEach(namespace => {
       const [ ModelProvider ] = getModel(namespace);
       children = <ModelProvider initialState={initialStates[namespace]}>
         {children}

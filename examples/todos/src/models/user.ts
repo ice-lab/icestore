@@ -34,7 +34,7 @@ const store = {
         auth,
       };
     },
-    setTodos(prevState, todos) {
+    setTodos(prevState, todos: number) {
       return { ...prevState, todos };
     },
   },
