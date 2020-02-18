@@ -17,7 +17,7 @@ import {
   ModelActions,
   ModelActionsState,
   SetFunctionsState,
-  UseModelValue,
+  ModelValue,
 } from './types';
 
 const isDev = process.env.NODE_ENV !== 'production';
@@ -29,7 +29,7 @@ export function createModel<C extends Config, K = string>(config: C, namespace?:
   type IModelActions = ModelActions<C>;
   type IModelActionsState = ModelActionsState<C>;
   type SetModelFunctionsState = SetFunctionsState<IModelConfigActions>;
-  type IUseModelValue = UseModelValue<C>;
+  type IModelValue = ModelValue<C>;
 
   const { state: defineState = {}, actions: defineActions = [] } = config;
   let actions;
@@ -127,7 +127,7 @@ export function createModel<C extends Config, K = string>(config: C, namespace?:
     return [ actionsPayload, setActionPayload, actionsState ];
   }
 
-  function useModel({ initialState }: ModelProps<IModelState>): IUseModelValue {
+  function useValue({ initialState }: ModelProps<IModelState>): IModelValue {
     const preloadedState = initialState || (defineState as IModelState);
     const [ state, setState ] = useState<IModelState>(preloadedState);
     const [ , executeAction, actionsState ] = useActions(state, setState);
@@ -143,11 +143,11 @@ export function createModel<C extends Config, K = string>(config: C, namespace?:
   }
 
   if (isDev && namespace) {
-    useModel.displayName = namespace;
+    useValue.displayName = namespace;
   }
 
   return createContainer(
-    useModel,
+    useValue,
     value => value[0],
     value => value[1],
     value => value[2],

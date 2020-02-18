@@ -112,14 +112,15 @@ export type ConfigPropTypeState<C extends Config> = PropType<C, 'state'>;
 export type ConfigPropTypeActions<C extends Config> = PropType<C, 'actions'>;
 export type ModelActions<C extends Config> = Actions<ConfigPropTypeActions<C>>;
 export type ModelActionsState<C extends Config> = FunctionsState<ConfigPropTypeActions<C>>;
-export type UseModelValue<C extends Config> = [ ConfigPropTypeState<C>, ModelActions<C>, ModelActionsState<C> ];
+export type ModelValue<C extends Config> = [ ConfigPropTypeState<C>, ModelActions<C>, ModelActionsState<C> ];
 export type Model<C extends Config> =
   ContextHookReturn<
     ConfigPropTypeState<C>,
-    UseModelValue<C>,
+    ModelValue<C>,
     [
-      (model: UseModelValue<C>) => ConfigPropTypeState<C>,
-      (model: UseModelValue<C>) => ModelActions<C>,
-      (model: UseModelValue<C>) => ModelActionsState<C>
+      (model: ModelValue<C>) => ConfigPropTypeState<C>,
+      (model: ModelValue<C>) => ModelActions<C>,
+      (model: ModelValue<C>) => ModelActionsState<C>
     ]
   >;
+export type UseModelValue<C extends Config> = [ ConfigPropTypeState<C>, ModelActions<C> ];

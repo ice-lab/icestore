@@ -7,6 +7,7 @@ import {
   ConfigPropTypeState,
   ModelActions,
   ModelActionsState,
+  UseModelValue,
 } from './types';
 
 export function createStore<C extends Configs>(configs: C) {
@@ -43,7 +44,7 @@ export function createStore<C extends Configs>(configs: C) {
     return useModelActionsState();
   }
 
-  function useModel<K extends keyof C>(namespace: K): [ConfigPropTypeState<C[K]>, ModelActions<C[K]>] {
+  function useModel<K extends keyof C>(namespace: K): UseModelValue<C[K]> {
     return [ useModelState(namespace), useModelActions(namespace) ];
   }
 
@@ -91,6 +92,5 @@ export function createStore<C extends Configs>(configs: C) {
     withModel,
     withModelActions,
     withModelActionsState,
-    models,
   };
 }
