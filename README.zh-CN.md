@@ -41,7 +41,7 @@ export const todos = {
     dataSource: [],
   },
   actions: {
-    async fetch(prevState, actions) {
+    async fetch(prevState) {
       await delay(1000);
       const dataSource = [
         { name: 'react' },
@@ -51,7 +51,7 @@ export const todos = {
       return {
         ...prevState,
         dataSource,
-      }
+      };
     },
     add(prevState, todo) {
       return {
@@ -59,7 +59,7 @@ export const todos = {
         dataSource: [
           ...prevState.dataSource,
           todo,
-        ]
+        ],
       };
     },
   },
@@ -121,18 +121,14 @@ function Todos() {
       <ul>
         {dataSource.map(({ name, done }, index) => (
           <li key={index}>
-            <label>
-              {done ? <s>{name}</s> : <span>{name}</span>}
-            </label>
+            {done ? <s>{name}</s> : <span>{name}</span>}
           </li>
         ))}
       </ul>
-      <div>
-        <input
-          onKeyDown={onAdd}
-          placeholder="Press Enter"
-        />
-      </div>
+      <input
+        onKeyDown={onAdd}
+        placeholder="Press Enter"
+      />
     </div>
   );
 }
@@ -162,15 +158,15 @@ import { createStore } from '@ice/store'
 
 const counterModel = {
   state: {
-    value: 0
+    value: 0,
   },
 };
 
 const models = {
-  counter: counterModel
+  counter: counterModel,
 };
 
-createStore(models)
+createStore(models);
 ```
 
 #### state
@@ -196,7 +192,7 @@ const counter = {
   state: 0,
   actions: {
     add: (prevState, payload) => prevState + payload,
-  }
+  },
 };
 ```
 
@@ -209,7 +205,7 @@ const counter = {
       await delay(1000);
       return prevState + payload;
     },
-  }
+  },
 };
 ```
 
@@ -219,7 +215,7 @@ const counter = {
 const user = {
   state: {
     foo: [],
-  }
+  },
   actions: {
     like(prevState, payload, actions, globalActions) => {
       actions.foo(payload); // 调用本模型的 foo
@@ -273,11 +269,11 @@ ReactDOM.render(
 ```jsx
 const counter = {
   state: {
-    value: 0
+    value: 0,
   },
   actions: {
     add: (prevState, payload) => ({...prevState, value: prevState.value + payload}),
-  }
+  },
 };
 
 const { userModel } = createStore({ counter });
@@ -335,7 +331,6 @@ class TodoList extends Component {
   render() {
     const { counter } = this.props;
     const [ state, actions ] = counter;
-    const { dataSource } = state;
     
     state.value; // 0
 
