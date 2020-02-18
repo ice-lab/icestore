@@ -22,14 +22,14 @@ import {
 
 const isDev = process.env.NODE_ENV !== 'production';
 
-export function createModel<M extends Config, K = string>(config: M, namespace?: K, modelsActions?): Model<M> {
-  type IModelState = ConfigPropTypeState<M>;
-  type IModelConfigActions = ConfigPropTypeActions<M>;
+export function createModel<C extends Config, K = string>(config: C, namespace?: K, modelsActions?): Model<C> {
+  type IModelState = ConfigPropTypeState<C>;
+  type IModelConfigActions = ConfigPropTypeActions<C>;
   type IModelConfigActionsKey = keyof IModelConfigActions;
-  type IModelActions = ModelActions<M>;
-  type IModelActionsState = ModelActionsState<M>;
+  type IModelActions = ModelActions<C>;
+  type IModelActionsState = ModelActionsState<C>;
   type SetModelFunctionsState = SetFunctionsState<IModelConfigActions>;
-  type IUseModelValue = UseModelValue<M>;
+  type IUseModelValue = UseModelValue<C>;
 
   const { state: defineState = {}, actions: defineActions = [] } = config;
   let actions;

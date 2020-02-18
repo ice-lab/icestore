@@ -82,7 +82,7 @@ export interface FunctionState {
 }
 
 export type FunctionsState<Functions> = {
-  [K in keyof Functions]: FunctionState;
+  [K in keyof Functions]?: FunctionState;
 }
 
 export type SetFunctionsState<Functions> = ReactSetState<FunctionsState<Functions>>;
@@ -105,7 +105,7 @@ export type ActionsPayload<A> = {
 export type SetActionsPayload<A> = ReactSetState<ActionsPayload<A>>;
 
 export type Actions<A extends ConfigActions> = {
-  [K in keyof A]: (payload?: Parameters<A[K]>[1]) => void;
+  [K in keyof A]?: (payload?: Parameters<A[K]>[1]) => void;
 }
 
 export type ConfigPropTypeState<C extends Config> = PropType<C, 'state'>;

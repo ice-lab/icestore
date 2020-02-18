@@ -1,6 +1,6 @@
 import { delay } from '../utils';
 
-const store = {
+const user = {
   state: {
     dataSource: {
       name: '',
@@ -28,4 +28,4 @@ const store = {
   },
 };
 
-export default store;
+export default user;
