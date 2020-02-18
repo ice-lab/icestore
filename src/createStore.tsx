@@ -3,14 +3,14 @@ import transform from 'lodash.transform';
 import { createModel } from './createModel';
 import {
   ModelConfigs,
-  TModel,
-  TModelConfigState,
-  TModelActions,
-  TModelActionsState,
+  Model,
+  GetModelConfigState,
+  ModelActions,
+  ModelActionsState,
 } from './types';
 
 export function createStore<C extends ModelConfigs>(configs: C) {
-  function getModel<K extends keyof C>(namespace: K): TModel<C[K]> {
+  function getModel<K extends keyof C>(namespace: K): Model<C[K]> {
     const model = models[namespace];
     if (!model) {
       throw new Error(`Not found model by namespace: ${namespace}.`);
@@ -28,22 +28,22 @@ export function createStore<C extends ModelConfigs>(configs: C) {
     return <>{children}</>;
   }
 
-  function useModelState<K extends keyof C>(namespace: K): TModelConfigState<C[K]> {
+  function useModelState<K extends keyof C>(namespace: K): GetModelConfigState<C[K]> {
     const [, useModelState ] = getModel(namespace);
     return useModelState();
   }
 
-  function useModelActions<K extends keyof C>(namespace: K): TModelActions<C[K]> {
+  function useModelActions<K extends keyof C>(namespace: K): ModelActions<C[K]> {
     const [, , useModelActions ] = getModel(namespace);
     return useModelActions();
   }
 
-  function useModelActionsState<K extends keyof C>(namespace: K): TModelActionsState<C[K]> {
+  function useModelActionsState<K extends keyof C>(namespace: K): ModelActionsState<C[K]> {
     const [, , , useModelActionsState ] = getModel(namespace);
     return useModelActionsState();
   }
 
-  function useModel<K extends keyof C>(namespace: K): [TModelConfigState<C[K]>, TModelActions<C[K]>] {
+  function useModel<K extends keyof C>(namespace: K): [GetModelConfigState<C[K]>, ModelActions<C[K]>] {
     return [ useModelState(namespace), useModelActions(namespace) ];
   }
 
@@ -79,7 +79,7 @@ export function createStore<C extends ModelConfigs>(configs: C) {
   }
 
   const modelsActions = {};
-  const models: { [K in keyof C]?: TModel<C[K]> } = transform(configs, (result, config, namespace) => {
+  const models: { [K in keyof C]?: Model<C[K]> } = transform(configs, (result, config, namespace) => {
     result[namespace] = createModel(config, namespace, modelsActions);
   });
 

@@ -108,10 +108,18 @@ export type Actions<ConfigActions extends ModelConfigActions> = {
   [K in keyof ConfigActions]: (payload?: Parameters<ConfigActions[K]>[1]) => void;
 }
 
-export type TModelConfigState<M extends ModelConfig> = PropType<M, 'state'>;
-export type TModelConfigActions<M extends ModelConfig> = PropType<M, 'actions'>;
-export type TModelActions<M extends ModelConfig> = Actions<TModelConfigActions<M>>;
-export type TModelActionsState<M extends ModelConfig> = FunctionsState<TModelConfigActions<M>>;
-export type TUseModelValue<M extends ModelConfig> = [ TModelConfigState<M>, TModelActions<M>, TModelActionsState<M> ];
-export type TModel<M extends ModelConfig> =
-  ContextHookReturn<TModelConfigState<M>, TUseModelValue<M>, [(model: TUseModelValue<M>) => TModelConfigState<M>, (model: TUseModelValue<M>) => TModelActions<M>, (model: TUseModelValue<M>) => TModelActionsState<M>]>;
+export type GetModelConfigState<M extends ModelConfig> = PropType<M, 'state'>;
+export type GetModelConfigActions<M extends ModelConfig> = PropType<M, 'actions'>;
+export type ModelActions<M extends ModelConfig> = Actions<GetModelConfigActions<M>>;
+export type ModelActionsState<M extends ModelConfig> = FunctionsState<GetModelConfigActions<M>>;
+export type UseModelValue<M extends ModelConfig> = [ GetModelConfigState<M>, ModelActions<M>, ModelActionsState<M> ];
+export type Model<M extends ModelConfig> =
+  ContextHookReturn<
+    GetModelConfigState<M>,
+    UseModelValue<M>,
+    [
+      (model: UseModelValue<M>) => GetModelConfigState<M>,
+      (model: UseModelValue<M>) => ModelActions<M>,
+      (model: UseModelValue<M>) => ModelActionsState<M>
+    ]
+  >;

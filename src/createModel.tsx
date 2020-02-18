@@ -11,32 +11,32 @@ import {
   SetActionsPayload,
   ActionsIdentifier,
   FunctionState,
-  TModel,
-  TModelConfigState,
-  TModelConfigActions,
-  TModelActions,
-  TModelActionsState,
+  Model,
+  GetModelConfigState,
+  GetModelConfigActions,
+  ModelActions,
+  ModelActionsState,
   SetFunctionsState,
-  TUseModelValue,
+  UseModelValue,
 } from './types';
 
 const isDev = process.env.NODE_ENV !== 'production';
 
-export function createModel<M extends ModelConfig, K = string>(config: M, namespace?: K, modelsActions?): TModel<M> {
-  type ModelState = TModelConfigState<M>;
-  type ModelConfigActions = TModelConfigActions<M>;
-  type ModelConfigActionsKey = keyof ModelConfigActions;
-  type ModelActions = TModelActions<M>;
-  type ModelActionsState = TModelActionsState<M>;
-  type SetModelFunctionsState = SetFunctionsState<ModelConfigActions>;
-  type UseModelValue = TUseModelValue<M>;
+export function createModel<M extends ModelConfig, K = string>(config: M, namespace?: K, modelsActions?): Model<M> {
+  type IModelState = GetModelConfigState<M>;
+  type IModelConfigActions = GetModelConfigActions<M>;
+  type IModelConfigActionsKey = keyof IModelConfigActions;
+  type IModelActions = ModelActions<M>;
+  type IModelActionsState = ModelActionsState<M>;
+  type SetModelFunctionsState = SetFunctionsState<IModelConfigActions>;
+  type IUseModelValue = UseModelValue<M>;
 
   const { state: defineState = {}, actions: defineActions = [] } = config;
   let actions;
 
-  function useFunctionsState(functions: ModelConfigActionsKey[]):
-  [ ModelActionsState, SetModelFunctionsState, (name: ModelConfigActionsKey, args: FunctionState) => void ] {
-    const functionsInitialState = useMemo<ModelActionsState>(
+  function useFunctionsState(functions: IModelConfigActionsKey[]):
+  [ IModelActionsState, SetModelFunctionsState, (name: IModelConfigActionsKey, args: FunctionState) => void ] {
+    const functionsInitialState = useMemo<IModelActionsState>(
       () => transform(functions, (result, name) => {
         result[name] = {
           isLoading: false,
@@ -45,9 +45,9 @@ export function createModel<M extends ModelConfig, K = string>(config: M, namesp
       }, {}),
       [functions],
     );
-    const [ functionsState, setFunctionsState ] = useState<ModelActionsState>(() => functionsInitialState);
+    const [ functionsState, setFunctionsState ] = useState<IModelActionsState>(() => functionsInitialState);
     const setFunctionState = useCallback(
-      (name: ModelConfigActionsKey, args: FunctionState) => setFunctionsState(prevState => ({
+      (name: IModelConfigActionsKey, args: FunctionState) => setFunctionsState(prevState => ({
         ...prevState,
         [name]: {
           ...prevState[name],
@@ -59,10 +59,10 @@ export function createModel<M extends ModelConfig, K = string>(config: M, namesp
     return [ functionsState, setFunctionsState, setFunctionState ];
   }
 
-  function useActions(state: ModelState, setState: ReactSetState<ModelState>):
-  [ ActionsPayload<ModelActions>, (name: ModelConfigActionsKey, payload: any) => void, ModelActionsState ] {
+  function useActions(state: IModelState, setState: ReactSetState<IModelState>):
+  [ ActionsPayload<IModelActions>, (name: IModelConfigActionsKey, payload: any) => void, IModelActionsState ] {
     const [ actionsState, , setActionsState ] = useFunctionsState(Object.keys(defineActions));
-    const [ actionsInitialPayload, actionsInitialIdentifier ]: [ActionsPayload<ModelActions>, ActionsIdentifier<ModelActions>] = useMemo(
+    const [ actionsInitialPayload, actionsInitialIdentifier ]: [ActionsPayload<IModelActions>, ActionsIdentifier<IModelActions>] = useMemo(
       () => transform(defineActions, (result, action, name) => {
         const state = {
           payload: null,
@@ -73,7 +73,7 @@ export function createModel<M extends ModelConfig, K = string>(config: M, namesp
       }, [ {}, {} ]),
       [],
     );
-    const [ actionsPayload, setActionsPayload ]: [ ActionsPayload<ModelActions>, SetActionsPayload<ModelActions> ] = useState(() => actionsInitialPayload);
+    const [ actionsPayload, setActionsPayload ]: [ ActionsPayload<IModelActions>, SetActionsPayload<IModelActions> ] = useState(() => actionsInitialPayload);
     const setActionPayload = useCallback(
       (name, payload) => setActionsPayload(prevState => ({
         ...prevState,
@@ -127,9 +127,9 @@ export function createModel<M extends ModelConfig, K = string>(config: M, namesp
     return [ actionsPayload, setActionPayload, actionsState ];
   }
 
-  function useModel({ initialState }: ModelProps<ModelState>): UseModelValue {
-    const preloadedState = initialState || (defineState as ModelState);
-    const [ state, setState ] = useState<ModelState>(preloadedState);
+  function useModel({ initialState }: ModelProps<IModelState>): IUseModelValue {
+    const preloadedState = initialState || (defineState as IModelState);
+    const [ state, setState ] = useState<IModelState>(preloadedState);
     const [ , executeAction, actionsState ] = useActions(state, setState);
 
     actions = useMemo(() => transform(defineActions, (result, fn, name) => {
