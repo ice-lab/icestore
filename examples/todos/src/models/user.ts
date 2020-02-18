@@ -1,21 +1,9 @@
 import { delay } from '../utils';
 
-export interface User {
-  name?: string;
-  age?: number;
-}
-
-export interface UserStore {
-  dataSource: User;
-  auth: boolean;
-  todos: number;
-  login: () => void;
-  setTodos: (todos: number) => void;
-}
-
 const store = {
   state: {
     dataSource: {
+      name: '',
     },
     todos: 0,
     auth: false,

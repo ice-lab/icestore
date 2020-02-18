@@ -19,11 +19,11 @@ class TodoListClass extends Component<any> {
     const { title, todos, todosActionsState } = this.props;
     const [ state ] = todos;
     const { dataSource } = state;
-    return TodoList(
-      { title, dataSource, subTitle: 'Class Component' },
-      { toggle: this.onToggle, remove: this.onRemove },
-      todosActionsState,
-    );
+    return TodoList({
+      state: { title, dataSource, subTitle: 'Class Component' },
+      actions: { toggle: this.onToggle, remove: this.onRemove },
+      actionsState: todosActionsState,
+    });
   }
 }
 

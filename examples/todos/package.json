@@ -4,18 +4,31 @@
   "private": true,
   "dependencies": {
     "@ice/store": "^1.0.0",
-    "react": "16.8.6",
-    "react-dom": "16.8.6"
+    "react": "^16.8.6",
+    "react-dom": "^16.8.6"
   },
   "devDependencies": {
-    "css-modules-typescript-loader": "^2.0.4",
-    "ice-plugin-fusion": "^0.1.4",
-    "ice-plugin-moment-locales": "^0.1.0",
-    "ice-scripts": "^2.0.0"
+    "@types/jest": "^24.0.0",
+    "@types/node": "^12.0.0",
+    "@types/react": "^16.9.0",
+    "@types/react-dom": "^16.9.0",
+    "react-scripts": "3.4.0",
+    "typescript": "^3.7.5"
   },
   "scripts": {
-    "start": "ice-scripts dev",
-    "build": "ice-scripts build",
-    "test": "ice-scripts test"
+    "start": "react-scripts start",
+    "build": "react-scripts build"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
   }
 }

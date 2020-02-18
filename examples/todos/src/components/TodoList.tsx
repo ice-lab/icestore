@@ -3,7 +3,10 @@ import store from '../store';
 
 const { useModel, useModelActionsState } = store;
 
-export function TodoList({ title, subTitle, dataSource }, { toggle, remove }, actionsState) {
+export function TodoList({ state, actions, actionsState }) {
+  const { title, subTitle, dataSource } = state;
+  const { toggle, remove } = actions;
+
   return (
     <div>
       <h2>{title}</h2>
@@ -37,8 +40,10 @@ export default function({ title }) {
   const [ state, actions ] = useModel('todos');
   const actionsState = useModelActionsState('todos');
   return TodoList(
-    { ...state, title, subTitle: 'Function Component' },
-    actions,
-    actionsState,
+    {
+      state: { ...state, title, subTitle: 'Function Component' },
+      actions,
+      actionsState
+    },
   );
 }
