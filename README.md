@@ -33,7 +33,7 @@ icestore is a lightweight React state management library based on hooks. It has 
 
 Let's build a simple todo app from scatch using icestore which includes following steps:
 
-### Step 1 - Use a model to define your store：
+### Step 1 - Use a model to define your store
 
 ```javascript
 export const todos = {
