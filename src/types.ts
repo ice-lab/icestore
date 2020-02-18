@@ -57,19 +57,19 @@ export type ContextHookReturn<
   ? ContextHookTuple<P, V>
   : ContextHookMultipleTuple<P, S>);
 
-export type ModelConfigAction<S = any> = (prevState: S, payload?: any, actions?: any, globalActions?: any) => S | Promise<S>;
+export type ConfigAction<S = any> = (prevState: S, payload?: any, actions?: any, globalActions?: any) => S | Promise<S>;
 
-export interface ModelConfigActions<S = any> {
-  [name: string]: ModelConfigAction<S>;
+export interface ConfigActions<S = any> {
+  [name: string]: ConfigAction<S>;
 }
 
-export interface ModelConfig<S = any> {
+export interface Config<S = any> {
   state: S;
-  actions?: ModelConfigActions<S>;
+  actions?: ConfigActions<S>;
 };
 
-export interface ModelConfigs {
-  [namespace: string]: ModelConfig;
+export interface Configs {
+  [namespace: string]: Config;
 }
 
 export interface ModelProps<S = any> {
@@ -98,28 +98,28 @@ export interface ActionPayload {
   identifier: ActionIdentifier;
 }
 
-export type ActionsPayload<ConfigActions> = {
-  [K in keyof ConfigActions]: ActionPayload;
+export type ActionsPayload<A> = {
+  [K in keyof A]: ActionPayload;
 }
 
-export type SetActionsPayload<ConfigActions> = ReactSetState<ActionsPayload<ConfigActions>>;
+export type SetActionsPayload<A> = ReactSetState<ActionsPayload<A>>;
 
-export type Actions<ConfigActions extends ModelConfigActions> = {
-  [K in keyof ConfigActions]: (payload?: Parameters<ConfigActions[K]>[1]) => void;
+export type Actions<A extends ConfigActions> = {
+  [K in keyof A]: (payload?: Parameters<A[K]>[1]) => void;
 }
 
-export type GetModelConfigState<M extends ModelConfig> = PropType<M, 'state'>;
-export type GetModelConfigActions<M extends ModelConfig> = PropType<M, 'actions'>;
-export type ModelActions<M extends ModelConfig> = Actions<GetModelConfigActions<M>>;
-export type ModelActionsState<M extends ModelConfig> = FunctionsState<GetModelConfigActions<M>>;
-export type UseModelValue<M extends ModelConfig> = [ GetModelConfigState<M>, ModelActions<M>, ModelActionsState<M> ];
-export type Model<M extends ModelConfig> =
+export type ConfigPropTypeState<C extends Config> = PropType<C, 'state'>;
+export type ConfigPropTypeActions<C extends Config> = PropType<C, 'actions'>;
+export type ModelActions<C extends Config> = Actions<ConfigPropTypeActions<C>>;
+export type ModelActionsState<C extends Config> = FunctionsState<ConfigPropTypeActions<C>>;
+export type UseModelValue<C extends Config> = [ ConfigPropTypeState<C>, ModelActions<C>, ModelActionsState<C> ];
+export type Model<C extends Config> =
   ContextHookReturn<
-    GetModelConfigState<M>,
-    UseModelValue<M>,
+    ConfigPropTypeState<C>,
+    UseModelValue<C>,
     [
-      (model: UseModelValue<M>) => GetModelConfigState<M>,
-      (model: UseModelValue<M>) => ModelActions<M>,
-      (model: UseModelValue<M>) => ModelActionsState<M>
+      (model: UseModelValue<C>) => ConfigPropTypeState<C>,
+      (model: UseModelValue<C>) => ModelActions<C>,
+      (model: UseModelValue<C>) => ModelActionsState<C>
     ]
   >;

@@ -6,14 +6,14 @@ import { createContainer } from './createContainer';
 import {
   ReactSetState,
   ModelProps,
-  ModelConfig,
+  Config,
   ActionsPayload,
   SetActionsPayload,
   ActionsIdentifier,
   FunctionState,
   Model,
-  GetModelConfigState,
-  GetModelConfigActions,
+  ConfigPropTypeState,
+  ConfigPropTypeActions,
   ModelActions,
   ModelActionsState,
   SetFunctionsState,
@@ -22,9 +22,9 @@ import {
 
 const isDev = process.env.NODE_ENV !== 'production';
 
-export function createModel<M extends ModelConfig, K = string>(config: M, namespace?: K, modelsActions?): Model<M> {
-  type IModelState = GetModelConfigState<M>;
-  type IModelConfigActions = GetModelConfigActions<M>;
+export function createModel<M extends Config, K = string>(config: M, namespace?: K, modelsActions?): Model<M> {
+  type IModelState = ConfigPropTypeState<M>;
+  type IModelConfigActions = ConfigPropTypeActions<M>;
   type IModelConfigActionsKey = keyof IModelConfigActions;
   type IModelActions = ModelActions<M>;
   type IModelActionsState = ModelActionsState<M>;

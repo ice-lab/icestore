@@ -2,14 +2,14 @@ import React from 'react';
 import transform from 'lodash.transform';
 import { createModel } from './createModel';
 import {
-  ModelConfigs,
+  Configs,
   Model,
-  GetModelConfigState,
+  ConfigPropTypeState,
   ModelActions,
   ModelActionsState,
 } from './types';
 
-export function createStore<C extends ModelConfigs>(configs: C) {
+export function createStore<C extends Configs>(configs: C) {
   function getModel<K extends keyof C>(namespace: K): Model<C[K]> {
     const model = models[namespace];
     if (!model) {
@@ -28,7 +28,7 @@ export function createStore<C extends ModelConfigs>(configs: C) {
     return <>{children}</>;
   }
 
-  function useModelState<K extends keyof C>(namespace: K): GetModelConfigState<C[K]> {
+  function useModelState<K extends keyof C>(namespace: K): ConfigPropTypeState<C[K]> {
     const [, useModelState ] = getModel(namespace);
     return useModelState();
   }
@@ -43,7 +43,7 @@ export function createStore<C extends ModelConfigs>(configs: C) {
     return useModelActionsState();
   }
 
-  function useModel<K extends keyof C>(namespace: K): [GetModelConfigState<C[K]>, ModelActions<C[K]>] {
+  function useModel<K extends keyof C>(namespace: K): [ConfigPropTypeState<C[K]>, ModelActions<C[K]>] {
     return [ useModelState(namespace), useModelActions(namespace) ];
   }
 
