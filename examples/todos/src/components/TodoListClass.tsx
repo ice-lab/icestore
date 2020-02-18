@@ -1,18 +1,14 @@
 import { Component } from 'react';
-import { transformModel, transformModelActionsStates } from '@ice/store';
 import store from '../store';
 import { TodoList } from './TodoList';
-import todos from '../models/todos';
 
-const { withModel, withModelActionsState } = store;
-
-const todoModel = transformModel(todos);
-const todoModelActionsState = transformModelActionsStates(todos);
+const { withModel, withModelActionsState, models } = store;
+const [ , useModelState, useModelActions, useModelActionsState ] = models.todos;
 
 interface Props {
   title: string;
-  todos: typeof todoModel;
-  todosActionsState: typeof todoModelActionsState;
+  todos: [ ReturnType<typeof useModelState>, ReturnType<typeof useModelActions> ];
+  todosActionsState: typeof useModelActionsState;
 }
 
 class TodoListClass extends Component<Props> {

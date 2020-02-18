@@ -91,5 +91,6 @@ export function createStore<C extends Configs>(configs: C) {
     withModel,
     withModelActions,
     withModelActionsState,
+    models,
   };
 }
