@@ -27,7 +27,7 @@ icestore is a lightweight React state management library based on hooks. It has 
 * **Minimal & Familiar API**: No additional learning costs, easy to get started with the knowledge of React Hooks.
 * **Class Component Support**: Make old projects enjoying the fun of lightweight state management with friendly compatibility strategy.
 * **Built in Async Status**: Records loading and error status of async actions, simplifying the rendering logic in the view layer.
-* **TypeScript Support**: Provide complete type definitions to support intelliSense in VS Code.
+* **TypeScript Support**: Support complete type definitions to support intelliSense in VS Code.
 
 ## Getting Started
 
@@ -36,6 +36,7 @@ Let's build a simple todo app from scatch using icestore which includes followin
 ### Step 1 - Use a model to define your store：
 
 ```javascript
+// src/models/todos.js
 export const todos = {
   state: {
     dataSource: [],
@@ -69,6 +70,7 @@ export const todos = {
 ### Step 2 - Create the store
 
 ```javascript
+// src/store.js
 import { createStore } from '@ice/store';
 import * as models from './models';
 
@@ -78,6 +80,7 @@ export default createStore(models);
 ### Step 3 - Wrap your application
 
 ```jsx
+// src/App.jsx
 import React from 'react';
 import ReactDOM from 'react-dom';
 import store from './store';
