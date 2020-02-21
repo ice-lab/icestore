@@ -36,6 +36,7 @@ icestore 是基于 React Hooks 实现的轻量级状态管理框架，具有以�
 ### 第一步：定义模型
 
 ```javascript
+// src/models/todos.js
 export const todos = {
   state: {
     dataSource: [],
@@ -66,18 +67,28 @@ export const todos = {
 };
 ```
 
-### 第二步：创建 Store
+然后将所有的 model 统一导出:
 
 ```javascript
+// src/models/index.js
+export { default as todos } from './todos';
+// ...other models
+```
+
+### 第二步：创建 Store 实例
+
+```javascript
+// src/store.js
 import { createStore } from '@ice/store';
 import * as models from './models';
 
 export default createStore(models);
 ```
 
-### 第三步：挂载 Store
+### 第三步：全局包裹 StoreProvider
 
 ```jsx
+// src/App.jsx
 import React from 'react';
 import ReactDOM from 'react-dom';
 import store from './store';
@@ -89,7 +100,7 @@ ReactDOM.render(
     <App />
   </Provider>,
   rootEl
-); 
+);
 ```
 
 ### 第四步：消费模型
@@ -224,7 +235,7 @@ const user = {
     like(prevState, payload, actions, globalActions) => {
       actions.foo(payload); // 调用本模型的 foo
       globalActions.user.foo(payload); // 调用其他模型的 foo
-      
+
       // 做一些操作
 
       return {
@@ -261,7 +272,7 @@ ReactDOM.render(
     <App />
   </Provider>,
   rootEl
-); 
+);
 ```
 
 #### useModel
@@ -336,12 +347,12 @@ class TodoList extends Component {
     const { counter } = this.props;
     const [ state, actions ] = counter;
     const { dataSource } = state;
-    
+
     state.value; // 0
 
     actions.add(1);
   }
-} 
+}
 
 export default withModel('counter')(TodoList);
 ```

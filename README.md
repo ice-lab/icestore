@@ -27,7 +27,7 @@ icestore is a lightweight React state management library based on hooks. It has 
 * **Minimal & Familiar API**: No additional learning costs, easy to get started with the knowledge of React Hooks.
 * **Class Component Support**: Make old projects enjoying the fun of lightweight state management with friendly compatibility strategy.
 * **Built in Async Status**: Records loading and error status of async actions, simplifying the rendering logic in the view layer.
-* **TypeScript Support**: Support complete type definitions to support intelliSense in VS Code.
+* **TypeScript Support**: Provide complete type definitions to support intelliSense in VS Code.
 
 ## Getting Started
 
@@ -37,7 +37,7 @@ Let's build a simple todo app from scatch using icestore which includes followin
 
 ```javascript
 // src/models/todos.js
-export const todos = {
+const todos = {
   state: {
     dataSource: [],
   },
@@ -65,9 +65,18 @@ export const todos = {
     },
   },
 };
+export default todos;
 ```
 
-### Step 2 - Create the store
+And export all models:
+
+```javascript
+// src/models/index.js
+export { default as todos } from './todos';
+// ...other models
+```
+
+### Step 2 - Create the store instance
 
 ```javascript
 // src/store.js
@@ -92,7 +101,7 @@ ReactDOM.render(
     <App />
   </Provider>,
   rootEl
-); 
+);
 ```
 
 ### Step 4 - Consume model
@@ -192,7 +201,7 @@ const model = {
 
 `actions: { [string]: (prevState, payload, actions, globalActions) => any }`
 
-An object of functions that change the model's state. These functions take the model's previous state and a payload, and return the model's next state. 
+An object of functions that change the model's state. These functions take the model's previous state and a payload, and return the model's next state.
 
 ```js
 const counter = {
@@ -227,7 +236,7 @@ const user = {
     like(prevState, payload, actions, globalActions) => {
       actions.foo(payload); // call user's actions
       globalActions.user.foo(payload); // call actions of another model
-      
+
       // do something...
 
       return {
@@ -264,7 +273,7 @@ ReactDOM.render(
     <App />
   </Provider>,
   rootEl
-); 
+);
 ```
 
 #### useModel
@@ -339,12 +348,12 @@ class TodoList extends Component {
     const { counter } = this.props;
     const [ state, actions ] = counter;
     const { dataSource } = state;
-    
+
     state.value; // 0
 
     actions.add(1);
   }
-} 
+}
 
 export default withModel('counter')(TodoList);
 ```
