@@ -1,8 +1,8 @@
 import { Component } from 'react';
+import { UseModelValue, ModelActionsState } from '@ice/store';
 import store from '../store';
 import { TodoList } from './TodoList';
 import todosModel from '../models/todos';
-import { UseModelValue, ModelActionsState } from '@ice/store';
 
 const { withModel, withModelActionsState } = store;
 

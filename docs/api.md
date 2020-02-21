@@ -184,8 +184,8 @@ A hook granting your components access to the action state of the model.
 
 ```js
 function FunctionComponent() {
-  const actions = useModelActions('name');
-  const actionsState = useModelActionsState('name');
+  const actions = useModelActions('foo');
+  const actionsState = useModelActionsState('foo');
 
   useEffect(() => {
     actions.fetch();
