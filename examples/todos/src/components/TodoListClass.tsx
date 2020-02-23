@@ -1,18 +1,28 @@
 import { Component } from 'react';
+import { Assign } from 'utility-types';
 import { UseModelValue, ModelActionsState } from '@ice/store';
 import store from '../store';
-import { TodoList } from './TodoList';
+import { TodoList as TodoListFn } from './TodoList';
 import todosModel from '../models/todos';
 
 const { withModel, withModelActionsState } = store;
 
-interface Props {
-  title: string;
+interface MapModeToProp {
   todos: UseModelValue<typeof todosModel>;
+}
+
+interface MapModelActionsStateToProp {
   todosActionsState: ModelActionsState<typeof todosModel>;
 }
 
-class TodoListClass extends Component<Props> {
+interface CustomProp {
+  title: string;
+}
+
+type PropsWithModel = Assign<MapModeToProp, MapModelActionsStateToProp>;
+type Props = Assign<CustomProp, PropsWithModel>;
+
+class TodoList extends Component<Props> {
   onRemove = (index) => {
     const [, actions] = this.props.todos;
     actions.remove(index);
@@ -27,7 +37,7 @@ class TodoListClass extends Component<Props> {
     const { title, todos, todosActionsState } = this.props;
     const [ state ] = todos;
     const { dataSource } = state;
-    return TodoList({
+    return TodoListFn({
       state: { title, dataSource, subTitle: 'Class Component' },
       actions: { toggle: this.onToggle, remove: this.onRemove },
       actionsState: todosActionsState,
@@ -35,6 +45,6 @@ class TodoListClass extends Component<Props> {
   }
 }
 
-export default withModelActionsState('todos')(
-  withModel('todos')(TodoListClass),
+export default withModelActionsState('todos')<PropsWithModel, Props>(
+  withModel('todos')(TodoList)
 );

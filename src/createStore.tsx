@@ -2,6 +2,7 @@ import React from 'react';
 import transform from 'lodash.transform';
 import { createModel } from './createModel';
 import {
+  Optionalize,
   Configs,
   Model,
   ConfigPropTypeState,
@@ -48,35 +49,52 @@ export function createStore<C extends Configs>(configs: C) {
     return [ useModelState(namespace), useModelActions(namespace) ];
   }
 
-  function createWithUse(useFun) {
-    const fnName = useFun.name;
-    return function withModel(namespace, mapDataToProps?) {
-      const propName = fnName === useModel.name ? namespace : `${namespace}${fnName.slice(8)}`;
-      return (Component) => {
-        return (props): React.ReactElement => {
-          const model = useFun(namespace);
-          const modelProps = mapDataToProps ? mapDataToProps(model) : { [propName]: model };
-          return (
-            <Component
-              {...modelProps}
-              {...props}
-            />
-          );
-        };
+  function withModel<K extends keyof C, M extends (model: UseModelValue<C[K]>) => Object>(namespace: K, mapModelToProps?: M) {
+    mapModelToProps = (mapModelToProps || ((model) => ({ [namespace]: model }))) as M;
+    return <R extends ReturnType<typeof mapModelToProps>, P extends R>(Component: React.ComponentType<P>) => {
+      return (props: Optionalize<P, R>): React.ReactElement => {
+        const value = useModel(namespace);
+        const withProps = mapModelToProps(value);
+        return (
+          <Component
+            {...withProps}
+            {...(props as P)}
+          />
+        );
       };
     };
   }
 
-  function withModel<K extends keyof C>(namespace: K, mapModelToProps?) {
-    return createWithUse(useModel)(namespace, mapModelToProps);
+  function withModelActions<K extends keyof C, M extends (actions: ModelActions<C[K]>) => Object>(namespace: K, mapModelActionsToProps?: M) {
+    mapModelActionsToProps = (mapModelActionsToProps || ((actions) => ({ [`${namespace}Actions`]: actions }))) as M;
+    return <R extends ReturnType<typeof mapModelActionsToProps>, P extends R>(Component: React.ComponentType<P>) => {
+      return (props: Optionalize<P, R>): React.ReactElement => {
+        const value = useModelActions(namespace);
+        const withProps = mapModelActionsToProps(value);
+        return (
+          <Component
+            {...withProps}
+            {...(props as P)}
+          />
+        );
+      };
+    };
   }
 
-  function withModelActions<K extends keyof C>(namespace: K, mapModelActionsToProps?) {
-    return createWithUse(useModelActions)(namespace, mapModelActionsToProps);
-  }
-
-  function withModelActionsState<K extends keyof C>(namespace?: K, mapModelActionsStateToProps?) {
-    return createWithUse(useModelActionsState)(namespace, mapModelActionsStateToProps);
+  function withModelActionsState<K extends keyof C, M extends (actionsState: ModelActionsState<C[K]>) => Object>(namespace?: K, mapModelActionsStateToProps?: M) {
+    mapModelActionsStateToProps = (mapModelActionsStateToProps || ((actionsState) => ({ [`${namespace}ActionsState`]: actionsState }))) as M;
+    return <R extends ReturnType<typeof mapModelActionsStateToProps>, P extends R>(Component: React.ComponentType<P>) => {
+      return (props: Optionalize<P, R>): React.ReactElement => {
+        const value = useModelActionsState(namespace);
+        const withProps = mapModelActionsStateToProps(value);
+        return (
+          <Component
+            {...withProps}
+            {...(props as P)}
+          />
+        );
+      };
+    };
   }
 
   const modelsActions = {};
