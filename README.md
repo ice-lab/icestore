@@ -39,7 +39,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { createStore } from '@ice/store';
 
-const delay = async (time) => new Promise((resolve) => setTimeout(() => resolve(), time));
+const delay = (time) => new Promise((resolve) => setTimeout(() => resolve(), time));
 
 // 1️⃣ Use a model to define your store
 const counter = {
