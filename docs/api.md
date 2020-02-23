@@ -25,9 +25,7 @@ const {
 } = createStore(models);
 ```
 
-### Parameters
-
-**models**
+### models
 
 ```js
 import { createStore } from '@ice/store'
@@ -114,9 +112,7 @@ const user = {
 };
 ```
 
-### Return
-
-#### Provider
+### Provider
 
 `Provider(props: { children, initialStates })`
 
@@ -136,7 +132,7 @@ ReactDOM.render(
 ); 
 ```
 
-#### useModel
+### useModel
 
 `useModel(name: string): [ state, actions ]`
 
@@ -163,7 +159,7 @@ function FunctionComponent() {
 }
 ```
 
-#### useModelActions
+### useModelActions
 
 `useModelActions(name: string): actions`
 
@@ -176,7 +172,7 @@ function FunctionComponent() {
 }
 ```
 
-#### useModelActionsState
+### useModelActionsState
 
 `useModelActionsState(name: string): { [actionName: string]: { isLoading: boolean, error: Error } } `
 
@@ -196,7 +192,7 @@ function FunctionComponent() {
 }
 ```
 
-#### withModel
+### withModel
 
 `withModel(name: string, mapModelToProps?: (model: [state, actions]) => Object = (model) => ({ [name]: model }) ): (React.Component) => React.Component`
 
@@ -259,7 +255,7 @@ export default withModel(
 )(TodoList);
 ```
 
-#### withModelActions
+### withModelActions
 
 `withModelActions(name: string, mapModelActionsToProps?: (actions) => Object = (actions) => ({ [name]: actions }) ): (React.Component) => React.Component`
 
@@ -287,7 +283,7 @@ export default withModelActions('todos')(TodoList);
 
 You can use `mapModelActionsToProps` to set the property as the same way like `mapModelToProps`.
 
-#### withModelActionsState
+### withModelActionsState
 
 `withModelActionsState(name: string, mapModelActionsStateToProps?: (actionsState) => Object = (actionsState) => ({ [name]: actionsState }) ): (React.Component) => React.Component`
 
