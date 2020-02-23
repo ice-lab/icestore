@@ -18,7 +18,7 @@
   <tbody>
     <tr>
       <td><a href="https://codesandbox.io/s/github/ice-lab/icestore/tree/master/examples/counter?module=/src/index.tsx">Counter</a></td>
-      <td><a href="https://codesandbox.io/s/github/ice-lab/icestore/tree/master/examples/todos?module=/src/index.tsx.js">Todos</a></td>
+      <td><a href="https://codesandbox.io/s/github/ice-lab/icestore/tree/master/examples/todos?module=/src/index.tsx">Todos</a></td>
     </tr>
   </tbody>
 </table>
