@@ -132,6 +132,42 @@ ReactDOM.render(
 ); 
 ```
 
+Set initialStates:
+
+```jsx
+import React from 'react';
+import ReactDOM from 'react-dom';
+import { createStore } from '@ice/store';
+
+const models = {
+  todo: {
+    state: {},
+  },
+  user: {
+    state: {},
+  }
+};
+const { Provider } = createStore(models);
+
+const initialStates = {
+  todo: {
+    title: 'Foo',
+    done: true,
+  },
+  user: {
+    name: 'Alvin',
+    age: 18,
+  },
+};
+
+ReactDOM.render(
+  <Provider initialStates={initialStates}>
+    <App />
+  </Provider>,
+  rootEl
+); 
+```
+
 ### useModel
 
 `useModel(name: string): [ state, actions ]`
@@ -335,7 +371,6 @@ const [
 
 Exposes the model to your React application, so that your components will be able to consume and interact with the model via the hooks.
 
-
 ```jsx
 import React from 'react';
 import ReactDOM from 'react-dom';
@@ -344,6 +379,25 @@ import { createStore } from '@ice/store';
 const { Provider } = createModel(model);
 ReactDOM.render(
   <Provider>
+    <Component />
+  </Provider>,
+  rootEl
+); 
+```
+
+Set initialState:
+
+```jsx
+import React from 'react';
+import ReactDOM from 'react-dom';
+import { createStore } from '@ice/store';
+
+const userModel = {
+  state: {},
+};
+const { Provider } = createModel(userModel);
+ReactDOM.render(
+  <Provider initialState={{ name: 'Alvin', age: 18, }}>
     <Component />
   </Provider>,
   rootEl
