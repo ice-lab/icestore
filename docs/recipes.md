@@ -148,6 +148,7 @@ export default withModel('user')(
 );
 
 // functional flavor:
+import compose from 'lodash/fp/compose';
 export default compose(withModel('user'), withModel('todos'))(TodoList);
 ```
 
