@@ -1,6 +1,7 @@
 import { Component } from 'react';
 import { Assign } from 'utility-types';
 import { UseModelValue, ModelActionsState } from '@ice/store';
+// import compose from 'lodash/fp/compose';
 import store from '../store';
 import { TodoList as TodoListFn } from './TodoList';
 import todosModel from '../models/todos';
@@ -48,3 +49,6 @@ class TodoList extends Component<Props> {
 export default withModelActionsState('todos')<PropsWithModel, Props>(
   withModel('todos')(TodoList),
 );
+
+// functional flavor:
+// export default compose(withModelActionsState('todos'), withModel('todos'))(TodoList);
