@@ -49,7 +49,7 @@ export function createStore<C extends Configs>(configs: C) {
     return [ useModelState(namespace), useModelActions(namespace) ];
   }
 
-  function withModel<K extends keyof C, M extends (model: UseModelValue<C[K]>) => Object>(namespace: K, mapModelToProps?: M) {
+  function withModel<K extends keyof C, M extends (model: UseModelValue<C[K]>) => Record<string, any>>(namespace: K, mapModelToProps?: M) {
     mapModelToProps = (mapModelToProps || ((model) => ({ [namespace]: model }))) as M;
     return <R extends ReturnType<typeof mapModelToProps>, P extends R>(Component: React.ComponentType<P>) => {
       return (props: Optionalize<P, R>): React.ReactElement => {
@@ -65,7 +65,7 @@ export function createStore<C extends Configs>(configs: C) {
     };
   }
 
-  function withModelActions<K extends keyof C, M extends (actions: ModelActions<C[K]>) => Object>(namespace: K, mapModelActionsToProps?: M) {
+  function withModelActions<K extends keyof C, M extends (actions: ModelActions<C[K]>) => Record<string, any>>(namespace: K, mapModelActionsToProps?: M) {
     mapModelActionsToProps = (mapModelActionsToProps || ((actions) => ({ [`${namespace}Actions`]: actions }))) as M;
     return <R extends ReturnType<typeof mapModelActionsToProps>, P extends R>(Component: React.ComponentType<P>) => {
       return (props: Optionalize<P, R>): React.ReactElement => {
@@ -81,7 +81,7 @@ export function createStore<C extends Configs>(configs: C) {
     };
   }
 
-  function withModelActionsState<K extends keyof C, M extends (actionsState: ModelActionsState<C[K]>) => Object>(namespace?: K, mapModelActionsStateToProps?: M) {
+  function withModelActionsState<K extends keyof C, M extends (actionsState: ModelActionsState<C[K]>) => Record<string, any>>(namespace?: K, mapModelActionsStateToProps?: M) {
     mapModelActionsStateToProps = (mapModelActionsStateToProps || ((actionsState) => ({ [`${namespace}ActionsState`]: actionsState }))) as M;
     return <R extends ReturnType<typeof mapModelActionsStateToProps>, P extends R>(Component: React.ComponentType<P>) => {
       return (props: Optionalize<P, R>): React.ReactElement => {

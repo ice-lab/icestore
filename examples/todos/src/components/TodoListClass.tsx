@@ -46,5 +46,5 @@ class TodoList extends Component<Props> {
 }
 
 export default withModelActionsState('todos')<PropsWithModel, Props>(
-  withModel('todos')(TodoList)
+  withModel('todos')(TodoList),
 );
