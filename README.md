@@ -49,7 +49,7 @@ const counter = {
     async decrement(prevState) {
       await delay(1000);
       return prevState - 1;
-    }
+    },
   },
 };
 
