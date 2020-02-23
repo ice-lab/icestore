@@ -32,7 +32,7 @@ icestore is a lightweight React state management library based on hooks. It has 
 * **Class Component Support**: Make old projects enjoying the fun of lightweight state management with friendly compatibility strategy.
 * **TypeScript Support**: Provide complete type definitions to support intelliSense in VS Code.
 
-See the table for more [ability comparison](docs/recipes.md#Capability).
+See the [comparison table](docs/recipes.md#Comparison) for more details.
 
 ## Basic example
 
