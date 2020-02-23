@@ -12,7 +12,7 @@ const counter = {
     async decrement(prevState) {
       await delay(1000);
       return prevState - 1;
-    }
+    },
   },
 };
 
@@ -31,8 +31,8 @@ function Counter() {
   return (
     <div>
       <span>{count}</span>
-      <button onClick={increment}>+</button>
-      <button onClick={decrement}>-</button>
+      <button type="button" onClick={increment}>+</button>
+      <button type="button" onClick={decrement}>-</button>
     </div>
   );
 }

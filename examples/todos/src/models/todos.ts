@@ -15,7 +15,7 @@ const todos = {
       {
         name: 'Init',
         done: false,
-      }
+      },
     ],
   },
 

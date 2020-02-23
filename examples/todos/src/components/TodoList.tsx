@@ -43,7 +43,7 @@ export default function({ title }) {
     {
       state: { ...state, title, subTitle: 'Function Component' },
       actions,
-      actionsState
+      actionsState,
     },
   );
 }
