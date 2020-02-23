@@ -203,7 +203,15 @@ function FunctionComponent() {
 Use withModel to connect the model and class component:
 
 ```jsx
-class TodoList extends Component {
+import { UseModelValue } from '@ice/store';
+import todosModel from '@/models/todos';
+import store from '@/store';
+
+interface Props {
+  todos: UseModelValue<typeof todosModel>; // `withModel` automatically adds the name of the model as the property
+}
+
+class TodoList extends Component<Props> {
   render() {
     const { counter } = this.props;
     const [ state, actions ] = counter;
@@ -216,6 +224,96 @@ class TodoList extends Component {
 
 export default withModel('counter')(TodoList);
 ```
+
+use `mapModelToProps` to set the property:
+
+```tsx
+import { UseModelValue } from '@ice/store';
+import todosModel from '@/models/todos';
+import store from '@/store';
+
+const { withModel } = store;
+
+interface Props {
+  title: string;
+  customKey: UseModelValue<typeof todosModel>;
+}
+
+class TodoList extends Component<Props> {
+  render() {
+    const { title, customKey } = this.props;
+    const [ state, actions ] = customKey;
+    
+    state.field; // get state
+    actions.add({ /* ... */}); // run action
+  }
+}
+
+export default withModel(
+  'todos', 
+
+  // mapModelToProps: (model: [state, actions]) => Object = (model) => ({ [modelName]: model }) )
+  (model) => ({
+    customKey: model,
+  })
+)(TodoList);
+```
+
+#### withModelActions
+
+`withModelActions(name: string, mapModelActionsToProps?: (actions) => Object = (actions) => ({ [name]: actions }) ): (React.Component) => React.Component`
+
+```tsx
+import { ModelActionsState, ModelActions } from '@ice/store';
+import todosModel from '@/models/todos';
+import store from '@/store';
+
+const { withModelActions } = store;
+
+interface Props {
+  todosActions: ModelActions<typeof todosModel>;  // `withModelActions` automatically adds `${modelName}Actions` as the property
+}
+
+class TodoList extends Component<Props> {
+  render() {
+    const { todosActions } = this.props;
+
+    todosActions.add({ /* ... */}); // run action
+  }
+}
+
+export default withModelActions('todos')(TodoList);
+```
+
+You can use `mapModelActionsToProps` to set the property as the same way like `mapModelToProps`.
+
+#### withModelActionsState
+
+`withModelActionsState(name: string, mapModelActionsStateToProps?: (actionsState) => Object = (actionsState) => ({ [name]: actionsState }) ): (React.Component) => React.Component`
+
+```tsx
+import { ModelActionsState, ModelActions } from '@ice/store';
+import todosModel from '@/models/todos';
+import store from '@/store';
+
+const { withModelActionsState } = store;
+
+interface Props {
+  todosActionsState: ModelActionsState<typeof todosModel>; // `todosActionsState` automatically adds `${modelName}ActionsState` as the property
+}
+
+class TodoList extends Component<Props> {
+  render() {
+    const { todosActionsState } = this.props;
+
+    todosActionsState.add.isLoading; // get action state
+  }
+}
+
+export default withModelActionsState('todos')(TodoList);
+```
+
+You can use `mapModelActionsStateToProps` to set the property as the same way like `mapModelToProps`.
 
 ## createModel
 

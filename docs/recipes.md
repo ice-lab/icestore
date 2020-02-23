@@ -103,8 +103,8 @@ import store from '@/store';
 const { withModel } = store;
 
 interface Props {
-  title: string; // custom prop
-  todos: UseModelValue<typeof todosModel>; // `withModel` automatically added model's name as prop
+  title: string; // custom property
+  todos: UseModelValue<typeof todosModel>; // `withModel` automatically adds the name of the model as the property
 }
 
 class TodoList extends Component<Props> {
@@ -120,38 +120,7 @@ class TodoList extends Component<Props> {
 export default withModel('todos')(TodoList);
 ```
 
-### Advanced
-
-#### Set the prop name
-
-```tsx
-import { UseModelValue } from '@ice/store';
-import todosModel from '@/models/todos';
-import store from '@/store';
-
-const { withModel } = store;
-
-interface Props {
-  title: string;
-  customKey: UseModelValue<typeof todosModel>;
-}
-
-class TodoList extends Component<Props> {
-  render() {
-    const { title, customKey } = this.props;
-    const [ state, actions ] = customKey;
-    
-    state.field; // get state
-    actions.add({ /* ... */}); // run action
-  }
-}
-
-export default withModel('todos', (model) => ({
-  customKey: model,
-}))(TodoList);
-```
-
-#### Using multiple models
+### With multiple models
 
 ```tsx
 import { UseModelValue } from '@ice/store';
@@ -182,34 +151,15 @@ export default withModel('user')(
 export default compose(withModel('user'), withModel('todos'))(TodoList);
 ```
 
-#### withModelActions & withModelActionsState
+### withModelActions & withModelActionsState
 
+You can use `withModelActions` to call only model actions without listening for model changes, also for `withModelActionsState`.
 
-```tsx
-import { ModelActionsState, ModelActions } from '@ice/store';
-import todosModel from '@/models/todos';
-import store from '@/store';
-
-const { withModelActions, withModelActionsState } = store;
-
-interface Props {
-  todosActionsState: ModelActionsState<typeof todosModel>;
-  todosActions: ModelActions<typeof todosModel>;
-}
-
-class TodoList extends Component<Props> {
-  render() {
-    const { todosActionsState, todosActions } = this.props;
-
-    todosActions.add({ /* ... */}); // run action
-    todosActionsState.add.isLoading; // get action state
-  }
-}
-
-export default compose(withModelActions('todos'), withModelActionsState('todos'))(TodoList);
-```
+See [docs/api](./api.md) for more details.
 
 ## Directory organization
+
+For most small and medium-sized projects, it is recommended to centrally manage all the project models in the global `src/models/` directory:
 
 ```bash
 ├── src/
@@ -224,3 +174,5 @@ export default compose(withModelActions('todos'), withModelActionsState('todos')
 │   │   └── index.js
 │   └── store.js
 ```
+
+If the project is relatively large, or more likely to follow the page maintenance of the store,then you can declare a store instance in each page directory. However, in this case, cross page store calls should be avoided as much as possible.
