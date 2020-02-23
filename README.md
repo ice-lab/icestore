@@ -1,6 +1,6 @@
 # icestore
 
-> Lightweight React state management library based on react hooks
+> Lightweight state management solution based on React Hooks.
 
 [![NPM version](https://img.shields.io/npm/v/@ice/store.svg?style=flat)](https://npmjs.org/package/@ice/store)
 [![Package Quality](https://npm.packagequality.com/shield/@ice%2Fstore.svg)](https://packagequality.com/#?package=@ice/store)
@@ -27,10 +27,12 @@
 
 icestore is a lightweight React state management library based on hooks. It has the following core features:
 
-* **Minimal & Familiar API**: No additional learning costs, easy to get started with the knowledge of React Hooks.
-* **Class Component Support**: Make old projects enjoying the fun of lightweight state management with friendly compatibility strategy.
+* **Minimal & Familiar API**: No additional learning costs, easy to get started with the knowledge of React Hooks, friendly to Redux users.
 * **Built in Async Status**: Records loading and error status of async actions, simplifying the rendering logic in the view layer.
+* **Class Component Support**: Make old projects enjoying the fun of lightweight state management with friendly compatibility strategy.
 * **TypeScript Support**: Provide complete type definitions to support intelliSense in VS Code.
+
+See the table for more [ability comparison](docs/recipes.md#Capability).
 
 ## Basic example
 

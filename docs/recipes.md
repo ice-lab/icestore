@@ -177,3 +177,24 @@ For most small and medium-sized projects, it is recommended to centrally manage 
 ```
 
 If the project is relatively large, or more likely to follow the page maintenance of the store,then you can declare a store instance in each page directory. However, in this case, cross page store calls should be avoided as much as possible.
+
+## Capability
+
+- O: Yes
+- X: No
+- +: Tips
+
+| | constate | zustand | react-tracked | rematch | icestore |
+| --------| -------- | -------- | -------- | -------- | -------- |
+| Aync Action | O | O | O | O | O |
+| Async Action | + | O | O | O | O |
+| Class Component | + | + | + | O | O |
+| Hooks Component | O | O | O | O | O |
+| Async Status | X | X | X | O | O |
+| Middleware or Plug-in | X | O | X | O | X |
+| Centralization | X | X | X | O | O |
+| Model interaction | + | + | + | O | O |
+| SSR | O | X | O | O | O |
+| devtools | X | O | X | O | X |
+| Lazy load models | + | + | + | O | O |
+ 
