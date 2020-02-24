@@ -8,7 +8,7 @@ import todosModel from '../models/todos';
 
 const { withModel, withModelActionsState } = store;
 
-interface MapModeToProp {
+interface MapModelToProp {
   todos: UseModelValue<typeof todosModel>;
 }
 
@@ -20,7 +20,7 @@ interface CustomProp {
   title: string;
 }
 
-type PropsWithModel = Assign<MapModeToProp, MapModelActionsStateToProp>;
+type PropsWithModel = Assign<MapModelToProp, MapModelActionsStateToProp>;
 type Props = Assign<CustomProp, PropsWithModel>;
 
 class TodoList extends Component<Props> {

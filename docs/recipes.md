@@ -102,9 +102,12 @@ import store from '@/store';
 
 const { withModel } = store;
 
-interface Props {
+interface MapModelToProp {
+  todos: UseModelValue<typeof todosModel>;  // `withModel` automatically adds the name of the model as the property
+}
+
+interface Props extends MapModelToProp {
   title: string; // custom property
-  todos: UseModelValue<typeof todosModel>; // `withModel` automatically adds the name of the model as the property
 }
 
 class TodoList extends Component<Props> {
@@ -117,7 +120,7 @@ class TodoList extends Component<Props> {
   }
 }
 
-export default withModel('todos')(TodoList);
+export default withModel('todos')<MapModelToProp, Props>(TodoList);
 ```
 
 ### With multiple models
@@ -125,14 +128,14 @@ export default withModel('todos')(TodoList);
 ```tsx
 import { UseModelValue } from '@ice/store';
 import todosModel from '@/models/todos';
-import useModel from '@/models/user';
+import userModel from '@/models/user';
 import store from '@/store';
 
 const { withModel } = store;
 
 interface Props {
   todos: UseModelValue<typeof todosModel>;
-  user: UseModelValue<typeof useModel>;
+  user: UseModelValue<typeof userModel>;
 }
 
 class TodoList extends Component<Props> {
