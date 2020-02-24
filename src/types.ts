@@ -1,5 +1,7 @@
 import * as React from 'react';
 
+export type Optionalize<T extends K, K> = Omit<T, keyof K>;
+
 export type PropType<TObj, TProp extends keyof TObj> = TObj[TProp];
 
 export type ReactSetState<S> = React.Dispatch<React.SetStateAction<S>>;
@@ -57,19 +59,19 @@ export type ContextHookReturn<
   ? ContextHookTuple<P, V>
   : ContextHookMultipleTuple<P, S>);
 
-export type ModelConfigAction<S = any> = (prevState: S, payload?: any, actions?: any, globalActions?: any) => S | Promise<S>;
+export type ConfigAction<S = any> = (prevState: S, payload?: any, actions?: any, globalActions?: any) => S | Promise<S>;
 
-export interface ModelConfigActions<S = any> {
-  [name: string]: ModelConfigAction<S>;
+export interface ConfigActions<S = any> {
+  [name: string]: ConfigAction<S>;
 }
 
-export interface ModelConfig<S = any> {
+export interface Config<S = any> {
   state: S;
-  actions?: ModelConfigActions<S>;
+  actions?: ConfigActions<S>;
 };
 
-export interface ModelConfigs {
-  [namespace: string]: ModelConfig;
+export interface Configs {
+  [namespace: string]: Config;
 }
 
 export interface ModelProps<S = any> {
@@ -82,7 +84,7 @@ export interface FunctionState {
 }
 
 export type FunctionsState<Functions> = {
-  [K in keyof Functions]: FunctionState;
+  [K in keyof Functions]?: FunctionState;
 }
 
 export type SetFunctionsState<Functions> = ReactSetState<FunctionsState<Functions>>;
@@ -98,20 +100,29 @@ export interface ActionPayload {
   identifier: ActionIdentifier;
 }
 
-export type ActionsPayload<ConfigActions> = {
-  [K in keyof ConfigActions]: ActionPayload;
+export type ActionsPayload<A> = {
+  [K in keyof A]: ActionPayload;
 }
 
-export type SetActionsPayload<ConfigActions> = ReactSetState<ActionsPayload<ConfigActions>>;
+export type SetActionsPayload<A> = ReactSetState<ActionsPayload<A>>;
 
-export type Actions<ConfigActions extends ModelConfigActions> = {
-  [K in keyof ConfigActions]: (payload?: Parameters<ConfigActions[K]>[1]) => void;
+export type Actions<A extends ConfigActions> = {
+  [K in keyof A]?: (payload?: Parameters<A[K]>[1]) => void;
 }
 
-export type TModelConfigState<M extends ModelConfig> = PropType<M, 'state'>;
-export type TModelConfigActions<M extends ModelConfig> = PropType<M, 'actions'>;
-export type TModelActions<M extends ModelConfig> = Actions<TModelConfigActions<M>>;
-export type TModelActionsState<M extends ModelConfig> = FunctionsState<TModelConfigActions<M>>;
-export type TUseModelValue<M extends ModelConfig> = [ TModelConfigState<M>, TModelActions<M>, TModelActionsState<M> ];
-export type TModel<M extends ModelConfig> =
-  ContextHookReturn<TModelConfigState<M>, TUseModelValue<M>, [(model: TUseModelValue<M>) => TModelConfigState<M>, (model: TUseModelValue<M>) => TModelActions<M>, (model: TUseModelValue<M>) => TModelActionsState<M>]>;
+export type ConfigPropTypeState<C extends Config> = PropType<C, 'state'>;
+export type ConfigPropTypeActions<C extends Config> = PropType<C, 'actions'>;
+export type ModelActions<C extends Config> = Actions<ConfigPropTypeActions<C>>;
+export type ModelActionsState<C extends Config> = FunctionsState<ConfigPropTypeActions<C>>;
+export type ModelValue<C extends Config> = [ ConfigPropTypeState<C>, ModelActions<C>, ModelActionsState<C> ];
+export type Model<C extends Config> =
+  ContextHookReturn<
+  ConfigPropTypeState<C>,
+  ModelValue<C>,
+  [
+    (model: ModelValue<C>) => ConfigPropTypeState<C>,
+    (model: ModelValue<C>) => ModelActions<C>,
+    (model: ModelValue<C>) => ModelActionsState<C>
+  ]
+  >;
+export type UseModelValue<C extends Config> = [ ConfigPropTypeState<C>, ModelActions<C> ];

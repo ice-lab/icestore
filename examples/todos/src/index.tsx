@@ -27,5 +27,5 @@ function App() {
   );
 }
 
-const rootElement = document.getElementById('ice-container');
+const rootElement = document.getElementById('root');
 ReactDOM.render(<App />, rootElement);

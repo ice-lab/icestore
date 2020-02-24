@@ -1,17 +1,26 @@
 import { delay } from '../utils';
 
-interface Todo {
+export interface Todo {
   name: string;
   done?: boolean;
 }
 
-const store = {
+export interface TodosState {
+  dataSource: Todo[];
+}
+
+const todos = {
   state: {
-    dataSource: [],
+    dataSource: [
+      {
+        name: 'Init',
+        done: false,
+      },
+    ],
   },
 
   actions: {
-    async refresh(prevState, args, actions, globalActions) {
+    async refresh(prevState: TodosState, args, actions, globalActions) {
       await delay(2000);
 
       const dataSource: any[] = [
@@ -32,20 +41,20 @@ const store = {
         dataSource,
       };
     },
-    toggle(prevState, index: number) {
+    toggle(prevState: TodosState, index: number) {
       prevState.dataSource[index].done = !prevState.dataSource[index].done;
       return {
         ...prevState,
       };
     },
-    add(prevState, todo: Todo, actions, globalActions) {
+    add(prevState: TodosState, todo: Todo, actions, globalActions) {
       prevState.dataSource.push(todo);
       globalActions.user.setTodos(prevState.dataSource.length);
       return {
         ...prevState,
       };
     },
-    async remove(prevState, index: number, actions, globalActions) {
+    async remove(prevState: TodosState, index: number, actions, globalActions) {
       await delay(1000);
 
       prevState.dataSource.splice(index, 1);
@@ -57,4 +66,4 @@ const store = {
   },
 };
 
-export default store;
+export default todos;
