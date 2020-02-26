@@ -184,10 +184,10 @@ const counter = {
   },
 };
 
-const { userModel } = createStore({ counter });
+const { useModel } = createStore({ counter });
 
 function FunctionComponent() {
-  const [ state, actions ] = userModel('name');
+  const [ state, actions ] = useModel('counter');
 
   state.value; // 0
 
@@ -203,7 +203,7 @@ A hook granting your components access to the model actions.
 
 ```js
 function FunctionComponent() {
-  const actions = useModelActions('name');
+  const actions = useModelActions('counter');
   actions.add(1);
 }
 ```
@@ -216,8 +216,8 @@ A hook granting your components access to the action state of the model.
 
 ```js
 function FunctionComponent() {
-  const actions = useModelActions('foo');
-  const actionsState = useModelActionsState('foo');
+  const actions = useModelActions('counter');
+  const actionsState = useModelActionsState('counter');
 
   useEffect(() => {
     actions.fetch();
