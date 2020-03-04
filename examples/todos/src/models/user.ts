@@ -8,22 +8,29 @@ const user = {
     todos: 0,
     auth: false,
   },
-  actions: {
-    async login(prevState) {
+  reducers: {
+    setTodos(prevState, todos: number) {
+      return { ...prevState, todos };
+    },
+    setState(prevState, payload) {
+      return {
+        ...prevState,
+        ...payload,
+      }
+    },
+  },
+  effects: {
+    async login(prevState, payload, actions) {
       await delay(1000);
       const dataSource = {
         name: 'Alvin',
       };
       const auth = true;
 
-      return {
-        ...prevState,
+      actions.setState({
         dataSource,
         auth,
-      };
-    },
-    setTodos(prevState, todos: number) {
-      return { ...prevState, todos };
+      });
     },
   },
 };

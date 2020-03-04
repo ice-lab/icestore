@@ -48,7 +48,8 @@
     "react": "^16.8.0",
     "react-dom": "^16.8.0",
     "ts-jest": "^24.0.2",
-    "typescript": "^3.7.4"
+    "typescript": "^3.7.4",
+    "utility-types": "^3.10.0"
   },
   "peerDependencies": {
     "react": "^16.8.0"

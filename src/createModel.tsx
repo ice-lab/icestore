@@ -7,15 +7,15 @@ import {
   ReactSetState,
   ModelProps,
   Config,
-  ActionsPayload,
-  SetActionsPayload,
-  ActionsIdentifier,
+  EffectsPayload,
+  SetEffectsPayload,
+  EffectsIdentifier,
   FunctionState,
   Model,
   ConfigPropTypeState,
-  ConfigPropTypeActions,
-  ModelActions,
-  ModelActionsState,
+  ConfigMergedEffects,
+  ModelEffects,
+  ModelEffectsState,
   SetFunctionsState,
   ModelValue,
 } from './types';
@@ -24,25 +24,26 @@ const isDev = process.env.NODE_ENV !== 'production';
 
 export function createModel<C extends Config, K = string>(config: C, namespace?: K, modelsActions?): Model<C> {
   type IModelState = ConfigPropTypeState<C>;
-  type IModelConfigActions = ConfigPropTypeActions<C>;
-  type IModelConfigActionsKey = keyof IModelConfigActions;
-  type IModelActions = ModelActions<C>;
-  type IModelActionsState = ModelActionsState<C>;
-  type SetModelFunctionsState = SetFunctionsState<IModelConfigActions>;
+  type IModelConfigMergedEffects = ConfigMergedEffects<C>;
+  type IModelConfigMergedEffectsKey = keyof IModelConfigMergedEffects;
+  type IModelEffects = ModelEffects<C>;
+  type IModelEffectsState = ModelEffectsState<C>;
+  type SetModelFunctionsState = SetFunctionsState<IModelConfigMergedEffects>;
   type IModelValue = ModelValue<C>;
+  type IModelConfigMergedEffectsKeys = IModelConfigMergedEffectsKey[];
 
   const {
     state: defineState = {},
     actions: defineActions = {},
-    effects: defineEffects = {},
+    effects = {},
     reducers = {},
   } = config;
-  const effects = { ...defineActions, ...defineEffects };
+  const mergedEffects = { ...defineActions, ...effects } as IModelConfigMergedEffects;
   let actions;
 
-  function useFunctionsState(functions: IModelConfigActionsKey[]):
-  [ IModelActionsState, SetModelFunctionsState, (name: IModelConfigActionsKey, args: FunctionState) => void ] {
-    const functionsInitialState = useMemo<IModelActionsState>(
+  function useFunctionsState(functions: IModelConfigMergedEffectsKeys):
+  [ IModelEffectsState, SetModelFunctionsState, (name: IModelConfigMergedEffectsKey, args: FunctionState) => void ] {
+    const functionsInitialState = useMemo<IModelEffectsState>(
       () => transform(functions, (result, name) => {
         result[name] = {
           isLoading: false,
@@ -51,9 +52,9 @@ export function createModel<C extends Config, K = string>(config: C, namespace?:
       }, {}),
       [functions],
     );
-    const [ functionsState, setFunctionsState ] = useState<IModelActionsState>(() => functionsInitialState);
+    const [ functionsState, setFunctionsState ] = useState<IModelEffectsState>(() => functionsInitialState);
     const setFunctionState = useCallback(
-      (name: IModelConfigActionsKey, args: FunctionState) => setFunctionsState(prevState => ({
+      (name: IModelConfigMergedEffectsKey, args: FunctionState) => setFunctionsState(prevState => ({
         ...prevState,
         [name]: {
           ...prevState[name],
@@ -65,11 +66,11 @@ export function createModel<C extends Config, K = string>(config: C, namespace?:
     return [ functionsState, setFunctionsState, setFunctionState ];
   }
 
-  function useActions(state: IModelState, setState: ReactSetState<IModelState>):
-  [ ActionsPayload<IModelActions>, (name: IModelConfigActionsKey, payload: any) => void, IModelActionsState ] {
-    const [ actionsState, , setActionsState ] = useFunctionsState(Object.keys(effects));
-    const [ actionsInitialPayload, actionsInitialIdentifier ]: [ActionsPayload<IModelActions>, ActionsIdentifier<IModelActions>] = useMemo(
-      () => transform(effects, (result, action, name) => {
+  function useEffects(state: IModelState, setState: ReactSetState<IModelState>):
+  [ EffectsPayload<IModelEffects>, (name: IModelConfigMergedEffectsKey, payload: any) => void, IModelEffectsState ] {
+    const [ effectsState, , setEffectsState ] = useFunctionsState(Object.keys(mergedEffects) as IModelConfigMergedEffectsKeys);
+    const [ effectsInitialPayload, effectsInitialIdentifier ]: [EffectsPayload<IModelEffects>, EffectsIdentifier<IModelEffects>] = useMemo(
+      () => transform(mergedEffects, (result, effect, name) => {
         const state = {
           payload: null,
           identifier: 0,
@@ -79,9 +80,9 @@ export function createModel<C extends Config, K = string>(config: C, namespace?:
       }, [ {}, {} ]),
       [],
     );
-    const [ actionsPayload, setActionsPayload ]: [ ActionsPayload<IModelActions>, SetActionsPayload<IModelActions> ] = useState(() => actionsInitialPayload);
-    const setActionPayload = useCallback(
-      (name, payload) => setActionsPayload(prevState => ({
+    const [ effectsPayload, setEffectsPayload ]: [ EffectsPayload<IModelEffects>, SetEffectsPayload<IModelEffects> ] = useState(() => effectsInitialPayload);
+    const setEffectPayload = useCallback(
+      (name, payload) => setEffectsPayload(prevState => ({
         ...prevState,
         [name]: {
           ...prevState[name],
@@ -92,71 +93,72 @@ export function createModel<C extends Config, K = string>(config: C, namespace?:
       [],
     );
 
-    const actionsIdentifier = useRef(actionsInitialIdentifier);
-    const actionsPayloadIdentifier = Object.keys(actionsPayload).map((name) => actionsPayload[name].identifier);
+    const effectsIdentifier = useRef(effectsInitialIdentifier);
+    const effectsPayloadIdentifier = Object.keys(effectsPayload).map((name) => effectsPayload[name].identifier);
 
     useEffect(() => {
-      Object.keys(actionsPayload).forEach((name) => {
-        const { identifier, payload } = actionsPayload[name];
-        if (identifier && identifier !== actionsIdentifier.current[name]) {
-          actionsIdentifier.current = {
-            ...actionsIdentifier.current,
+      (Object.keys(effectsPayload) as IModelConfigMergedEffectsKeys).forEach((name) => {
+        const { identifier, payload } = effectsPayload[name];
+        if (identifier && identifier !== effectsIdentifier.current[name]) {
+          effectsIdentifier.current = {
+            ...effectsIdentifier.current,
             [name]: identifier,
           };
           (async () => {
-            const nextState = effects[name](state, payload, actions, modelsActions);
+            const nextState = mergedEffects[name](state, payload, actions, modelsActions);
+            const isAction = defineActions[name as string];
             if (isPromise(nextState)) {
-              setActionsState(name, {
+              setEffectsState(name, {
                 isLoading: true,
                 error: null,
               });
               try {
                 const result = await nextState;
-                if (defineActions[name]) {
+                if (isAction) {
                   setState(result);
                 }
-                setActionsState(name, {
+                setEffectsState(name, {
                   isLoading: false,
                   error: null,
                 });
               } catch (error) {
-                setActionsState(name, {
+                setEffectsState(name, {
                   isLoading: false,
                   error,
                 });
               }
-            } else {
+            } else if (isAction) {
               setState(nextState);
             }
           })();
         }
       });
-    }, [ actionsPayloadIdentifier ]);
+    }, [ effectsPayloadIdentifier ]);
 
-    return [ actionsPayload, setActionPayload, actionsState ];
+    return [ effectsPayload, setEffectPayload, effectsState ];
   }
 
   function useValue({ initialState }: ModelProps<IModelState>): IModelValue {
     const preloadedState = initialState || (defineState as IModelState);
     const [ state, setState ] = useState<IModelState>(preloadedState);
-    const [ , executeAction, actionsState ] = useActions(state, setState);
+    const [ , executeEffect, effectsState ] = useEffects(state, setState);
 
     actions = useMemo(() => {
-      const setEffects = transform(effects, (result, fn, name) => {
-        result[name] = (payload) => executeAction(name, payload);
+      const setEffects = transform(mergedEffects, (result, fn, name) => {
+        result[name] = (payload) => executeEffect(name, payload);
       });
 
       const setReducers = transform(reducers, (result, fn, name) => {
         result[name] = (payload) => setState((prevState) => fn(prevState, payload));
       });
 
-      return { ...setEffects, ...setReducers };
-    }, [effects, reducers]);
+      return { ...setReducers, ...setEffects, };
+    }, [mergedEffects, reducers]);
 
     if (namespace && modelsActions) {
       modelsActions[namespace] = actions;
     }
-    return [ state, actions, actionsState ];
+    return [ state, actions, effectsState ];
   }
 
   if (isDev && namespace) {

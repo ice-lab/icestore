@@ -30,7 +30,7 @@ const store = createStore(models);
 const { useModel } = store;
 function Counter() {
   const [ count, actions ] = useModel('counter');
-  const { increment, decrementAsync } = actions as any;
+  const { increment, decrementAsync } = actions;
   return (
     <div>
       <span>{count}</span>
