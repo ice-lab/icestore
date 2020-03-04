@@ -156,7 +156,7 @@ export function createModel<C extends Config, K = string>(config: C, namespace?:
         result[name] = (payload) => setState((prevState) => fn(prevState, payload));
       });
 
-      return { ...setReducers, ...setEffects, };
+      return { ...setReducers, ...setEffects };
     }, [mergedEffects, reducers]);
 
     if (namespace && modelsActions) {
