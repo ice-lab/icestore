@@ -16,7 +16,7 @@ const user = {
       return {
         ...prevState,
         ...payload,
-      }
+      };
     },
   },
   effects: {

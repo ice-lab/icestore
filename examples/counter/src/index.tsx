@@ -16,7 +16,7 @@ const counter = {
       await delay(1000);
       actions.decrement();
     },
-  }
+  },
 };
 
 const models = {

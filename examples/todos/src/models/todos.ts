@@ -32,7 +32,7 @@ const todos = {
         ...prevState,
         ...payload,
       };
-    }
+    },
   },
   effects: {
     add(state: TodosState, todo: Todo, actions, globalActions) {
@@ -40,7 +40,7 @@ const todos = {
       dataSource.push(todo);
       globalActions.user.setTodos(dataSource.length);
       actions.setState({
-        dataSource
+        dataSource,
       });
     },
     async refresh(state: TodosState, args, actions, globalActions) {

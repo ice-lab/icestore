@@ -193,7 +193,7 @@ If the project is relatively large, or more likely to follow the page maintenanc
 
 - O: Yes
 - X: No
-- +: Tips
+- +: Extra
 
 | | constate | zustand | react-tracked | rematch | icestore |
 | --------| -------- | -------- | -------- | -------- | -------- |

@@ -38,7 +38,7 @@ export function createModel<C extends Config, K = string>(config: C, namespace?:
     effects = {},
     reducers = {},
   } = config;
-  const mergedEffects = { ...defineActions, ...effects } as IModelConfigMergedEffects;
+  const mergedEffects = { ...defineActions, ...effects };
   let actions;
 
   if (Object.keys(defineActions).length > 0) {
@@ -109,7 +109,7 @@ export function createModel<C extends Config, K = string>(config: C, namespace?:
             [name]: identifier,
           };
           (async () => {
-            const nextState = mergedEffects[name](state, payload, actions, modelsActions);
+            const nextState = (mergedEffects as IModelConfigMergedEffects)[name](state, payload, actions, modelsActions);
             const isAction = defineActions[name as string];
             if (isPromise(nextState)) {
               setEffectsState(name, {

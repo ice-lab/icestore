@@ -60,9 +60,9 @@ export type ContextHookReturn<
   ? ContextHookTuple<P, V>
   : ContextHookMultipleTuple<P, S>);
 
-  export type ConfigAction<S = any> = (prevState: S, payload?: any, actions?: any, globalActions?: any) => S | Promise<S>;
-  export type ConfigEffect<S = any> = (state: S, payload?: any, actions?: any, globalActions?: any) => void | Promise<void>;
-  export type ConfigReducer<S = any> = (state: S, payload?: any,) => S;
+export type ConfigAction<S = any> = (prevState: S, payload?: any, actions?: any, globalActions?: any) => S | Promise<S>;
+export type ConfigEffect<S = any> = (state: S, payload?: any, actions?: any, globalActions?: any) => void | Promise<void>;
+export type ConfigReducer<S = any> = (state: S, payload?: any,) => S;
 
 export interface ConfigActions<S = any> {
   [name: string]: ConfigAction<S>;

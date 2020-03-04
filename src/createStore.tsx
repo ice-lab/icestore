@@ -96,7 +96,7 @@ export function createStore<C extends Configs>(configs: C) {
           );
         };
       };
-    }
+    };
   }
 
   const modelsActions = {};
