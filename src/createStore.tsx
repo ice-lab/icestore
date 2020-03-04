@@ -81,20 +81,22 @@ export function createStore<C extends Configs>(configs: C) {
     };
   }
 
-  function withModelEffectsState<K extends keyof C, M extends (effectsState: ModelEffectsState<C[K]>) => Record<string, any>>(namespace?: K, mapModelEffectsStateToProps?: M) {
-    mapModelEffectsStateToProps = (mapModelEffectsStateToProps || ((effectsState) => ({ [`${namespace}EffectsState`]: effectsState }))) as M;
-    return <R extends ReturnType<typeof mapModelEffectsStateToProps>, P extends R>(Component: React.ComponentType<P>) => {
-      return (props: Optionalize<P, R>): React.ReactElement => {
-        const value = useModelEffectsState(namespace);
-        const withProps = mapModelEffectsStateToProps(value);
-        return (
-          <Component
-            {...withProps}
-            {...(props as P)}
-          />
-        );
+  function createWithModelEffectsState(fieldSuffix: string = 'EffectsState') {
+    return function withModelEffectsState<K extends keyof C, M extends (effectsState: ModelEffectsState<C[K]>) => Record<string, any>>(namespace?: K, mapModelEffectsStateToProps?: M) {
+      mapModelEffectsStateToProps = (mapModelEffectsStateToProps || ((effectsState) => ({ [`${namespace}${fieldSuffix}`]: effectsState }))) as M;
+      return <R extends ReturnType<typeof mapModelEffectsStateToProps>, P extends R>(Component: React.ComponentType<P>) => {
+        return (props: Optionalize<P, R>): React.ReactElement => {
+          const value = useModelEffectsState(namespace);
+          const withProps = mapModelEffectsStateToProps(value);
+          return (
+            <Component
+              {...withProps}
+              {...(props as P)}
+            />
+          );
+        };
       };
-    };
+    }
   }
 
   const modelsActions = {};
@@ -109,6 +111,16 @@ export function createStore<C extends Configs>(configs: C) {
     useModelEffectsState,
     withModel,
     withModelActions,
-    withModelEffectsState,
+    withModelEffectsState: createWithModelEffectsState(),
+
+    /**
+    * @deprecated
+    */
+    useModelActionsState: useModelEffectsState,
+
+    /**
+    * @deprecated
+    */
+    withModelActionsState: createWithModelEffectsState('ActionsState'),
   };
 }

@@ -78,6 +78,10 @@ export interface ConfigReducers<S = any> {
 
 export interface Config<S = any> {
   state: S;
+
+  /**
+    * @deprecated
+    */
   actions?: ConfigActions<S>;
   effects?: ConfigEffects<S>;
   reducers?: ConfigReducers<S>;

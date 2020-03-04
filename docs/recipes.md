@@ -18,21 +18,26 @@ export default {
     name: '',
     tasks: 0,
   },
-  actions: {
-    async refresh() {
-      return await fetch('/user');
+  effects: {
+    async refresh(state, playload, actions) {
+      const data = await fetch('/user');
+      actions.setState(data);
+    },
+  },
+  reducers: {
+    setState(prevState, payload) {
+      return { ...prevState, ...payload };
     },
   },
 };
 
 // src/models/tasks
-import { user }  from './user';
-
 export default {
   state: [],
-  actions: {
-    async refresh() {
-      return await fetch('/tasks');
+  effects: {
+    async refresh(state, playload, actions) {
+      const data = await fetch('/tasks');
+      actions.setState(data);
     },
     async add(prevState, task, actions, globalActions) {
       await fetch('/tasks/add', task);
@@ -42,10 +47,13 @@ export default {
 
       // Retrieve todos after adding tasks
       await actions.refresh();
-
-      return { ...prevState };
     },
-  }
+  },
+  reducers: {
+    setState(prevState, payload) {
+      return { ...prevState, ...payload };
+    },
+  },
 };
 
 // src/store
@@ -67,9 +75,9 @@ For example, the action A in Model A calls the action B in Model B and the actio
 
 Be careful the possibility of endless loop problem will arise when methods from different models call each other.
 
-## Async actions' executing status
+## effects' executing status
 
-`icestore` has built-in support to access the executing status of async actions. This enables users to have access to the isLoading and error executing status of async actions without defining extra state, making the code more consise and clean.
+`icestore` has built-in support to access the executing status of effects. This enables users to have access to the isLoading and error executing status of effects without defining extra state, making the code more consise and clean.
 
 ### Example
 
@@ -78,14 +86,14 @@ import { useModelActions } from './store';
 
 function FunctionComponent() {
   const actions = useModelActions('name');
-  const actionsState = useModelActionsState('name');
+  const effectsState = useModelEffectsState('name');
 
   useEffect(() => {
     actions.fetch();
   }, []);
 
-  actionsState.fetch.isLoading;
-  actionsState.fetch.error;
+  effectsState.fetch.isLoading;
+  effectsState.fetch.error;
 }
 ```
 

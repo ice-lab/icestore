@@ -28,9 +28,9 @@ export function createModel<C extends Config, K = string>(config: C, namespace?:
   type IModelConfigMergedEffectsKey = keyof IModelConfigMergedEffects;
   type IModelEffects = ModelEffects<C>;
   type IModelEffectsState = ModelEffectsState<C>;
-  type SetModelFunctionsState = SetFunctionsState<IModelConfigMergedEffects>;
   type IModelValue = ModelValue<C>;
   type IModelConfigMergedEffectsKeys = IModelConfigMergedEffectsKey[];
+  type SetModelFunctionsState = SetFunctionsState<IModelConfigMergedEffects>;
 
   const {
     state: defineState = {},
@@ -40,6 +40,10 @@ export function createModel<C extends Config, K = string>(config: C, namespace?:
   } = config;
   const mergedEffects = { ...defineActions, ...effects } as IModelConfigMergedEffects;
   let actions;
+
+  if (Object.keys(defineActions).length > 0) {
+    console.error('The actions field is no longer recommended for the following reasons: https://github.com/ice-lab/icestore/issues/66');
+  }
 
   function useFunctionsState(functions: IModelConfigMergedEffectsKeys):
   [ IModelEffectsState, SetModelFunctionsState, (name: IModelConfigMergedEffectsKey, args: FunctionState) => void ] {

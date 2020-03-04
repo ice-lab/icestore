@@ -55,30 +55,43 @@ const model = {
 };
 ```
 
-#### actions
+#### reducers
 
-`actions: { [string]: (prevState, payload, actions, globalActions) => any }`
+`reducers: { [string]: (prevState, payload) => any }`
 
-An object of functions that change the model's state. These functions take the model's previous state and a payload, and return the model's next state. 
+An object of functions that change the model's state. These functions take the model's previous state and a payload, and return the model's next state. These should be pure functions relying only on the state and payload args to compute the next state. For code that relies on the "outside world" (impure functions like api calls, etc.), use effects.
 
 ```js
 const counter = {
   state: 0,
-  actions: {
-    add: (prevState, payload) => prevState + payload,
-  },
+  reducers: {
+    add: (state, payload) => state + payload,
+  }
 };
 ```
 
-Actions provide a simple way of handling async actions when used with async/await:
+#### effects
+
+`effects: { [string]: (prevState, payload, actions, globalActions) => void }`
+
+An object of functions that can handle the world outside of the model. Effects provide a simple way of handling async actions when used with async/await.
 
 ```js
 const counter = {
-  actions: {
-    async addAsync(prevState, payload) => {
-      await delay(1000);
-      return prevState + payload;
+  state: 0,
+  effects: {
+    async add(prevState, payload, actions) {
+      // wait for data to load
+      const response = await fetch('http://example.com/data');
+      const data = await response.json();
+      // pass the result to a local reducer
+      actions.update(data);
     },
+  },
+  reducers: {
+    update(prev, data) {
+      return {...prev, ...data};
+    }
   },
 };
 ```
@@ -90,25 +103,19 @@ const user = {
   state: {
     foo: [],
   },
-  actions: {
+  effects: {
     like(prevState, payload, actions, globalActions) => {
       actions.foo(payload); // call user's actions
       globalActions.user.foo(payload); // call actions of another model
-      
-      // do something...
-
-      return {
-        ...prevState,
-      };
-    },
-    foo(prevState, id) {
-      // do something...
-
-      return {
-        ...prevState,
-      };
     },
   },
+  reducres: {
+    foo(prevState, payload) {
+      return {
+        ...prevState,
+      };
+    },
+  }
 };
 ```
 
@@ -179,7 +186,7 @@ const counter = {
   state: {
     value: 0,
   },
-  actions: {
+  reducers: {
     add: (prevState, payload) => ({...prevState, value: prevState.value + payload}),
   },
 };
@@ -217,14 +224,14 @@ A hook granting your components access to the action state of the model.
 ```js
 function FunctionComponent() {
   const actions = useModelActions('counter');
-  const actionsState = useModelActionsState('counter');
+  const effectsState = useModelEffectsState('counter');
 
   useEffect(() => {
     actions.fetch();
   }, []);
 
-  actionsState.fetch.isLoading;
-  actionsState.fetch.error;
+  effectsState.fetch.isLoading;
+  effectsState.fetch.error;
 }
 ```
 
@@ -321,7 +328,7 @@ You can use `mapModelActionsToProps` to set the property as the same way like `m
 
 ### withModelActionsState
 
-`withModelActionsState(name: string, mapModelActionsStateToProps?: (actionsState) => Object = (actionsState) => ({ [name]: actionsState }) ): (React.Component) => React.Component`
+`withModelActionsState(name: string, mapModelActionsStateToProps?: (effectsState) => Object = (effectsState) => ({ [name]: effectsState }) ): (React.Component) => React.Component`
 
 ```tsx
 import { ModelActionsState, ModelActions } from '@ice/store';
@@ -361,7 +368,7 @@ const [
   Provider,
   useState,
   useActions,
-  useActionsState,
+  useEffectsState,
 ] = createModel(model);
 ```
 
@@ -439,22 +446,22 @@ function FunctionComponent() {
 }
 ```
 
-### useActionsState
+### useEffectsState
 
-`useActionsState(): { [actionName: string]: { isLoading: boolean, error: Error } } `
+`useEffectsState(): { [actionName: string]: { isLoading: boolean, error: Error } } `
 
 A hook granting your components access to the action state of the model.
 
 ```js
 function FunctionComponent() {
   const actions = useActions();
-  const actionsState = useActionsState();
+  const effectsState = useEffectsState();
 
   useEffect(() => {
     actions.fetch();
   }, []);
 
-  actionsState.fetch.isLoading;
-  actionsState.fetch.error;
+  effectsState.fetch.isLoading;
+  effectsState.fetch.error;
 }
 ```
