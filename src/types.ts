@@ -68,6 +68,8 @@ export interface ConfigActions<S = any> {
 export interface Config<S = any> {
   state: S;
   actions?: ConfigActions<S>;
+  effects?: any;
+  reducers?: any;
 };
 
 export interface Configs {

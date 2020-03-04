@@ -31,7 +31,13 @@ export function createModel<C extends Config, K = string>(config: C, namespace?:
   type SetModelFunctionsState = SetFunctionsState<IModelConfigActions>;
   type IModelValue = ModelValue<C>;
 
-  const { state: defineState = {}, actions: defineActions = [] } = config;
+  const {
+    state: defineState = {},
+    actions: defineActions = {},
+    effects: defineEffects = {},
+    reducers = {},
+  } = config;
+  const effects = { ...defineActions, ...defineEffects };
   let actions;
 
   function useFunctionsState(functions: IModelConfigActionsKey[]):
@@ -61,9 +67,9 @@ export function createModel<C extends Config, K = string>(config: C, namespace?:
 
   function useActions(state: IModelState, setState: ReactSetState<IModelState>):
   [ ActionsPayload<IModelActions>, (name: IModelConfigActionsKey, payload: any) => void, IModelActionsState ] {
-    const [ actionsState, , setActionsState ] = useFunctionsState(Object.keys(defineActions));
+    const [ actionsState, , setActionsState ] = useFunctionsState(Object.keys(effects));
     const [ actionsInitialPayload, actionsInitialIdentifier ]: [ActionsPayload<IModelActions>, ActionsIdentifier<IModelActions>] = useMemo(
-      () => transform(defineActions, (result, action, name) => {
+      () => transform(effects, (result, action, name) => {
         const state = {
           payload: null,
           identifier: 0,
@@ -98,14 +104,17 @@ export function createModel<C extends Config, K = string>(config: C, namespace?:
             [name]: identifier,
           };
           (async () => {
-            const nextState = defineActions[name](state, payload, actions, modelsActions);
+            const nextState = effects[name](state, payload, actions, modelsActions);
             if (isPromise(nextState)) {
               setActionsState(name, {
                 isLoading: true,
                 error: null,
               });
               try {
-                setState(await nextState);
+                const result = await nextState;
+                if (defineActions[name]) {
+                  setState(result);
+                }
                 setActionsState(name, {
                   isLoading: false,
                   error: null,
@@ -132,9 +141,17 @@ export function createModel<C extends Config, K = string>(config: C, namespace?:
     const [ state, setState ] = useState<IModelState>(preloadedState);
     const [ , executeAction, actionsState ] = useActions(state, setState);
 
-    actions = useMemo(() => transform(defineActions, (result, fn, name) => {
-      result[name] = (payload) => executeAction(name, payload);
-    }), [defineActions]);
+    actions = useMemo(() => {
+      const setEffects = transform(effects, (result, fn, name) => {
+        result[name] = (payload) => executeAction(name, payload);
+      });
+
+      const setReducers = transform(reducers, (result, fn, name) => {
+        result[name] = (payload) => setState((prevState) => fn(prevState, payload));
+      });
+
+      return { ...setEffects, ...setReducers };
+    }, [effects, reducers]);
 
     if (namespace && modelsActions) {
       modelsActions[namespace] = actions;

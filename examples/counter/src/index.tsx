@@ -7,13 +7,16 @@ const delay = (time) => new Promise((resolve) => setTimeout(() => resolve(), tim
 // 1️⃣ Use a model to define your store
 const counter = {
   state: 0,
-  actions: {
+  reducers: {
     increment:(prevState) => prevState + 1,
-    async decrement(prevState) {
-      await delay(1000);
-      return prevState - 1;
-    },
+    decrement:(prevState) => prevState - 1,
   },
+  effects: {
+    async decrementAsync(state, playload, actions) {
+      await delay(1000);
+      actions.decrement();
+    },
+  }
 };
 
 const models = {
@@ -27,12 +30,12 @@ const store = createStore(models);
 const { useModel } = store;
 function Counter() {
   const [ count, actions ] = useModel('counter');
-  const { increment, decrement } = actions;
+  const { increment, decrementAsync } = actions as any;
   return (
     <div>
       <span>{count}</span>
       <button type="button" onClick={increment}>+</button>
-      <button type="button" onClick={decrement}>-</button>
+      <button type="button" onClick={decrementAsync}>-</button>
     </div>
   );
 }
