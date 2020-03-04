@@ -191,18 +191,17 @@ If the project is relatively large, or more likely to follow the page maintenanc
 | --------| -------- | -------- | -------- | -------- | -------- |
 | Framework | React | React | React | Any,None | React |
 | Simplicity | ★★★★ | ★★★ | ★★★ | ★★★★ | ★★★★★ |
-| Readability | ★★★ | ★★★ | ★★★ | ★★★ | ★★★★ |
-| Configurable | ★★★ | ★★★ | ★★★ | ★★★★★ | ★★★ |
 | Less boilerplate | ★★ | ★★★ | ★★★ | ★★★★ | ★★★★★ |
-| Async Action | + | O | O | O | O |
+| Configurable | ★★★ | ★★★ | ★★★ | ★★★★★ | ★★★ |
+| Shareable State | O | O | O | O | O |
+| Reusable State | O | O | O | O | O |
+| Interactive State | + | + | + | O | O |
 | Class Component | + | + | + | O | O |
 | Function Component | O | O | O | O | O |
 | Async Status | X | X | X | O | O |
-| Centralization | X | X | X | O | O |
-| Model interaction | + | + | + | O | O |
 | SSR | O | X | O | O | O |
-| Lazy load models | + | + | + | O | O |
 | Persist | X | X | X | O | X |
+| Lazy load models | + | + | + | O | O |
+| Centralization | X | X | X | O | O | 
 | Middleware or Plug-in | X | O | X | O | X |
 | Devtools | X | O | X | O | X |
- 
