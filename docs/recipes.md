@@ -163,9 +163,9 @@ import compose from 'lodash/fp/compose';
 export default compose(withModel('user'), withModel('todos'))(TodoList);
 ```
 
-### withModelActions & withModelActionsState
+### withModelActions & withModelEffectsState
 
-You can use `withModelActions` to call only model actions without listening for model changes, also for `withModelActionsState`.
+You can use `withModelActions` to call only model actions without listening for model changes, also for `withModelEffectsState`.
 
 See [docs/api](./api.md) for more details.
 

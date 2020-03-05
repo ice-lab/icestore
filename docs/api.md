@@ -18,10 +18,10 @@ const {
   Provider,
   useModel,
   useModelActions,
-  useModelActionsState,
+  useModelEffectsState,
   withModel,
   withModelActions,
-  withModelActionsState,
+  withModelEffectsState,
 } = createStore(models);
 ```
 
@@ -215,9 +215,9 @@ function FunctionComponent() {
 }
 ```
 
-### useModelActionsState
+### useModelEffectsState
 
-`useModelActionsState(name: string): { [actionName: string]: { isLoading: boolean, error: Error } } `
+`useModelEffectsState(name: string): { [actionName: string]: { isLoading: boolean, error: Error } } `
 
 A hook granting your components access to the action state of the model.
 
@@ -326,16 +326,16 @@ export default withModelActions('todos')(TodoList);
 
 You can use `mapModelActionsToProps` to set the property as the same way like `mapModelToProps`.
 
-### withModelActionsState
+### withModelEffectsState
 
-`withModelActionsState(name: string, mapModelActionsStateToProps?: (effectsState) => Object = (effectsState) => ({ [name]: effectsState }) ): (React.Component) => React.Component`
+`withModelEffectsState(name: string, mapModelActionsStateToProps?: (effectsState) => Object = (effectsState) => ({ [name]: effectsState }) ): (React.Component) => React.Component`
 
 ```tsx
 import { ModelActionsState, ModelActions } from '@ice/store';
 import todosModel from '@/models/todos';
 import store from '@/store';
 
-const { withModelActionsState } = store;
+const { withModelEffectsState } = store;
 
 interface Props {
   todosActionsState: ModelActionsState<typeof todosModel>; // `todosActionsState` automatically adds `${modelName}ActionsState` as the property
@@ -349,7 +349,7 @@ class TodoList extends Component<Props> {
   }
 }
 
-export default withModelActionsState('todos')(TodoList);
+export default withModelEffectsState('todos')(TodoList);
 ```
 
 You can use `mapModelActionsStateToProps` to set the property as the same way like `mapModelToProps`.
