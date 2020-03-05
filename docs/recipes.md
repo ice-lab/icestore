@@ -314,7 +314,7 @@ function App() {
 }
 ```
 
-### Bind View
+### Binding View
 
 #### 0.x
 
