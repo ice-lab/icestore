@@ -43,7 +43,7 @@ const todos = {
         dataSource,
       });
     },
-    async refresh(state: TodosState, args, actions, globalActions) {
+    async refresh(state: TodosState, payload, actions, globalActions) {
       await delay(2000);
 
       const dataSource: any[] = [

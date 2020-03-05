@@ -248,7 +248,7 @@ const todos = {
         dataSource,
       });
     },
-    async refresh(state, args, actions, globalActions) {
+    async refresh(state, payload, actions, globalActions) {
       await delay(2000);
 
       const dataSource = [
