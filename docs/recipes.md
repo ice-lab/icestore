@@ -18,21 +18,26 @@ export default {
     name: '',
     tasks: 0,
   },
-  actions: {
-    async refresh() {
-      return await fetch('/user');
+  effects: {
+    async refresh(state, payload, actions) {
+      const data = await fetch('/user');
+      actions.update(data);
+    },
+  },
+  reducers: {
+    update(prevState, payload) {
+      return { ...prevState, ...payload };
     },
   },
 };
 
 // src/models/tasks
-import { user }  from './user';
-
 export default {
   state: [],
-  actions: {
-    async refresh() {
-      return await fetch('/tasks');
+  effects: {
+    async refresh(state, payload, actions) {
+      const data = await fetch('/tasks');
+      actions.update(data);
     },
     async add(prevState, task, actions, globalActions) {
       await fetch('/tasks/add', task);
@@ -42,10 +47,13 @@ export default {
 
       // Retrieve todos after adding tasks
       await actions.refresh();
-
-      return { ...prevState };
     },
-  }
+  },
+  reducers: {
+    update(prevState, payload) {
+      return { ...prevState, ...payload };
+    },
+  },
 };
 
 // src/store
@@ -67,9 +75,9 @@ For example, the action A in Model A calls the action B in Model B and the actio
 
 Be careful the possibility of endless loop problem will arise when methods from different models call each other.
 
-## Async actions' executing status
+## effects' executing status
 
-`icestore` has built-in support to access the executing status of async actions. This enables users to have access to the isLoading and error executing status of async actions without defining extra state, making the code more consise and clean.
+`icestore` has built-in support to access the executing status of effects. This enables users to have access to the isLoading and error executing status of effects without defining extra state, making the code more consise and clean.
 
 ### Example
 
@@ -78,14 +86,14 @@ import { useModelActions } from './store';
 
 function FunctionComponent() {
   const actions = useModelActions('name');
-  const actionsState = useModelActionsState('name');
+  const effectsState = useModelEffectsState('name');
 
   useEffect(() => {
     actions.fetch();
   }, []);
 
-  actionsState.fetch.isLoading;
-  actionsState.fetch.error;
+  effectsState.fetch.isLoading;
+  effectsState.fetch.error;
 }
 ```
 
@@ -155,9 +163,9 @@ import compose from 'lodash/fp/compose';
 export default compose(withModel('user'), withModel('todos'))(TodoList);
 ```
 
-### withModelActions & withModelActionsState
+### withModelActions & withModelEffectsState
 
-You can use `withModelActions` to call only model actions without listening for model changes, also for `withModelActionsState`.
+You can use `withModelActions` to call only model actions without listening for model changes, also for `withModelEffectsState`.
 
 See [docs/api](./api.md) for more details.
 
@@ -181,26 +189,167 @@ For most small and medium-sized projects, it is recommended to centrally manage 
 
 If the project is relatively large, or more likely to follow the page maintenance of the store,then you can declare a store instance in each page directory. However, in this case, cross page store calls should be avoided as much as possible.
 
+## Upgrade Guidelines
+
+### Define Model
+
+#### 0.x
+
+```ts
+import user from './user';
+
+const store = {
+  dataSource: [],
+  async refresh() {
+    await delay(2000);
+
+    this.dataSource = [
+      {
+        name: 'react',
+      },
+      {
+        name: 'vue',
+        done: true,
+      },
+      {
+        name: 'angular',
+      },
+    ],
+    user.setTodos(this.dataSource.length);
+  },
+  add(todo) {
+    this.dataSource.push(todo);
+    user.setTodos(this.dataSource.length);
+  },
+};
+```
+
+#### 1.x
+
+```ts
+const todos = {
+  state: {
+    dataSource: [],
+  },
+  reducers: {
+    update(prevState, payload) {
+      return {
+        ...prevState,
+        ...payload,
+      };
+    },
+  },
+  effects: {
+    add(state, todo, actions, globalActions) {
+      const dataSource = [].concat(state.dataSource);
+      dataSource.push(todo);
+      globalActions.user.setTodos(dataSource.length);
+      actions.update({
+        dataSource,
+      });
+    },
+    async refresh(state, payload, actions, globalActions) {
+      await delay(2000);
+
+      const dataSource = [
+        {
+          name: 'react',
+        },
+        {
+          name: 'vue',
+          done: true,
+        },
+        {
+          name: 'angular',
+        },
+      ];
+      globalActions.user.setTodos(dataSource.length);
+      actions.update({
+        dataSource,
+      });
+    },
+  },
+};
+```
+
+### Create store
+
+#### 0.x
+
+```js
+import Icestore from '@ice/store';
+import * as stores from './stores';
+
+const icestore = new Icestore();
+export default icestore.registerStores(stores);
+```
+
+#### 1.x
+
+```js
+import { createStore } from '@ice/store';
+import * as models from './models';
+
+export default createStore(models);
+```
+
+### Consume model
+
+#### 0.x
+
+```js
+function App() {
+  const todos = stores.useStore('todos');
+  const { dataSource, add } = todos;
+}
+```
+
+#### 1.x
+
+```js
+function App() {
+  const [ state, actions ] = store.useModel('todos');
+  const { dataSource } = state;
+  const { add } = actions;
+}
+```
+
+### Binding View
+
+#### 0.x
+
+No need.
+
+#### 1.x
+
+```js
+const { Provider } = store;
+ReactDOM.render(<Provider>
+  <App />
+</Provider>, document.getElementById('root'));
+```
+
 ## Comparison
 
 - O: Yes
 - X: No
-- +: Tips
+- +: Extra
 
 | | constate | zustand | react-tracked | rematch | icestore |
 | --------| -------- | -------- | -------- | -------- | -------- |
+| Framework | React | React | React | Any,None | React |
 | Simplicity | ★★★★ | ★★★ | ★★★ | ★★★★ | ★★★★★ |
-| Readability | ★★★ | ★★★ | ★★★ | ★★★ | ★★★★ |
-| Configurable | ★★★ | ★★★ | ★★★ | ★★★★★ | ★★★ |
 | Less boilerplate | ★★ | ★★★ | ★★★ | ★★★★ | ★★★★★ |
-| Async Action | + | O | O | O | O |
+| Configurable | ★★★ | ★★★ | ★★★ | ★★★★★ | ★★★ |
+| Shareable State | O | O | O | O | O |
+| Reusable State | O | O | O | O | O |
+| Interactive State | + | + | + | O | O |
 | Class Component | + | + | + | O | O |
-| Hooks Component | O | O | O | O | O |
+| Function Component | O | O | O | O | O |
 | Async Status | X | X | X | O | O |
-| Centralization | X | X | X | O | O |
-| Model interaction | + | + | + | O | O |
 | SSR | O | X | O | O | O |
+| Persist | X | X | X | O | X |
 | Lazy load models | + | + | + | O | O |
+| Centralization | X | X | X | O | O | 
 | Middleware or Plug-in | X | O | X | O | X |
 | Devtools | X | O | X | O | X |
- 

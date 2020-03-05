@@ -7,7 +7,7 @@ import {
   Model,
   ConfigPropTypeState,
   ModelActions,
-  ModelActionsState,
+  ModelEffectsState,
   UseModelValue,
 } from './types';
 
@@ -40,9 +40,9 @@ export function createStore<C extends Configs>(configs: C) {
     return useModelActions();
   }
 
-  function useModelActionsState<K extends keyof C>(namespace: K): ModelActionsState<C[K]> {
-    const [, , , useModelActionsState ] = getModel(namespace);
-    return useModelActionsState();
+  function useModelEffectsState<K extends keyof C>(namespace: K): ModelEffectsState<C[K]> {
+    const [, , , useModelEffectsState ] = getModel(namespace);
+    return useModelEffectsState();
   }
 
   function useModel<K extends keyof C>(namespace: K): UseModelValue<C[K]> {
@@ -81,18 +81,20 @@ export function createStore<C extends Configs>(configs: C) {
     };
   }
 
-  function withModelActionsState<K extends keyof C, M extends (actionsState: ModelActionsState<C[K]>) => Record<string, any>>(namespace?: K, mapModelActionsStateToProps?: M) {
-    mapModelActionsStateToProps = (mapModelActionsStateToProps || ((actionsState) => ({ [`${namespace}ActionsState`]: actionsState }))) as M;
-    return <R extends ReturnType<typeof mapModelActionsStateToProps>, P extends R>(Component: React.ComponentType<P>) => {
-      return (props: Optionalize<P, R>): React.ReactElement => {
-        const value = useModelActionsState(namespace);
-        const withProps = mapModelActionsStateToProps(value);
-        return (
-          <Component
-            {...withProps}
-            {...(props as P)}
-          />
-        );
+  function createWithModelEffectsState(fieldSuffix: string = 'EffectsState') {
+    return function withModelEffectsState<K extends keyof C, M extends (effectsState: ModelEffectsState<C[K]>) => Record<string, any>>(namespace?: K, mapModelEffectsStateToProps?: M) {
+      mapModelEffectsStateToProps = (mapModelEffectsStateToProps || ((effectsState) => ({ [`${namespace}${fieldSuffix}`]: effectsState }))) as M;
+      return <R extends ReturnType<typeof mapModelEffectsStateToProps>, P extends R>(Component: React.ComponentType<P>) => {
+        return (props: Optionalize<P, R>): React.ReactElement => {
+          const value = useModelEffectsState(namespace);
+          const withProps = mapModelEffectsStateToProps(value);
+          return (
+            <Component
+              {...withProps}
+              {...(props as P)}
+            />
+          );
+        };
       };
     };
   }
@@ -106,9 +108,19 @@ export function createStore<C extends Configs>(configs: C) {
     Provider,
     useModel,
     useModelActions,
-    useModelActionsState,
+    useModelEffectsState,
     withModel,
     withModelActions,
-    withModelActionsState,
+    withModelEffectsState: createWithModelEffectsState(),
+
+    /**
+    * @deprecated
+    */
+    useModelActionsState: useModelEffectsState,
+
+    /**
+    * @deprecated
+    */
+    withModelActionsState: createWithModelEffectsState('ActionsState'),
   };
 }

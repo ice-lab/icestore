@@ -18,9 +18,32 @@ const todos = {
       },
     ],
   },
-
-  actions: {
-    async refresh(prevState: TodosState, args, actions, globalActions) {
+  reducers: {
+    toggle(prevState: TodosState, index: number) {
+      const dataSource = [].concat(prevState.dataSource);
+      dataSource[index].done = !prevState.dataSource[index].done;
+      return {
+        ...prevState,
+        dataSource,
+      };
+    },
+    update(prevState: TodosState, payload) {
+      return {
+        ...prevState,
+        ...payload,
+      };
+    },
+  },
+  effects: {
+    add(state: TodosState, todo: Todo, actions, globalActions) {
+      const dataSource = [].concat(state.dataSource);
+      dataSource.push(todo);
+      globalActions.user.setTodos(dataSource.length);
+      actions.update({
+        dataSource,
+      });
+    },
+    async refresh(state: TodosState, payload, actions, globalActions) {
       await delay(2000);
 
       const dataSource: any[] = [
@@ -36,32 +59,17 @@ const todos = {
         },
       ];
       globalActions.user.setTodos(dataSource.length);
-      return {
-        ...prevState,
+      actions.update({
         dataSource,
-      };
+      });
     },
-    toggle(prevState: TodosState, index: number) {
-      prevState.dataSource[index].done = !prevState.dataSource[index].done;
-      return {
-        ...prevState,
-      };
-    },
-    add(prevState: TodosState, todo: Todo, actions, globalActions) {
-      prevState.dataSource.push(todo);
-      globalActions.user.setTodos(prevState.dataSource.length);
-      return {
-        ...prevState,
-      };
-    },
-    async remove(prevState: TodosState, index: number, actions, globalActions) {
+    async remove(state: TodosState, index: number, actions, globalActions) {
       await delay(1000);
+      const dataSource = [].concat(state.dataSource);
+      dataSource.splice(index, 1);
 
-      prevState.dataSource.splice(index, 1);
-      globalActions.user.setTodos(prevState.dataSource.length);
-      return {
-        ...prevState,
-      };
+      globalActions.user.setTodos(dataSource.length);
+      actions.update(state);
     },
   },
 };
