@@ -19,13 +19,13 @@ export default {
     tasks: 0,
   },
   effects: {
-    async refresh(state, playload, actions) {
+    async refresh(state, payload, actions) {
       const data = await fetch('/user');
-      actions.setState(data);
+      actions.update(data);
     },
   },
   reducers: {
-    setState(prevState, payload) {
+    update(prevState, payload) {
       return { ...prevState, ...payload };
     },
   },
@@ -35,9 +35,9 @@ export default {
 export default {
   state: [],
   effects: {
-    async refresh(state, playload, actions) {
+    async refresh(state, payload, actions) {
       const data = await fetch('/tasks');
-      actions.setState(data);
+      actions.update(data);
     },
     async add(prevState, task, actions, globalActions) {
       await fetch('/tasks/add', task);
@@ -50,7 +50,7 @@ export default {
     },
   },
   reducers: {
-    setState(prevState, payload) {
+    update(prevState, payload) {
       return { ...prevState, ...payload };
     },
   },
@@ -232,7 +232,7 @@ const todos = {
     dataSource: [],
   },
   reducers: {
-    setState(prevState, payload) {
+    update(prevState, payload) {
       return {
         ...prevState,
         ...payload,
@@ -244,7 +244,7 @@ const todos = {
       const dataSource = [].concat(state.dataSource);
       dataSource.push(todo);
       globalActions.user.setTodos(dataSource.length);
-      actions.setState({
+      actions.update({
         dataSource,
       });
     },
@@ -264,7 +264,7 @@ const todos = {
         },
       ];
       globalActions.user.setTodos(dataSource.length);
-      actions.setState({
+      actions.update({
         dataSource,
       });
     },

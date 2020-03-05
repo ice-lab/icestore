@@ -12,7 +12,7 @@ const user = {
     setTodos(prevState, todos: number) {
       return { ...prevState, todos };
     },
-    setState(prevState, payload) {
+    update(prevState, payload) {
       return {
         ...prevState,
         ...payload,
@@ -27,7 +27,7 @@ const user = {
       };
       const auth = true;
 
-      actions.setState({
+      actions.update({
         dataSource,
         auth,
       });

@@ -12,7 +12,7 @@ const counter = {
     decrement:(prevState) => prevState - 1,
   },
   effects: {
-    async decrementAsync(state, playload, actions) {
+    async decrementAsync(state, payload, actions) {
       await delay(1000);
       actions.decrement();
     },

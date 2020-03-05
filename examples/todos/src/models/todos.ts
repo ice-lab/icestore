@@ -27,7 +27,7 @@ const todos = {
         dataSource,
       };
     },
-    setState(prevState: TodosState, payload) {
+    update(prevState: TodosState, payload) {
       return {
         ...prevState,
         ...payload,
@@ -39,7 +39,7 @@ const todos = {
       const dataSource = [].concat(state.dataSource);
       dataSource.push(todo);
       globalActions.user.setTodos(dataSource.length);
-      actions.setState({
+      actions.update({
         dataSource,
       });
     },
@@ -59,7 +59,7 @@ const todos = {
         },
       ];
       globalActions.user.setTodos(dataSource.length);
-      actions.setState({
+      actions.update({
         dataSource,
       });
     },
@@ -69,7 +69,7 @@ const todos = {
       dataSource.splice(index, 1);
 
       globalActions.user.setTodos(dataSource.length);
-      actions.setState(state);
+      actions.update(state);
     },
   },
 };
