@@ -31,7 +31,8 @@
     "prepublishOnly": "npm run lint:nofix && npm run test && npm run build",
     "lint": "npm run lint:nofix -- --fix",
     "lint:nofix": "eslint --cache --ext .ts,.tsx ./",
-    "test": "NODE_ENV=unittest jest",
+    "test": "cross-env NODE_ENV=unittest jest",
+    "test-watch": "jest --watch",
     "coverage": "codecov"
   },
   "devDependencies": {
@@ -42,6 +43,7 @@
     "@types/jest": "^24.0.12",
     "@types/node": "^12.0.0",
     "codecov": "^3.3.0",
+    "cross-env": "^7.0.2",
     "eslint": "^6.7.2",
     "husky": "^3.0.9",
     "jest": "^24.7.1",
