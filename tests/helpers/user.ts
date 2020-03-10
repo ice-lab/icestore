@@ -17,7 +17,7 @@ const user = {
   effects: {
     async login(prevState, payload, actions) {
       const dataSource = {
-        name: 'Alvin',
+        name: 'name',
       };
       const auth = true;
 

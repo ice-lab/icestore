@@ -7,9 +7,9 @@ describe('createModel', () => {
     expect(model.length).toBe(4);
   });
 
-  it('create model with actions should console error', () => {
+  it('creating model with actions should console error', () => {
     const spy = jest.spyOn(console, 'error');
-    const model = createModel(todosWithAction);
+    createModel(todosWithAction);
     expect(spy).toHaveBeenCalled();
   });
 });

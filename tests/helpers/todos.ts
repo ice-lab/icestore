@@ -8,6 +8,8 @@ export interface TodosState {
   dataSource: Todo[];
 }
 
+export const delay = (time) => new Promise((resolve) => setTimeout(() => resolve(), time));
+
 const todos = {
   state: {
     dataSource: [
@@ -34,6 +36,18 @@ const todos = {
       actions.update({
         dataSource,
       });
+      // globalActions.user.setTodos(dataSource.length);
+    },
+
+    async delete(state: TodosState, index: number, actions, globalActions) {
+      await delay(1000);
+      const dataSource = [].concat(state.dataSource);
+      console.log(dataSource);
+      dataSource.splice(index, 1);
+      console.log(dataSource);
+
+      actions.update({ dataSource });
+      // globalActions.user.setTodos(dataSource.length);
     },
   },
 };
