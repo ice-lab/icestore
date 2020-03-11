@@ -67,16 +67,19 @@ describe('createStore', () => {
     const store = createStore(models);
     const { Provider, useModel, useModelEffectsState } = store;
 
-    // it('throw when trying to use the inexisted model', () => {
-    //   const namespace: any = 'test';
-    //   expect(() => renderHook(() => useModel(namespace), {
-    //     wrapper: props => (
-    //       <Provider {...props}>
-    //         {props.children}
-    //       </Provider>
-    //     ),
-    //   })).toThrow();
-    // });
+    it('throw error when trying to use the inexisted model', () => {
+      const namespace: any = 'test';
+
+      const { result } = rhl.renderHook(() => useModel(namespace), {
+        wrapper: props => (
+          <Provider {...props}>
+            {props.children}
+          </Provider>
+        ),
+      });
+
+      expect(result.error).toEqual(Error(`Not found model by namespace: ${namespace}.`));
+    });
 
     it('passes the initial state', () => {
       const initialStates = {
