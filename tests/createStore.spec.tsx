@@ -1,7 +1,10 @@
 /* eslint-disable react/jsx-filename-extension */
-import React from 'react';
-import { renderHook, act, cleanup } from '@testing-library/react-hooks';
+import React, { PureComponent } from 'react';
+import * as rtl from '@testing-library/react';
+import * as rhl from '@testing-library/react-hooks';
 import { createStore } from '../src/createStore';
+import { UseModelValue, ModelActions } from '../src/types';
+import counterModel from './helpers/counter';
 import * as models from './helpers/models';
 
 export const IceStoreContext = React.createContext(null);
@@ -24,7 +27,7 @@ describe('createStore', () => {
   });
 
   describe("Provider", () => {
-    afterEach(() => cleanup());
+    afterEach(() => rtl.cleanup());
 
     const store = createStore(models);
     const { Provider } = store;
@@ -59,6 +62,8 @@ describe('createStore', () => {
   });
 
   describe('useModel', () => {
+    afterEach(() => rhl.cleanup());
+
     const store = createStore(models);
     const { Provider, useModel, useModelEffectsState } = store;
 
@@ -81,7 +86,7 @@ describe('createStore', () => {
         },
       };
       const wrapper = props => <Provider {...props} initialStates={initialStates}>{props.children}</Provider>;
-      const { result } = renderHook(() => useModel("todos"), { wrapper });
+      const { result } = rhl.renderHook(() => useModel("todos"), { wrapper });
       const [state] = result.current;
       expect(state).toBe(initialStates.todos);
     });
@@ -96,14 +101,14 @@ describe('createStore', () => {
         },
       };
       const wrapper = props => <Provider {...props} initialStates={initialStates}>{props.children}</Provider>;
-      const { result } = renderHook(() => useModel("todos"), { wrapper });
+      const { result } = rhl.renderHook(() => useModel("todos"), { wrapper });
       const [state, actions] = result.current;
       const todos = models.todos;
 
       expect(state).toBe(initialStates.todos);
       expect(Reflect.ownKeys(actions)).toEqual([...Reflect.ownKeys(todos.reducers), ...Reflect.ownKeys(todos.effects)]);
 
-      act(() => {
+      rhl.act(() => {
         actions.add({ name: 'testAction', done: false });
       });
 
@@ -119,7 +124,7 @@ describe('createStore', () => {
     });
 
     it('applies the reducer to the previous state', () => {
-      const { result } = renderHook(() => useModel("todos"), {
+      const { result } = rhl.renderHook(() => useModel("todos"), {
         wrapper: props => (
           <Provider {...props}>
             {props.children}
@@ -134,7 +139,7 @@ describe('createStore', () => {
       expect(Reflect.ownKeys(actions)).toEqual([...Reflect.ownKeys(todos.reducers), ...Reflect.ownKeys(todos.effects)]);
 
 
-      act(() => {
+      rhl.act(() => {
         actions.add({ name: 'testAction', done: false });
       });
 
@@ -169,10 +174,10 @@ describe('createStore', () => {
         return { state, actions, effectsState };
       }
 
-      const { result, waitForNextUpdate } = renderHook(() => useModelEffect(), { wrapper });
+      const { result, waitForNextUpdate } = rhl.renderHook(() => useModelEffect(), { wrapper });
 
       expect(result.current.state.dataSource).toEqual(initialStates.todos.dataSource);
-      act(() => {
+      rhl.act(() => {
         result.current.actions.delete(0);
       });
 
@@ -182,6 +187,142 @@ describe('createStore', () => {
 
       expect(result.current.state.dataSource).toEqual([]);
       expect(result.current.effectsState.delete).toEqual({ isLoading: false, error: null });
+    });
+  });
+
+  describe('withModel', () => {
+    afterEach(() => rtl.cleanup());
+
+    const store = createStore({ counter: counterModel });
+    const { Provider, withModel, withModelActions, withModelEffectsState } = store;
+
+    interface CounterProps {
+      counter: UseModelValue<typeof counterModel>;
+      children: React.ReactChild;
+    }
+    class Counter extends PureComponent<CounterProps> {
+      render() {
+        const { counter, children } = this.props;
+        const [state, actions] = counter;
+        const { count } = state;
+        return (
+          <React.Fragment>
+            <div data-testid="count">{count}</div>
+            <div data-testid="increment" onClick={() => actions.increment()} />
+            <div data-testid="decrement" onClick={() => actions.decrement()} />
+            <div data-testid="decrementAsync" onClick={() => actions.decrementAsync()} />
+            {children}
+          </React.Fragment>
+        );
+      }
+    }
+
+    interface CounterResetProps {
+      counterActions: ModelActions<typeof counterModel>;
+    };
+
+    class CounterReset extends PureComponent<CounterResetProps> {
+      render() {
+        const { counterActions } = this.props;
+
+        return (
+          <div data-testid="reset" onClick={() => counterActions.reset()} />
+        );
+      }
+    }
+
+    interface CounterLoadingWrapperProps {
+      counterEffectsState: any;
+      children: React.ReactChild;
+    }
+    class CounterLoadingWrapper extends PureComponent<CounterLoadingWrapperProps> {
+      render() {
+        const { counterEffectsState, children } = this.props;
+        return (
+          <React.Fragment>
+            <code data-testid="decrementAsyncState">
+              {JSON.stringify(counterEffectsState.decrementAsync)}
+            </code>
+            {children}
+          </React.Fragment>
+        );
+      }
+    }
+
+    // init withModel components
+    const WithModelCounter = withModel('counter')(Counter);
+    const WithActionsCounterReset = withModelActions('counter')(CounterReset);
+    const WithEffectsStateCounterLoadingWrapper = withModelEffectsState('counter')(CounterLoadingWrapper);
+
+    it('passes the initial state', () => {
+      const initialStates = { counter: { count: 5 } };
+      const tester = rtl.render(<Provider initialStates={initialStates}><WithModelCounter /></Provider>);
+      const { getByTestId } = tester;
+      expect(getByTestId('count').innerHTML).toBe('5');
+    });
+
+    it('applies the reducer to the initial state', () => {
+      const initialStates = { counter: { count: 5 } };
+      const tester = rtl.render(<Provider initialStates={initialStates}><WithModelCounter /></Provider>);
+      const { getByTestId } = tester;
+      expect(getByTestId('count').innerHTML).toBe('5');
+
+      rtl.fireEvent.click(getByTestId('increment'));
+      expect(getByTestId('count').innerHTML).toBe('6');
+
+      rtl.fireEvent.click(getByTestId('decrement'));
+      expect(getByTestId('count').innerHTML).toBe('5');
+    });
+
+    it('applies the reducer to the previous state', () => {
+      const tester = rtl.render(<Provider><WithModelCounter /></Provider>);
+      const { getByTestId } = tester;
+      expect(getByTestId('count').innerHTML).toBe('0');
+
+      rtl.fireEvent.click(getByTestId('increment'));
+      expect(getByTestId('count').innerHTML).toBe('1');
+
+      rtl.fireEvent.click(getByTestId('decrement'));
+      expect(getByTestId('count').innerHTML).toBe('0');
+    });
+
+    it('WithModelActions', () => {
+      const tester = rtl.render(
+        <Provider>
+          <WithModelCounter>
+            <WithActionsCounterReset />
+          </WithModelCounter>
+        </Provider>,
+      );
+      const { getByTestId } = tester;
+      expect(getByTestId('count').innerHTML).toBe('0');
+
+      rtl.fireEvent.click(getByTestId('increment'));
+      expect(getByTestId('count').innerHTML).toBe('1');
+
+      rtl.fireEvent.click(getByTestId('reset'));
+      expect(getByTestId('count').innerHTML).toBe('0');
+    });
+
+    it('withModelEffectsState', async () => {
+      const container = (
+        <Provider>
+          <WithEffectsStateCounterLoadingWrapper>
+            <WithModelCounter />
+          </WithEffectsStateCounterLoadingWrapper>
+        </Provider>
+      );
+      const tester = rtl.render(container);
+
+      const { getByTestId } = tester;
+      expect(getByTestId('count').innerHTML).toBe('0');
+      rtl.fireEvent.click(getByTestId('decrementAsync'));
+
+      expect(getByTestId('decrementAsyncState').innerHTML).toBe('{"isLoading":true,"error":null}');
+
+      // await rtl.wait(() => tester.getByTestId('decrementAsyncState'));
+      await rtl.waitForDomChange();
+      expect(getByTestId('decrementAsyncState').innerHTML).toBe('{"isLoading":false,"error":null}');
     });
   });
 });
