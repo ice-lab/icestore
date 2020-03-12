@@ -35,7 +35,7 @@ const todos = {
       actions.update({
         dataSource,
       });
-      // globalActions.user.setTodos(dataSource.length);
+      globalActions.user.setTodos(dataSource.length);
     },
 
     async delete(state: TodosState, index: number, actions, globalActions) {
@@ -44,7 +44,7 @@ const todos = {
       dataSource.splice(index, 1);
 
       actions.update({ dataSource });
-      // globalActions.user.setTodos(dataSource.length);
+      globalActions.user.setTodos(dataSource.length);
     },
   },
 };

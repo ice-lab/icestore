@@ -1,32 +1,35 @@
 const user = {
   state: {
     dataSource: {
-      name: '',
+      name: 'testName',
     },
-    todos: 0,
+    todos: 1,
     auth: false,
   },
   reducers: {
-    update(prevState, payload) {
-      return {
-        ...prevState,
-        ...payload,
-      };
+    setTodos(prevState, todos: number) {
+      return { ...prevState, todos };
     },
+    // update(prevState, payload) {
+    //   return {
+    //     ...prevState,
+    //     ...payload,
+    //   };
+    // },
   },
-  effects: {
-    async login(prevState, payload, actions) {
-      const dataSource = {
-        name: 'name',
-      };
-      const auth = true;
+  // effects: {
+  //   async login(prevState, payload, actions) {
+  //     const dataSource = {
+  //       name: 'name',
+  //     };
+  //     const auth = true;
 
-      actions.update({
-        dataSource,
-        auth,
-      });
-    },
-  },
+  //     actions.update({
+  //       dataSource,
+  //       auth,
+  //     });
+  //   },
+  // },
 };
 
 export default user;

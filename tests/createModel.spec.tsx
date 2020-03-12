@@ -4,6 +4,7 @@ import todos, { todosWithAction } from './helpers/todos';
 describe('createModel', () => {
   it('expose methods', () => {
     const model = createModel(todos);
+    // console.log(model[1]());
     expect(model.length).toBe(4);
   });
 
@@ -13,4 +14,3 @@ describe('createModel', () => {
     expect(spy).toHaveBeenCalled();
   });
 });
-

@@ -7,8 +7,6 @@ import { UseModelValue, ModelActions } from '../src/types';
 import counterModel from './helpers/counter';
 import * as models from './helpers/models';
 
-export const IceStoreContext = React.createContext(null);
-
 describe('createStore', () => {
   it('exposes the public API', () => {
     const store = createStore(models);
@@ -28,37 +26,27 @@ describe('createStore', () => {
 
   describe("Provider", () => {
     afterEach(() => rtl.cleanup());
-
     const store = createStore(models);
     const { Provider } = store;
 
-    // function Child() {
-    //   return (
-    //     <IceStoreContext.Consumer>
-    //       {(store) => {
-    //         const text = '';
-    //         console.log(store);
-    //         if (store) {
-    //           // const {} = 
-    //           // text = store.getState().toString();
-    //           console.log(store);
-    //         }
+    it('should not enforce one child', () => {
+      expect(() =>
+        rtl.render(
+          <Provider>
+            <div />
+          </Provider>,
+        ),
+      ).not.toThrow();
 
-    //         return (
-    //           <div data-testid="todos">
-    //             store - {text}
-    //           </div>
-    //         );
-    //       }}
-    //     </IceStoreContext.Consumer>
-    //   );
-    // }
-
-    // const tester = rtl.render(
-    //   <Provider>
-    //     <Child />
-    //   </Provider>,
-    // );
+      expect(() =>
+        rtl.render(
+          <Provider>
+            <div />
+            <div />
+          </Provider>,
+        ),
+      ).not.toThrow();
+    });
   });
 
   describe('useModel', () => {
@@ -157,6 +145,29 @@ describe('createStore', () => {
       );
     });
 
+    it('passes value to other models', () => {
+      //  Define a new hooks  for that renderHook api doesn't support render one more hooks 
+      function useModels() {
+        const [todosState, todosActions] = useModel("todos");
+        const [userState, userActions] = useModel("user");
+
+        return { todosState, todosActions, userState, userActions };
+      };
+      const wrapper = props => (
+        <Provider {...props}>
+          {props.children}
+        </Provider>
+      );
+      const { result } = rhl.renderHook(() => useModels(), { wrapper });
+      expect(result.current.todosState.dataSource.length).toBe(1);
+      expect(result.current.userState.todos).toBe(1);
+      rhl.act(() => {
+        result.current.todosActions.add({ name: 'testAction', done: false });
+      });
+      expect(result.current.todosState.dataSource.length).toBe(2);
+      expect(result.current.userState.todos).toBe(2);
+    });
+
     it('get model effects state', async () => {
       const initialStates = {
         todos: {
@@ -168,8 +179,7 @@ describe('createStore', () => {
       };
       const wrapper = props => <Provider {...props} initialStates={initialStates}>{props.children}</Provider>;
 
-      // renderHook api doesn't support render one more hooks 
-      // so we define a new hooks 
+      //  Define a new hooks  for that renderHook api doesn't support render one more hooks 
       function useModelEffect() {
         const [state, actions] = useModel("todos");
         const effectsState = useModelEffectsState('todos');
