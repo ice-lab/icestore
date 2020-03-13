@@ -4,6 +4,7 @@ import store from './store';
 import Todos from './components/Todos';
 import TodoAdd from './components/TodoAdd';
 import User from './components/User';
+import Car from './components/Car';
 
 const { Provider } = store;
 
@@ -23,6 +24,7 @@ function App() {
       <Todos />
       <TodoAdd />
       <User />
+      <Car />
     </Provider>
   );
 }
