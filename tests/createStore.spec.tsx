@@ -329,13 +329,15 @@ describe('createStore', () => {
 
       const { getByTestId } = tester;
       expect(getByTestId('count').innerHTML).toBe('0');
+      rtl.fireEvent.click(getByTestId('increment'));
+      expect(getByTestId('count').innerHTML).toBe('1');
       rtl.fireEvent.click(getByTestId('decrementAsync'));
 
       expect(getByTestId('decrementAsyncState').innerHTML).toBe('{"isLoading":true,"error":null}');
 
-      // await rtl.wait(() => tester.getByTestId('decrementAsyncState'));
       await rtl.waitForDomChange();
       expect(getByTestId('decrementAsyncState').innerHTML).toBe('{"isLoading":false,"error":null}');
+      expect(getByTestId('count').innerHTML).toBe('0');
     });
   });
 });

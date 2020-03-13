@@ -15,6 +15,9 @@ const counter = {
   },
   effects: {
     async decrementAsync(state, payload, actions) {
+      if (state.count <= 0) {
+        throw new Error('count should be greater than or equal to 0');
+      }
       await delay(1000);
       actions.decrement();
     },
