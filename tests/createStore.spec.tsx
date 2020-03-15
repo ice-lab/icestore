@@ -326,10 +326,11 @@ describe('createStore', () => {
         </Provider>
       );
       const tester = rtl.render(container);
-
       const { getByTestId } = tester;
+
       expect(getByTestId('count').innerHTML).toBe('0');
       rtl.fireEvent.click(getByTestId('increment'));
+
       expect(getByTestId('count').innerHTML).toBe('1');
       rtl.fireEvent.click(getByTestId('decrementAsync'));
 

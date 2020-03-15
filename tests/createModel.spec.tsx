@@ -83,7 +83,7 @@ describe('createModel', () => {
     expect(result.current.state.count).toBe(1);
   });
 
-  it('useActions', async () => {
+  it('useEffectsState', async () => {
     function useStateEffects() {
       const state = useState();
       const actions = useActions();
