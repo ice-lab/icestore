@@ -326,6 +326,59 @@ ReactDOM.render(<Provider>
 </Provider>, document.getElementById('root'));
 ```
 
+## Immutable Description 
+
+### Don't destructure the state argument
+
+In order to support the mutation API we utilise [immer](https://github.com/immerjs/immer). Under the hood immer utilises Proxies in order to track our mutations, converting them into immutable updates. Therefore if you destructure the state that is provided to your action you break out of the Proxy, after which any update you perform to the state will not be applied.
+
+Below are a couple examples of this antipattern.
+
+```js
+const model = {
+  reducers: {
+    addTodo({ items }, payload) {
+      items.push(payload);
+    },
+
+    // or 
+
+    addTodo(state, payload) => {
+      const { items } = state;
+      items.push(payload);
+    }
+  }
+}
+```
+
+### Switching to an immutable API
+
+By default we use immer to provide a mutation based API.
+
+This is completely optional, you can instead return new state from your actions like below.
+
+```js
+const model = {
+  state: [],
+  reducers: {
+    addTodo((prevState, payload) {
+      // 👇 new immutable state returned
+      return [...prevState, payload];
+    })
+  }
+}
+```
+
+Should you prefer this approach you can explicitly disable immer via the disableImmer option value of createStore.
+
+```js
+import { createStore } from '@ice/store';
+
+const store = createStore(models, {
+  disableImmer: true; // 👈 set the flag
+});
+```
+
 ## Comparison
 
 - O: Yes

@@ -377,6 +377,8 @@ const count = {
 }
 ```
 
+See [docs/recipes](./recipes.md#immutable-description) for more details.
+
 ##### effects
 
 `effects: { [string]: (prevState, payload, actions, globalActions) => void }`
