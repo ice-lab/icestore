@@ -159,12 +159,12 @@ export function createModel<C extends Config, K = string>(config: C, options?: O
         result[name] = (payload) => setState((prevState) =>
           !disableImmer && typeof prevState === 'object'
             ? produce(prevState, (draft) => {
-                const next = fn(draft, payload);
-                if (typeof next === 'object') {
-                  return next;
-                }
-              })
-            : fn(prevState, payload)
+              const next = fn(draft, payload);
+              if (typeof next === 'object') {
+                return next;
+              }
+            })
+            : fn(prevState, payload),
         );
       });
 
