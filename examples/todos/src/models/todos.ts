@@ -20,12 +20,7 @@ const todos = {
   },
   reducers: {
     toggle(prevState: TodosState, index: number) {
-      const dataSource = [].concat(prevState.dataSource);
-      dataSource[index].done = !prevState.dataSource[index].done;
-      return {
-        ...prevState,
-        dataSource,
-      };
+      prevState.dataSource[index].done = !prevState.dataSource[index].done;
     },
     update(prevState: TodosState, payload) {
       return {

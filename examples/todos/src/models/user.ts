@@ -10,7 +10,7 @@ const user = {
   },
   reducers: {
     setTodos(prevState, todos: number) {
-      return { ...prevState, todos };
+      prevState.todos = todos;
     },
     update(prevState, payload) {
       return {

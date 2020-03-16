@@ -2,6 +2,7 @@
 import { useState, useMemo, useEffect, useRef, useCallback } from 'react';
 import isPromise from 'is-promise';
 import transform from 'lodash.transform';
+import produce from 'immer';
 import { createContainer } from './createContainer';
 import {
   ReactSetState,
@@ -153,7 +154,16 @@ export function createModel<C extends Config, K = string>(config: C, namespace?:
       });
 
       const setReducers = transform(reducers, (result, fn, name) => {
-        result[name] = (payload) => setState((prevState) => fn(prevState, payload));
+        result[name] = (payload) => setState((prevState) =>
+          typeof prevState === 'object'
+            ? produce(prevState, (draft) => {
+                const next = fn(draft, payload);
+                if (typeof next === 'object') {
+                  return next;
+                }
+              })
+            : fn(prevState, payload)
+        );
       });
 
       return { ...setReducers, ...setEffects };
