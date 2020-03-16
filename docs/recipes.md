@@ -233,10 +233,7 @@ const todos = {
   },
   reducers: {
     update(prevState, payload) {
-      return {
-        ...prevState,
-        ...payload,
-      };
+      return { ...prevState, ...payload };
     },
   },
   effects: {

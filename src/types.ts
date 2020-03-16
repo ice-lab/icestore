@@ -147,3 +147,7 @@ export type Model<C extends Config> =
   ]
   >;
 export type UseModelValue<C extends Config> = [ ConfigPropTypeState<C>, ModelActions<C> ];
+
+export interface Options {
+  disableImmer?: boolean;
+}

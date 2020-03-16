@@ -19,11 +19,12 @@ import {
   ModelEffectsState,
   SetFunctionsState,
   ModelValue,
+  Options,
 } from './types';
 
 const isDev = process.env.NODE_ENV !== 'production';
 
-export function createModel<C extends Config, K = string>(config: C, namespace?: K, modelsActions?): Model<C> {
+export function createModel<C extends Config, K = string>(config: C, options?: Options, namespace?: K, modelsActions?): Model<C> {
   type IModelState = ConfigPropTypeState<C>;
   type IModelConfigMergedEffects = ConfigMergedEffects<C>;
   type IModelConfigMergedEffectsKey = keyof IModelConfigMergedEffects;
@@ -40,6 +41,7 @@ export function createModel<C extends Config, K = string>(config: C, namespace?:
     reducers = {},
   } = config;
   const mergedEffects = { ...defineActions, ...effects };
+  const disableImmer = options && options.disableImmer;
   let actions;
 
   if (Object.keys(defineActions).length > 0) {
@@ -155,7 +157,7 @@ export function createModel<C extends Config, K = string>(config: C, namespace?:
 
       const setReducers = transform(reducers, (result, fn, name) => {
         result[name] = (payload) => setState((prevState) =>
-          typeof prevState === 'object'
+          !disableImmer && typeof prevState === 'object'
             ? produce(prevState, (draft) => {
                 const next = fn(draft, payload);
                 if (typeof next === 'object') {

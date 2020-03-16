@@ -7,7 +7,7 @@ The `createStore` is a main function exported from the library, which creates a 
 
 ## createStore
 
-`createStore(models)`
+`createStore(models, options)`
 
 The function called to create a store.
 
@@ -25,7 +25,9 @@ const {
 } = createStore(models);
 ```
 
-### models
+### Arguments
+
+#### models
 
 ```js
 import { createStore } from '@ice/store'
@@ -43,83 +45,17 @@ const models = {
 createStore(models);
 ```
 
-#### state
+See [model](#model) for details.
 
-`state: any`: Required
+#### options
 
-The initial state of the model.
+- `disableImmer` (boolean, optional, default=false)
 
-```js
-const model = {
-  state: { loading: false },
-};
-```
+  If you set this to true, then [immer](https://github.com/immerjs/immer) will be disabled, meaning you can no longer mutate state directly within actions and will instead have to return immutable state as in a standard reducer.
 
-#### reducers
+### Returns
 
-`reducers: { [string]: (prevState, payload) => any }`
-
-An object of functions that change the model's state. These functions take the model's previous state and a payload, and return the model's next state. These should be pure functions relying only on the state and payload args to compute the next state. For code that relies on the "outside world" (impure functions like api calls, etc.), use effects.
-
-```js
-const counter = {
-  state: 0,
-  reducers: {
-    add: (state, payload) => state + payload,
-  }
-};
-```
-
-#### effects
-
-`effects: { [string]: (prevState, payload, actions, globalActions) => void }`
-
-An object of functions that can handle the world outside of the model. Effects provide a simple way of handling async actions when used with async/await.
-
-```js
-const counter = {
-  state: 0,
-  effects: {
-    async add(prevState, payload, actions) {
-      // wait for data to load
-      const response = await fetch('http://example.com/data');
-      const data = await response.json();
-      // pass the result to a local reducer
-      actions.update(data);
-    },
-  },
-  reducers: {
-    update(prev, data) {
-      return {...prev, ...data};
-    }
-  },
-};
-```
-
-You can call another action by useing `actions` or `globalActions`:
-
-```js
-const user = {
-  state: {
-    foo: [],
-  },
-  effects: {
-    like(prevState, payload, actions, globalActions) => {
-      actions.foo(payload); // call user's actions
-      globalActions.user.foo(payload); // call actions of another model
-    },
-  },
-  reducres: {
-    foo(prevState, payload) {
-      return {
-        ...prevState,
-      };
-    },
-  }
-};
-```
-
-### Provider
+#### Provider
 
 `Provider(props: { children, initialStates })`
 
@@ -175,7 +111,7 @@ ReactDOM.render(
 ); 
 ```
 
-### useModel
+#### useModel
 
 `useModel(name: string): [ state, actions ]`
 
@@ -187,7 +123,9 @@ const counter = {
     value: 0,
   },
   reducers: {
-    add: (prevState, payload) => ({...prevState, value: prevState.value + payload}),
+    add: (state, payload) => {
+      state.value = state.value + payload;
+    },
   },
 };
 
@@ -202,7 +140,7 @@ function FunctionComponent() {
 }
 ```
 
-### useModelActions
+#### useModelActions
 
 `useModelActions(name: string): actions`
 
@@ -215,7 +153,7 @@ function FunctionComponent() {
 }
 ```
 
-### useModelEffectsState
+#### useModelEffectsState
 
 `useModelEffectsState(name: string): { [actionName: string]: { isLoading: boolean, error: Error } } `
 
@@ -235,7 +173,7 @@ function FunctionComponent() {
 }
 ```
 
-### withModel
+#### withModel
 
 `withModel(name: string, mapModelToProps?: (model: [state, actions]) => Object = (model) => ({ [name]: model }) ): (React.Component) => React.Component`
 
@@ -298,7 +236,7 @@ export default withModel(
 )(TodoList);
 ```
 
-### withModelActions
+#### withModelActions
 
 `withModelActions(name: string, mapModelActionsToProps?: (actions) => Object = (actions) => ({ [name]: actions }) ): (React.Component) => React.Component`
 
@@ -326,7 +264,7 @@ export default withModelActions('todos')(TodoList);
 
 You can use `mapModelActionsToProps` to set the property as the same way like `mapModelToProps`.
 
-### withModelEffectsState
+#### withModelEffectsState
 
 `withModelEffectsState(name: string, mapModelActionsStateToProps?: (effectsState) => Object = (effectsState) => ({ [name]: effectsState }) ): (React.Component) => React.Component`
 
@@ -356,10 +294,9 @@ You can use `mapModelActionsStateToProps` to set the property as the same way li
 
 ## createModel
 
-`createStore(model)`
+`createStore(model, options)`
 
 The function called to create a model.
-
 
 ```js
 import { createModel } from '@ice/store';
@@ -372,7 +309,132 @@ const [
 ] = createModel(model);
 ```
 
-### Provider
+### Arguments
+
+#### model
+
+##### state
+
+`state: any`: Required
+
+The initial state of the model.
+
+```js
+const model = {
+  state: { loading: false },
+};
+```
+
+##### reducers
+
+`reducers: { [string]: (prevState, payload) => any }`
+
+An object of functions that change the model's state. These functions take the model's previous state and a payload, and return the model's next state. These should be pure functions relying only on the state and payload args to compute the next state. For code that relies on the "outside world" (impure functions like api calls, etc.), use effects.
+
+```js
+const counter = {
+  state: 0,
+  reducers: {
+    add: (state, payload) => state + payload,
+  }
+};
+```
+
+Reducer could be use mutable method to achieve immutable state. Like the example:
+
+```js
+const todo = {
+  state: [
+    {
+      todo: 'Learn typescript',
+      done: true,
+    },
+    {
+      todo: 'Try immer',
+      done: false,
+    },
+  ],
+  reducers: {
+    done(state) {
+      state.push({ todo: 'Tweet about it' });
+      state[1].done = true;
+    },
+  },
+}
+```
+
+In Immer, reducers perform mutations to achieve the next immutable state. Keep in mind, Immer only supports change detection on plain objects and arrays, so primitive values like strings or numbers will always return a change. Like the example:
+
+```js
+const count = {
+  state: 0,
+  reducers: {
+    add(state) {
+      state += 1;
+      return state;
+    },
+  },
+}
+```
+
+##### effects
+
+`effects: { [string]: (prevState, payload, actions, globalActions) => void }`
+
+An object of functions that can handle the world outside of the model. Effects provide a simple way of handling async actions when used with async/await.
+
+```js
+const counter = {
+  state: 0,
+  effects: {
+    async add(prevState, payload, actions) {
+      // wait for data to load
+      const response = await fetch('http://example.com/data');
+      const data = await response.json();
+      // pass the result to a local reducer
+      actions.update(data);
+    },
+  },
+  reducers: {
+    update(prevState, payload) {
+      return { ...prevState, ...payload };
+    }
+  },
+};
+```
+
+You can call another action by useing `actions` or `globalActions`:
+
+```js
+const user = {
+  state: {
+    foo: [],
+  },
+  effects: {
+    like(prevState, payload, actions, globalActions) => {
+      actions.foo(payload); // call user's actions
+      globalActions.user.foo(payload); // call actions of another model
+    },
+  },
+  reducres: {
+    foo(prevState, payload) {
+      return {
+        ...prevState,
+      };
+    },
+  }
+};
+```
+
+#### options
+
+- `disableImmer` (boolean, optional, default=false)
+
+  If you set this to true, then [immer](https://github.com/immerjs/immer) will be disabled, meaning you can no longer mutate state directly within actions and will instead have to return immutable state as in a standard reducer.
+
+### Returns
+
+#### Provider
 
 `Provider(props: { children, initialState })`
 
@@ -433,7 +495,7 @@ function FunctionComponent() {
 }
 ```
 
-### useActions
+#### useActions
 
 `useActions(): actions`
 
@@ -446,7 +508,7 @@ function FunctionComponent() {
 }
 ```
 
-### useEffectsState
+#### useEffectsState
 
 `useEffectsState(): { [actionName: string]: { isLoading: boolean, error: Error } } `
 

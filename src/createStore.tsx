@@ -9,9 +9,10 @@ import {
   ModelActions,
   ModelEffectsState,
   UseModelValue,
+  Options,
 } from './types';
 
-export function createStore<C extends Configs>(configs: C) {
+export function createStore<C extends Configs>(configs: C, options?: Options) {
   function getModel<K extends keyof C>(namespace: K): Model<C[K]> {
     const model = models[namespace];
     if (!model) {
@@ -101,7 +102,7 @@ export function createStore<C extends Configs>(configs: C) {
 
   const modelsActions = {};
   const models: { [K in keyof C]?: Model<C[K]> } = transform(configs, (result, config, namespace) => {
-    result[namespace] = createModel(config, namespace, modelsActions);
+    result[namespace] = createModel(config, options, namespace, modelsActions);
   });
 
   return {
