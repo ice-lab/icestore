@@ -9,8 +9,8 @@ const user = {
     auth: false,
   },
   reducers: {
-    setTodos(prevState, todos: number) {
-      return { ...prevState, todos };
+    setTodos(state, todos: number) {
+      state.todos = todos;
     },
     update(prevState, payload) {
       return {
