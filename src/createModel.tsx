@@ -43,7 +43,7 @@ export function createModel<C extends Config, K = string>(config: C, options?: O
     reducers = {},
   } = config;
   const mergedEffects = { ...defineActions, ...effects };
-  const disableImmer = options && options.disableImmer;
+  const immerable = !(options && options.disableImmer);
   let actions;
 
   if (Object.keys(defineActions).length > 0) {
@@ -159,7 +159,7 @@ export function createModel<C extends Config, K = string>(config: C, options?: O
 
       const setReducers = transform(reducers, (result, fn, name) => {
         result[name] = (payload) => setState((prevState) =>
-          !disableImmer && typeof prevState === 'object'
+          immerable && typeof prevState === 'object'
             ? produce(prevState, (draft) => {
               const next = fn(draft, payload);
               if (typeof next === 'object') {
