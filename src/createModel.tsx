@@ -2,7 +2,7 @@
 import { useState, useMemo, useEffect, useRef, useCallback } from 'react';
 import isPromise from 'is-promise';
 import transform from 'lodash.transform';
-import produce from 'immer';
+import produce, { enableES5 } from 'immer';
 import { createContainer } from './createContainer';
 import {
   ReactSetState,
@@ -21,6 +21,8 @@ import {
   ModelValue,
   Options,
 } from './types';
+
+enableES5();
 
 const isDev = process.env.NODE_ENV !== 'production';
 
