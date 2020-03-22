@@ -12,7 +12,7 @@ export default class Dispatcher {
         } catch (e) {
           callback(undefined);
         }
-      }
+      },
     );
   };
 }

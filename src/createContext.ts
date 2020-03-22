@@ -13,15 +13,15 @@ export default function() {
 
     if (process.env.NODE_ENV !== "production" && !contextValue) {
       throw new Error(
-        "could not find icestore context value; please ensure the component is wrapped in a <Provider>"
+        "could not find icestore context value; please ensure the component is wrapped in a <Provider>",
       );
     }
 
-    return contextValue! as Dispatcher;
+    return contextValue as Dispatcher;
   }
 
   return {
     context: ReactIcestoreContext,
-    useContext: useIcestoreContext
+    useContext: useIcestoreContext,
   };
 }

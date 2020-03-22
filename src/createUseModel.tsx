@@ -6,7 +6,7 @@ export default function<Models>(useContext: any) {
   type Model = { [key in keyof Models]: any };
   function useModel<T extends keyof Model, U>(
     namespace: T,
-    updater?: (model: Model[T]) => U
+    updater?: (model: Model[T]) => U,
   ): typeof updater extends undefined
     ? Model[T]
     : ReturnType<NonNullable<typeof updater>> {
@@ -23,7 +23,7 @@ export default function<Models>(useContext: any) {
     const updaterRef = useRef(updater);
     updaterRef.current = updater;
     const [state, setState] = useState<RetState>(() =>
-      updaterRef.current ? updaterRef.current(data) : data
+      updaterRef.current ? updaterRef.current(data) : data,
     );
     const lastState = useRef<any>(state);
 
@@ -44,7 +44,7 @@ export default function<Models>(useContext: any) {
       return () => {
         callbacks.delete(handler);
       };
-    }, [namespace]);
+    }, [callbacks, namespace, updater]);
 
     return state;
   }

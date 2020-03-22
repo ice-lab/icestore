@@ -13,6 +13,6 @@ export default function(models: Models) {
   return {
     Provider: createProvider(context, dispatcher, models),
     useModel: createUseModel<IModels>(useContext),
-    getModel: createGetModel(dispatcher)
+    getModel: createGetModel(dispatcher),
   };
 }
