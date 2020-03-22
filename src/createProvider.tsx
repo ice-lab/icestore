@@ -1,7 +1,7 @@
-import React from "react";
-import Executor from "./executor";
-import Dispatcher from "./dispatcher";
-import { Models } from "./types";
+import React from 'react';
+import Executor from './executor';
+import Dispatcher from './dispatcher';
+import { Models } from './types';
 
 export default function(context: any, dispatcher: Dispatcher, models: Models) {
   return ({ children }: { children: React.ReactNode }) => {

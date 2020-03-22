@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useMemo } from "react";
+import React, { useEffect, useRef, useMemo } from 'react';
 
 interface ExecutorProps {
   hook: () => any;
@@ -17,7 +17,7 @@ export default (props: ExecutorProps) => {
   try {
     data = hook();
   } catch (e) {
-    console.error(`Invoking '${namespace || "unknown"}' model failed:`, e);
+    console.error(`Invoking '${namespace || 'unknown'}' model failed:`, e);
   }
 
   useMemo(() => {

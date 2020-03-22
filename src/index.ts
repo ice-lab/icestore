@@ -1,9 +1,9 @@
-import Dispatcher from "./dispatcher";
-import createContext from "./createContext";
-import createProvider from "./createProvider";
-import createUseModel from "./createUseModel";
-import createGetModel from "./createGetModel";
-import { Models } from "./types";
+import Dispatcher from './dispatcher';
+import createContext from './createContext';
+import createProvider from './createProvider';
+import createUseModel from './createUseModel';
+import createGetModel from './createGetModel';
+import { Models } from './types';
 
 export default function(models: Models) {
   const { context, useContext } = createContext();

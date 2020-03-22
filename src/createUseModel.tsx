@@ -1,6 +1,6 @@
-import { useState, useEffect, useRef } from "react";
-import isEqual from "lodash.isequal";
-import Dispatcher from "./dispatcher";
+import { useState, useEffect, useRef } from 'react';
+import isEqual from 'lodash.isequal';
+import Dispatcher from './dispatcher';
 
 export default function<Models>(useContext: any) {
   type Model = { [key in keyof Models]: any };
