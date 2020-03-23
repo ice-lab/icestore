@@ -9,10 +9,16 @@ function useCounter() {
   const [count, setCount] = useState(0);
   const decrement = () => setCount(count - 1);
   const increment = () => setCount(count + 1);
+  const decrementAsync = async () => {
+    await delay(1000);
+    decrement();
+  };
+
   return {
     count,
     decrement,
     increment,
+    decrementAsync,
   };
 }
 
@@ -26,16 +32,29 @@ const store = createStore(models);
 // 3️⃣ Consume model
 const { useModel, getModel } = store;
 function Button() {
-  function handleClick() {
-    getModel('counter').increment();
+  function getCounter() {
+    return getModel('counter');
   }
+  function handleIncrement() {
+    getCounter().increment();
+  }
+  function handleDecrementAsync() {
+    getCounter().decrementAsync();
+  }
+
   console.log('Render Button.');
-  return <button type="button" onClick={handleClick}>+</button>;
+  return (
+    <>
+      <button type="button" onClick={handleIncrement}>+</button>
+      <button type="button" onClick={handleDecrementAsync}>-</button>
+    </>
+  );
 }
 function Count() {
-  console.log('Render Count.');
   const { count } = useModel('counter');
-  return <span>{count}</span>;
+
+  console.log('Render Count.');
+  return (<span>{count}</span>);
 }
 
 // 4️⃣ Wrap your components with Provider
