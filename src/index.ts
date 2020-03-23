@@ -5,7 +5,7 @@ import createUseModel from './createUseModel';
 import createGetModel from './createGetModel';
 import { Models } from './types';
 
-export default function(models: Models) {
+export const createStore = function(models: Models) {
   const { context, useContext } = createContext();
   const dispatcher = new Dispatcher();
   type IModels = typeof models;
@@ -16,3 +16,6 @@ export default function(models: Models) {
     getModel: createGetModel(dispatcher),
   };
 }
+
+
+export default createStore;

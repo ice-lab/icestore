@@ -20,7 +20,7 @@ const initialStates = {
 
 function App() {
   return (
-    <Provider initialStates={initialStates}>
+    <Provider>
       <Todos />
       <TodoAdd />
       <User />

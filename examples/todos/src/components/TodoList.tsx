@@ -1,7 +1,7 @@
 import React from 'react';
 import store from '../store';
 
-const { useModel, useModelEffectsState } = store;
+const { useModel } = store;
 
 export function TodoList({ state, actions, effectsState }) {
   const { title, subTitle, dataSource } = state;
@@ -25,7 +25,7 @@ export function TodoList({ state, actions, effectsState }) {
               {done ? <s>{name}</s> : <span>{name}</span>}
             </label>
             {
-              effectsState.remove.isLoading ?
+              effectsState.remove.loading ?
                 '...deleting...' :
                 <button type="submit" onClick={() => remove(index)}>-</button>
             }
@@ -37,11 +37,10 @@ export function TodoList({ state, actions, effectsState }) {
 }
 
 export default function({ title }) {
-  const [ state, actions ] = useModel('todos');
-  const effectsState = useModelEffectsState('todos');
+  const [ state, actions, effectsState ] = useModel('todos');
   return TodoList(
     {
-      state: { ...state, title, subTitle: 'Function Component' },
+      state: { dataSource: state, title, subTitle: 'Function Component' },
       actions,
       effectsState,
     },

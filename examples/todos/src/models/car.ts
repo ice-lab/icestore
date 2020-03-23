@@ -1,11 +1,8 @@
 /**
- * This model only defines state, but not effects and reducers
+ * This model only defines state, but not actions
  */
+import { useState } from 'react';
 
-const car = {
-  state: {
-    logo: 'string',
-  },
+export default function useCar() {
+  return useState({ logo: 'string' });
 };
-
-export default car;

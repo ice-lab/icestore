@@ -6,7 +6,7 @@ interface ExecutorProps {
   namespace: string;
 }
 
-export default (props: ExecutorProps) => {
+export default function(props: ExecutorProps) {
   const { hook, onUpdate, namespace } = props;
 
   const updateRef = useRef(onUpdate);

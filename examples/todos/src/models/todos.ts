@@ -1,77 +1,76 @@
+import { useState } from 'react';
+import { useAsyncFn } from 'react-use';
 import { delay } from '../utils';
+import store from '../store';
 
 export interface Todo {
   name: string;
   done?: boolean;
 }
 
-export interface TodosState {
-  dataSource: Todo[];
-}
+export default function useTodos() {
+  const [todos, setTodos] = useState<Todo[]>([
+    {
+      name: 'Init',
+      done: false,
+    },
+  ]);
 
-const todos = {
-  state: {
-    dataSource: [
+  function toggle(index: number) {
+    setTodos(prevState => {
+      const dataSource = ([] as any).concat(prevState);
+      dataSource[index].done = !prevState[index].done;
+      return dataSource;
+    });
+  }
+
+  function add(todo: Todo) {
+    const dataSource = ([] as any).concat(todos);
+    dataSource.push(todo);
+
+    store.getModel('user')[1].setTodos(dataSource.length);
+    setTodos(dataSource);
+  }
+
+  const [refreshState, refresh] = useAsyncFn(async function() {
+    await delay(2000);
+
+    const dataSource = [
       {
-        name: 'Init',
-        done: false,
+        name: 'react',
       },
-    ],
-  },
-  reducers: {
-    toggle(prevState: TodosState, index: number) {
-      const dataSource = [].concat(prevState.dataSource);
-      dataSource[index].done = !prevState.dataSource[index].done;
-      return {
-        ...prevState,
-        dataSource,
-      };
-    },
-    update(prevState: TodosState, payload) {
-      return {
-        ...prevState,
-        ...payload,
-      };
-    },
-  },
-  effects: {
-    add(state: TodosState, todo: Todo, actions, globalActions) {
-      const dataSource = [].concat(state.dataSource);
-      dataSource.push(todo);
-      globalActions.user.setTodos(dataSource.length);
-      actions.update({
-        dataSource,
-      });
-    },
-    async refresh(state: TodosState, payload, actions, globalActions) {
-      await delay(2000);
+      {
+        name: 'vue',
+        done: true,
+      },
+      {
+        name: 'angular',
+      },
+    ];
+    store.getModel('user')[1].setTodos(dataSource.length);
+    setTodos(dataSource);
+  }, [setTodos]);
 
-      const dataSource: any[] = [
-        {
-          name: 'react',
-        },
-        {
-          name: 'vue',
-          done: true,
-        },
-        {
-          name: 'angular',
-        },
-      ];
-      globalActions.user.setTodos(dataSource.length);
-      actions.update({
-        dataSource,
-      });
-    },
-    async remove(state: TodosState, index: number, actions, globalActions) {
-      await delay(1000);
-      const dataSource = [].concat(state.dataSource);
-      dataSource.splice(index, 1);
+  const [removeState, remove] = useAsyncFn(async function(index: number) {
+    await delay(1000);
+    const dataSource = ([] as any).concat(todos);
+    dataSource.splice(index, 1);
 
-      globalActions.user.setTodos(dataSource.length);
-      actions.update(state);
+    store.getModel('user')[1].setTodos(dataSource.length);
+    setTodos(dataSource);
+  }, [todos, setTodos]);
+
+  return [
+    todos,
+    {
+      toggle,
+      add,
+      refresh,
+      remove,
     },
-  },
+    {
+      refresh: refreshState,
+      remove: removeState,
+    }
+  ];
 };
-
-export default todos;

@@ -6,7 +6,8 @@
     "@ice/store": "^1.1.0",
     "lodash": "^4.17.15",
     "react": "^16.8.6",
-    "react-dom": "^16.8.6"
+    "react-dom": "^16.8.6",
+    "react-use": "^13.27.0"
   },
   "devDependencies": {
     "@types/jest": "^24.0.0",
