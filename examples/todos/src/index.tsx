@@ -8,16 +8,6 @@ import Car from './components/Car';
 
 const { Provider } = store;
 
-const initialStates = {
-  user: {
-    dataSource: {
-      name: 'Tom',
-    },
-    auth: true,
-    todos: 0,
-  },
-};
-
 function App() {
   return (
     <Provider>
