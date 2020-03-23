@@ -16,6 +16,11 @@ export default function useTodos() {
     },
   ]);
 
+  function getUserActions() {
+    const [, actions] = store.getModel('user');
+    return actions;
+  }
+
   function toggle(index: number) {
     setTodos(prevState => {
       const dataSource = ([] as any).concat(prevState);
@@ -28,7 +33,7 @@ export default function useTodos() {
     const dataSource = ([] as any).concat(todos);
     dataSource.push(todo);
 
-    store.getModel('user')[1].setTodos(dataSource.length);
+    getUserActions().setTodos(dataSource.length);
     setTodos(dataSource);
   }
 
@@ -47,7 +52,7 @@ export default function useTodos() {
         name: 'angular',
       },
     ];
-    store.getModel('user')[1].setTodos(dataSource.length);
+    getUserActions().setTodos(dataSource.length);
     setTodos(dataSource);
   }, [setTodos]);
 
@@ -56,7 +61,7 @@ export default function useTodos() {
     const dataSource = ([] as any).concat(todos);
     dataSource.splice(index, 1);
 
-    store.getModel('user')[1].setTodos(dataSource.length);
+    getUserActions().setTodos(dataSource.length);
     setTodos(dataSource);
   }, [todos, setTodos]);
 
