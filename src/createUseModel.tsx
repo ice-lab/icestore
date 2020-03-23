@@ -8,7 +8,7 @@ export default function<Models>(useContext: any) {
   ): Model[T] {
     type RetState = Model[T];
     const dispatcher = useContext() as Dispatcher;
-    const data = dispatcher.data![namespace];
+    const data = dispatcher.data[namespace];
     if (!dispatcher.callbacks[namespace]) {
       dispatcher.callbacks[namespace] = new Set();
     }

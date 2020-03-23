@@ -15,7 +15,7 @@ export const createStore = function(models: Models) {
     useModel: createUseModel<IModels>(useContext),
     getModel: createGetModel(dispatcher),
   };
-}
+};
 
 
 export default createStore;

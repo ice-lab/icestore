@@ -36,7 +36,7 @@ export default function useUser() {
       login,
     },
     {
-      login: loginState
-    }
+      login: loginState,
+    },
   ];
 };

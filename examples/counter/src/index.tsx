@@ -12,7 +12,7 @@ function useCounter() {
   return {
     count,
     decrement,
-    increment
+    increment,
   };
 }
 
@@ -30,7 +30,7 @@ function Button() {
     getModel('counter').increment();
   }
   console.log('Render Button.');
-  return <button onClick={handleClick}>+</button>;
+  return <button type="button" onClick={handleClick}>+</button>;
 }
 function Count() {
   console.log('Render Count.');

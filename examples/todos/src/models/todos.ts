@@ -76,6 +76,6 @@ export default function useTodos() {
     {
       refresh: refreshState,
       remove: removeState,
-    }
+    },
   ];
 };
