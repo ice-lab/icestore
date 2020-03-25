@@ -64,7 +64,7 @@ const todos = {
       dataSource.splice(index, 1);
 
       globalActions.user.setTodos(dataSource.length);
-      actions.update(state);
+      actions.update({dataSource});
     },
   },
 };
