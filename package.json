@@ -1,6 +1,6 @@
 {
   "name": "@ice/store",
-  "version": "1.1.2",
+  "version": "1.2.0",
   "description": "Lightweight React state management library based on react hooks",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
@@ -59,6 +59,7 @@
     "preset": "ts-jest"
   },
   "dependencies": {
+    "immer": "^6.0.1",
     "is-promise": "^2.1.0",
     "lodash.transform": "^4.6.0",
     "utility-types": "^3.10.0"

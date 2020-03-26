@@ -2,6 +2,7 @@
 import { useState, useMemo, useEffect, useRef, useCallback } from 'react';
 import isPromise from 'is-promise';
 import transform from 'lodash.transform';
+import produce, { enableES5 } from 'immer';
 import { createContainer } from './createContainer';
 import {
   ReactSetState,
@@ -18,11 +19,14 @@ import {
   ModelEffectsState,
   SetFunctionsState,
   ModelValue,
+  Options,
 } from './types';
+
+enableES5();
 
 const isDev = process.env.NODE_ENV !== 'production';
 
-export function createModel<C extends Config, K = string>(config: C, namespace?: K, modelsActions?): Model<C> {
+export function createModel<C extends Config, K = string>(config: C, options?: Options, namespace?: K, modelsActions?): Model<C> {
   type IModelState = ConfigPropTypeState<C>;
   type IModelConfigMergedEffects = ConfigMergedEffects<C>;
   type IModelConfigMergedEffectsKey = keyof IModelConfigMergedEffects;
@@ -39,6 +43,7 @@ export function createModel<C extends Config, K = string>(config: C, namespace?:
     reducers = {},
   } = config;
   const mergedEffects = { ...defineActions, ...effects };
+  const immerable = !(options && options.disableImmer);
   let actions;
 
   if (Object.keys(defineActions).length > 0) {
@@ -153,7 +158,16 @@ export function createModel<C extends Config, K = string>(config: C, namespace?:
       });
 
       const setReducers = transform(reducers, (result, fn, name) => {
-        result[name] = (payload) => setState((prevState) => fn(prevState, payload));
+        result[name] = (payload) => setState((prevState) =>
+          immerable && typeof prevState === 'object'
+            ? produce(prevState, (draft) => {
+              const next = fn(draft, payload);
+              if (typeof next === 'object') {
+                return next;
+              }
+            })
+            : fn(prevState, payload),
+        );
       });
 
       return { ...setReducers, ...setEffects };

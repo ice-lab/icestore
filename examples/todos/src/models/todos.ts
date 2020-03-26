@@ -19,13 +19,8 @@ const todos = {
     ],
   },
   reducers: {
-    toggle(prevState: TodosState, index: number) {
-      const dataSource = [].concat(prevState.dataSource);
-      dataSource[index].done = !prevState.dataSource[index].done;
-      return {
-        ...prevState,
-        dataSource,
-      };
+    toggle(state: TodosState, index: number) {
+      state.dataSource[index].done = !state.dataSource[index].done;
     },
     update(prevState: TodosState, payload) {
       return {
@@ -36,7 +31,7 @@ const todos = {
   },
   effects: {
     add(state: TodosState, todo: Todo, actions, globalActions) {
-      const dataSource = [].concat(state.dataSource);
+      const dataSource = ([] as any).concat(state.dataSource);
       dataSource.push(todo);
       globalActions.user.setTodos(dataSource.length);
       actions.update({
@@ -65,11 +60,11 @@ const todos = {
     },
     async remove(state: TodosState, index: number, actions, globalActions) {
       await delay(1000);
-      const dataSource = [].concat(state.dataSource);
+      const dataSource = ([] as any).concat(state.dataSource);
       dataSource.splice(index, 1);
 
       globalActions.user.setTodos(dataSource.length);
-      actions.update(state);
+      actions.update({dataSource});
     },
   },
 };
