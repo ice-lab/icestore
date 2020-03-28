@@ -31,7 +31,7 @@ const nextState = {
   },
   effects: {
     ...cntState.effects,
-  }
+  },
 };
 
 const createLoadingAction = (converter, i) => (

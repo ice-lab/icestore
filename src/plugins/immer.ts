@@ -1,6 +1,6 @@
-import { Action, Models, Plugin } from '../typings';
 import produce from 'immer';
 import { combineReducers, ReducersMapObject } from 'redux';
+import { Action, Models, Plugin } from '../typings';
 
 function combineReducersWithImmer(reducers: ReducersMapObject) {
   const reducersWithImmer: ReducersMapObject<any, Action<any>> = {};

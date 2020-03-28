@@ -1,6 +1,6 @@
 import React from 'react';
-import { init } from '../init';
 import { Provider as ReduxProvider } from 'react-redux';
+import { init } from '../init';
 import createLoadingPlugin from '../plugins/loading';
 import createImmerPlugin from '../plugins/immer';
 import createErrorPlugin from '../plugins/error';
@@ -29,8 +29,8 @@ export const createStore = function(models: any, initConfig?: any) {
 
   const wrappedModels = appendReducers(
     convertEffects(
-      convertActions(models)
-    )
+      convertActions(models),
+    ),
   );
 
   const store = init({

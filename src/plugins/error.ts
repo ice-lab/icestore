@@ -51,7 +51,7 @@ const nextState = {
   },
   effects: {
     ...cntState.effects,
-  }
+  },
 };
 function fallback(value) {
   return value < 0 ? 0 : value;
@@ -68,7 +68,7 @@ const createErrorAction = (converter, i) => (
   };
   if (typeof nextState.models[name] === 'undefined') {
     nextState.models[name] = {
-      ...defaultValue
+      ...defaultValue,
     };
   }
   nextState.models[name] = {
@@ -80,7 +80,7 @@ const createErrorAction = (converter, i) => (
   }
   if (typeof nextState.effects[name][action] === 'undefined') {
     nextState.effects[name][action] = {
-      ...defaultValue
+      ...defaultValue,
     };
   }
   nextState.effects[name][action] = {
@@ -154,7 +154,7 @@ export default (config: ErrorConfig = {}): Plugin => {
   };
 
   cntState.global = {
-    ...defaultValue
+    ...defaultValue,
   };
   error.state.global = converter(cntState.global);
 
@@ -171,7 +171,7 @@ export default (config: ErrorConfig = {}): Plugin => {
       }
 
       cntState.models[name] = {
-       ...defaultValue
+        ...defaultValue,
       };
       error.state.models[name] = converter(cntState.models[name]);
       error.state.effects[name] = {};
@@ -184,7 +184,7 @@ export default (config: ErrorConfig = {}): Plugin => {
         }
 
         cntState.effects[name][action] = {
-          ...defaultValue
+          ...defaultValue,
         };
         error.state.effects[name][action] = converter(
           cntState.effects[name][action],
