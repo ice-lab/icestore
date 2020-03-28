@@ -1,8 +1,8 @@
 import isFunction from 'lodash.isfunction';
-import warning from '../utils/warning';
+import warning from './warning';
 
 /**
- * fallback for 1.1.0 ~ 1.2.0
+ * Compatible with 1.1.0 ~ 1.2.0
  *
  * effects: {} => effects: () => ({})
  */
@@ -33,7 +33,7 @@ export function convertEffects(originModels: any) {
 }
 
 /**
- * fallback for 1.0.0 ~ 1.1.0
+ * Compatible with 1.0.0 ~ 1.1.0
  *
  * actions: {} => effects: () => ({})
  */

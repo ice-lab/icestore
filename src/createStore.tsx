@@ -1,13 +1,13 @@
 import React from 'react';
 import { Provider as ReduxProvider } from 'react-redux';
-import { init } from '../init';
-import createLoadingPlugin from '../plugins/loading';
-import createImmerPlugin from '../plugins/immer';
-import createErrorPlugin from '../plugins/error';
-import { convertEffects, convertActions } from './converter';
-import appendReducers from './appendReducers';
+import { init } from './init';
+import createLoadingPlugin from './plugins/loading';
+import createImmerPlugin from './plugins/immer';
+import createErrorPlugin from './plugins/error';
+import { convertEffects, convertActions } from './utils/converter';
+import appendReducers from './utils/appendReducers';
 import createHooks from './createHooks';
-import warning from '../utils/warning';
+import warning from './utils/warning';
 
 const loading = createLoadingPlugin();
 const error = createErrorPlugin();
