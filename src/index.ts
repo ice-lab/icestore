@@ -1,4 +1,5 @@
-export * from './types';
-export * from './createContainer';
-export * from './createStore';
-export * from './createModel';
+import { createStore } from './exports/createStore';
+
+export * from './exports/createStore';
+export * from './init';
+export default createStore;

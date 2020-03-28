@@ -59,9 +59,10 @@
     "preset": "ts-jest"
   },
   "dependencies": {
-    "immer": "^6.0.1",
-    "is-promise": "^2.1.0",
-    "lodash.transform": "^4.6.0",
+    "immer": "^6.0.2",
+    "lodash.isfunction": "^3.0.9",
+    "react-redux": "^7.2.0",
+    "redux": "^4.0.5",
     "utility-types": "^3.10.0"
   }
 }

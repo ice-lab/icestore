@@ -11,12 +11,19 @@ const counter = {
     increment:(prevState) => prevState + 1,
     decrement:(prevState) => prevState - 1,
   },
-  effects: {
-    async decrementAsync(state, payload, actions) {
+  // effects: {
+  //   async decrementAsync(state, payload, actions) {
+  //     console.log('actions', actions);
+  //     await delay(1000);
+  //     actions.decrement();
+  //   },
+  // },
+  effects: (dispatch) => ({
+    async decrementAsync() {
       await delay(1000);
-      actions.decrement();
+      dispatch.counter.decrement();
     },
-  },
+  }),
 };
 
 const models = {

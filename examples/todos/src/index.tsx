@@ -14,7 +14,7 @@ const initialStates = {
       name: 'Tom',
     },
     auth: true,
-    todos: 0,
+    todos: 5,
   },
 };
 
