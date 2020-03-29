@@ -32,8 +32,7 @@ let count = 0;
 /**
  * createOriginStore
  *
- * generates a Icestore
- * with a set configuration
+ * generates a Icestore with a set configuration
  * @param config
  */
 export const createIcestore = (initConfig: T.InitConfig = {}): T.Icestore => {

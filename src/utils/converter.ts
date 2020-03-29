@@ -2,9 +2,11 @@ import isFunction from 'lodash.isfunction';
 import warning from './warning';
 
 /**
- * Compatible with 1.1.0 ~ 1.2.0
+ * convertEffects
  *
+ * Compatible with 1.1.0 ~ 1.2.0
  * effects: {} => effects: () => ({})
+ * @param originModels
  */
 export function convertEffects(originModels: any) {
   const models = {};
@@ -33,9 +35,11 @@ export function convertEffects(originModels: any) {
 }
 
 /**
- * Compatible with 1.0.0 ~ 1.1.0
+ * convertActions
  *
+ * Compatible with 1.0.0 ~ 1.1.0
  * actions: {} => effects: () => ({})
+ * @param originModels
  */
 export function convertActions(originModels: any) {
   const models = {};

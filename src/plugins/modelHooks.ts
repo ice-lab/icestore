@@ -2,7 +2,7 @@ import { Plugin } from '../typings';
 import warning from '../utils/warning';
 
 /**
- * Hooks Plugin
+ * ModelHooks Plugin
  *
  * generates hooks for store
  */

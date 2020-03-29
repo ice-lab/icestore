@@ -49,7 +49,6 @@ export default function({
       modelReducers[action] = model.reducers[modelReducer];
     }
     const combinedReducer = (state: any = model.state, action: T.Action) => {
-      // handle effects
       if (typeof modelReducers[action.type] === 'function') {
         return modelReducers[action.type](state, action.payload, action.meta);
       }
@@ -61,6 +60,7 @@ export default function({
       : (state: any, action: T.Action) =>
         combinedReducer(modelBaseReducer(state, action), action);
   };
+  
   // initialize model reducers
   for (const model of models) {
     this.createModelReducer(model);

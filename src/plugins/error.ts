@@ -207,12 +207,10 @@ export default (config: ErrorConfig = {}): Plugin => {
 
         // create function with pre & post error calls
         const effectWrapper = async (...props) => {
+          // @todo add a judgment, only clear when there has been a error
+          this.dispatch.error.hide({ name, action }, null);
           try {
-            // @todo 需要加一个判断，只有当曾经有错误时才需要清除
-            this.dispatch.error.hide({ name, action }, null);
-            // waits for dispatch function to finish before calling 'hide'
-            const effectResult = await origEffect(...props);
-            return effectResult;
+            return await origEffect(...props);
           } catch (error) {
             this.dispatch.error.show({ name, action }, error);
           }

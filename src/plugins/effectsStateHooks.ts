@@ -1,5 +1,10 @@
 import { Plugin } from '../typings';
 
+/**
+ * EffectsStateHooks Plugin
+ *
+ * Plugin for provide store.useModelEffectsState
+ */
 export default (): Plugin => {
   return {
     onStoreCreated(store: any) {
