@@ -4,7 +4,7 @@ import * as T from '../typings';
 import warning from '../utils/warning';
 
 interface ProviderConfig {
-  context: any;
+  context: React.Context<null>;
 }
 
 export default ({ context }: ProviderConfig): T.Plugin => {

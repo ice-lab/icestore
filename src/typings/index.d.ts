@@ -1,6 +1,6 @@
 import * as Redux from 'redux';
 
-export as namespace icestore
+export as namespace icestore;
 
 export type ExtractIcestoreStateFromModels<M extends Models> = {
   [modelKey in keyof M]: M[modelKey]['state']

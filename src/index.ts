@@ -54,8 +54,7 @@ export const createStore = (models: any, initConfig?: any): any => {
     initConfig || {};
   const middlewares = redux.middlewares || [];
 
-  const NO_PROVIDER = '_NP_' as any;
-  const context = React.createContext(NO_PROVIDER);
+  const context = React.createContext(null);
 
   // defaults middlewares
   middlewares.push(thunkMiddleware);
