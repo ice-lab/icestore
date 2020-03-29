@@ -53,6 +53,7 @@ const effectsPlugin: T.Plugin = {
     return next => async (action: T.Action) => {
       // async/await acts as promise middleware
       if (action.type in this.effects) {
+        // effects that share a name with a reducer are called after their reducer counterpart
         await next(action);
         return this.effects[action.type](
           action.payload,

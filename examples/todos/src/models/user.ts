@@ -12,27 +12,19 @@ const user = {
     setTodos(state, todos: number) {
       state.todos = todos;
     },
-    update(prevState, payload) {
-      return {
-        ...prevState,
-        ...payload,
-      };
-    },
   },
-  effects: {
-    async login(prevState, payload, actions) {
+  effects: () => ({
+    async login() {
       await delay(1000);
-      const dataSource = {
-        name: 'Alvin',
-      };
-      const auth = true;
 
-      actions.update({
-        dataSource,
-        auth,
+      this.update({
+        dataSource: {
+          name: 'Alvin',
+        },
+        auth: true,
       });
     },
-  },
+  })
 };
 
 export default user;

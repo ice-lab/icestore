@@ -1,4 +1,5 @@
 import React from 'react';
+import thunkMiddleware from 'redux-thunk';
 import { init } from './init';
 import createProviderPlugin from './plugins/provider';
 import createReduxHooksPlugin from './plugins/reduxHooks';
@@ -11,11 +12,17 @@ import { convertEffects, convertActions } from './utils/converter';
 import appendReducers from './utils/appendReducers';
 
 export const createStore = function(models: any, initConfig?: any): any {
-  const { plugins = [], disableImmer, disableLoading, disableError } =
+  const { plugins = [], redux = {}, disableImmer, disableLoading, disableError } =
     initConfig || {};
+  const middlewares = redux.middlewares || [];
+
   const NO_PROVIDER = '_NP_' as any;
   const context = React.createContext(NO_PROVIDER);
 
+  // defaults middlewares
+  middlewares.push(thunkMiddleware);
+
+  // defaults plugins
   plugins.push(createProviderPlugin({context}));
   plugins.push(createReduxHooksPlugin({context}));
   plugins.push(createModelHooksPlugin());
@@ -34,6 +41,7 @@ export const createStore = function(models: any, initConfig?: any): any {
     plugins.push(error);
   }
 
+  // compatibility handling
   const wrappedModels = appendReducers(
     convertEffects(
       convertActions(models),
@@ -43,6 +51,10 @@ export const createStore = function(models: any, initConfig?: any): any {
   const store = init({
     models: wrappedModels,
     plugins,
+    redux: {
+      ...redux,
+      middlewares: [thunkMiddleware]
+    },
   });
 
   return store;

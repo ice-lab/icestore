@@ -25,11 +25,24 @@ export default (): Plugin => {
         warning('useModelActions is not recommended, please use `useModelDispatch`');
         return useModelDispatch(name);
       }
+      function getModel(name: string) {
+        return [getModelState(name), getModelDispatch(name)];
+      }
+      function getModelState(name: string) {
+        return store.getState()[name];
+      }
+      function getModelDispatch(name: string) {
+        return store.dispatch()[name];
+      }
 
       return {
         useModel,
         useModelState,
         useModelDispatch,
+
+        getModel,
+        getModelState,
+        getModelDispatch,
 
         // @deprecated
         useModelActions,
