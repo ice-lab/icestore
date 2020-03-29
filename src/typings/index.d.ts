@@ -2,6 +2,17 @@ import * as Redux from 'redux';
 
 export as namespace icestore;
 
+export type PropType<TObj, TProp extends keyof TObj> = TObj[TProp];
+
+export interface EffectState {
+  isLoading: boolean;
+  error: Error;
+}
+
+export type EffectsState<Effects> = {
+  [K in keyof Effects]: EffectState;
+}
+
 export type ExtractIcestoreStateFromModels<M extends Models> = {
   [modelKey in keyof M]: M[modelKey]['state']
 }
@@ -60,10 +71,23 @@ export type ExtractIcestoreDispatchersFromReducers<
   reducers extends ModelConfig['reducers']
 > = ExtractIcestoreDispatchersFromReducersObject<reducers & {}>
 
+export type ExtractIcestoreStateFromModel<M extends ModelConfig> = PropType<M, 'state'>;
+
+export type ExtractIcestoreEffectsFromModel<M extends ModelConfig> = PropType<M, 'effects'>;
+
+export type ExtractIcestoreReducersFromModel<M extends ModelConfig> = PropType<M, 'reducers'>;
+
+export type ExtractIcestoreModelFromModel<M extends ModelConfig> = [
+  ExtractIcestoreStateFromModel<M>,
+  ExtractIcestoreDispatchersFromModel<M>,
+];
+
+export type ExtractIcestoreEffectsStateFromModel<M extends ModelConfig> = EffectsState<ExtractIcestoreEffectsFromModel<M>>;
+
 export type ExtractIcestoreDispatchersFromModel<
   M extends ModelConfig
-> = ExtractIcestoreDispatchersFromReducers<M['reducers']> &
-ExtractIcestoreDispatchersFromEffects<M['effects']>
+> = ExtractIcestoreDispatchersFromReducers<ExtractIcestoreReducersFromModel<M>> &
+ExtractIcestoreDispatchersFromEffects<ExtractIcestoreEffectsFromModel<M>>
 
 export type ExtractIcestoreDispatchersFromModels<M extends Models> = {
   [modelKey in keyof M]: ExtractIcestoreDispatchersFromModel<M[modelKey]>
@@ -98,6 +122,8 @@ export type IcestoreDispatch<M extends Models | void = void> = (M extends Models
 export function init<M extends Models>(
   config: InitConfig<M> | undefined
 ): Icestore<M>
+
+export function createStore(models: any): any;
 
 export function getDispatch<M extends Models>(): IcestoreDispatch<M>
 

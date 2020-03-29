@@ -1,3 +1,4 @@
+import React from 'react';
 import * as T from '../typings';
 
 export interface ErrorConfig {
@@ -221,7 +222,22 @@ export default (config: ErrorConfig = {}): T.Plugin => {
       function useModelEffectsError(name) {
         return store.useSelector(state => (state as any).error.effects[name]);
       };
-      return { useModelEffectsError };
+      function withModelEffectsError(name?: string, mapModelEffectsErrorToProps?: any) {
+        mapModelEffectsErrorToProps = (mapModelEffectsErrorToProps || ((errors) => ({ [`${name}Errors`]: errors })));
+        return (Component) => {
+          return (props): React.ReactElement => {
+            const value = useModelEffectsError(name);
+            const withProps = mapModelEffectsErrorToProps(value);
+            return (
+              <Component
+                {...withProps}
+                {...props}
+              />
+            );
+          };
+        };
+      };
+      return { useModelEffectsError, withModelEffectsError };
     },
   };
 };

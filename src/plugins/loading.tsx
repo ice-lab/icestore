@@ -1,3 +1,4 @@
+import React from 'react';
 import * as T from '../typings';
 
 export interface LoadingConfig {
@@ -182,7 +183,22 @@ export default (config: LoadingConfig = {}): T.Plugin => {
       function useModelEffectsLoading(name) {
         return store.useSelector(state => (state as any).loading.effects[name]);
       };
-      return { useModelEffectsLoading };
+      function withModelEffectsLoading(name?: string, mapModelEffectsLoadingToProps?: any) {
+        mapModelEffectsLoadingToProps = (mapModelEffectsLoadingToProps || ((loadings) => ({ [`${name}Loadings`]: loadings })));
+        return (Component) => {
+          return (props): React.ReactElement => {
+            const value = useModelEffectsLoading(name);
+            const withProps = mapModelEffectsLoadingToProps(value);
+            return (
+              <Component
+                {...withProps}
+                {...props}
+              />
+            );
+          };
+        };
+      };
+      return { useModelEffectsLoading, withModelEffectsLoading };
     },
   };
 };
