@@ -47,7 +47,6 @@ const dispatchPlugin: T.Plugin = {
     },
   },
 
-  // access store.dispatch after store is created
   onStoreCreated(store: any) {
     this.storeDispatch = store.dispatch;
     this.storeGetState = store.getState;

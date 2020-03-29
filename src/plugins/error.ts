@@ -224,5 +224,11 @@ export default (config: ErrorConfig = {}): Plugin => {
         this.dispatch[name][action] = effectWrapper;
       });
     },
+    onStoreCreated(store: any) {
+      function useModelEffectsError(name) {
+        return store.useSelector(state => (state as any).error.effects[name]);
+      };
+      return { useModelEffectsError };
+    },
   };
 };

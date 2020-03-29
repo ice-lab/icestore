@@ -178,5 +178,11 @@ export default (config: LoadingConfig = {}): Plugin => {
         this.dispatch[name][action] = effectWrapper;
       });
     },
+    onStoreCreated(store: any) {
+      function useModelEffectsLoading(name) {
+        return store.useSelector(state => (state as any).loading.effects[name]);
+      };
+      return { useModelEffectsLoading };
+    },
   };
 };
