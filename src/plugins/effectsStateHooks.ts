@@ -1,11 +1,11 @@
-import { Plugin } from '../typings';
+import * as T from '../typings';
 
 /**
  * EffectsStateHooks Plugin
  *
  * Plugin for provide store.useModelEffectsState
  */
-export default (): Plugin => {
+export default (): T.Plugin => {
   return {
     onStoreCreated(store: any) {
       function useModelEffectsState(name) {

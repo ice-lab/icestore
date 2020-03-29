@@ -1,16 +1,16 @@
 import produce from 'immer';
 import { combineReducers, ReducersMapObject } from 'redux';
-import { Action, Models, Plugin } from '../typings';
+import * as T from '../typings';
 
 function combineReducersWithImmer(reducers: ReducersMapObject) {
-  const reducersWithImmer: ReducersMapObject<any, Action<any>> = {};
+  const reducersWithImmer: ReducersMapObject<any, T.Action<any>> = {};
   // reducer must return value because literal don't support immer
 
   Object.keys(reducers).forEach((key) => {
     const reducerFn = reducers[key];
     reducersWithImmer[key] = (state, payload) =>
       typeof state === 'object'
-        ? produce(state, (draft: Models) => {
+        ? produce(state, (draft: T.Models) => {
             const next = reducerFn(draft, payload);
             if (typeof next === 'object') return next;
           })
@@ -21,7 +21,7 @@ function combineReducersWithImmer(reducers: ReducersMapObject) {
 }
 
 // icestore plugin
-const immerPlugin = (): Plugin => ({
+const immerPlugin = (): T.Plugin => ({
   config: {
     redux: {
       combineReducers: combineReducersWithImmer,

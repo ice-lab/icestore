@@ -1,4 +1,4 @@
-import { Plugin } from '../typings';
+import * as T from '../typings';
 import warning from '../utils/warning';
 
 /**
@@ -6,7 +6,7 @@ import warning from '../utils/warning';
  *
  * generates hooks for store
  */
-export default (): Plugin => {
+export default (): T.Plugin => {
   return {
     onStoreCreated(store: any) {
       function useModel(name: string) {

@@ -1,5 +1,5 @@
 import { createSelectorHook, createDispatchHook } from 'react-redux';
-import { Plugin } from '../typings';
+import * as T from '../typings';
 
 interface ReduxHooksConfig {
   context: any;
@@ -10,7 +10,7 @@ interface ReduxHooksConfig {
  *
  * generates redux hooks for store
  */
-export default ({ context }: ReduxHooksConfig): Plugin => {
+export default ({ context }: ReduxHooksConfig): T.Plugin => {
   const useSelector = createSelectorHook(context);
   const useDispatch = createDispatchHook(context);
 

@@ -1,4 +1,4 @@
-import { Validation } from '../typings';
+import * as T from '../typings';
 
 /**
  * validate
@@ -6,7 +6,7 @@ import { Validation } from '../typings';
  * takes an array of arrays of validations and
  * throws if an error occurs
  */
-const validate = (validations: Validation[]): void => {
+const validate = (validations: T.Validation[]): void => {
   if (process.env.NODE_ENV !== 'production') {
     for (const validation of validations) {
       const condition = validation[0];

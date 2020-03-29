@@ -1,4 +1,4 @@
-import { ExtractIcestoreDispatchersFromEffects, Model, Models, Plugin } from '../typings';
+import * as T from '../typings';
 
 export interface LoadingConfig {
   name?: string;
@@ -7,13 +7,13 @@ export interface LoadingConfig {
   asNumber?: boolean;
 }
 
-export interface LoadingState<M extends Models> {
+export interface LoadingState<M extends T.Models> {
   loading: {
     global: boolean;
     models: { [modelName in keyof M]: boolean };
     effects: {
       [modelName in keyof M]: {
-        [effectName in keyof ExtractIcestoreDispatchersFromEffects<M[modelName]['effects']>]: boolean
+        [effectName in keyof T.ExtractIcestoreDispatchersFromEffects<M[modelName]['effects']>]: boolean
       }
     };
   };
@@ -93,7 +93,7 @@ const validateConfig = config => {
   }
 };
 
-export default (config: LoadingConfig = {}): Plugin => {
+export default (config: LoadingConfig = {}): T.Plugin => {
   validateConfig(config);
 
   const loadingModelName = config.name || 'loading';
@@ -101,7 +101,7 @@ export default (config: LoadingConfig = {}): Plugin => {
   const converter =
 		config.asNumber === true ? (cnt: number) => cnt : (cnt: number) => cnt > 0;
 
-  const loading: Model = {
+  const loading: T.Model = {
     name: loadingModelName,
     reducers: {
       hide: createLoadingAction(converter, -1),
@@ -121,7 +121,7 @@ export default (config: LoadingConfig = {}): Plugin => {
         loading,
       },
     },
-    onModel({ name }: Model) {
+    onModel({ name }: T.Model) {
       // do not run dispatch on 'loading' model
       if (name === loadingModelName) {
         return;

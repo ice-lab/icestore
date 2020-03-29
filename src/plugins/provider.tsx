@@ -1,13 +1,13 @@
 import React from 'react';
 import { Provider as ReduxProvider } from 'react-redux';
-import { Plugin } from '../typings';
+import * as T from '../typings';
 import warning from '../utils/warning';
 
 interface ProviderConfig {
   context: any;
 }
 
-export default ({ context }: ProviderConfig): Plugin => {
+export default ({ context }: ProviderConfig): T.Plugin => {
   return {
     onStoreCreated(store: any) {
       const Provider = function(props: { children; initialStates? }) {

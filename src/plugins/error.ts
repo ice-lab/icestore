@@ -1,9 +1,4 @@
-import {
-  ExtractIcestoreDispatchersFromEffects,
-  Model,
-  Models,
-  Plugin,
-} from '../typings';
+import * as T from '../typings';
 
 export interface ErrorConfig {
   name?: string;
@@ -17,13 +12,13 @@ interface IErrorState {
   value: boolean;
 }
 
-export interface ErrorState<M extends Models> {
+export interface ErrorState<M extends T.Models> {
   error: {
     global: IErrorState;
     models: { [modelName in keyof M]: IErrorState };
     effects: {
       [modelName in keyof M]: {
-        [effectName in keyof ExtractIcestoreDispatchersFromEffects<
+        [effectName in keyof T.ExtractIcestoreDispatchersFromEffects<
         M[modelName]['effects']
         >]: IErrorState
       }
@@ -129,7 +124,7 @@ const validateConfig = config => {
   }
 };
 
-export default (config: ErrorConfig = {}): Plugin => {
+export default (config: ErrorConfig = {}): T.Plugin => {
   validateConfig(config);
 
   const errorModelName = config.name || 'error';
@@ -142,7 +137,7 @@ export default (config: ErrorConfig = {}): Plugin => {
         value: cnt.value > 0,
       });
 
-  const error: Model = {
+  const error: T.Model = {
     name: errorModelName,
     reducers: {
       hide: createErrorAction(converter, -1),
@@ -164,7 +159,7 @@ export default (config: ErrorConfig = {}): Plugin => {
         error,
       },
     },
-    onModel({ name }: Model) {
+    onModel({ name }: T.Model) {
       // do not run dispatch on 'error' model
       if (name === errorModelName) {
         return;
