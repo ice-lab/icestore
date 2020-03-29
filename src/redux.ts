@@ -8,8 +8,8 @@ const composeEnhancersWithDevtools = (
   const { disabled, ...options } = devtoolOptions;
   /* istanbul ignore next */
   return !disabled &&
-		typeof window === 'object' &&
-		window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__
+    typeof window === 'object' &&
+    window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__
     ? window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__(options)
     : Redux.compose;
 };
@@ -24,7 +24,7 @@ export default function({
   const combineReducers = redux.combineReducers || Redux.combineReducers;
   const createStore: Redux.StoreCreator = redux.createStore || Redux.createStore;
   const initialState: any =
-		typeof redux.initialState !== 'undefined' ? redux.initialState : {};
+    typeof redux.initialState !== 'undefined' ? redux.initialState : {};
 
   this.reducers = redux.reducers;
 

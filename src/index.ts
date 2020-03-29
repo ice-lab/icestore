@@ -92,7 +92,7 @@ export const createStore = (models: any, initConfig?: any): any => {
     plugins,
     redux: {
       ...redux,
-      middlewares: [thunkMiddleware]
+      middlewares: [thunkMiddleware],
     },
   });
 

@@ -28,7 +28,7 @@ const todos = {
     },
     remove(state, index) {
       state.dataSource.splice(index, 1);
-    }
+    },
   },
   effects: (dispatch) => ({
     add() {

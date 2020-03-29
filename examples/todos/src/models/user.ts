@@ -24,7 +24,7 @@ const user = {
         auth: true,
       });
     },
-  })
+  }),
 };
 
 export default user;

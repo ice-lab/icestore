@@ -96,9 +96,9 @@ export default (initConfig: T.InitConfig & { name: string }): T.Config => {
           ...(plugin.config.redux.middlewares || []),
         ];
         config.redux.combineReducers =
-					config.redux.combineReducers || plugin.config.redux.combineReducers;
+          config.redux.combineReducers || plugin.config.redux.combineReducers;
         config.redux.createStore =
-					config.redux.createStore || plugin.config.redux.createStore;
+          config.redux.createStore || plugin.config.redux.createStore;
       }
     }
   }

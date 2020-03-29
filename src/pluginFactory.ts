@@ -9,18 +9,18 @@ import validate from './utils/validate';
 export default (config: T.Config) => ({
   config,
   /**
-	 * validate
-	 *
-	 * bind validate to the store for easy access
-	 */
+   * validate
+   *
+   * bind validate to the store for easy access
+   */
   validate,
 
   /**
-	 * create plugin
-	 *
-	 * binds plugin properties and functions to an instance of PluginFactorys
-	 * @param plugin
-	 */
+   * create plugin
+   *
+   * binds plugin properties and functions to an instance of PluginFactorys
+   * @param plugin
+   */
   create(plugin: T.Plugin): T.Plugin {
     validate([
       [
@@ -46,9 +46,9 @@ export default (config: T.Config) => ({
     if (plugin.exposed) {
       for (const key of Object.keys(plugin.exposed)) {
         this[key] =
-					typeof plugin.exposed[key] === 'function'
-					  ? plugin.exposed[key].bind(this) // bind functions to plugin class
-					  : Object.create(plugin.exposed[key]); // add exposed to plugin class
+          typeof plugin.exposed[key] === 'function'
+            ? plugin.exposed[key].bind(this) // bind functions to plugin class
+            : Object.create(plugin.exposed[key]); // add exposed to plugin class
       }
     }
     for (const method of ['onModel', 'middleware', 'onStoreCreated']) {

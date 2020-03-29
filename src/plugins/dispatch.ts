@@ -17,22 +17,22 @@ const dispatchPlugin: T.Plugin = {
     },
 
     /**
-		 * dispatch
-		 *
-		 * both a function (dispatch) and an object (dispatch[modelName][actionName])
-		 * @param action T.Action
-		 */
+     * dispatch
+     *
+     * both a function (dispatch) and an object (dispatch[modelName][actionName])
+     * @param action T.Action
+     */
     dispatch(action: T.Action) {
       return this.storeDispatch(action);
     },
 
     /**
-		 * createDispatcher
-		 *
-		 * genereates an action creator for a given model & reducer
-		 * @param modelName string
-		 * @param reducerName string
-		 */
+     * createDispatcher
+     *
+     * genereates an action creator for a given model & reducer
+     * @param modelName string
+     * @param reducerName string
+     */
     createDispatcher(modelName: string, reducerName: string) {
       return async (payload?: any, meta?: any): Promise<any> => {
         const action: T.Action = { type: `${modelName}/${reducerName}` };
