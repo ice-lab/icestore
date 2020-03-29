@@ -1,6 +1,5 @@
 import { createSelectorHook, createDispatchHook } from 'react-redux';
 import { Plugin } from '../typings';
-import warning from '../utils/warning';
 
 interface ReduxHooksConfig {
   context: any;
