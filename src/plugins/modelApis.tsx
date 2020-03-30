@@ -13,29 +13,31 @@ export default (): T.Plugin => {
       // hooks
       function useModel(name: string) {
         const state = useModelState(name);
-        const dispatch = useModelDispatch(name);
-        return [state, dispatch];
+        const dispatchers = useModelDispatchers(name);
+        return [state, dispatchers];
       }
       function useModelState(name: string) {
         return store.useSelector(state => state[name]);
       }
-      function useModelDispatch(name: string) {
+      function useModelDispatchers(name: string) {
         const dispatch = store.useDispatch();
         return dispatch[name];
       }
+
+      // @deprecated
       function useModelActions(name: string) {
-        warning('`useModelActions` is not recommended, please use `useModelDispatch`');
-        return useModelDispatch(name);
+        warning('`useModelActions` is not recommended, please use `useModelDispatchers`');
+        return useModelDispatchers(name);
       }
 
       // other apis
       function getModel(name: string) {
-        return [getModelState(name), getModelDispatch(name)];
+        return [getModelState(name), getModelDispatchers(name)];
       }
       function getModelState(name: string) {
         return store.getState()[name];
       }
-      function getModelDispatch(name: string) {
+      function getModelDispatchers(name: string) {
         return store.dispatch()[name];
       }
       function withModel(name: string, mapModelToProps?: any) {
@@ -55,16 +57,16 @@ export default (): T.Plugin => {
       }
 
       const actionsSuffix = 'Actions';
-      function createWithModelDispatch(fieldSuffix: string = 'Dispatch') {
-        return function withModelActions(name: string, mapModelDispatchToProps?: any) {
+      function createWithModelDispatchers(fieldSuffix: string = 'Dispatchers') {
+        return function withModelDispatchers(name: string, mapModelDispatchersToProps?: any) {
           if (fieldSuffix === actionsSuffix) {
-            warning('`withModelActions` is not recommended, please use `withModelDispatch`');
+            warning('`withModelActions` is not recommended, please use `withModelDispatchers`');
           }
-          mapModelDispatchToProps = (mapModelDispatchToProps || ((dispatch) => ({ [`${name}${fieldSuffix}`]: dispatch })));
+          mapModelDispatchersToProps = (mapModelDispatchersToProps || ((dispatch) => ({ [`${name}${fieldSuffix}`]: dispatch })));
           return (Component) => {
             return (props): React.ReactElement => {
-              const value = useModelActions(name);
-              const withProps = mapModelDispatchToProps(value);
+              const dispatchers = useModelDispatchers(name);
+              const withProps = mapModelDispatchersToProps(dispatchers);
               return (
                 <Component
                   {...withProps}
@@ -79,19 +81,17 @@ export default (): T.Plugin => {
       return {
         useModel,
         useModelState,
-        useModelDispatch,
+        useModelDispatchers,
 
         getModel,
         getModelState,
-        getModelDispatch,
+        getModelDispatchers,
         withModel,
-        withModelDispatch: createWithModelDispatch(),
+        withModelDispatchers: createWithModelDispatchers(),
 
-        // @deprecated
         useModelActions,
-
         // @deprecated
-        withModelActions: createWithModelDispatch(actionsSuffix),
+        withModelActions: createWithModelDispatchers(actionsSuffix),
       };
     },
   };

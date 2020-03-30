@@ -13,7 +13,7 @@ export default (): T.Plugin => {
     onStoreCreated(store: any) {
       function useModelEffectsState(name) {
         warning('`useModelEffectsState` is not recommended, please use `useModelEffectsLoading` and `useModelEffectsError`');
-        const dispatch = store.useModelDispatch(name);
+        const dispatch = store.useModelDispatchers(name);
         const isLoadings = store.useModelEffectsLoading(name);
         const errors = store.useModelEffectsError(name);
 

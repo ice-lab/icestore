@@ -4,9 +4,9 @@ import store from '../store';
 const { useModel } = store;
 
 export default function UserApp() {
-  const [ state, actions ] = useModel('user');
+  const [ state, dispatchers ] = useModel('user');
   const { dataSource, auth, todos } = state;
-  const { login } = actions;
+  const { login } = dispatchers;
   const { name } = dataSource;
 
   useEffect(() => {

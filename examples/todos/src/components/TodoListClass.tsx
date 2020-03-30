@@ -25,13 +25,13 @@ type Props = Assign<CustomProp, PropsWithModel>;
 
 class TodoList extends Component<Props> {
   onRemove = (index) => {
-    const [, actions] = this.props.todos;
-    actions.remove(index);
+    const [, dispatchers] = this.props.todos;
+    dispatchers.remove(index);
   }
 
   onToggle = (index) => {
-    const [, actions] = this.props.todos;
-    actions.toggle(index);
+    const [, dispatchers] = this.props.todos;
+    dispatchers.toggle(index);
   }
 
   render() {
@@ -40,7 +40,7 @@ class TodoList extends Component<Props> {
     const { dataSource } = state;
     return TodoListFn({
       state: { title, dataSource, subTitle: 'Class Component' },
-      actions: { toggle: this.onToggle, remove: this.onRemove },
+      dispatchers: { toggle: this.onToggle, remove: this.onRemove },
       effectsState: todosEffectsState,
     });
   }

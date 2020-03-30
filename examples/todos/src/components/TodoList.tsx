@@ -3,9 +3,9 @@ import store from '../store';
 
 const { useModel, useModelEffectsState } = store;
 
-export function TodoList({ state, actions, effectsState }) {
+export function TodoList({ state, dispatchers, effectsState }) {
   const { title, subTitle, dataSource } = state;
-  const { toggle, remove } = actions;
+  const { toggle, remove } = dispatchers;
 
   return (
     <div>
@@ -37,12 +37,12 @@ export function TodoList({ state, actions, effectsState }) {
 }
 
 export default function({ title }) {
-  const [ state, actions ] = useModel('todos');
+  const [ state, dispatchers ] = useModel('todos');
   const effectsState = useModelEffectsState('todos');
   return TodoList(
     {
       state: { ...state, title, subTitle: 'Function Component' },
-      actions,
+      dispatchers,
       effectsState,
     },
   );

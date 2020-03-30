@@ -7,10 +7,10 @@ const { useModel, useModelEffectsState } = store;
 
 export default function Todos() {
   const todos = useModel('todos');
-  const [ state, actions ] = todos;
+  const [ state, dispatchers ] = todos;
   const effectsState: any = useModelEffectsState('todos');
   const { dataSource } = state;
-  const { refresh } = actions;
+  const { refresh } = dispatchers;
 
   useEffect(() => {
     refresh();

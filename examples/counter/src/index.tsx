@@ -36,8 +36,8 @@ const store = createStore(models);
 // 3️⃣ Consume model
 const { useModel } = store;
 function Counter() {
-  const [ count, actions ] = useModel('counter');
-  const { increment, decrementAsync } = actions;
+  const [ count, dispatchers ] = useModel('counter');
+  const { increment, decrementAsync } = dispatchers;
   return (
     <div>
       <span>{count}</span>
