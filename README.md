@@ -50,10 +50,10 @@ const counter = {
     increment:(prevState) => prevState + 1,
     decrement:(prevState) => prevState - 1,
   },
-  effects: (dispatch) => ({
+  effects: () => ({
     async decrementAsync(payload, rootState) {
       await delay(1000);
-      dispatch.decrement();
+      this.decrement();
     },
   })
 };
