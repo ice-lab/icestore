@@ -208,6 +208,8 @@ export default (config: ErrorConfig = {}): T.Plugin => {
           try {
             return await origEffect(...props);
           } catch (error) {
+            // display error on console
+            console.error(error);
             this.dispatch.error.show({ name, action }, error);
           }
         };

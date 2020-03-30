@@ -94,6 +94,7 @@ import store from '@/store';
 
 function Foo() {
   const actions = store.useModelActions('foo');
+  actions.foo();
   return null;
 }
 ```
@@ -105,6 +106,7 @@ import store from '@/store';
 
 function Foo() {
   const dispatchers = store.useModelDispatchers('foo');
+  dispatchers.foo();
   return null;
 }
 ```
@@ -142,80 +144,6 @@ class TodoList extends Component {
 }
 
 export default withModelDispatchers('todos')(TodoList);
-```
-
-### Use Model Effects State
-
-#### useModelEffectsState
-
-1.2:
-
-```jsx
-import store from '@/store';
-
-function Foo() {
-  const effectsState = store.useModelEffectsState('foo');
-
-  effectsState.foo.isLoading; // boolean
-  effectsState.foo.error; // Error
-  return null;
-}
-```
-
-1.3:
-
-```jsx
-import store from '@/store';
-
-function Foo() {
-  const effectsLoading = store.useModelEffectsLoading('foo');
-  const effectsError = store.useModelEffectsError('foo');
-
-  effectsLoading.foo; // boolean
-
-  effectsError.foo.value; // boolean
-  effectsError.foo.error; // Error
-  return null;
-}
-```
-
-#### withModelEffectsState
-
-1.2:
-
-```jsx
-import store from '@/store';
-const { withModelEffectsState } = store;
-
-class TodoList extends Component {
-  onRemove = (index) => {
-    const effectsState = this.props.todosEffectsState;
-    effectsState.foo.isLoading;
-    effectsState.foo.error;
-  }
-}
-
-export default withModelEffectsState('todos')(TodoList);
-```
-
-1.3:
-
-```jsx
-import compose from 'lodash/fp/compose';
-const { withModelEffectsLoading, withModelEffectsError } = store;
-
-class TodoList extends Component {
-  onRemove = (index) => {
-    const effectsLoading = this.props.todosEffectsLoading;
-    const effectsError = this.props.todosEffectsError;
-    effectsLoading.foo; // boolean
-
-    effectsError.foo.value; // boolean
-    effectsError.foo.error; // Error
-  }
-}
-
-export default compose(withModelEffectsLoading('todos'), withModelEffectsError('todos'))(TodoList);
 ```
 
 ### Types

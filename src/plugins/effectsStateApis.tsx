@@ -3,8 +3,7 @@ import * as T from '../typings';
 import warning from '../utils/warning';
 
 /**
- * @deprecated
- * EffectsStateHooks Plugin
+ * EffectsStateApis Plugin
  *
  * Plugin for provide store.useModelEffectsState
  */
@@ -13,16 +12,15 @@ export default (): T.Plugin => {
     onStoreCreated(store: any) {
       function createUseModelEffectsState(fnName) {
         return function(name) {
-          warning(`\`${fnName}\` API has been detected, please use \`useModelEffectsLoading\` and \`useModelEffectsError\` instead.`);
           const dispatch = store.useModelDispatchers(name);
-          const isLoadings = store.useModelEffectsLoading(name);
-          const errors = store.useModelEffectsError(name);
+          const effectsLoading = store.useModelEffectsLoading ? store.useModelEffectsLoading(name) : {};
+          const effectsError = store.useModelEffectsError ? store.useModelEffectsError(name) : {};
 
           const states = {};
           Object.keys(dispatch).forEach(key => {
             states[key] = {
-              isLoading: isLoadings[key],
-              error: errors[key] ? errors[key].error : null,
+              isLoading: effectsLoading[key],
+              error: effectsError[key] ? effectsError[key].error : null,
             };
           });
           return states;
@@ -35,9 +33,7 @@ export default (): T.Plugin => {
       function createWithModelEffectsState(fieldSuffix: string = 'EffectsState') {
         return function withModelEffectsState(name?: string, mapModelEffectsStateToProps?: any) {
           if (fieldSuffix === actionsSuffix) {
-            warning('`withModelActionsState` API has been detected, please use `withModelEffectsLoading` and `withModelEffectsError` instead.');
-          } else {
-            warning('`withModelEffectsState` API has been detected, please use `withModelEffectsLoading` and `withModelEffectsError` instead.');
+            warning('`withModelActionsState` API has been detected, please use `useModelEffectsState` instead.');
           }
 
           mapModelEffectsStateToProps = (mapModelEffectsStateToProps || ((effectsState) => ({ [`${name}${fieldSuffix}`]: effectsState })));

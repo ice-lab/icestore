@@ -34,9 +34,12 @@ const effectsPlugin: T.Plugin = {
           `Invalid effect (${model.name}/${effectName}). Must be a function`,
         ],
       ]);
+
+      // provide this.reducer() for effects
       this.effects[`${model.name}/${effectName}`] = effects[effectName].bind(
         this.dispatch[model.name],
       );
+
       // add effect to dispatch
       // is assuming dispatch is available already... that the dispatch plugin is in there
       this.dispatch[model.name][effectName] = this.createDispatcher.apply(
