@@ -50,8 +50,14 @@ export const createIcestore = (initConfig: T.InitConfig = {}): T.Icestore => {
  * @param initConfig
  */
 export const createStore = (models: any, initConfig?: any): any => {
-  const { plugins = [], redux = {}, disableImmer, disableLoading, disableError } =
-    initConfig || {};
+  const {
+    disableImmer,
+    disableLoading,
+    disableError,
+    initialState,
+    plugins = [],
+    redux = {},
+  } = initConfig || {};
   const middlewares = redux.middlewares || [];
 
   const context = React.createContext(null);
@@ -90,7 +96,8 @@ export const createStore = (models: any, initConfig?: any): any => {
     plugins,
     redux: {
       ...redux,
-      middlewares: [thunkMiddleware],
+      initialState,
+      middlewares,
     },
   });
 

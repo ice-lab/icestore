@@ -143,6 +143,30 @@ const user = {
 
 #### options
 
+- `initialState` (Object, optional, default=undefined)
+
+  Allows you to hydrate your store with initial state (for example state received from your server in a server rendering context).
+
+  ```jsx
+  import { createStore } from '@ice/store';
+
+  const models = {
+    todo: { state: {}, },
+    user: { state: {}, },
+  };
+
+  const initialState = {
+    todo: {
+      title: 'Foo',
+      done: true,
+    },
+    user: {
+      name: 'Alvin',
+      age: 18,
+    },
+  };
+  createStore(models, { initialState });
+  ```
 - `disableImmer` (boolean, optional, default=false)
 
   If you set this to true, then [immer](https://github.com/immerjs/immer) will be disabled, meaning you can no longer mutate state directly within actions and will instead have to return immutable state as in a standard reducer.
@@ -161,7 +185,7 @@ const user = {
 
 #### Provider
 
-`Provider(props: { children, initialStates })`
+`Provider(props: { children })`
 
 Exposes the store to your React application, so that your components will be able to consume and interact with the store via the hooks.
 
@@ -173,42 +197,6 @@ import { createStore } from '@ice/store';
 const { Provider } = createStore(models);
 ReactDOM.render(
   <Provider>
-    <App />
-  </Provider>,
-  rootEl
-); 
-```
-
-Set initialStates:
-
-```jsx
-import React from 'react';
-import ReactDOM from 'react-dom';
-import { createStore } from '@ice/store';
-
-const models = {
-  todo: {
-    state: {},
-  },
-  user: {
-    state: {},
-  }
-};
-const { Provider } = createStore(models);
-
-const initialStates = {
-  todo: {
-    title: 'Foo',
-    done: true,
-  },
-  user: {
-    name: 'Alvin',
-    age: 18,
-  },
-};
-
-ReactDOM.render(
-  <Provider initialStates={initialStates}>
     <App />
   </Provider>,
   rootEl

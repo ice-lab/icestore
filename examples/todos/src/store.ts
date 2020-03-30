@@ -2,4 +2,14 @@
 import { createStore } from '@ice/store';
 import * as models from './models';
 
-export default createStore(models);
+const initialState = {
+  user: {
+    dataSource: {
+      name: 'Tom',
+    },
+    auth: true,
+    todos: 5,
+  },
+}
+
+export default createStore(models, { initialState });

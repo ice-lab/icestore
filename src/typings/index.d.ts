@@ -135,7 +135,7 @@ export function createIcestore<M extends Models>(
   config: InitConfig<M> | undefined
 ): Icestore<M>
 
-export function createStore(models: any): any;
+export function createStore(models: any, options?: any): any;
 
 export function createModel<S = any, M extends ModelConfig<S> = ModelConfig>(
   model: M
