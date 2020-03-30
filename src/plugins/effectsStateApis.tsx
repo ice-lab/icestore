@@ -26,9 +26,15 @@ export default (): T.Plugin => {
         });
         return states;
       };
+
+      const actionsSuffix = 'ActionsState';
       function createWithModelEffectsState(fieldSuffix: string = 'EffectsState') {
         return function withModelEffectsState(name?: string, mapModelEffectsStateToProps?: any) {
-          warning('`withModelEffectsState` is not recommended, please use `withModelEffectsLoading` and `withModelEffectsError` instead.');
+          if (fieldSuffix === actionsSuffix) {
+            warning('`withModelActionsState` is not recommended, please use `withModelEffectsLoading` and `withModelEffectsError` instead.');
+          } else {
+            warning('`withModelEffectsState` is not recommended, please use `withModelEffectsLoading` and `withModelEffectsError` instead.');
+          }
 
           mapModelEffectsStateToProps = (mapModelEffectsStateToProps || ((effectsState) => ({ [`${name}${fieldSuffix}`]: effectsState })));
           return (Component) => {
@@ -48,7 +54,7 @@ export default (): T.Plugin => {
       return {
         useModelEffectsState,
         withModelEffectsState: createWithModelEffectsState(),
-        withModelActionsState: createWithModelEffectsState('ActionsState'),
+        withModelActionsState: createWithModelEffectsState(actionsSuffix),
       };
     },
   };

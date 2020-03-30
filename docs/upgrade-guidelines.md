@@ -3,6 +3,221 @@ id: upgrade-guidelines
 title: Upgrade Guidelines
 ---
 
+## 1.2 to 1.3
+
+From 1.2 to 1.3 is fully compatible, but we recommend that you use the new API in incremental code.
+We will remove the deprecated API in future versions.
+
+### initialState
+
+1.2:
+
+```jsx
+import store from './store';
+const { Provider } = store;
+
+const initialStates = {
+  foo: {
+  },
+};
+function App() {
+  return (
+    <Provider initialStates={initialStates}>
+      <Todos />
+    </Provider>
+  );
+}
+```
+
+1.3
+
+```js
+import { createStore } from '@ice/store';
+import * as models from './models';
+
+const initialState = {
+  foo: {
+  },
+};
+
+export default createStore(models, { initialState });
+```
+
+### Define Model Effects
+
+1.2:
+
+```js
+const todos = {
+  state: [ { title: 'Testing' } ],
+  reducers: {
+    foo(prevState, payload) {
+    }
+  },
+  effects: {
+    async refresh(state, payload, actions, globalActions) {
+      console.log(state); // [ { title: 'Testing' } ]
+      actions.foo(); // call self actions
+      globalActions.user.foo(); // call another model's action
+    }
+  },
+};
+```
+
+1.3:
+
+```js
+const todos = {
+  state: [ { title: 'Testing' } ],
+  reducers: {
+    foo(prevState, payload) {
+    }
+  },
+  effects: (dispatch) => ({
+    async refresh(payload, rootState) {
+      console.log(rootState.todos); // [ { title: 'Testing' } ]
+      this.foo(); // call self actions
+      dispatch.user.foo(); // call another model's action
+    }
+  }),
+};
+```
+
+### Use Model Actions
+
+#### useModelActions
+
+1.2:
+
+```jsx
+import store from '@/store';
+
+function Foo() {
+  const actions = store.useModelActions('foo');
+  return null;
+}
+```
+
+1.3:
+
+```jsx
+import store from '@/store';
+
+function Foo() {
+  const dispatchers = store.useModelDispatchers('foo');
+  return null;
+}
+```
+
+#### withModelActions
+
+1.2:
+
+```jsx
+import store from '@/store';
+const { withModelActions } = store;
+
+class TodoList extends Component {
+  onRemove = (index) => {
+    const actions = this.props.todosActions;
+    actions.remove(index);
+  }
+}
+
+export default withModelActions('todos')(TodoList);
+```
+
+1.3:
+
+```jsx
+
+import store from '@/store';
+const { withModelDispatchers } = store;
+
+class TodoList extends Component {
+  onRemove = (index) => {
+    const dispatchers = this.props.todosDispatchers;
+    dispatchers.remove(index);
+  }
+}
+
+export default withModelDispatchers('todos')(TodoList);
+```
+
+### Use Model Effects State
+
+#### useModelEffectsState
+
+1.2:
+
+```jsx
+import store from '@/store';
+
+function Foo() {
+  const effectsState = store.useModelEffectsState('foo');
+
+  effectsState.foo.isLoading; // boolean
+  effectsState.foo.error; // Error
+  return null;
+}
+```
+
+1.3:
+
+```jsx
+import store from '@/store';
+
+function Foo() {
+  const effectsLoading = store.useModelEffectsLoading('foo');
+  const effectsError = store.useModelEffectsError('foo');
+
+  effectsLoading.foo; // boolean
+
+  effectsError.foo.value; // boolean
+  effectsError.foo.error; // Error
+  return null;
+}
+```
+
+#### withModelEffectsState
+
+1.2:
+
+```jsx
+import store from '@/store';
+const { withModelEffectsState } = store;
+
+class TodoList extends Component {
+  onRemove = (index) => {
+    const effectsState = this.props.todosEffectsState;
+    effectsState.foo.isLoading;
+    effectsState.foo.error;
+  }
+}
+
+export default withModelEffectsState('todos')(TodoList);
+```
+
+1.3:
+
+```jsx
+import compose from 'lodash/fp/compose';
+const { withModelEffectsLoading, withModelEffectsError } = store;
+
+class TodoList extends Component {
+  onRemove = (index) => {
+    const effectsLoading = this.props.todosEffectsLoading;
+    const effectsError = this.props.todosEffectsError;
+    effectsLoading.foo; // boolean
+
+    effectsError.foo.value; // boolean
+    effectsError.foo.error; // Error
+  }
+}
+
+export default compose(withModelEffectsLoading('todos'), withModelEffectsError('todos'))(TodoList);
+```
+
 ## 0.x to 1.x
 
 ### Define Model
@@ -41,24 +256,20 @@ const store = {
 #### 1.x
 
 ```ts
+import store from '@/store';
 const todos = {
   state: {
     dataSource: [],
   },
   reducers: {
-    update(prevState, payload) {
-      return { ...prevState, ...payload };
+    add(state, todo) {
+      state.dataSource.push(todo);
     },
   },
-  effects: {
-    add(state, todo, actions, globalActions) {
-      const dataSource = [].concat(state.dataSource);
-      dataSource.push(todo);
-      globalActions.user.setTodos(dataSource.length);
-      actions.update({
-        dataSource,
-      });
-    },
+  effects: (dispatch) => ({
+    add() {
+      dispatch.user.setTodos(store.getModelState('todos').dataSource.length);
+    },,
     async refresh(state, payload, actions, globalActions) {
       await delay(2000);
 
@@ -74,12 +285,13 @@ const todos = {
           name: 'angular',
         },
       ];
-      globalActions.user.setTodos(dataSource.length);
-      actions.update({
+      this.update({
         dataSource,
       });
+
+      dispatch.user.setTodos(dataSource.length);
     },
-  },
+  }),
 };
 ```
 

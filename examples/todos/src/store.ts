@@ -10,6 +10,6 @@ const initialState = {
     auth: true,
     todos: 5,
   },
-}
+};
 
 export default createStore(models, { initialState });
