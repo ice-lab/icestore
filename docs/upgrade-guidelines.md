@@ -10,7 +10,7 @@ We will remove the deprecated API in future versions.
 
 ### initialState
 
-1.2:
+#### 1.2
 
 ```jsx
 import store from './store';
@@ -29,7 +29,7 @@ function App() {
 }
 ```
 
-1.3
+#### 1.3
 
 ```js
 import { createStore } from '@ice/store';
@@ -45,7 +45,7 @@ export default createStore(models, { initialState });
 
 ### Define Model Effects
 
-1.2:
+#### 1.2
 
 ```js
 const todos = {
@@ -64,7 +64,7 @@ const todos = {
 };
 ```
 
-1.3:
+#### 1.3
 
 ```js
 const todos = {
@@ -87,7 +87,7 @@ const todos = {
 
 #### useModelActions
 
-1.2:
+#### 1.2
 
 ```jsx
 import store from '@/store';
@@ -98,7 +98,7 @@ function Foo() {
 }
 ```
 
-1.3:
+#### 1.3
 
 ```jsx
 import store from '@/store';
@@ -111,7 +111,7 @@ function Foo() {
 
 #### withModelActions
 
-1.2:
+#### 1.2
 
 ```jsx
 import store from '@/store';
@@ -127,7 +127,7 @@ class TodoList extends Component {
 export default withModelActions('todos')(TodoList);
 ```
 
-1.3:
+#### 1.3
 
 ```jsx
 
