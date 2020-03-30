@@ -11,21 +11,25 @@ import warning from '../utils/warning';
 export default (): T.Plugin => {
   return {
     onStoreCreated(store: any) {
-      function useModelEffectsState(name) {
-        warning('`useModelEffectsState` is not recommended, please use `useModelEffectsLoading` and `useModelEffectsError` instead.');
-        const dispatch = store.useModelDispatchers(name);
-        const isLoadings = store.useModelEffectsLoading(name);
-        const errors = store.useModelEffectsError(name);
+      function createUseModelEffectsState(fnName) {
+        return function(name) {
+          warning(`\`${fnName}\` is not recommended, please use \`useModelEffectsLoading\` and \`useModelEffectsError\` instead.`);
+          const dispatch = store.useModelDispatchers(name);
+          const isLoadings = store.useModelEffectsLoading(name);
+          const errors = store.useModelEffectsError(name);
 
-        const states = {};
-        Object.keys(dispatch).forEach(key => {
-          states[key] = {
-            isLoading: isLoadings[key],
-            error: errors[key] ? errors[key].error : null,
-          };
-        });
-        return states;
-      };
+          const states = {};
+          Object.keys(dispatch).forEach(key => {
+            states[key] = {
+              isLoading: isLoadings[key],
+              error: errors[key] ? errors[key].error : null,
+            };
+          });
+          return states;
+        }
+      }
+
+      const useModelEffectsState = createUseModelEffectsState('useModelEffectsState');
 
       const actionsSuffix = 'ActionsState';
       function createWithModelEffectsState(fieldSuffix: string = 'EffectsState') {
@@ -53,6 +57,7 @@ export default (): T.Plugin => {
       }
       return {
         useModelEffectsState,
+        useModelActionsState: createUseModelEffectsState('useModelActionsState'),
         withModelEffectsState: createWithModelEffectsState(),
         withModelActionsState: createWithModelEffectsState(actionsSuffix),
       };

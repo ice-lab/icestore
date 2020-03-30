@@ -218,6 +218,29 @@ class TodoList extends Component {
 export default compose(withModelEffectsLoading('todos'), withModelEffectsError('todos'))(TodoList);
 ```
 
+### Types
+
+_todo_
+
+## 1.1 to 1.3
+
+From 1.1 to 1.3 is fully compatible, but we recommend that you use the new API in incremental code.
+We will remove the deprecated API in future versions.
+
+### Define Model Actions
+
+_todo_
+
+### Use Model Actions State
+
+#### useModelActionsState
+
+_todo_
+
+#### withModelActionsState
+
+_todo_
+
 ## 0.x to 1.x
 
 ### Define Model
