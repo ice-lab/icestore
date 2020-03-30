@@ -11,9 +11,9 @@ function combineReducersWithImmer(reducers: ReducersMapObject) {
     reducersWithImmer[key] = (state, payload) =>
       typeof state === 'object'
         ? produce(state, (draft: T.Models) => {
-            const next = reducerFn(draft, payload);
-            if (typeof next === 'object') return next;
-          })
+          const next = reducerFn(draft, payload);
+          if (typeof next === 'object') return next;
+        })
         : reducerFn(state, payload);
   });
 
