@@ -10,30 +10,31 @@ import warning from '../utils/warning';
 export default (): T.Plugin => {
   return {
     onStoreCreated(store: any) {
-      function createUseModelEffectsState(fnName) {
-        return function(name) {
-          const dispatch = store.useModelDispatchers(name);
-          const effectsLoading = store.useModelEffectsLoading ? store.useModelEffectsLoading(name) : {};
-          const effectsError = store.useModelEffectsError ? store.useModelEffectsError(name) : {};
+      function useModelEffectsState(name) {
+        const dispatch = store.useModelDispatchers(name);
+        const effectsLoading = store.useModelEffectsLoading ? store.useModelEffectsLoading(name) : {};
+        const effectsError = store.useModelEffectsError ? store.useModelEffectsError(name) : {};
 
-          const states = {};
-          Object.keys(dispatch).forEach(key => {
-            states[key] = {
-              isLoading: effectsLoading[key],
-              error: effectsError[key] ? effectsError[key].error : null,
-            };
-          });
-          return states;
-        };
+        const states = {};
+        Object.keys(dispatch).forEach(key => {
+          states[key] = {
+            isLoading: effectsLoading[key],
+            error: effectsError[key] ? effectsError[key].error : null,
+          };
+        });
+        return states;
+      };
+
+      function useModelActionsState(name) {
+        warning('`useModelActionsState` API has been detected, please use `useModelEffectsState` instead. \n\n\n https://github.com/ice-lab/icestore/blob/master/docs/upgrade-guidelines.md#usemodelactionsstate');
+        return useModelEffectsState(name);
       }
-
-      const useModelEffectsState = createUseModelEffectsState('useModelEffectsState');
 
       const actionsSuffix = 'ActionsState';
       function createWithModelEffectsState(fieldSuffix: string = 'EffectsState') {
-        return function withModelEffectsState(name?: string, mapModelEffectsStateToProps?: any) {
+        return function(name?: string, mapModelEffectsStateToProps?: any) {
           if (fieldSuffix === actionsSuffix) {
-            warning('`withModelActionsState` API has been detected, please use `useModelEffectsState` instead.');
+            warning('`withModelActionsState` API has been detected, please use `withModelEffectsState` instead. \n\n\n https://github.com/ice-lab/icestore/blob/master/docs/upgrade-guidelines.md#withmodelactionsstate');
           }
 
           mapModelEffectsStateToProps = (mapModelEffectsStateToProps || ((effectsState) => ({ [`${name}${fieldSuffix}`]: effectsState })));
@@ -53,7 +54,7 @@ export default (): T.Plugin => {
       }
       return {
         useModelEffectsState,
-        useModelActionsState: createUseModelEffectsState('useModelActionsState'),
+        useModelActionsState,
         withModelEffectsState: createWithModelEffectsState(),
         withModelActionsState: createWithModelEffectsState(actionsSuffix),
       };
