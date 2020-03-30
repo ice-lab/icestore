@@ -222,9 +222,9 @@ export default compose(withModelEffectsLoading('todos'), withModelEffectsError('
 
 _todo_
 
-## 1.1 to 1.3
+## 1.0 to 1.3
 
-From 1.1 to 1.3 is fully compatible, but we recommend that you use the new API in incremental code.
+From 1.0 to 1.3 is fully compatible, but we recommend that you use the new API in incremental code.
 We will remove the deprecated API in future versions.
 
 ### Define Model Actions
