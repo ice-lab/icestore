@@ -14,7 +14,7 @@ export function convertEffects(originModels: any) {
     const model = originModels[name];
     const originEffects = model.effects;
     if (originEffects && !isFunction(originEffects)) {
-      warning('Defining effects as objects is not recommended, please use `{ effects: () => ({ effects: () => {} }) }` instead.');
+      warning('Defining effects as objects has been detected, please use `{ effects: () => ({ effectName: () => {} }) }` instead.');
       model.effects = (dispatch: any) => {
         const effects = {};
         Object.keys(originEffects).forEach(function(key) {
@@ -48,7 +48,7 @@ export function convertActions(originModels: any) {
     const model = originModels[name];
     const actions = model.actions;
     if (actions) {
-      warning('The actions field is no longer recommended for the following reasons: https://github.com/ice-lab/icestore/issues/66');
+      warning('The actions field has been detected, please use `reducers` and `effects` instead.');
       if (!model.reducers) {
         model.reducers = {};
       }

@@ -13,7 +13,7 @@ export default ({ context }: ProviderConfig): T.Plugin => {
       const Provider = function(props: { children; initialStates? }) {
         const { children, initialStates } = props;
         if (initialStates) {
-          warning('initialStates is no longer recommended');
+          warning('`initialStates` API has been detected, please use `createStore(model, { initialState })` instead. \n\n\n https://github.com/ice-lab/icestore/blob/master/docs/upgrade-guidelines.md#initialstate');
           Object.keys(initialStates).forEach(name => {
             const initialState = initialStates[name];
             if (initialState && store.dispatch[name].setState) {

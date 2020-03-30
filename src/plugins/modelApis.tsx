@@ -26,7 +26,7 @@ export default (): T.Plugin => {
 
       // @deprecated
       function useModelActions(name: string) {
-        warning('`useModelActions` is not recommended, please use `useModelDispatchers` instead.');
+        warning('`useModelActions` API has been detected, please use `useModelDispatchers` instead.');
         return useModelDispatchers(name);
       }
 
@@ -60,7 +60,7 @@ export default (): T.Plugin => {
       function createWithModelDispatchers(fieldSuffix: string = 'Dispatchers') {
         return function withModelDispatchers(name: string, mapModelDispatchersToProps?: any) {
           if (fieldSuffix === actionsSuffix) {
-            warning('`withModelActions` is not recommended, please use `withModelDispatchers` instead.');
+            warning('`withModelActions` API has been detected, please use `withModelDispatchers` instead.');
           }
           mapModelDispatchersToProps = (mapModelDispatchersToProps || ((dispatch) => ({ [`${name}${fieldSuffix}`]: dispatch })));
           return (Component) => {
@@ -79,18 +79,22 @@ export default (): T.Plugin => {
       }
 
       return {
+        // Hooks
         useModel,
         useModelState,
         useModelDispatchers,
 
+        // real time
         getModel,
         getModelState,
         getModelDispatchers,
+
+        // Class component support
         withModel,
         withModelDispatchers: createWithModelDispatchers(),
 
-        useModelActions,
         // @deprecated
+        useModelActions,
         withModelActions: createWithModelDispatchers(actionsSuffix),
       };
     },

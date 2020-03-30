@@ -13,7 +13,7 @@ export default (): T.Plugin => {
     onStoreCreated(store: any) {
       function createUseModelEffectsState(fnName) {
         return function(name) {
-          warning(`\`${fnName}\` is not recommended, please use \`useModelEffectsLoading\` and \`useModelEffectsError\` instead.`);
+          warning(`\`${fnName}\` API has been detected, please use \`useModelEffectsLoading\` and \`useModelEffectsError\` instead.`);
           const dispatch = store.useModelDispatchers(name);
           const isLoadings = store.useModelEffectsLoading(name);
           const errors = store.useModelEffectsError(name);
@@ -35,9 +35,9 @@ export default (): T.Plugin => {
       function createWithModelEffectsState(fieldSuffix: string = 'EffectsState') {
         return function withModelEffectsState(name?: string, mapModelEffectsStateToProps?: any) {
           if (fieldSuffix === actionsSuffix) {
-            warning('`withModelActionsState` is not recommended, please use `withModelEffectsLoading` and `withModelEffectsError` instead.');
+            warning('`withModelActionsState` API has been detected, please use `withModelEffectsLoading` and `withModelEffectsError` instead.');
           } else {
-            warning('`withModelEffectsState` is not recommended, please use `withModelEffectsLoading` and `withModelEffectsError` instead.');
+            warning('`withModelEffectsState` API has been detected, please use `withModelEffectsLoading` and `withModelEffectsError` instead.');
           }
 
           mapModelEffectsStateToProps = (mapModelEffectsStateToProps || ((effectsState) => ({ [`${name}${fieldSuffix}`]: effectsState })));
