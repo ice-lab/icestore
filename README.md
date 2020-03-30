@@ -27,7 +27,7 @@
 
 icestore is a lightweight React state management library based on hooks. It has the following core features:
 
-* **Minimal & Familiar API**: No additional learning costs, easy to get started with the knowledge of React Hooks, friendly to Redux users.
+* **Minimal & Familiar API**: No additional learning costs, easy to get started with the knowledge of Redux && React Hooks.
 * **Built in Async Status**: Records loading and error status of async actions, simplifying the rendering logic in the view layer.
 * **Class Component Support**: Make old projects enjoying the fun of lightweight state management with friendly compatibility strategy.
 * **TypeScript Support**: Provide complete type definitions to support intelliSense in VS Code.
@@ -50,12 +50,12 @@ const counter = {
     increment:(prevState) => prevState + 1,
     decrement:(prevState) => prevState - 1,
   },
-  effects: {
-    async decrementAsync(state, payload, actions) {
+  effects: (dispatch) => ({
+    async decrementAsync(payload, rootState) {
       await delay(1000);
-      actions.decrement();
+      dispatch.decrement();
     },
-  }
+  })
 };
 
 const models = {
@@ -68,8 +68,8 @@ const store = createStore(models);
 // 3️⃣ Consume model
 const { useModel } = store;
 function Counter() {
-  const [ count, actions ] = useModel('counter');
-  const { increment, decrementAsync } = actions;
+  const [ count, dispatchers ] = useModel('counter');
+  const { increment, decrementAsync } = dispatchers;
   return (
     <div>
       <span>{count}</span>
@@ -108,6 +108,10 @@ npm install @ice/store --save
 ## Recipes
 
 [docs/recipes](./docs/recipes.md)
+
+## Upgrade Guidelines
+
+[docs/upgrade-guidelines](./docs/upgrade-guidelines.md)
 
 ## Browser Compatibility
 
