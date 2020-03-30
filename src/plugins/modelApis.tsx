@@ -3,7 +3,7 @@ import * as T from '../typings';
 import warning from '../utils/warning';
 
 /**
- * ModelHooks Plugin
+ * ModelApis Plugin
  *
  * generates hooks for store
  */

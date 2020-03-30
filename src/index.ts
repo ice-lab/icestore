@@ -5,8 +5,8 @@ import * as T from './typings';
 import mergeConfig from './utils/mergeConfig';
 import createProviderPlugin from './plugins/provider';
 import createReduxHooksPlugin from './plugins/reduxHooks';
-import createModelHooksPlugin from './plugins/modelHooks';
-import createEffectsStateHooksPlugin from './plugins/effectsStateHooks';
+import createModelApisPlugin from './plugins/modelApis';
+import createEffectsStateApisPlugin from './plugins/effectsStateApis';
 import createImmerPlugin from './plugins/immer';
 import createLoadingPlugin from './plugins/loading';
 import createErrorPlugin from './plugins/error';
@@ -62,8 +62,8 @@ export const createStore = (models: any, initConfig?: any): any => {
   // defaults plugins
   plugins.push(createProviderPlugin({context}));
   plugins.push(createReduxHooksPlugin({context}));
-  plugins.push(createModelHooksPlugin());
-  plugins.push(createEffectsStateHooksPlugin());
+  plugins.push(createModelApisPlugin());
+  plugins.push(createEffectsStateApisPlugin());
 
   const loading = createLoadingPlugin();
   const error = createErrorPlugin();
