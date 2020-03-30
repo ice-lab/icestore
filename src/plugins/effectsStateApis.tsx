@@ -12,7 +12,7 @@ export default (): T.Plugin => {
   return {
     onStoreCreated(store: any) {
       function useModelEffectsState(name) {
-        warning('`useModelEffectsState` is not recommended, please use `useModelEffectsLoading` and `useModelEffectsError`');
+        warning('`useModelEffectsState` is not recommended, please use `useModelEffectsLoading` and `useModelEffectsError` instead.');
         const dispatch = store.useModelDispatchers(name);
         const isLoadings = store.useModelEffectsLoading(name);
         const errors = store.useModelEffectsError(name);
@@ -28,7 +28,7 @@ export default (): T.Plugin => {
       };
       function createWithModelEffectsState(fieldSuffix: string = 'EffectsState') {
         return function withModelEffectsState(name?: string, mapModelEffectsStateToProps?: any) {
-          warning('`withModelEffectsState` is not recommended, please use `withModelEffectsLoading` and `withModelEffectsError`');
+          warning('`withModelEffectsState` is not recommended, please use `withModelEffectsLoading` and `withModelEffectsError` instead.');
 
           mapModelEffectsStateToProps = (mapModelEffectsStateToProps || ((effectsState) => ({ [`${name}${fieldSuffix}`]: effectsState })));
           return (Component) => {

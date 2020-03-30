@@ -13,6 +13,16 @@ export type EffectsState<Effects> = {
   [K in keyof Effects]: EffectState;
 }
 
+export type EffectsLoading<Effects> = {
+  [K in keyof Effects]: boolean;
+}
+export type EffectsError<Effects> = {
+  [K in keyof Effects]: {
+    error: Error;
+    value: number;
+  };
+}
+
 export type ExtractIcestoreStateFromModels<M extends Models> = {
   [modelKey in keyof M]: M[modelKey]['state']
 }
@@ -82,6 +92,8 @@ export type ExtractIcestoreModelFromModel<M extends ModelConfig> = [
   ExtractIcestoreDispatchersFromModel<M>,
 ];
 
+export type ExtractIcestoreEffectsErrorFromModel<M extends ModelConfig> = EffectsError<ExtractIcestoreEffectsFromModel<M>>;
+export type ExtractIcestoreEffectsLoadingFromModel<M extends ModelConfig> = EffectsLoading<ExtractIcestoreEffectsFromModel<M>>;
 export type ExtractIcestoreEffectsStateFromModel<M extends ModelConfig> = EffectsState<ExtractIcestoreEffectsFromModel<M>>;
 
 export type ExtractIcestoreDispatchersFromModel<

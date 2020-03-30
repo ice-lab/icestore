@@ -82,10 +82,10 @@ Be careful the possibility of endless loop problem will arise when methods from 
 ### Example
 
 ```js
-import { useModelActions } from './store';
+import { useModelDispatchers } from './store';
 
 function FunctionComponent() {
-  const actions = useModelActions('name');
+  const actions = useModelDispatchers('name');
   const effectsState = useModelEffectsState('name');
 
   useEffect(() => {
@@ -163,9 +163,9 @@ import compose from 'lodash/fp/compose';
 export default compose(withModel('user'), withModel('todos'))(TodoList);
 ```
 
-### withModelActions & withModelEffectsState
+### withModelDispatchers & withModelEffectsState
 
-You can use `withModelActions` to call only model actions without listening for model changes, also for `withModelEffectsState`.
+You can use `withModelDispatchers` to call only model actions without listening for model changes, also for `withModelEffectsState`.
 
 See [docs/api](./api.md) for more details.
 

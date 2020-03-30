@@ -14,7 +14,7 @@ export function convertEffects(originModels: any) {
     const model = originModels[name];
     const originEffects = model.effects;
     if (originEffects && !isFunction(originEffects)) {
-      warning('Defining effects as objects is not recommended.');
+      warning('Defining effects as objects is not recommended, please use `{ effects: () => ({ effects: () => {} }) }` instead.');
       model.effects = (dispatch: any) => {
         const effects = {};
         Object.keys(originEffects).forEach(function(key) {

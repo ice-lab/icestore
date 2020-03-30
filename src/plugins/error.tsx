@@ -223,7 +223,7 @@ export default (config: ErrorConfig = {}): T.Plugin => {
         return store.useSelector(state => (state as any).error.effects[name]);
       };
       function withModelEffectsError(name?: string, mapModelEffectsErrorToProps?: any) {
-        mapModelEffectsErrorToProps = (mapModelEffectsErrorToProps || ((errors) => ({ [`${name}Errors`]: errors })));
+        mapModelEffectsErrorToProps = (mapModelEffectsErrorToProps || ((errors) => ({ [`${name}EffectsError`]: errors })));
         return (Component) => {
           return (props): React.ReactElement => {
             const value = useModelEffectsError(name);

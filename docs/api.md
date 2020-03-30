@@ -17,10 +17,10 @@ import { createStore } from '@ice/store';
 const { 
   Provider,
   useModel,
-  useModelActions,
+  useModelDispatchers,
   useModelEffectsState,
   withModel,
-  withModelActions,
+  withModelDispatchers,
   withModelEffectsState,
 } = createStore(models);
 ```
@@ -140,15 +140,15 @@ function FunctionComponent() {
 }
 ```
 
-#### useModelActions
+#### useModelDispatchers
 
-`useModelActions(name: string): actions`
+`useModelDispatchers(name: string): actions`
 
 A hook granting your components access to the model actions.
 
 ```js
 function FunctionComponent() {
-  const actions = useModelActions('counter');
+  const actions = useModelDispatchers('counter');
   actions.add(1);
 }
 ```
@@ -161,7 +161,7 @@ A hook granting your components access to the action state of the model.
 
 ```js
 function FunctionComponent() {
-  const actions = useModelActions('counter');
+  const actions = useModelDispatchers('counter');
   const effectsState = useModelEffectsState('counter');
 
   useEffect(() => {
@@ -236,19 +236,19 @@ export default withModel(
 )(TodoList);
 ```
 
-#### withModelActions
+#### withModelDispatchers
 
-`withModelActions(name: string, mapModelActionsToProps?: (actions) => Object = (actions) => ({ [name]: actions }) ): (React.Component) => React.Component`
+`withModelDispatchers(name: string, mapModelActionsToProps?: (actions) => Object = (actions) => ({ [name]: actions }) ): (React.Component) => React.Component`
 
 ```tsx
 import { ModelActionsState, ModelActions } from '@ice/store';
 import todosModel from '@/models/todos';
 import store from '@/store';
 
-const { withModelActions } = store;
+const { withModelDispatchers } = store;
 
 interface Props {
-  todosActions: ModelActions<typeof todosModel>;  // `withModelActions` automatically adds `${modelName}Actions` as the property
+  todosActions: ModelActions<typeof todosModel>;  // `withModelDispatchers` automatically adds `${modelName}Dispatchers` as the property
 }
 
 class TodoList extends Component<Props> {
@@ -259,7 +259,7 @@ class TodoList extends Component<Props> {
   }
 }
 
-export default withModelActions('todos')(TodoList);
+export default withModelDispatchers('todos')(TodoList);
 ```
 
 You can use `mapModelActionsToProps` to set the property as the same way like `mapModelToProps`.

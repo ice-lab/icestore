@@ -3,12 +3,12 @@ import store from '../store';
 // import TodoList from './TodoListClass';
 import TodoList from './TodoList';
 
-const { useModel, useModelEffectsState } = store;
+const { useModel, useModelEffectsLoading } = store;
 
 export default function Todos() {
   const todos = useModel('todos');
   const [ state, dispatchers ] = todos;
-  const effectsState: any = useModelEffectsState('todos');
+  const effectsLoading = useModelEffectsLoading('todos');
   const { dataSource } = state;
   const { refresh } = dispatchers;
 
@@ -21,5 +21,5 @@ export default function Todos() {
   const taskView = dataSource.length ? <TodoList title="Todos" /> : noTaskView;
 
   console.debug('Todos rending... ');
-  return effectsState.refresh.isLoading? loadingView : taskView;
+  return effectsLoading.refresh ? loadingView : taskView;
 }

@@ -184,7 +184,7 @@ export default (config: LoadingConfig = {}): T.Plugin => {
         return store.useSelector(state => (state as any).loading.effects[name]);
       };
       function withModelEffectsLoading(name?: string, mapModelEffectsLoadingToProps?: any) {
-        mapModelEffectsLoadingToProps = (mapModelEffectsLoadingToProps || ((loadings) => ({ [`${name}Loadings`]: loadings })));
+        mapModelEffectsLoadingToProps = (mapModelEffectsLoadingToProps || ((loadings) => ({ [`${name}EffectsLoading`]: loadings })));
         return (Component) => {
           return (props): React.ReactElement => {
             const value = useModelEffectsLoading(name);

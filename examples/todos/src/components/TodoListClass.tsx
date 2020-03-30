@@ -1,19 +1,19 @@
 import { Component } from 'react';
 import { Assign } from 'utility-types';
-import { ExtractIcestoreModelFromModel, ExtractIcestoreEffectsStateFromModel } from '@ice/store';
+import { ExtractIcestoreModelFromModel, ExtractIcestoreEffectsLoadingFromModel } from '@ice/store';
 // import compose from 'lodash/fp/compose';
 import store from '../store';
 import { TodoList as TodoListFn } from './TodoList';
 import todosModel from '../models/todos';
 
-const { withModel, withModelEffectsState } = store;
+const { withModel, withModelEffectsLoading } = store;
 
 interface MapModelToProp {
   todos: ExtractIcestoreModelFromModel<typeof todosModel>;
 }
 
 interface MapModelEffectsStateToProp {
-  todosEffectsState: ExtractIcestoreEffectsStateFromModel<typeof todosModel>;
+  todosEffectsLoading: ExtractIcestoreEffectsLoadingFromModel<typeof todosModel>;
 }
 
 interface CustomProp {
@@ -35,20 +35,20 @@ class TodoList extends Component<Props> {
   }
 
   render() {
-    const { title, todos, todosEffectsState } = this.props;
+    const { title, todos, todosEffectsLoading } = this.props;
     const [ state ] = todos;
     const { dataSource } = state;
     return TodoListFn({
       state: { title, dataSource, subTitle: 'Class Component' },
       dispatchers: { toggle: this.onToggle, remove: this.onRemove },
-      effectsState: todosEffectsState,
+      effectsLoading: todosEffectsLoading,
     });
   }
 }
 
-export default withModelEffectsState('todos')(
+export default withModelEffectsLoading('todos')(
   withModel('todos')(TodoList),
 );
 
 // functional flavor:
-// export default compose(withModelEffectsState('todos'), withModel('todos'))(TodoList);
+// export default compose(withModelEffectsLoading('todos'), withModel('todos'))(TodoList);

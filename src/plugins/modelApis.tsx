@@ -26,7 +26,7 @@ export default (): T.Plugin => {
 
       // @deprecated
       function useModelActions(name: string) {
-        warning('`useModelActions` is not recommended, please use `useModelDispatchers`');
+        warning('`useModelActions` is not recommended, please use `useModelDispatchers` instead.');
         return useModelDispatchers(name);
       }
 
@@ -60,7 +60,7 @@ export default (): T.Plugin => {
       function createWithModelDispatchers(fieldSuffix: string = 'Dispatchers') {
         return function withModelDispatchers(name: string, mapModelDispatchersToProps?: any) {
           if (fieldSuffix === actionsSuffix) {
-            warning('`withModelActions` is not recommended, please use `withModelDispatchers`');
+            warning('`withModelActions` is not recommended, please use `withModelDispatchers` instead.');
           }
           mapModelDispatchersToProps = (mapModelDispatchersToProps || ((dispatch) => ({ [`${name}${fieldSuffix}`]: dispatch })));
           return (Component) => {
