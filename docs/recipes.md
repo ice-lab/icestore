@@ -18,42 +18,32 @@ export default {
     name: '',
     tasks: 0,
   },
-  effects: {
-    async refresh(state, payload, actions) {
+  effects: () => ({
+    async refresh() {
       const data = await fetch('/user');
-      actions.update(data);
+      this.update(data);
     },
-  },
-  reducers: {
-    update(prevState, payload) {
-      return { ...prevState, ...payload };
-    },
-  },
+  }),
 };
 
 // src/models/tasks
 export default {
   state: [],
-  effects: {
-    async refresh(state, payload, actions) {
+  effects: (dispatch) => ({
+    async refresh() {
       const data = await fetch('/tasks');
-      actions.update(data);
+      this.update(data);
     },
-    async add(prevState, task, actions, globalActions) {
+    async add(task) {
       await fetch('/tasks/add', task);
 
       // Retrieve user information after adding tasks
-      await globalActions.user.refresh();
+      await dispatch.user.refresh();
 
       // Retrieve todos after adding tasks
-      await actions.refresh();
+      await this.refresh();
     },
-  },
-  reducers: {
-    update(prevState, payload) {
-      return { ...prevState, ...payload };
-    },
-  },
+  }),
 };
 
 // src/store
@@ -248,21 +238,21 @@ const store = createStore(models, {
 - X: No
 - +: Extra
 
-| | constate | zustand | react-tracked | rematch | icestore |
+| | constate | zustand | react-tracked | icestore |
 | --------| -------- | -------- | -------- | -------- | -------- |
-| Framework | React | React | React | Any,None | React |
-| Simplicity | ★★★★ | ★★★ | ★★★ | ★★★★ | ★★★★★ |
-| Less boilerplate | ★★ | ★★★ | ★★★ | ★★★★ | ★★★★★ |
-| Configurable | ★★★ | ★★★ | ★★★ | ★★★★★ | ★★★ |
-| Shareable State | O | O | O | O | O |
-| Reusable State | O | O | O | O | O |
-| Interactive State | + | + | + | O | O |
-| Class Component | + | + | + | O | O |
-| Function Component | O | O | O | O | O |
-| Async Status | X | X | X | O | O |
-| SSR | O | X | O | O | O |
-| Persist | X | X | X | O | X |
-| Lazy load models | + | + | + | O | O |
-| Centralization | X | X | X | O | O | 
-| Middleware or Plug-in | X | O | X | O | X |
-| Devtools | X | O | X | O | X |
+| Framework | React | React | React | React |
+| Simplicity | ★★★★ | ★★★ | ★★★ | ★★★★ |
+| Less boilerplate | ★★ | ★★★ | ★★★ | ★★★★ |
+| Configurable | ★★★ | ★★★ | ★★★ | ★★★★★ |
+| Shareable State | O | O | O | O |
+| Reusable State | O | O | O | O |
+| Interactive State | + | + | + | O |
+| Class Component | + | + | + | O |
+| Function Component | O | O | O | O |
+| Async Status | X | X | X | O |
+| SSR | O | X | O | O |
+| Persist | X | X | X | O |
+| Lazy load models | + | + | + | O |
+| Centralization | X | X | X | O | 
+| Middleware or Plug-in | X | O | X | O |
+| Devtools | X | O | X | O |
