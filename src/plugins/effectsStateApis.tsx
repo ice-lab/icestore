@@ -24,7 +24,7 @@ export default (): T.Plugin => {
             };
           });
           return states;
-        }
+        };
       }
 
       const useModelEffectsState = createUseModelEffectsState('useModelEffectsState');
