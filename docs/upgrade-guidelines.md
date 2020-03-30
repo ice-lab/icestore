@@ -157,17 +157,95 @@ We will remove the deprecated API in future versions.
 
 ### Define Model Actions
 
-_todo_
+#### 1.0
+
+```js
+const todos = {
+  actions: {
+    increment:(prevState) => prevState + 1,
+    async incrementAsync(state, payload, actions) {
+      await delay(1000);
+      actions.increment();
+    }
+  }
+}
+```
+
+#### 1.3
+
+```js
+const todos = {
+  reducers: {
+    increment:(prevState) => prevState + 1,
+  },
+  effects: () => ({
+    async incrementAsync() {
+      await delay(1000);
+      this.increment();
+    },
+  }),
+}
+```
 
 ### Use Model Actions State
 
 #### useModelActionsState
 
-_todo_
+##### 1.2
+
+```js
+import store from '@/store';
+
+function Foo() {
+  const actionsState = store.useModelActionsState();
+  actionsState.foo.isLoading; // boolean
+  actionsState.foo.error; // Error
+}
+```
+
+##### 1.3
+
+```js
+import store from '@/store';
+
+function Foo() {
+  const effectsState = store.useModelEffectsState();
+  effectsState.foo.isLoading; // boolean
+  effectsState.foo.error; // Error
+}
+```
 
 #### withModelActionsState
 
-_todo_
+##### 1.2
+
+```jsx	
+import store from '@/store';	
+const { withModelActionsState } = store;	
+class TodoList extends Component {	
+  onRemove = (index) => {	
+    const actionsState = this.props.todosActionsState;	
+    actionsState.foo.isLoading;	
+    actionsState.foo.error;	
+  }	
+}	
+export default withModelActionsState('todos')(TodoList);	
+```
+
+##### 1.3
+
+```jsx	
+import store from '@/store';	
+const { withModelEffectsState } = store;	
+class TodoList extends Component {	
+  onRemove = (index) => {	
+    const effectsState = this.props.todosEffectsState;	
+    effectsState.foo.isLoading;	
+    effectsState.foo.error;	
+  }	
+}	
+export default withModelEffectsState('todos')(TodoList);	
+```
 
 ## 0.x to 1.x
 

@@ -14,7 +14,7 @@ export function convertEffects(originModels: any) {
     const model = originModels[name];
     const originEffects = model.effects;
     if (originEffects && !isFunction(originEffects)) {
-      warning('Defining effects as objects has been detected, please use `{ effects: () => ({ effectName: () => {} }) }` instead.');
+      warning('Defining effects as objects has been detected, please use `{ effects: () => ({ effectName: () => {} }) }` instead. \n\n\n https://github.com/ice-lab/icestore/blob/master/docs/upgrade-guidelines.md#define-model-effects');
       model.effects = (dispatch: any) => {
         const effects = {};
         Object.keys(originEffects).forEach(function(key) {

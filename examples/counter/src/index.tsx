@@ -11,17 +11,10 @@ const counter = {
     increment:(prevState) => prevState + 1,
     decrement:(prevState) => prevState - 1,
   },
-  // effects: {
-  //   async decrementAsync(state, payload, actions) {
-  //     console.log('actions', actions);
-  //     await delay(1000);
-  //     actions.decrement();
-  //   },
-  // },
   effects: (dispatch) => ({
     async decrementAsync() {
       await delay(1000);
-      dispatch.counter.decrement();
+      this.decrement();
     },
   }),
 };
