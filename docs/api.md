@@ -15,18 +15,17 @@ The function called to create a store.
 import { createStore } from '@ice/store';
 
 const { 
+  // major apis
   Provider,
   useModel,
+  getModel,
+  withModel,
+
+  // auxiliary apis
   useModelDispatchers,
   useModelEffectsState,
-  useModelEffectsLoading,
-  useModelEffectsError,
-  withModel,
   withModelDispatchers,
   withModelEffectsState,
-  withModelEffectsLoading,
-  withModelEffectsError,
-  getModel,
   getModelState,
   getModelDispatchers,
 } = createStore(models);
@@ -237,54 +236,24 @@ function FunctionComponent() {
 }
 ```
 
-#### useModelDispatchers
+#### getModel
 
-`useModelDispatchers(name: string): dispatchers`
+`getModel(name: string): [ state, dispatchers ]`
 
-A hook granting your components access to the model dispatchers.
-
-```js
-function FunctionComponent() {
-  const dispatchers = useModelDispatchers('counter');
-  dispatchers.add(1);
-}
-```
-
-#### useModelEffectsLoading
-
-`useModelEffectsLoading(name: string): { [actionName: string]: boolean } `
-
-A hook granting your components access to the action loading state of the model.
+A API granting you access to the model instance.
 
 ```js
+import { useCallback } from 'react';
+import store from '@/store';
+
 function FunctionComponent() {
-  const dispatchers = useModelDispatchers('counter');
-  const effectsLoading = useModelEffectsLoading('counter');
-
-  useEffect(() => {
-    dispatchers.fetch();
-  }, []);
-
-  effectsLoading.fetch; // boolean
-}
-```
-
-#### useModelEffectsError
-
-`useModelEffectsError(name: string): { [actionName: string]: { error: Error; value: boolean;}} `
-
-A hook granting your components access to the action error state of the model.
-
-```js
-function FunctionComponent() {
-  const dispatchers = useModelDispatchers('counter');
-  const effectsError = useModelEffectsError('counter');
-
-  useEffect(() => {
-    dispatchers.fetch();
-  }, []);
-
-  effectsError.fetch.error; // Error
+  const memoizedCallback = useCallback(
+    () => {
+      const [state] = store.getModel('foo');
+      doSomething(a, b, state);
+    },
+    [a, b],
+  );
 }
 ```
 
@@ -349,6 +318,57 @@ export default withModel(
     customKey: model,
   })
 )(TodoList);
+```
+
+#### useModelDispatchers
+
+`useModelDispatchers(name: string): dispatchers`
+
+A hook granting your components access to the model dispatchers.
+
+```js
+function FunctionComponent() {
+  const dispatchers = useModelDispatchers('counter');
+  dispatchers.add(1);
+}
+```
+
+#### useModelEffectsLoading
+
+`useModelEffectsLoading(name: string): { [actionName: string]: boolean } `
+
+A hook granting your components access to the action loading state of the model.
+
+```js
+function FunctionComponent() {
+  const dispatchers = useModelDispatchers('counter');
+  const effectsLoading = useModelEffectsLoading('counter');
+
+  useEffect(() => {
+    dispatchers.fetch();
+  }, []);
+
+  effectsLoading.fetch; // boolean
+}
+```
+
+#### useModelEffectsError
+
+`useModelEffectsError(name: string): { [actionName: string]: { error: Error; value: boolean;}} `
+
+A hook granting your components access to the action error state of the model.
+
+```js
+function FunctionComponent() {
+  const dispatchers = useModelDispatchers('counter');
+  const effectsError = useModelEffectsError('counter');
+
+  useEffect(() => {
+    dispatchers.fetch();
+  }, []);
+
+  effectsError.fetch.error; // Error
+}
 ```
 
 #### withModelDispatchers
@@ -435,11 +455,11 @@ export default withModelEffectsError('todos')(TodoList);
 
 You can use `mapModelEffectsErrorToProps` to set the property as the same way like `mapModelToProps`.
 
-#### getModel
+#### getModelState
 
-`getModel(name: string): [ state, dispatchers ]`
+`getModelState(name: string): state`
 
-A API granting you access to the model instance.
+A API granting you access to the model state.
 
 ```js
 import { useCallback } from 'react';
@@ -448,8 +468,8 @@ import store from '@/store';
 function FunctionComponent() {
   const memoizedCallback = useCallback(
     () => {
-      const [state] = store.getModel('foo');
-      doSomething(a, b, state);
+      const state = store.getModelState('foo');
+      something(a, state);
     },
     [a, b],
   );
@@ -471,27 +491,6 @@ function FunctionComponent() {
     () => {
       const dispatchers = store.getModelDispatchers('foo');
       dispatchers.foo(a, b);
-    },
-    [a, b],
-  );
-}
-```
-
-#### getModelState
-
-`getModelState(name: string): state`
-
-A API granting you access to the model state.
-
-```js
-import { useCallback } from 'react';
-import store from '@/store';
-
-function FunctionComponent() {
-  const memoizedCallback = useCallback(
-    () => {
-      const state = store.getModelState('foo');
-      something(a, state);
     },
     [a, b],
   );

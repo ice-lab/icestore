@@ -238,7 +238,7 @@ const store = createStore(models, {
 - X: No
 - +: Extra
 
-| | constate | zustand | react-tracked | icestore |
+| constate | zustand | react-tracked | icestore |
 | --------| -------- | -------- | -------- | -------- | -------- |
 | Framework | React | React | React | React |
 | Simplicity | ★★★★ | ★★★ | ★★★ | ★★★★ |

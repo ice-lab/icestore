@@ -1,6 +1,6 @@
 # icestore
 
-> Lightweight state management solution based on React Hooks.
+> Simple and friendly state for React.
 
 [![NPM version](https://img.shields.io/npm/v/@ice/store.svg?style=flat)](https://npmjs.org/package/@ice/store)
 [![Package Quality](https://npm.packagequality.com/shield/@ice%2Fstore.svg)](https://packagequality.com/#?package=@ice/store)
@@ -25,7 +25,7 @@
 
 ## Introduction
 
-icestore is a lightweight React state management library based on hooks. It has the following core features:
+icestore is a simple and friendly state management library for React. It has the following core features:
 
 * **Minimal & Familiar API**: No additional learning costs, easy to get started with the knowledge of Redux && React Hooks.
 * **Built in Async Status**: Records loading and error status of async actions, simplifying the rendering logic in the view layer.
@@ -51,7 +51,7 @@ const counter = {
     decrement:(prevState) => prevState - 1,
   },
   effects: () => ({
-    async decrementAsync(payload, rootState) {
+    async decrementAsync() {
       await delay(1000);
       this.decrement();
     },
