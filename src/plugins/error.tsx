@@ -19,7 +19,7 @@ export interface ErrorState<M extends T.Models> {
     models: { [modelName in keyof M]: IErrorState };
     effects: {
       [modelName in keyof M]: {
-        [effectName in keyof T.ExtractIcestoreDispatchersFromEffects<
+        [effectName in keyof T.ExtractIModelDispatchersFromEffects<
         M[modelName]['effects']
         >]: IErrorState
       }

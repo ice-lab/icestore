@@ -1,6 +1,6 @@
 import { Component } from 'react';
 import { Assign } from 'utility-types';
-import { ExtractIcestoreModelFromModel, ExtractIcestoreEffectsLoadingFromModel } from '@ice/store';
+import { ExtractIModelFromModelConfig, ExtractIModelEffectsLoadingFromModelConfig } from '@ice/store';
 // import compose from 'lodash/fp/compose';
 import store from '../store';
 import { TodoList as TodoListFn } from './TodoList';
@@ -9,11 +9,11 @@ import todosModel from '../models/todos';
 const { withModel, withModelEffectsLoading } = store;
 
 interface MapModelToProp {
-  todos: ExtractIcestoreModelFromModel<typeof todosModel>;
+  todos: ExtractIModelFromModelConfig<typeof todosModel>;
 }
 
 interface MapModelEffectsStateToProp {
-  todosEffectsLoading: ExtractIcestoreEffectsLoadingFromModel<typeof todosModel>;
+  todosEffectsLoading: ExtractIModelEffectsLoadingFromModelConfig<typeof todosModel>;
 }
 
 interface CustomProp {

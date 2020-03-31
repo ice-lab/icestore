@@ -290,12 +290,12 @@ function FunctionComponent() {
 Use withModel to connect the model and class component:
 
 ```jsx
-import { ExtractIcestoreModelFromModel } from '@ice/store';
+import { ExtractIModelFromModelConfig } from '@ice/store';
 import todosModel from '@/models/todos';
 import store from '@/store';
 
 interface Props {
-  todos: ExtractIcestoreModelFromModel<typeof todosModel>; // `withModel` automatically adds the name of the model as the property
+  todos: ExtractIModelFromModelConfig<typeof todosModel>; // `withModel` automatically adds the name of the model as the property
 }
 
 class TodoList extends Component<Props> {
@@ -315,7 +315,7 @@ export default withModel('counter')(TodoList);
 use `mapModelToProps` to set the property:
 
 ```tsx
-import { ExtractIcestoreModelFromModel } from '@ice/store';
+import { ExtractIModelFromModelConfig } from '@ice/store';
 import todosModel from '@/models/todos';
 import store from '@/store';
 
@@ -323,7 +323,7 @@ const { withModel } = store;
 
 interface Props {
   title: string;
-  customKey: ExtractIcestoreModelFromModel<typeof todosModel>;
+  customKey: ExtractIModelFromModelConfig<typeof todosModel>;
 }
 
 class TodoList extends Component<Props> {
@@ -351,14 +351,14 @@ export default withModel(
 `withModelDispatchers(name: string, mapModelDispatchersToProps?: (dispatchers) => Object = (dispatchers) => ({ [name]: dispatchers }) ): (React.Component) => React.Component`
 
 ```tsx
-import { ExtractIcestoreDispatchersFromModel } from '@ice/store';
+import { ExtractIModelDispatchersFromModelConfig } from '@ice/store';
 import todosModel from '@/models/todos';
 import store from '@/store';
 
 const { withModelDispatchers } = store;
 
 interface Props {
-  todosDispatchers: ExtractIcestoreDispatchersFromModel<typeof todosModel>;  // `withModelDispatchers` automatically adds `${modelName}Dispatchers` as the property
+  todosDispatchers: ExtractIModelDispatchersFromModelConfig<typeof todosModel>;  // `withModelDispatchers` automatically adds `${modelName}Dispatchers` as the property
 }
 
 class TodoList extends Component<Props> {
@@ -379,14 +379,14 @@ You can use `mapModelDispatchersToProps` to set the property as the same way lik
 `withModelEffectsLoading(name: string, mapModelEffectsLoadingToProps?: (effectsLoading) => Object = (effectsLoading) => ({ [name]: effectsLoading }) ): (React.Component) => React.Component`
 
 ```tsx
-import { ExtractIcestoreEffectsLoadingFromModel } from '@ice/store';
+import { ExtractIModelEffectsLoadingFromModelConfig } from '@ice/store';
 import todosModel from '@/models/todos';
 import store from '@/store';
 
 const { withModelEffectsLoading } = store;
 
 interface Props {
-  todosEffectsLoading: ExtractIcestoreEffectsLoadingFromModel<typeof todosModel>; // `todosEffectsLoading` automatically adds `${modelName}EffectsLoading` as the property
+  todosEffectsLoading: ExtractIModelEffectsLoadingFromModelConfig<typeof todosModel>; // `todosEffectsLoading` automatically adds `${modelName}EffectsLoading` as the property
 }
 
 class TodoList extends Component<Props> {
@@ -407,14 +407,14 @@ You can use `mapModelEffectsLoadingToProps` to set the property as the same way 
 `withModelEffectsError(name: string, mapModelEffectsErrorToProps?: (effectsError) => Object = (effectsError) => ({ [name]: effectsError }) ): (React.Component) => React.Component`
 
 ```tsx
-import { ExtractIcestoreEffectsErrorFromModel } from '@ice/store';
+import { ExtractIModelEffectsErrorFromModelConfig } from '@ice/store';
 import todosModel from '@/models/todos';
 import store from '@/store';
 
 const { withModelEffectsError } = store;
 
 interface Props {
-  todosEffectsError: ExtractIcestoreEffectsErrorFromModel<typeof todosModel>; // `todosEffectsError` automatically adds `${modelName}EffectsError` as the property
+  todosEffectsError: ExtractIModelEffectsErrorFromModelConfig<typeof todosModel>; // `todosEffectsError` automatically adds `${modelName}EffectsError` as the property
 }
 
 class TodoList extends Component<Props> {

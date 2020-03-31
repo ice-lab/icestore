@@ -31,7 +31,7 @@ export type IcestoreRootState<M extends Models> = ExtractIcestoreStateFromModels
 M
 >
 
-export type ExtractIcestoreDispatcherAsyncFromEffect<
+export type ExtractIModelDispatcherAsyncFromEffect<
   E
 > = E extends () => Promise<infer R>
   ? IcestoreDispatcherAsync<void, void, R>
@@ -41,25 +41,25 @@ export type ExtractIcestoreDispatcherAsyncFromEffect<
       ? IcestoreDispatcherAsync<P, M, R>
       : IcestoreDispatcherAsync<any, any, any>
 
-export type ExtractIcestoreDispatchersFromEffectsObject<
+export type ExtractIModelDispatchersFromEffectsObject<
   effects extends ModelEffects<any>
 > = {
-  [effectKey in keyof effects]: ExtractIcestoreDispatcherAsyncFromEffect<
+  [effectKey in keyof effects]: ExtractIModelDispatcherAsyncFromEffect<
   effects[effectKey]
   >
 }
 
-export type ExtractIcestoreDispatchersFromEffects<
+export type ExtractIModelDispatchersFromEffects<
   effects extends ModelConfig['effects']
 > = effects extends ((...args: any[]) => infer R)
   ? R extends ModelEffects<any>
-    ? ExtractIcestoreDispatchersFromEffectsObject<R>
+    ? ExtractIModelDispatchersFromEffectsObject<R>
     : {}
   : effects extends ModelEffects<any>
-    ? ExtractIcestoreDispatchersFromEffectsObject<effects>
+    ? ExtractIModelDispatchersFromEffectsObject<effects>
     : {}
 
-export type ExtractIcestoreDispatcherFromReducer<R> = R extends () => any
+export type ExtractIModelDispatcherFromReducer<R> = R extends () => any
   ? IcestoreDispatcher<void, void>
   : R extends (state: infer S) => infer S
     ? IcestoreDispatcher<void, void>
@@ -69,40 +69,40 @@ export type ExtractIcestoreDispatcherFromReducer<R> = R extends () => any
         ? IcestoreDispatcher<P, M>
         : IcestoreDispatcher<any, any>
 
-export type ExtractIcestoreDispatchersFromReducersObject<
+export type ExtractIModelDispatchersFromReducersObject<
   reducers extends ModelReducers<any>
 > = {
-  [reducerKey in keyof reducers]: ExtractIcestoreDispatcherFromReducer<
+  [reducerKey in keyof reducers]: ExtractIModelDispatcherFromReducer<
   reducers[reducerKey]
   >
 }
 
-export type ExtractIcestoreDispatchersFromReducers<
+export type ExtractIModelDispatchersFromReducers<
   reducers extends ModelConfig['reducers']
-> = ExtractIcestoreDispatchersFromReducersObject<reducers & {}>
+> = ExtractIModelDispatchersFromReducersObject<reducers & {}>
 
-export type ExtractIcestoreStateFromModel<M extends ModelConfig> = PropType<M, 'state'>;
+export type ExtractIModelStateFromModelConfig<M extends ModelConfig> = PropType<M, 'state'>;
 
-export type ExtractIcestoreEffectsFromModel<M extends ModelConfig> = PropType<M, 'effects'>;
+export type ExtractIModelEffectsFromModelConfig<M extends ModelConfig> = PropType<M, 'effects'>;
 
-export type ExtractIcestoreReducersFromModel<M extends ModelConfig> = PropType<M, 'reducers'>;
+export type ExtractIModelReducersFromModelConfig<M extends ModelConfig> = PropType<M, 'reducers'>;
 
-export type ExtractIcestoreModelFromModel<M extends ModelConfig> = [
-  ExtractIcestoreStateFromModel<M>,
-  ExtractIcestoreDispatchersFromModel<M>,
+export type ExtractIModelFromModelConfig<M extends ModelConfig> = [
+  ExtractIModelStateFromModelConfig<M>,
+  ExtractIModelDispatchersFromModelConfig<M>,
 ];
 
-export type ExtractIcestoreEffectsErrorFromModel<M extends ModelConfig> = EffectsError<ExtractIcestoreEffectsFromModel<M>>;
-export type ExtractIcestoreEffectsLoadingFromModel<M extends ModelConfig> = EffectsLoading<ExtractIcestoreEffectsFromModel<M>>;
-export type ExtractIcestoreEffectsStateFromModel<M extends ModelConfig> = EffectsState<ExtractIcestoreEffectsFromModel<M>>;
+export type ExtractIModelEffectsErrorFromModelConfig<M extends ModelConfig> = EffectsError<ExtractIModelEffectsFromModelConfig<M>>;
+export type ExtractIModelEffectsLoadingFromModelConfig<M extends ModelConfig> = EffectsLoading<ExtractIModelEffectsFromModelConfig<M>>;
+export type ExtractIModelEffectsStateFromModelConfig<M extends ModelConfig> = EffectsState<ExtractIModelEffectsFromModelConfig<M>>;
 
-export type ExtractIcestoreDispatchersFromModel<
+export type ExtractIModelDispatchersFromModelConfig<
   M extends ModelConfig
-> = ExtractIcestoreDispatchersFromReducers<ExtractIcestoreReducersFromModel<M>> &
-ExtractIcestoreDispatchersFromEffects<ExtractIcestoreEffectsFromModel<M>>
+> = ExtractIModelDispatchersFromReducers<ExtractIModelReducersFromModelConfig<M>> &
+ExtractIModelDispatchersFromEffects<ExtractIModelEffectsFromModelConfig<M>>
 
 export type ExtractIcestoreDispatchersFromModels<M extends Models> = {
-  [modelKey in keyof M]: ExtractIcestoreDispatchersFromModel<M[modelKey]>
+  [modelKey in keyof M]: ExtractIModelDispatchersFromModelConfig<M[modelKey]>
 }
 
 export type IcestoreDispatcher<P = void, M = void> = ([P] extends [void]
@@ -143,33 +143,33 @@ export interface Icestore<
   subscribe(listener: () => void): Redux.Unsubscribe;
 }
 
-export interface Store<
+export interface PresetIcestore<
   M extends Models = Models,
   A extends Action = Action,
 > extends Icestore<M, A> {
-  useModelEffectsState<K extends keyof M>(name: K): ExtractIcestoreEffectsStateFromModel<M[K]>;
+  useModelEffectsState<K extends keyof M>(name: K): ExtractIModelEffectsStateFromModelConfig<M[K]>;
   withModelEffectsState<
     K extends keyof M,
-    F extends (effectsState: ExtractIcestoreEffectsStateFromModel<M[K]>) => Record<string, any>
+    F extends (effectsState: ExtractIModelEffectsStateFromModelConfig<M[K]>) => Record<string, any>
   >(name?: K, mapModelEffectsStateToProps?: F):
     <R extends ReturnType<typeof mapModelEffectsStateToProps>, P extends R>(Component: React.ComponentType<P>) =>
       (props: Optionalize<P, R>) => React.ReactElement;
-  useModelEffectsError<K extends keyof M>(name: K): ExtractIcestoreEffectsErrorFromModel<M[K]>;
+  useModelEffectsError<K extends keyof M>(name: K): ExtractIModelEffectsErrorFromModelConfig<M[K]>;
   withModelEffectsError<
     K extends keyof M,
-    F extends (effectsError: ExtractIcestoreEffectsErrorFromModel<M[K]>) => Record<string, any>
+    F extends (effectsError: ExtractIModelEffectsErrorFromModelConfig<M[K]>) => Record<string, any>
   >(name?: K, mapModelEffectsErrorToProps?: F): any;
-  useModelEffectsLoading<K extends keyof M>(name: K): ExtractIcestoreEffectsLoadingFromModel<M[K]>;
+  useModelEffectsLoading<K extends keyof M>(name: K): ExtractIModelEffectsLoadingFromModelConfig<M[K]>;
   withModelEffectsError<
     K extends keyof M,
-    F extends (effectsLoading: ExtractIcestoreEffectsLoadingFromModel<M[K]>) => Record<string, any>
+    F extends (effectsLoading: ExtractIModelEffectsLoadingFromModelConfig<M[K]>) => Record<string, any>
   >(name?: K, mapModelEffectsLoadingToProps?: F): any;
-  useModel<K extends keyof M>(name: K): ExtractIcestoreModelFromModel<M[K]>;
-  useModelState<K extends keyof M>(name: K): ExtractIcestoreStateFromModel<M[K]>;
-  useModelDispatchers<K extends keyof M>(name: K): ExtractIcestoreDispatchersFromModel<M[K]>;
-  getModel<K extends keyof M>(name: K): ExtractIcestoreModelFromModel<M[K]>;
-  getModelState<K extends keyof M>(): ExtractIcestoreStateFromModel<M[K]>;
-  getModelDispatchers<K extends keyof M>(): ExtractIcestoreDispatchersFromModel<M[K]>;
+  useModel<K extends keyof M>(name: K): ExtractIModelFromModelConfig<M[K]>;
+  useModelState<K extends keyof M>(name: K): ExtractIModelStateFromModelConfig<M[K]>;
+  useModelDispatchers<K extends keyof M>(name: K): ExtractIModelDispatchersFromModelConfig<M[K]>;
+  getModel<K extends keyof M>(name: K): ExtractIModelFromModelConfig<M[K]>;
+  getModelState<K extends keyof M>(): ExtractIModelStateFromModelConfig<M[K]>;
+  getModelDispatchers<K extends keyof M>(): ExtractIModelDispatchersFromModelConfig<M[K]>;
   withModel<K extends keyof M>(name: K): any;
   withModelDispatchers<K extends keyof M>(name: K): any;
   Provider: ({ children }: {

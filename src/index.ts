@@ -49,7 +49,7 @@ export const init = <M extends T.Models>(initConfig: T.InitConfig<M> = {}): T.Ic
  * @param models
  * @param initConfig
  */
-export const createStore = <M extends T.Models>(models: M, initConfig?: T.CreateStoreConfig<M>): T.Store<M> => {
+export const createStore = <M extends T.Models>(models: M, initConfig?: T.CreateStoreConfig<M>): T.PresetIcestore<M> => {
   const {
     disableImmer,
     disableLoading,
@@ -101,7 +101,7 @@ export const createStore = <M extends T.Models>(models: M, initConfig?: T.Create
     },
   });
 
-  return store as T.Store<M>;
+  return store as T.PresetIcestore<M>;
 };
 
 export default createStore;
