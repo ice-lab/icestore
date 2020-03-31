@@ -93,13 +93,13 @@ export type ExtractIModelFromModelConfig<M extends ModelConfig> = [
 ];
 
 export type ExtractIModelEffectsErrorFromModelConfig<M extends ModelConfig> = EffectsError<
-  ExtractIModelDispatchersFromEffects<ExtractIModelEffectsFromModelConfig<M>>
+ExtractIModelDispatchersFromEffects<ExtractIModelEffectsFromModelConfig<M>>
 >;
 export type ExtractIModelEffectsLoadingFromModelConfig<M extends ModelConfig> = EffectsLoading<
-  ExtractIModelDispatchersFromEffects<ExtractIModelEffectsFromModelConfig<M>>
+ExtractIModelDispatchersFromEffects<ExtractIModelEffectsFromModelConfig<M>>
 >;
 export type ExtractIModelEffectsStateFromModelConfig<M extends ModelConfig> = EffectsState<
-  ExtractIModelDispatchersFromEffects<ExtractIModelEffectsFromModelConfig<M>>
+ExtractIModelDispatchersFromEffects<ExtractIModelEffectsFromModelConfig<M>>
 >;
 
 export type ExtractIModelDispatchersFromModelConfig<
@@ -155,8 +155,8 @@ export interface EffectsErrorPluginAPI<M extends Models = Models> {
     K extends keyof M,
     F extends (effectsError: ExtractIModelEffectsErrorFromModelConfig<M[K]>) => Record<string, any>
   >(name: K, mapModelEffectsErrorToProps?: F):
-    <R extends ReturnType<typeof mapModelEffectsErrorToProps>, P extends R>(Component: React.ComponentType<P>) =>
-      (props: Optionalize<P, R>) => React.ReactElement;
+  <R extends ReturnType<F>, P extends R>(Component: React.ComponentType<P>) =>
+  (props: Optionalize<P, R>) => React.ReactElement;
 }
 
 export interface EffectsLoadingPluginAPI<M extends Models = Models> {
@@ -165,8 +165,8 @@ export interface EffectsLoadingPluginAPI<M extends Models = Models> {
     K extends keyof M,
     F extends (effectsLoading: ExtractIModelEffectsLoadingFromModelConfig<M[K]>) => Record<string, any>
   >(name: K, mapModelEffectsLoadingToProps?: F):
-    <R extends ReturnType<typeof mapModelEffectsLoadingToProps>, P extends R>(Component: React.ComponentType<P>) =>
-      (props: Optionalize<P, R>) => React.ReactElement;
+  <R extends ReturnType<F>, P extends R>(Component: React.ComponentType<P>) =>
+  (props: Optionalize<P, R>) => React.ReactElement;
 }
 
 export interface UseModelEffectsState<M extends Models> {
@@ -178,8 +178,8 @@ export interface WithModelEffectsState<M extends Models> {
     K extends keyof M,
     F extends (effectsState: ExtractIModelEffectsStateFromModelConfig<M[K]>) => Record<string, any>
   >(name: K, mapModelEffectsStateToProps?: F):
-    <R extends ReturnType<typeof mapModelEffectsStateToProps>, P extends R>(Component: React.ComponentType<P>) =>
-      (props: Optionalize<P, R>) => React.ReactElement;
+  <R extends ReturnType<F>, P extends R>(Component: React.ComponentType<P>) =>
+  (props: Optionalize<P, R>) => React.ReactElement;
 }
 
 export interface EffectsStatePluginAPI<M extends Models = Models> {
@@ -198,8 +198,8 @@ export interface WithModelDispatchers<M extends Models = Models> {
     K extends keyof M,
     F extends (model: ExtractIModelDispatchersFromModelConfig<M[K]>) => Record<string, any>
   >(name: K, mapModelDispatchersToProps?: F):
-    <R extends ReturnType<typeof mapModelDispatchersToProps>, P extends R>(Component: React.ComponentType<P>) =>
-    (props: Optionalize<P, R>) => React.ReactElement;
+  <R extends ReturnType<F>, P extends R>(Component: React.ComponentType<P>) =>
+  (props: Optionalize<P, R>) => React.ReactElement;
 }
 
 export interface ModelPluginAPI<M extends Models = Models> {
@@ -214,8 +214,8 @@ export interface ModelPluginAPI<M extends Models = Models> {
     K extends keyof M,
     F extends (model: ExtractIModelFromModelConfig<M[K]>) => Record<string, any>
   >(name: K, mapModelToProps?: F):
-    <R extends ReturnType<typeof mapModelToProps>, P extends R>(Component: React.ComponentType<P>) =>
-    (props: Optionalize<P, R>) => React.ReactElement;
+  <R extends ReturnType<F>, P extends R>(Component: React.ComponentType<P>) =>
+  (props: Optionalize<P, R>) => React.ReactElement;
   withModelDispatchers: WithModelDispatchers<M>;
   withModelActions: WithModelDispatchers<M>;
 }
@@ -230,11 +230,11 @@ export type PresetIcestore<
   M extends Models = Models,
   A extends Action = Action,
 > = Icestore<M, A> &
-  ModelPluginAPI<M> &
-  ProviderPluginAPI &
-  EffectsLoadingPluginAPI<M> &
-  EffectsErrorPluginAPI<M> &
-  EffectsStatePluginAPI<M>;
+ModelPluginAPI<M> &
+ProviderPluginAPI &
+EffectsLoadingPluginAPI<M> &
+EffectsErrorPluginAPI<M> &
+EffectsStatePluginAPI<M>;
 
 export interface Action<P = any, M = any> {
   type: string;
