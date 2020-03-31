@@ -46,7 +46,7 @@ class TodoList extends Component<Props> {
   }
 }
 
-export default withModelEffectsLoading('todos')(
+export default withModelEffectsLoading('todos')<PropsWithModel, Props>(
   withModel('todos')(TodoList),
 );
 

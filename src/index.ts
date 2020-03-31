@@ -49,7 +49,7 @@ export const init = <M extends T.Models>(initConfig: T.InitConfig<M> = {}): T.Ic
  * @param models
  * @param initConfig
  */
-export const createStore = <M extends T.Models>(models: M, initConfig?: T.CreateStoreConfig<M>): T.PresetIcestore<M> => {
+export const createStore = <M extends T.Models, C extends T.CreateStoreConfig<M>>(models: M, initConfig?: C): T.PresetIcestore<M> => {
   const {
     disableImmer,
     disableLoading,
@@ -69,7 +69,6 @@ export const createStore = <M extends T.Models>(models: M, initConfig?: T.Create
   plugins.push(createProviderPlugin({context}));
   plugins.push(createReduxHooksPlugin({context}));
   plugins.push(createModelApisPlugin());
-  plugins.push(createEffectsStateApisPlugin());
 
   const loading = createLoadingPlugin();
   const error = createErrorPlugin();
@@ -82,6 +81,9 @@ export const createStore = <M extends T.Models>(models: M, initConfig?: T.Create
   }
   if (!disableError) {
     plugins.push(error);
+  }
+  if (!disableLoading || !disableError) {
+    plugins.push(createEffectsStateApisPlugin());
   }
 
   // compatibility handling
@@ -105,3 +107,4 @@ export const createStore = <M extends T.Models>(models: M, initConfig?: T.Create
 };
 
 export default createStore;
+export * from './types';

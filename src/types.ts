@@ -1,3 +1,4 @@
+import { Assign } from 'utility-types';
 import * as Redux from 'redux';
 
 export type Optionalize<T extends K, K> = Omit<T, keyof K>;
@@ -92,9 +93,15 @@ export type ExtractIModelFromModelConfig<M extends ModelConfig> = [
   ExtractIModelDispatchersFromModelConfig<M>,
 ];
 
-export type ExtractIModelEffectsErrorFromModelConfig<M extends ModelConfig> = EffectsError<ExtractIModelEffectsFromModelConfig<M>>;
-export type ExtractIModelEffectsLoadingFromModelConfig<M extends ModelConfig> = EffectsLoading<ExtractIModelEffectsFromModelConfig<M>>;
-export type ExtractIModelEffectsStateFromModelConfig<M extends ModelConfig> = EffectsState<ExtractIModelEffectsFromModelConfig<M>>;
+export type ExtractIModelEffectsErrorFromModelConfig<M extends ModelConfig> = EffectsError<
+  ExtractIModelDispatchersFromEffects<ExtractIModelEffectsFromModelConfig<M>>
+>;
+export type ExtractIModelEffectsLoadingFromModelConfig<M extends ModelConfig> = EffectsLoading<
+  ExtractIModelDispatchersFromEffects<ExtractIModelEffectsFromModelConfig<M>>
+>;
+export type ExtractIModelEffectsStateFromModelConfig<M extends ModelConfig> = EffectsState<
+  ExtractIModelDispatchersFromEffects<ExtractIModelEffectsFromModelConfig<M>>
+>;
 
 export type ExtractIModelDispatchersFromModelConfig<
   M extends ModelConfig
@@ -143,39 +150,72 @@ export interface Icestore<
   subscribe(listener: () => void): Redux.Unsubscribe;
 }
 
-export interface PresetIcestore<
-  M extends Models = Models,
-  A extends Action = Action,
-> extends Icestore<M, A> {
-  useModelEffectsState<K extends keyof M>(name: K): ExtractIModelEffectsStateFromModelConfig<M[K]>;
-  withModelEffectsState<
-    K extends keyof M,
-    F extends (effectsState: ExtractIModelEffectsStateFromModelConfig<M[K]>) => Record<string, any>
-  >(name?: K, mapModelEffectsStateToProps?: F):
-    <R extends ReturnType<typeof mapModelEffectsStateToProps>, P extends R>(Component: React.ComponentType<P>) =>
-      (props: Optionalize<P, R>) => React.ReactElement;
+export interface EffectsErrorPluginAPI<M extends Models = Models> {
   useModelEffectsError<K extends keyof M>(name: K): ExtractIModelEffectsErrorFromModelConfig<M[K]>;
   withModelEffectsError<
     K extends keyof M,
     F extends (effectsError: ExtractIModelEffectsErrorFromModelConfig<M[K]>) => Record<string, any>
-  >(name?: K, mapModelEffectsErrorToProps?: F): any;
+  >(name: K, mapModelEffectsErrorToProps?: F):
+    <R extends ReturnType<typeof mapModelEffectsErrorToProps>, P extends R>(Component: React.ComponentType<P>) =>
+      (props: Optionalize<P, R>) => React.ReactElement;
+}
+
+export interface EffectsLoadingPluginAPI<M extends Models = Models> {
   useModelEffectsLoading<K extends keyof M>(name: K): ExtractIModelEffectsLoadingFromModelConfig<M[K]>;
-  withModelEffectsError<
+  withModelEffectsLoading<
     K extends keyof M,
     F extends (effectsLoading: ExtractIModelEffectsLoadingFromModelConfig<M[K]>) => Record<string, any>
-  >(name?: K, mapModelEffectsLoadingToProps?: F): any;
+  >(name: K, mapModelEffectsLoadingToProps?: F):
+    <R extends ReturnType<typeof mapModelEffectsLoadingToProps>, P extends R>(Component: React.ComponentType<P>) =>
+      (props: Optionalize<P, R>) => React.ReactElement;
+}
+
+export interface EffectsStatePluginAPI<M extends Models = Models> {
+  useModelEffectsState<K extends keyof M>(name: K): ExtractIModelEffectsStateFromModelConfig<M[K]>;
+  withModelEffectsState<
+    K extends keyof M,
+    F extends (effectsState: ExtractIModelEffectsStateFromModelConfig<M[K]>) => Record<string, any>
+  >(name: K, mapModelEffectsStateToProps?: F):
+    <R extends ReturnType<typeof mapModelEffectsStateToProps>, P extends R>(Component: React.ComponentType<P>) =>
+      (props: Optionalize<P, R>) => React.ReactElement;
+}
+
+export interface ModelPluginAPI<M extends Models = Models> {
   useModel<K extends keyof M>(name: K): ExtractIModelFromModelConfig<M[K]>;
   useModelState<K extends keyof M>(name: K): ExtractIModelStateFromModelConfig<M[K]>;
   useModelDispatchers<K extends keyof M>(name: K): ExtractIModelDispatchersFromModelConfig<M[K]>;
   getModel<K extends keyof M>(name: K): ExtractIModelFromModelConfig<M[K]>;
-  getModelState<K extends keyof M>(): ExtractIModelStateFromModelConfig<M[K]>;
-  getModelDispatchers<K extends keyof M>(): ExtractIModelDispatchersFromModelConfig<M[K]>;
-  withModel<K extends keyof M>(name: K): any;
-  withModelDispatchers<K extends keyof M>(name: K): any;
+  getModelState<K extends keyof M>(name: K): ExtractIModelStateFromModelConfig<M[K]>;
+  getModelDispatchers<K extends keyof M>(name: K): ExtractIModelDispatchersFromModelConfig<M[K]>;
+  withModel<
+    K extends keyof M,
+    F extends (model: ExtractIModelFromModelConfig<M[K]>) => Record<string, any>
+  >(name: K, mapModelToProps?: F):
+    <R extends ReturnType<typeof mapModelToProps>, P extends R>(Component: React.ComponentType<P>) =>
+    (props: Optionalize<P, R>) => React.ReactElement;
+  withModelDispatchers<
+    K extends keyof M,
+    F extends (model: ExtractIModelDispatchersFromModelConfig<M[K]>) => Record<string, any>
+  >(name: K, mapModelDispatchersToProps?: F):
+    <R extends ReturnType<typeof mapModelDispatchersToProps>, P extends R>(Component: React.ComponentType<P>) =>
+    (props: Optionalize<P, R>) => React.ReactElement;
+}
+
+export interface ProviderPluginAPI {
   Provider: ({ children }: {
     children: any;
   }) => JSX.Element;
 }
+
+export type PresetIcestore<
+  M extends Models = Models,
+  A extends Action = Action,
+> = Icestore<M, A> &
+  ModelPluginAPI<M> &
+  ProviderPluginAPI &
+  EffectsLoadingPluginAPI<M> &
+  EffectsErrorPluginAPI<M> &
+  EffectsStatePluginAPI<M>;
 
 export interface Action<P = any, M = any> {
   type: string;
@@ -280,12 +320,14 @@ export interface InitConfig<M extends Models = Models> {
   redux?: InitConfigRedux;
 }
 
-export interface CreateStoreConfig<M extends Models = Models> extends InitConfig<M> {
+export interface PrsetConfig {
   disableImmer?: boolean;
   disableLoading?: boolean;
   disableError?: boolean;
-  initialState?: boolean;
+  initialState?: any;
 }
+
+export type CreateStoreConfig<M extends Models = Models> = Assign<InitConfig<M>, PrsetConfig>;
 
 export interface Config<M extends Models = Models> extends InitConfig {
   name: string;
