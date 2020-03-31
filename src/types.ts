@@ -1,4 +1,3 @@
-import { Assign } from 'utility-types';
 import * as Redux from 'redux';
 
 export type Optionalize<T extends K, K> = Omit<T, keyof K>;
@@ -347,7 +346,7 @@ export interface PrsetConfig {
   initialState?: any;
 }
 
-export type CreateStoreConfig<M extends Models = Models> = Assign<InitConfig<M>, PrsetConfig>;
+export type CreateStoreConfig<M extends Models = Models> = InitConfig<M> & PrsetConfig;
 
 export interface Config<M extends Models = Models> extends InitConfig {
   name: string;
