@@ -146,7 +146,7 @@ export interface Icestore<
 export interface Store<
   M extends Models = Models,
   A extends Action = Action,
-> extends Icestore {
+> extends Icestore<M, A> {
   useModelEffectsState<K extends keyof M>(name: K): ExtractIcestoreEffectsStateFromModel<M[K]>;
   withModelEffectsState<
     K extends keyof M,
@@ -280,7 +280,7 @@ export interface InitConfig<M extends Models = Models> {
   redux?: InitConfigRedux;
 }
 
-export interface CreateStoreConfig<M extends Models = Models> extends InitConfig {
+export interface CreateStoreConfig<M extends Models = Models> extends InitConfig<M> {
   disableImmer?: boolean;
   disableLoading?: boolean;
   disableError?: boolean;
