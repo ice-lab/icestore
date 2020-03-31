@@ -1,5 +1,5 @@
 /* tslint-disable member-ordering */
-import * as T from '../typings';
+import * as T from '../types';
 
 /**
  * Effects Plugin

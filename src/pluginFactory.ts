@@ -1,4 +1,4 @@
-import * as T from './typings';
+import * as T from './types';
 import validate from './utils/validate';
 
 /**

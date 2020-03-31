@@ -1,6 +1,6 @@
 import React from 'react';
 import { Provider as ReduxProvider } from 'react-redux';
-import * as T from '../typings';
+import * as T from '../types';
 import warning from '../utils/warning';
 
 interface ProviderConfig {

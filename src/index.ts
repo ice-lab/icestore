@@ -1,7 +1,7 @@
 import React from 'react';
 import thunkMiddleware from 'redux-thunk';
 import Icestore from './icestore';
-import * as T from './typings';
+import * as T from './types';
 import mergeConfig from './utils/mergeConfig';
 import createProviderPlugin from './plugins/provider';
 import createReduxHooksPlugin from './plugins/reduxHooks';
@@ -35,7 +35,7 @@ let count = 0;
  * generates a Icestore with a set configuration
  * @param config
  */
-export const createIcestore = (initConfig: T.InitConfig = {}): T.Icestore => {
+export const createIcestore = <M extends T.Models>(initConfig: T.InitConfig<M> = {}): T.Icestore<M> => {
   const name = initConfig.name || count.toString();
   count += 1;
   const config: T.Config = mergeConfig({ ...initConfig, name });

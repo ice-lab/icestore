@@ -1,4 +1,4 @@
-import * as T from '../typings';
+import * as T from '../types';
 import validate from './validate';
 
 const merge = (original: any, next: any): any => {

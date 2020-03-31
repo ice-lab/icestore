@@ -1,5 +1,5 @@
 import React from 'react';
-import * as T from '../typings';
+import * as T from '../types';
 import warning from '../utils/warning';
 
 /**

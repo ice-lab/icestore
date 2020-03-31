@@ -3,10 +3,8 @@
   "version": "1.3.0",
   "description": "Lightweight React state management library based on react hooks",
   "main": "lib/index.js",
-	"types": "src/typings/index.d.ts",
   "files": [
-    "lib",
-		"src/typings/index.d.ts"
+    "lib"
   ],
   "repository": {
     "type": "git",

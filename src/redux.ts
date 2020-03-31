@@ -1,5 +1,5 @@
 import * as Redux from 'redux';
-import * as T from './typings';
+import * as T from './types';
 import isListener from './utils/isListener';
 
 const composeEnhancersWithDevtools = (
@@ -60,7 +60,7 @@ export default function({
       : (state: any, action: T.Action) =>
         combinedReducer(modelBaseReducer(state, action), action);
   };
-  
+
   // initialize model reducers
   for (const model of models) {
     this.createModelReducer(model);

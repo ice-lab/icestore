@@ -2,7 +2,7 @@ import pluginFactory from './pluginFactory';
 import dispatchPlugin from './plugins/dispatch';
 import effectsPlugin from './plugins/effects';
 import createRedux from './redux';
-import * as T from './typings';
+import * as T from './types';
 import validate from './utils/validate';
 
 const corePlugins: T.Plugin[] = [dispatchPlugin, effectsPlugin];

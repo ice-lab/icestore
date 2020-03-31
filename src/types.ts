@@ -1,7 +1,5 @@
 import * as Redux from 'redux';
 
-export as namespace icestore;
-
 export type PropType<TObj, TProp extends keyof TObj> = TObj[TProp];
 
 export interface EffectState {
@@ -130,22 +128,6 @@ export type IcestoreDispatch<M extends Models | void = void> = (M extends Models
 	  }) &
 (IcestoreDispatcher | IcestoreDispatcherAsync) &
 (Redux.Dispatch<any>) // for library compatability
-
-export function createIcestore<M extends Models>(
-  config: InitConfig<M> | undefined
-): Icestore<M>
-
-export function createStore(models: any, options?: any): any;
-
-export function createModel<S = any, M extends ModelConfig<S> = ModelConfig>(
-  model: M
-): M
-
-export namespace icestore {
-  export function createIcestore<M extends Models>(
-    config: InitConfig<M> | undefined
-  ): Icestore<M>
-}
 
 export interface Icestore<
   M extends Models = Models,

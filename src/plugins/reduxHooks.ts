@@ -1,5 +1,5 @@
 import { createSelectorHook, createDispatchHook } from 'react-redux';
-import * as T from '../typings';
+import * as T from '../types';
 
 interface ReduxHooksConfig {
   context: any;
