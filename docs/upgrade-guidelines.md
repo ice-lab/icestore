@@ -148,7 +148,15 @@ export default withModelDispatchers('todos')(TodoList);
 
 ### Types
 
-_todo_
+1.2 => 1.3
+
+- ConfigPropTypeState => ExtractIModelStateFromModelConfig
+- ConfigPropTypeEffects => ExtractIModelEffectsFromModelConfig
+- ConfigPropTypeReducers => ExtractIModelReducersFromModelConfig
+- ModelEffects => ExtractIModelDispatchersFromEffects
+- ModelActions => ExtractIModelDispatchersFromModelConfig
+- ModelEffectsState => ExtractIModelEffectsStateFromModelConfig
+- UseModelValue => ExtractIModelFromModelConfig
 
 ## 1.0 to 1.3
 
