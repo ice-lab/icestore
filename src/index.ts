@@ -35,7 +35,7 @@ let count = 0;
  * generates a Icestore with a set configuration
  * @param config
  */
-export const createIcestore = <M extends T.Models>(initConfig: T.InitConfig<M> = {}): T.Icestore<M> => {
+export const init = <M extends T.Models>(initConfig: T.InitConfig<M> = {}): T.Icestore<M> => {
   const name = initConfig.name || count.toString();
   count += 1;
   const config: T.Config = mergeConfig({ ...initConfig, name });
@@ -49,7 +49,7 @@ export const createIcestore = <M extends T.Models>(initConfig: T.InitConfig<M> =
  * @param models
  * @param initConfig
  */
-export const createStore = (models: any, initConfig?: any): any => {
+export const createStore = <M extends T.Models>(models: M, initConfig?: T.CreateStoreConfig<M>): T.Store<M> => {
   const {
     disableImmer,
     disableLoading,
@@ -91,7 +91,7 @@ export const createStore = (models: any, initConfig?: any): any => {
     ),
   );
 
-  const store = createIcestore({
+  const store = init({
     models: wrappedModels,
     plugins,
     redux: {
@@ -101,7 +101,7 @@ export const createStore = (models: any, initConfig?: any): any => {
     },
   });
 
-  return store;
+  return store as T.Store<M>;
 };
 
 export default createStore;

@@ -32,7 +32,7 @@ export default (): T.Plugin => {
 
       const actionsSuffix = 'ActionsState';
       function createWithModelEffectsState(fieldSuffix: string = 'EffectsState') {
-        return function(name?: string, mapModelEffectsStateToProps?: any) {
+        return function(name: string, mapModelEffectsStateToProps?) {
           if (fieldSuffix === actionsSuffix) {
             warning('`withModelActionsState` API has been detected, please use `withModelEffectsState` instead. \n\n\n https://github.com/ice-lab/icestore/blob/master/docs/upgrade-guidelines.md#withmodelactionsstate');
           }

@@ -1,5 +1,7 @@
 import * as Redux from 'redux';
 
+export type Optionalize<T extends K, K> = Omit<T, keyof K>;
+
 export type PropType<TObj, TProp extends keyof TObj> = TObj[TProp];
 
 export interface EffectState {
@@ -141,6 +143,40 @@ export interface Icestore<
   subscribe(listener: () => void): Redux.Unsubscribe;
 }
 
+export interface Store<
+  M extends Models = Models,
+  A extends Action = Action,
+> extends Icestore {
+  useModelEffectsState<K extends keyof M>(name: K): ExtractIcestoreEffectsStateFromModel<M[K]>;
+  withModelEffectsState<
+    K extends keyof M,
+    F extends (effectsState: ExtractIcestoreEffectsStateFromModel<M[K]>) => Record<string, any>
+  >(name?: K, mapModelEffectsStateToProps?: F):
+    <R extends ReturnType<typeof mapModelEffectsStateToProps>, P extends R>(Component: React.ComponentType<P>) =>
+      (props: Optionalize<P, R>) => React.ReactElement;
+  useModelEffectsError<K extends keyof M>(name: K): ExtractIcestoreEffectsErrorFromModel<M[K]>;
+  withModelEffectsError<
+    K extends keyof M,
+    F extends (effectsError: ExtractIcestoreEffectsErrorFromModel<M[K]>) => Record<string, any>
+  >(name?: K, mapModelEffectsErrorToProps?: F): any;
+  useModelEffectsLoading<K extends keyof M>(name: K): ExtractIcestoreEffectsLoadingFromModel<M[K]>;
+  withModelEffectsError<
+    K extends keyof M,
+    F extends (effectsLoading: ExtractIcestoreEffectsLoadingFromModel<M[K]>) => Record<string, any>
+  >(name?: K, mapModelEffectsLoadingToProps?: F): any;
+  useModel<K extends keyof M>(name: K): ExtractIcestoreModelFromModel<M[K]>;
+  useModelState<K extends keyof M>(name: K): ExtractIcestoreStateFromModel<M[K]>;
+  useModelDispatchers<K extends keyof M>(name: K): ExtractIcestoreDispatchersFromModel<M[K]>;
+  getModel<K extends keyof M>(name: K): ExtractIcestoreModelFromModel<M[K]>;
+  getModelState<K extends keyof M>(): ExtractIcestoreStateFromModel<M[K]>;
+  getModelDispatchers<K extends keyof M>(): ExtractIcestoreDispatchersFromModel<M[K]>;
+  withModel<K extends keyof M>(name: K): any;
+  withModelDispatchers<K extends keyof M>(name: K): any;
+  Provider: ({ children }: {
+    children: any;
+  }) => JSX.Element;
+}
+
 export interface Action<P = any, M = any> {
   type: string;
   payload?: P;
@@ -244,6 +280,13 @@ export interface InitConfig<M extends Models = Models> {
   redux?: InitConfigRedux;
 }
 
+export interface CreateStoreConfig<M extends Models = Models> extends InitConfig {
+  disableImmer?: boolean;
+  disableLoading?: boolean;
+  disableError?: boolean;
+  initialState?: boolean;
+}
+
 export interface Config<M extends Models = Models> extends InitConfig {
   name: string;
   models: M;
@@ -272,12 +315,6 @@ export interface ConfigRedux {
   ) => Redux.Reducer<any, Action>;
   createStore?: Redux.StoreCreator;
   devtoolOptions?: DevtoolOptions;
-}
-
-export interface IcestoreClass {
-  config: Config;
-  models: Model[];
-  addModel(model: Model): void;
 }
 
 declare global {

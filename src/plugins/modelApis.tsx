@@ -10,7 +10,7 @@ import warning from '../utils/warning';
 export default (): T.Plugin => {
   return {
     onStoreCreated(store: any) {
-      // hooks
+      // hooks  
       function useModel(name: string) {
         const state = useModelState(name);
         const dispatchers = useModelDispatchers(name);
@@ -40,7 +40,7 @@ export default (): T.Plugin => {
       function getModelDispatchers(name: string) {
         return store.dispatch()[name];
       }
-      function withModel(name: string, mapModelToProps?: any) {
+      function withModel(name: string, mapModelToProps?) {
         mapModelToProps = (mapModelToProps || ((model) => ({ [name]: model })));
         return (Component) => {
           return (props): React.ReactElement => {
@@ -58,7 +58,7 @@ export default (): T.Plugin => {
 
       const actionsSuffix = 'Actions';
       function createWithModelDispatchers(fieldSuffix: string = 'Dispatchers') {
-        return function withModelDispatchers(name: string, mapModelDispatchersToProps?: any) {
+        return function withModelDispatchers(name: string, mapModelDispatchersToProps?) {
           if (fieldSuffix === actionsSuffix) {
             warning('`withModelActions` API has been detected, please use `withModelDispatchers` instead. \n\n\n https://github.com/ice-lab/icestore/blob/master/docs/upgrade-guidelines.md#withmodelactions');
           }
