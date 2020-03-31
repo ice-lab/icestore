@@ -9,6 +9,7 @@ export default function Todos() {
   const todos = useModel('todos');
   const [ state, dispatchers ] = todos;
   const effectsLoading = useModelEffectsLoading('todos');
+
   const { dataSource } = state;
   const { refresh } = dispatchers;
 

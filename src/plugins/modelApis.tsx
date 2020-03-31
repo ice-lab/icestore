@@ -10,7 +10,7 @@ import warning from '../utils/warning';
 export default (): T.Plugin => {
   return {
     onStoreCreated(store: any) {
-      // hooks  
+      // hooks
       function useModel(name: string) {
         const state = useModelState(name);
         const dispatchers = useModelDispatchers(name);
@@ -24,7 +24,6 @@ export default (): T.Plugin => {
         return dispatch[name];
       }
 
-      // @deprecated
       function useModelActions(name: string) {
         warning('`useModelActions` API has been detected, please use `useModelDispatchers` instead. \n\n\n https://github.com/ice-lab/icestore/blob/master/docs/upgrade-guidelines.md#usemodelactions');
         return useModelDispatchers(name);

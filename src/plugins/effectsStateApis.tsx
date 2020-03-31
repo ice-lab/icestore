@@ -54,8 +54,10 @@ export default (): T.Plugin => {
       }
       return {
         useModelEffectsState,
-        useModelActionsState,
         withModelEffectsState: createWithModelEffectsState(),
+
+        // @deprecated
+        useModelActionsState,
         withModelActionsState: createWithModelEffectsState(actionsSuffix),
       };
     },

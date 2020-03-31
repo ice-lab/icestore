@@ -170,9 +170,12 @@ export interface EffectsLoadingPluginAPI<M extends Models = Models> {
       (props: Optionalize<P, R>) => React.ReactElement;
 }
 
-export interface EffectsStatePluginAPI<M extends Models = Models> {
-  useModelEffectsState<K extends keyof M>(name: K): ExtractIModelEffectsStateFromModelConfig<M[K]>;
-  withModelEffectsState<
+export interface UseModelEffectsState<M extends Models> {
+  <K extends keyof M>(name: K): ExtractIModelEffectsStateFromModelConfig<M[K]>;
+}
+
+export interface WithModelEffectsState<M extends Models> {
+  <
     K extends keyof M,
     F extends (effectsState: ExtractIModelEffectsStateFromModelConfig<M[K]>) => Record<string, any>
   >(name: K, mapModelEffectsStateToProps?: F):
@@ -180,10 +183,31 @@ export interface EffectsStatePluginAPI<M extends Models = Models> {
       (props: Optionalize<P, R>) => React.ReactElement;
 }
 
+export interface EffectsStatePluginAPI<M extends Models = Models> {
+  useModelEffectsState: UseModelEffectsState<M>;
+  useModelActionsState: UseModelEffectsState<M>;
+  withModelEffectsState: WithModelEffectsState<M>;
+  withModelActionsState: WithModelEffectsState<M>;
+}
+
+export interface UseModelDispatchers<M extends Models = Models> {
+  <K extends keyof M>(name: K): ExtractIModelDispatchersFromModelConfig<M[K]>;
+}
+
+export interface WithModelDispatchers<M extends Models = Models> {
+  <
+    K extends keyof M,
+    F extends (model: ExtractIModelDispatchersFromModelConfig<M[K]>) => Record<string, any>
+  >(name: K, mapModelDispatchersToProps?: F):
+    <R extends ReturnType<typeof mapModelDispatchersToProps>, P extends R>(Component: React.ComponentType<P>) =>
+    (props: Optionalize<P, R>) => React.ReactElement;
+}
+
 export interface ModelPluginAPI<M extends Models = Models> {
   useModel<K extends keyof M>(name: K): ExtractIModelFromModelConfig<M[K]>;
   useModelState<K extends keyof M>(name: K): ExtractIModelStateFromModelConfig<M[K]>;
-  useModelDispatchers<K extends keyof M>(name: K): ExtractIModelDispatchersFromModelConfig<M[K]>;
+  useModelDispatchers: UseModelDispatchers<M>;
+  useModelActions: UseModelDispatchers<M>;
   getModel<K extends keyof M>(name: K): ExtractIModelFromModelConfig<M[K]>;
   getModelState<K extends keyof M>(name: K): ExtractIModelStateFromModelConfig<M[K]>;
   getModelDispatchers<K extends keyof M>(name: K): ExtractIModelDispatchersFromModelConfig<M[K]>;
@@ -193,12 +217,8 @@ export interface ModelPluginAPI<M extends Models = Models> {
   >(name: K, mapModelToProps?: F):
     <R extends ReturnType<typeof mapModelToProps>, P extends R>(Component: React.ComponentType<P>) =>
     (props: Optionalize<P, R>) => React.ReactElement;
-  withModelDispatchers<
-    K extends keyof M,
-    F extends (model: ExtractIModelDispatchersFromModelConfig<M[K]>) => Record<string, any>
-  >(name: K, mapModelDispatchersToProps?: F):
-    <R extends ReturnType<typeof mapModelDispatchersToProps>, P extends R>(Component: React.ComponentType<P>) =>
-    (props: Optionalize<P, R>) => React.ReactElement;
+  withModelDispatchers: WithModelDispatchers<M>;
+  withModelActions: WithModelDispatchers<M>;
 }
 
 export interface ProviderPluginAPI {
