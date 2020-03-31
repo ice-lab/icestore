@@ -75,11 +75,11 @@ Be careful the possibility of endless loop problem will arise when methods from 
 import { useModelDispatchers } from './store';
 
 function FunctionComponent() {
-  const actions = useModelDispatchers('name');
+  const dispatchers = useModelDispatchers('name');
   const effectsState = useModelEffectsState('name');
 
   useEffect(() => {
-    actions.fetch();
+    dispatchers.fetch();
   }, []);
 
   effectsState.fetch.isLoading;
@@ -111,10 +111,10 @@ interface Props extends MapModelToProp {
 class TodoList extends Component<Props> {
   render() {
     const { title, todos } = this.props;
-    const [ state, actions ] = todos;
+    const [ state, dispatchers ] = todos;
     
     state.field; // get state
-    actions.add({ /* ... */}); // run action
+    dispatchers.add({ /* ... */}); // run action
   }
 }
 

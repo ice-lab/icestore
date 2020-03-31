@@ -18,12 +18,17 @@ const {
   Provider,
   useModel,
   useModelDispatchers,
+  useModelEffectsState,
   useModelEffectsLoading,
   useModelEffectsError,
   withModel,
   withModelDispatchers,
+  withModelEffectsState,
   withModelEffectsLoading,
   withModelEffectsError,
+  getModel,
+  getModelState,
+  getModelDispatchers,
 } = createStore(models);
 ```
 
@@ -99,7 +104,7 @@ See [docs/recipes](./recipes.md#immutable-description) for more details.
 
 ##### effects
 
-`effects: (dispatch) => ({ [string]: (payload, rootState) => void })`
+`effects: (dispatch) => ({ [string]: (payload, rootState, meta) => void })`
 
 An object of functions that can handle the world outside of the model. Effects provide a simple way of handling async actions when used with async/await.
 
@@ -107,7 +112,7 @@ An object of functions that can handle the world outside of the model. Effects p
 const counter = {
   state: 0,
   effects: (dispatch) => ({
-    async add(payload, rootState) {
+    async add(payload, rootState, meta) {
       // wait for data to load
       const response = await fetch('http://example.com/data');
       const data = await response.json();
@@ -236,7 +241,7 @@ function FunctionComponent() {
 
 `useModelDispatchers(name: string): dispatchers`
 
-A hook granting your components access to the model actions.
+A hook granting your components access to the model dispatchers.
 
 ```js
 function FunctionComponent() {
@@ -287,7 +292,7 @@ function FunctionComponent() {
 
 `withModel(name: string, mapModelToProps?: (model: [state, dispatchers]) => Object = (model) => ({ [name]: model }) ): (React.Component) => React.Component`
 
-Use withModel to connect the model and class component:
+Use withModel to connect the model and Class Component:
 
 ```jsx
 import { ExtractIModelFromModelConfig } from '@ice/store';
@@ -429,3 +434,66 @@ export default withModelEffectsError('todos')(TodoList);
 ```
 
 You can use `mapModelEffectsErrorToProps` to set the property as the same way like `mapModelToProps`.
+
+#### getModel
+
+`getModel(name: string): [ state, dispatchers ]`
+
+A API granting you access to the model instance.
+
+```js
+import { useCallback } from 'react';
+import store from '@/store';
+
+function FunctionComponent() {
+  const memoizedCallback = useCallback(
+    () => {
+      const [state] = store.getModel('foo');
+      doSomething(a, b, state);
+    },
+    [a, b],
+  );
+}
+```
+
+#### getModelDispatchers
+
+`getModelDispatchers(name: string): dispatchers`
+
+A API granting you access to the model dispatchers.
+
+```js
+import { useCallback } from 'react';
+import store from '@/store';
+
+function FunctionComponent() {
+  const memoizedCallback = useCallback(
+    () => {
+      const dispatchers = store.getModelDispatchers('foo');
+      dispatchers.foo(a, b);
+    },
+    [a, b],
+  );
+}
+```
+
+#### getModelState
+
+`getModelState(name: string): state`
+
+A API granting you access to the model state.
+
+```js
+import { useCallback } from 'react';
+import store from '@/store';
+
+function FunctionComponent() {
+  const memoizedCallback = useCallback(
+    () => {
+      const state = store.getModelState('foo');
+      something(a, state);
+    },
+    [a, b],
+  );
+}
+```

@@ -146,9 +146,7 @@ class TodoList extends Component {
 export default withModelDispatchers('todos')(TodoList);
 ```
 
-### Types
-
-1.2 => 1.3
+### Utility Types
 
 - ConfigPropTypeState => ExtractIModelStateFromModelConfig
 - ConfigPropTypeEffects => ExtractIModelEffectsFromModelConfig
@@ -307,7 +305,7 @@ const todos = {
     add() {
       dispatch.user.setTodos(store.getModelState('todos').dataSource.length);
     },,
-    async refresh(state, payload, actions, globalActions) {
+    async refresh(payload, rootState) {
       await delay(2000);
 
       const dataSource = [
@@ -368,9 +366,9 @@ function App() {
 
 ```js
 function App() {
-  const [ state, actions ] = store.useModel('todos');
+  const [ state, dispatchers ] = store.useModel('todos');
   const { dataSource } = state;
-  const { add } = actions;
+  const { add } = dispatchers;
 }
 ```
 

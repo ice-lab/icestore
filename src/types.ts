@@ -2,7 +2,7 @@ import * as Redux from 'redux';
 
 export type Optionalize<T extends K, K> = Omit<T, keyof K>;
 
-export type PropType<TObj, TProp extends keyof TObj> = TObj[TProp];
+export type PropType<Obj, Prop extends keyof Obj> = Obj[Prop];
 
 export interface EffectState {
   isLoading: boolean;
