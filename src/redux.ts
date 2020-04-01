@@ -26,6 +26,9 @@ export default function({
   const initialState: any =
     typeof redux.initialState !== 'undefined' ? redux.initialState : {};
 
+  // Allows passing in of reducer functions, rather than models.
+  // While not recommended,
+  // this can be used for migrating a Redux codebase or configuring different Redux extensions.
   this.reducers = redux.reducers;
 
   // combine models to generate reducers
@@ -66,6 +69,9 @@ export default function({
     this.createModelReducer(model);
   }
 
+  // rootReducers is a way to setup middleware hooks at the base of your root reducer.
+  // Unlike middleware, the return value is the next state.
+  // If undefined, the state will fallback to the initial state of reducers.
   this.createRootReducer = (
     rootReducers: T.RootReducers = {},
   ): Redux.Reducer<any, T.Action> => {
@@ -73,7 +79,7 @@ export default function({
     if (Object.keys(rootReducers).length) {
       return (state, action) => {
         const rootReducerAction = rootReducers[action.type];
-        if (rootReducers[action.type]) {
+        if (rootReducerAction) {
           return mergedReducers(rootReducerAction(state, action), action);
         }
         return mergedReducers(state, action);
