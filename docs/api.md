@@ -103,7 +103,7 @@ See [docs/recipes](./recipes.md#immutable-description) for more details.
 
 ##### effects
 
-`effects: (dispatch) => ({ [string]: (payload, rootState, meta) => void })`
+`effects: (dispatch) => ({ [string]: (payload, rootState) => void })`
 
 An object of functions that can handle the world outside of the model. Effects provide a simple way of handling async actions when used with async/await.
 
@@ -111,7 +111,7 @@ An object of functions that can handle the world outside of the model. Effects p
 const counter = {
   state: 0,
   effects: (dispatch) => ({
-    async add(payload, rootState, meta) {
+    async add(payload, rootState) {
       // wait for data to load
       const response = await fetch('http://example.com/data');
       const data = await response.json();
