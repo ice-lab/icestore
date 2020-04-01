@@ -27,14 +27,14 @@
 
 ## Introduction
 
-icestore 是面向 React 应用简单友好的状态管理方案。它包含以下核心特征：
+icestore 是面向 React 应用的、简单友好的状态管理方案。它包含以下核心特征：
 
 * **简单、熟悉的 API**：不需要额外的学习成本，只需要了解 React Hooks，对 Redux 用户友好。
 * **集成异步处理**：记录异步操作时的执行状态，简化视图中对于等待或错误的处理逻辑。
 * **支持组件 Class 写法**：友好的兼容策略可以让老项目享受轻量状态管理的乐趣。
 * **良好的 TypeScript 支持**：提供完整的 TypeScript 类型定义，在 VS Code 中能获得完整的类型检查和推断。
 
-查看[能力对比表](docs/recipes.md#Comparison)了解更多细节。
+查看[《能力对比表》](docs/recipes.md#Comparison)了解更多细节。
 
 ## 快速开始
 
