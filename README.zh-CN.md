@@ -133,7 +133,7 @@ npm install @ice/store --save
 
 ## 社区
 
-| DingTalk community                               | GitHub issues |  Gitter |
+| 钉钉群	                             | GitHub issues |  Gitter |
 |-------------------------------------|--------------|---------|
 | <a href="https://ice.alicdn.com/assets/images/qrcode.png"><img src="https://ice.alicdn.com/assets/images/qrcode.png" width="150" /></a> | [issues]     | [gitter]|
 
