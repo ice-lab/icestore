@@ -3,14 +3,14 @@ id: upgrade-guidelines
 title: Upgrade Guidelines
 ---
 
-## 1.2 to 1.3
+## 1.2.0 to 1.3.0
 
-From 1.2 to 1.3 is fully compatible, but we recommend that you use the new API in incremental code.
+From 1.2.0 to 1.3.0 is fully compatible, but we recommend that you use the new API in incremental code.
 We will remove the deprecated API in future versions.
 
 ### initialState
 
-#### 1.2
+#### 1.2.0
 
 ```jsx
 import store from './store';
@@ -29,7 +29,7 @@ function App() {
 }
 ```
 
-#### 1.3
+#### 1.3.0
 
 ```js
 import { createStore } from '@ice/store';
@@ -45,7 +45,7 @@ export default createStore(models, { initialState });
 
 ### Define Model Effects
 
-#### 1.2
+#### 1.2.0
 
 ```js
 const todos = {
@@ -64,7 +64,7 @@ const todos = {
 };
 ```
 
-#### 1.3
+#### 1.3.0
 
 ```js
 const todos = {
@@ -87,7 +87,7 @@ const todos = {
 
 #### useModelActions
 
-#### 1.2
+#### 1.2.0
 
 ```jsx
 import store from '@/store';
@@ -99,7 +99,7 @@ function Foo() {
 }
 ```
 
-#### 1.3
+#### 1.3.0
 
 ```jsx
 import store from '@/store';
@@ -113,7 +113,7 @@ function Foo() {
 
 #### withModelActions
 
-#### 1.2
+#### 1.2.0
 
 ```jsx
 import store from '@/store';
@@ -129,7 +129,7 @@ class TodoList extends Component {
 export default withModelActions('todos')(TodoList);
 ```
 
-#### 1.3
+#### 1.3.0
 
 ```jsx
 
@@ -156,14 +156,14 @@ export default withModelDispatchers('todos')(TodoList);
 - ModelEffectsState => ExtractIModelEffectsStateFromModelConfig
 - UseModelValue => ExtractIModelFromModelConfig
 
-## 1.0 to 1.3
+## 1.0.0 to 1.3.0
 
-From 1.0 to 1.3 is fully compatible, but we recommend that you use the new API in incremental code.
+From 1.0.0 to 1.3.0 is fully compatible, but we recommend that you use the new API in incremental code.
 We will remove the deprecated API in future versions.
 
 ### Define Model Actions
 
-#### 1.0
+#### 1.0.0
 
 ```js
 const todos = {
@@ -177,7 +177,7 @@ const todos = {
 }
 ```
 
-#### 1.3
+#### 1.3.0
 
 ```js
 const todos = {
@@ -197,7 +197,7 @@ const todos = {
 
 #### useModelActionsState
 
-##### 1.2
+##### 1.2.0
 
 ```js
 import store from '@/store';
@@ -209,7 +209,7 @@ function Foo() {
 }
 ```
 
-##### 1.3
+##### 1.3.0
 
 ```js
 import store from '@/store';
@@ -223,7 +223,7 @@ function Foo() {
 
 #### withModelActionsState
 
-##### 1.2
+##### 1.2.0
 
 ```jsx	
 import store from '@/store';	
@@ -238,7 +238,7 @@ class TodoList extends Component {
 export default withModelActionsState('todos')(TodoList);	
 ```
 
-##### 1.3
+##### 1.3.0
 
 ```jsx	
 import store from '@/store';	
@@ -253,11 +253,11 @@ class TodoList extends Component {
 export default withModelEffectsState('todos')(TodoList);	
 ```
 
-## 0.x to 1.x
+## 0.x.x to 1.x.x
 
 ### Define Model
 
-#### 0.x
+#### 0.x.x
 
 ```ts
 import user from './user';
@@ -288,7 +288,7 @@ const store = {
 };
 ```
 
-#### 1.x
+#### 1.x.x
 
 ```ts
 import store from '@/store';
@@ -332,7 +332,7 @@ const todos = {
 
 ### Create store
 
-#### 0.x
+#### 0.x.x
 
 ```js
 import Icestore from '@ice/store';
@@ -342,7 +342,7 @@ const icestore = new Icestore();
 export default icestore.registerStores(stores);
 ```
 
-#### 1.x
+#### 1.x.x
 
 ```js
 import { createStore } from '@ice/store';
@@ -353,7 +353,7 @@ export default createStore(models);
 
 ### Consume model
 
-#### 0.x
+#### 0.x.x
 
 ```js
 function App() {
@@ -362,7 +362,7 @@ function App() {
 }
 ```
 
-#### 1.x
+#### 1.x.x
 
 ```js
 function App() {
@@ -374,11 +374,11 @@ function App() {
 
 ### Binding View
 
-#### 0.x
+#### 0.x.x
 
 No need.
 
-#### 1.x
+#### 1.x.x
 
 ```js
 const { Provider } = store;
