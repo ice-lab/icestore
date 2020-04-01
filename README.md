@@ -123,7 +123,7 @@ npm install @ice/store --save
 
 ## Inspiration
 
-icestore refines and builds upon the ideas of [constate](https://github.com/diegohaz/constate) & [rematch](https://github.com/rematch/rematch).
+icestore refines and builds upon the ideas of [rematch](https://github.com/rematch/rematch) & [constate](https://github.com/diegohaz/constate).
 
 ## Contributors
 

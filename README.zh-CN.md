@@ -25,7 +25,7 @@
   </tbody>
 </table>
 
-## Introduction
+## 安装
 
 icestore 是面向 React 应用的、简单友好的状态管理方案。它包含以下核心特征：
 
@@ -123,13 +123,13 @@ npm install @ice/store --save
 
 ## 灵感
 
-icestore refines and builds upon the ideas of [constate](https://github.com/diegohaz/constate) & [rematch](https://github.com/rematch/rematch).
+创造 icestore 的灵感来自于 [rematch](https://github.com/rematch/rematch) 和 [constate](https://github.com/diegohaz/constate)。
 
 ## 参与贡献
 
-Feel free to report any questions as an [issue](https://github.com/alibaba/ice/issues/new), we'd love to have your helping hand on icestore.
+欢迎通过 [issue](https://github.com/alibaba/ice/issues/new) 反馈问题。
 
-If you're interested in icestore, see [CONTRIBUTING.md](https://github.com/alibaba/ice/blob/master/.github/CONTRIBUTING.md) for more information to learn how to get started.
+如果对 `icestore` 感兴趣，请参考 [CONTRIBUTING.md](https://github.com/alibaba/ice/blob/master/.github/CONTRIBUTING.md) 学习如何贡献代码。
 
 ## 社区
 
