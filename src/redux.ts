@@ -51,6 +51,8 @@ export default function({
         : `${model.name}/${modelReducer}`;
       modelReducers[action] = model.reducers[modelReducer];
     }
+
+    // use the `state = model.state` argument convention popularized
     const combinedReducer = (state: any = model.state, action: T.Action) => {
       if (typeof modelReducers[action.type] === 'function') {
         return modelReducers[action.type](state, action.payload, action.meta);
