@@ -383,3 +383,11 @@ declare global {
     __REDUX_DEVTOOLS_EXTENSION_COMPOSE__?: any;
   }
 }
+
+/** @deprecated */
+export type ConfigPropTypeState<M extends ModelConfig> = ExtractIModelStateFromModelConfig<M>;
+export type ConfigPropTypeEffects<M extends ModelConfig> = ExtractIModelEffectsFromModelConfig<M>;
+export type ConfigPropTypeReducers<M extends ModelConfig> = ExtractIModelReducersFromModelConfig<M>;
+export type ModelActions<M extends ModelConfig> = ExtractIModelDispatchersFromModelConfig<M>;
+export type ModelEffectsState<M extends ModelConfig> = ExtractIModelEffectsStateFromModelConfig<M>;
+export type UseModelValue<M extends ModelConfig> = ExtractIModelFromModelConfig<M>;
