@@ -31,7 +31,7 @@ export default (): T.Plugin => {
       function useModelActionsState(name) {
         if (!warnedUseModelActionsState) {
           warnedUseModelActionsState = true;
-          warning('`useModelActionsState` API has been detected, please use `useModelEffectsState` instead. \n\n\n https://github.com/ice-lab/icestore/blob/master/docs/upgrade-guidelines.md#usemodelactionsstate');
+          warning('`useModelActionsState` API has been detected, please use `useModelEffectsState` instead. \n\n\n Visit https://github.com/ice-lab/icestore/blob/master/docs/upgrade-guidelines.md#usemodelactionsstate to learn about how to upgrade.');
         }
         return useModelEffectsState(name);
       }
@@ -41,7 +41,7 @@ export default (): T.Plugin => {
         return function(name: string, mapModelEffectsStateToProps?) {
           if (fieldSuffix === actionsSuffix && !warnedWithModelActionsState) {
             warnedWithModelActionsState = true;
-            warning('`withModelActionsState` API has been detected, please use `withModelEffectsState` instead. \n\n\n https://github.com/ice-lab/icestore/blob/master/docs/upgrade-guidelines.md#withmodelactionsstate');
+            warning('`withModelActionsState` API has been detected, please use `withModelEffectsState` instead. \n\n\n Visit https://github.com/ice-lab/icestore/blob/master/docs/upgrade-guidelines.md#withmodelactionsstate to learn about how to upgrade.');
           }
 
           mapModelEffectsStateToProps = (mapModelEffectsStateToProps || ((effectsState) => ({ [`${name}${fieldSuffix}`]: effectsState })));

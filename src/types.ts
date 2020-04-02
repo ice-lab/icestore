@@ -57,7 +57,8 @@ export type ExtractIModelDispatchersFromEffects<
     : {}
   : effects extends ModelEffects<any>
     ? ExtractIModelDispatchersFromEffectsObject<effects>
-    : {}
+    : effects extends ConfigEffects<any> ?
+      OldModelEffects<any> : {};
 
 export type ExtractIModelDispatcherFromReducer<R> = R extends () => any
   ? IcestoreDispatcher<void, void>
@@ -221,9 +222,7 @@ export interface ModelPluginAPI<M extends Models = Models> {
 }
 
 export interface ProviderPluginAPI {
-  Provider: ({ children }: {
-    children: any;
-  }) => JSX.Element;
+  Provider: (props: { children: any; initialStates?: any }) => JSX.Element;
 }
 
 export type PresetIcestore<
@@ -281,10 +280,12 @@ export interface ModelConfig<S = any, SS = S> {
   name?: string;
   state: S;
   baseReducer?: (state: SS, action: Action) => SS;
-  reducers?: ModelReducers<S>;
+  reducers?: ModelReducers<S> | ConfigReducers;
   effects?:
   | ModelEffects<any>
-  | ((dispatch: IcestoreDispatch) => ModelEffects<any>);
+  | ((dispatch: IcestoreDispatch) => ModelEffects<any>)
+  | ConfigEffects;
+  actions?: ConfigActions<S>; // @deprecated
 }
 
 export interface PluginFactory extends Plugin {
@@ -385,9 +386,28 @@ declare global {
 }
 
 /** @deprecated */
-export type ConfigPropTypeState<M extends ModelConfig> = ExtractIModelStateFromModelConfig<M>;
-export type ConfigPropTypeEffects<M extends ModelConfig> = ExtractIModelEffectsFromModelConfig<M>;
-export type ConfigPropTypeReducers<M extends ModelConfig> = ExtractIModelReducersFromModelConfig<M>;
-export type ModelActions<M extends ModelConfig> = ExtractIModelDispatchersFromModelConfig<M>;
-export type ModelEffectsState<M extends ModelConfig> = ExtractIModelEffectsStateFromModelConfig<M>;
-export type UseModelValue<M extends ModelConfig> = ExtractIModelFromModelConfig<M>;
+export type ConfigAction<S = any> = (prevState: S, payload?: any, actions?: any, globalActions?: any) => S | Promise<S>;
+export type ConfigEffect<S = any> = (state: S, payload?: any, actions?: any, globalActions?: any) => void | Promise<void>;
+export type ConfigReducer<S = any> = (state: S, payload?: any,) => S;
+export interface ConfigEffects<S = any> {
+  [name: string]: ConfigEffect<S>;
+}
+export interface ConfigReducers<S = any> {
+  [name: string]: ConfigReducer<S>;
+}
+export interface ConfigActions<S = any> {
+  [name: string]: ConfigAction<S>;
+}
+export type Actions<A extends ConfigEffects> = {
+  [K in keyof A]: (payload?: Parameters<A[K]>[1]) => void;
+}
+export type ConfigPropTypeState<C extends ModelConfig> = PropType<C, 'state'>;
+export type ConfigPropTypeActions<C extends ModelConfig> = PropType<C, 'actions'>;
+export type ConfigPropTypeEffects<C extends ModelConfig> = PropType<C, 'effects'>;
+export type ConfigPropTypeReducers<C extends ModelConfig> = PropType<C, 'reducers'>;
+export type ConfigMergedEffects<C extends ModelConfig> = ConfigPropTypeActions<C> & ConfigPropTypeEffects<C>;
+export type OldModelEffects<C extends ModelConfig> = Actions<ConfigMergedEffects<C>>;;
+export type ModelActions<C extends ModelConfig> = Actions<ConfigPropTypeReducers<C> & ConfigPropTypeEffects<C>>;
+export type ModelEffectsState<C extends ModelConfig> = ExtractIModelEffectsStateFromModelConfig<C>;
+export type ModelValue<C extends ModelConfig> = [ ConfigPropTypeState<C>, ModelActions<C>, ModelEffectsState<C> ];
+export type UseModelValue<C extends ModelConfig> = [ ConfigPropTypeState<C>, ModelActions<C> ];

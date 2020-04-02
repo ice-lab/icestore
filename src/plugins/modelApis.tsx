@@ -30,7 +30,7 @@ export default (): T.Plugin => {
       function useModelActions(name: string) {
         if (!warnedUseModelActions) {
           warnedUseModelActions = true;
-          warning('`useModelActions` API has been detected, please use `useModelDispatchers` instead. \n\n\n https://github.com/ice-lab/icestore/blob/master/docs/upgrade-guidelines.md#usemodelactions');
+          warning('`useModelActions` API has been detected, please use `useModelDispatchers` instead. \n\n\n Visit https://github.com/ice-lab/icestore/blob/master/docs/upgrade-guidelines.md#usemodelactions to learn about how to upgrade.');
         }
         return useModelDispatchers(name);
       }
@@ -66,7 +66,7 @@ export default (): T.Plugin => {
         return function withModelDispatchers(name: string, mapModelDispatchersToProps?) {
           if (fieldSuffix === actionsSuffix && !warnedWithModelActions) {
             warnedWithModelActions = true;
-            warning('`withModelActions` API has been detected, please use `withModelDispatchers` instead. \n\n\n https://github.com/ice-lab/icestore/blob/master/docs/upgrade-guidelines.md#withmodelactions');
+            warning('`withModelActions` API has been detected, please use `withModelDispatchers` instead. \n\n\n Visit https://github.com/ice-lab/icestore/blob/master/docs/upgrade-guidelines.md#withmodelactions to learn about how to upgrade.');
           }
           mapModelDispatchersToProps = (mapModelDispatchersToProps || ((dispatch) => ({ [`${name}${fieldSuffix}`]: dispatch })));
           return (Component) => {
