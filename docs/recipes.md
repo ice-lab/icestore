@@ -3,6 +3,8 @@ id: recipes
 title: Recipes
 ---
 
+English | [简体中文](./recipes.zh-CN.md)
+
 ## Model interaction
 
 Model interaction is a common usage scene which can be implemented by calling actions from other model in a model's action.

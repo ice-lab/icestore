@@ -105,15 +105,15 @@ npm install @ice/store --save
 
 ## API
 
-[docs/api](./docs/api.md)
+[docs/api](./docs/api.zh-CN.md)
 
 ## 更多技巧
 
-[docs/recipes](./docs/recipes.md)
+[docs/recipes](./docs/recipes.zh-CN.md)
 
 ## 从老版本升级
 
-[docs/upgrade-guidelines](./docs/upgrade-guidelines.md)
+[docs/upgrade-guidelines](./docs/upgrade-guidelines.zh-CN.md)
 
 ## 浏览器支持
 
