@@ -203,8 +203,10 @@ export default (config: ErrorConfig = {}): T.Plugin => {
 
         // create function with pre & post error calls
         const effectWrapper = async (...props) => {
-          // @todo add a judgment, only clear when there has been a error
-          this.dispatch.error.hide({ name, action }, null);
+          // only clear when there has been a error
+          if (nextState.effects[name] && nextState.effects[name][action] && nextState.effects[name][action].error) {
+            this.dispatch.error.hide({ name, action }, null);
+          }
           try {
             return await origEffect(...props);
           } catch (error) {
