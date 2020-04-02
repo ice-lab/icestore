@@ -1,5 +1,5 @@
 
-import { createStore, IcestoreRootState, IcestoreDispatch } from '@ice/store'
+import { createStore, IcestoreRootState, IcestoreDispatch } from '@ice/store';
 import models from './models';
 
 const initialState = {

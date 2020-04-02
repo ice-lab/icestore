@@ -3,7 +3,7 @@ import { delay } from '../utils';
 export interface UserState {
   dataSource: {
     name: string;
-  },
+  };
   todos: number;
   auth: boolean;
 }
