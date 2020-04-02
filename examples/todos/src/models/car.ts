@@ -4,7 +4,7 @@
 
 const car = {
   state: {
-    logo: 'string',
+    logo: 'car',
   },
 };
 

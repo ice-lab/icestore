@@ -1,19 +1,19 @@
 import { Component } from 'react';
 import { Assign } from 'utility-types';
-import { UseModelValue, ModelEffectsState } from '@ice/store';
+import { ExtractIModelFromModelConfig, ExtractIModelEffectsLoadingFromModelConfig } from '@ice/store';
 // import compose from 'lodash/fp/compose';
 import store from '../store';
 import { TodoList as TodoListFn } from './TodoList';
 import todosModel from '../models/todos';
 
-const { withModel, withModelEffectsState } = store;
+const { withModel, withModelEffectsLoading } = store;
 
 interface MapModelToProp {
-  todos: UseModelValue<typeof todosModel>;
+  todos: ExtractIModelFromModelConfig<typeof todosModel>;
 }
 
 interface MapModelEffectsStateToProp {
-  todosActionsState: ModelEffectsState<typeof todosModel>;
+  todosEffectsLoading: ExtractIModelEffectsLoadingFromModelConfig<typeof todosModel>;
 }
 
 interface CustomProp {
@@ -25,30 +25,30 @@ type Props = Assign<CustomProp, PropsWithModel>;
 
 class TodoList extends Component<Props> {
   onRemove = (index) => {
-    const [, actions] = this.props.todos;
-    actions.remove(index);
+    const [, dispatchers] = this.props.todos;
+    dispatchers.remove(index);
   }
 
   onToggle = (index) => {
-    const [, actions] = this.props.todos;
-    actions.toggle(index);
+    const [, dispatchers] = this.props.todos;
+    dispatchers.toggle(index);
   }
 
   render() {
-    const { title, todos, todosActionsState } = this.props;
+    const { title, todos, todosEffectsLoading } = this.props;
     const [ state ] = todos;
     const { dataSource } = state;
     return TodoListFn({
       state: { title, dataSource, subTitle: 'Class Component' },
-      actions: { toggle: this.onToggle, remove: this.onRemove },
-      effectsState: todosActionsState,
+      dispatchers: { toggle: this.onToggle, remove: this.onRemove },
+      effectsLoading: todosEffectsLoading,
     });
   }
 }
 
-export default withModelEffectsState('todos')<PropsWithModel, Props>(
+export default withModelEffectsLoading('todos')<PropsWithModel, Props>(
   withModel('todos')(TodoList),
 );
 
 // functional flavor:
-// export default compose(withModelEffectsState('todos'), withModel('todos'))(TodoList);
+// export default compose(withModelEffectsLoading('todos'), withModel('todos'))(TodoList);

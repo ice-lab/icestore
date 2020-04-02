@@ -6,21 +6,11 @@ import TodoAdd from './components/TodoAdd';
 import User from './components/User';
 import Car from './components/Car';
 
-const { Provider } = store;
-
-const initialStates = {
-  user: {
-    dataSource: {
-      name: 'Tom',
-    },
-    auth: true,
-    todos: 0,
-  },
-};
+const { Provider } = store;;
 
 function App() {
   return (
-    <Provider initialStates={initialStates}>
+    <Provider>
       <Todos />
       <TodoAdd />
       <User />
