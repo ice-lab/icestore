@@ -10,7 +10,7 @@ export interface TodosState {
   dataSource: Todo[];
 }
 
-const todos = {
+const model = {
   state: {
     dataSource: [
       {
@@ -30,7 +30,7 @@ const todos = {
       state.dataSource.splice(index, 1);
     },
   },
-  effects: (dispatch) => ({
+  effects: (dispatch: RootDispatch) => ({
     add(todo: Todo) {
       dispatch.user.setTodos(store.getModelState('todos').dataSource.length);
     },
@@ -62,4 +62,4 @@ const todos = {
   }),
 };
 
-export default todos;
+export default model;

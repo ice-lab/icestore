@@ -1,11 +1,10 @@
 /**
  * This model only defines state, but not effects and reducers
  */
-
-const car = {
+const model = {
   state: {
     logo: 'car',
   },
 };
 
-export default car;
+export default model;

@@ -8,7 +8,7 @@ export interface UserState {
   auth: boolean;
 }
 
-const user = {
+const model = {
   state: {
     dataSource: {
       name: '',
@@ -35,4 +35,4 @@ const user = {
   }),
 };
 
-export default user;
+export default model;

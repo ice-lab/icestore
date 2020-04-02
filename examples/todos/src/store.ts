@@ -1,6 +1,6 @@
 
 import { createStore, IcestoreRootState, IcestoreDispatch } from '@ice/store'
-import * as models from './models';
+import models from './models';
 
 const initialState = {
   user: {
@@ -12,6 +12,9 @@ const initialState = {
   },
 };
 
-export default createStore(models, { initialState });
-export type RootState = IcestoreDispatch<typeof models>
-export type RootDispatch = IcestoreRootState<typeof models>
+const store = createStore(models, { initialState });
+
+export default store;
+export type Store = typeof store;
+export type RootDispatch = IcestoreDispatch<typeof models>;
+export type iRootState = IcestoreRootState<typeof models>;
