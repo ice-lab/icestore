@@ -2,6 +2,9 @@ import React from 'react';
 import * as T from '../types';
 import warning from '../utils/warning';
 
+let warnedUseModelActionsState = false;
+let warnedWithModelActionsState = false;
+
 /**
  * EffectsStateApis Plugin
  *
@@ -26,14 +29,17 @@ export default (): T.Plugin => {
       };
 
       function useModelActionsState(name) {
-        warning('`useModelActionsState` API has been detected, please use `useModelEffectsState` instead. \n\n\n https://github.com/ice-lab/icestore/blob/master/docs/upgrade-guidelines.md#usemodelactionsstate');
+        if (!warnedUseModelActionsState) {
+          warning('`useModelActionsState` API has been detected, please use `useModelEffectsState` instead. \n\n\n https://github.com/ice-lab/icestore/blob/master/docs/upgrade-guidelines.md#usemodelactionsstate');
+        }
         return useModelEffectsState(name);
       }
 
       const actionsSuffix = 'ActionsState';
       function createWithModelEffectsState(fieldSuffix: string = 'EffectsState') {
         return function(name: string, mapModelEffectsStateToProps?) {
-          if (fieldSuffix === actionsSuffix) {
+          if (fieldSuffix === actionsSuffix && !warnedWithModelActionsState) {
+            warnedWithModelActionsState = true;
             warning('`withModelActionsState` API has been detected, please use `withModelEffectsState` instead. \n\n\n https://github.com/ice-lab/icestore/blob/master/docs/upgrade-guidelines.md#withmodelactionsstate');
           }
 

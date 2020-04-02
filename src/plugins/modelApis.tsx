@@ -2,6 +2,9 @@ import React from 'react';
 import * as T from '../types';
 import warning from '../utils/warning';
 
+let warnedUseModelActions = false;
+let warnedWithModelActions = false;
+
 /**
  * ModelApis Plugin
  *
@@ -25,7 +28,10 @@ export default (): T.Plugin => {
       }
 
       function useModelActions(name: string) {
-        warning('`useModelActions` API has been detected, please use `useModelDispatchers` instead. \n\n\n https://github.com/ice-lab/icestore/blob/master/docs/upgrade-guidelines.md#usemodelactions');
+        if (!warnedUseModelActions) {
+          warnedUseModelActions = true;
+          warning('`useModelActions` API has been detected, please use `useModelDispatchers` instead. \n\n\n https://github.com/ice-lab/icestore/blob/master/docs/upgrade-guidelines.md#usemodelactions');
+        }
         return useModelDispatchers(name);
       }
 
@@ -58,7 +64,8 @@ export default (): T.Plugin => {
       const actionsSuffix = 'Actions';
       function createWithModelDispatchers(fieldSuffix: string = 'Dispatchers') {
         return function withModelDispatchers(name: string, mapModelDispatchersToProps?) {
-          if (fieldSuffix === actionsSuffix) {
+          if (fieldSuffix === actionsSuffix && !warnedWithModelActions) {
+            warnedWithModelActions = true;
             warning('`withModelActions` API has been detected, please use `withModelDispatchers` instead. \n\n\n https://github.com/ice-lab/icestore/blob/master/docs/upgrade-guidelines.md#withmodelactions');
           }
           mapModelDispatchersToProps = (mapModelDispatchersToProps || ((dispatch) => ({ [`${name}${fieldSuffix}`]: dispatch })));

@@ -14,7 +14,7 @@ export function convertEffects(originModels: any) {
     const model = originModels[name];
     const originEffects = model.effects;
     if (originEffects && !isFunction(originEffects)) {
-      warning('Defining effects as objects has been detected, please use `{ effects: () => ({ effectName: () => {} }) }` instead. \n\n\n https://github.com/ice-lab/icestore/blob/master/docs/upgrade-guidelines.md#define-model-effects');
+      warning(`Model(${name}): Defining effects as objects has been detected, please use \`{ effects: () => ({ effectName: () => {} }) }\` instead. \n\n\n https://github.com/ice-lab/icestore/blob/master/docs/upgrade-guidelines.md#define-model-effects`);
       model.effects = (dispatch: any) => {
         const effects = {};
         Object.keys(originEffects).forEach(function(key) {
@@ -48,7 +48,7 @@ export function convertActions(originModels: any) {
     const model = originModels[name];
     const actions = model.actions;
     if (actions) {
-      warning('The actions field has been detected, please use `reducers` and `effects` instead.');
+      warning(`Model(${name}): The actions field has been detected, please use \`reducers\` and \`effects\` instead.`);
       if (!model.reducers) {
         model.reducers = {};
       }
