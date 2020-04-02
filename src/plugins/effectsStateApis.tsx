@@ -30,6 +30,7 @@ export default (): T.Plugin => {
 
       function useModelActionsState(name) {
         if (!warnedUseModelActionsState) {
+          warnedUseModelActionsState = true;
           warning('`useModelActionsState` API has been detected, please use `useModelEffectsState` instead. \n\n\n https://github.com/ice-lab/icestore/blob/master/docs/upgrade-guidelines.md#usemodelactionsstate');
         }
         return useModelEffectsState(name);
