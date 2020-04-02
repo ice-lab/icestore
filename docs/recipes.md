@@ -240,8 +240,8 @@ const store = createStore(models, {
 - X: No
 - +: Extra
 
-| constate | zustand | react-tracked | icestore |
-| --------| -------- | -------- | -------- | -------- | -------- |
+| feature | constate | zustand | react-tracked | icestore |
+| :--------| :-------- | :-------- | :-------- | :-------- |
 | Framework | React | React | React | React |
 | Simplicity | ★★★★ | ★★★ | ★★★ | ★★★★ |
 | Less boilerplate | ★★ | ★★★ | ★★★ | ★★★★ |
@@ -255,6 +255,6 @@ const store = createStore(models, {
 | SSR | O | X | O | O |
 | Persist | X | X | X | O |
 | Lazy load models | + | + | + | O |
-| Centralization | X | X | X | O | 
+| Centralization | X | X | X | O |
 | Middleware or Plug-in | X | O | X | O |
 | Devtools | X | O | X | O |

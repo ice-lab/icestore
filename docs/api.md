@@ -124,7 +124,7 @@ const counter = {
 };
 ```
 
-You can call another action by useing `dispatch`:
+You can call another action by using `dispatch`:
 
 ```js
 const user = {
@@ -137,7 +137,7 @@ const user = {
       dispatch.todos.foo(payload); // call actions of another model
     },
   }),
-  reducres: {
+  reducers: {
     foo(prevState, payload) {
       return {
         ...prevState,
