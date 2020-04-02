@@ -1,5 +1,13 @@
 import { delay } from '../utils';
 
+export interface UserState {
+  dataSource: {
+    name: string;
+  },
+  todos: number;
+  auth: boolean;
+}
+
 const user = {
   state: {
     dataSource: {
@@ -9,7 +17,7 @@ const user = {
     auth: false,
   },
   reducers: {
-    setTodos(state, todos: number) {
+    setTodos(state: UserState, todos: number) {
       state.todos = todos;
     },
   },

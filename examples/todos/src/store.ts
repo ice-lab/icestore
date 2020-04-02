@@ -1,5 +1,5 @@
 
-import { createStore } from '@ice/store';
+import { createStore, IcestoreRootState, IcestoreDispatch } from '@ice/store'
 import * as models from './models';
 
 const initialState = {
@@ -13,3 +13,5 @@ const initialState = {
 };
 
 export default createStore(models, { initialState });
+export type RootState = IcestoreDispatch<typeof models>
+export type RootDispatch = IcestoreRootState<typeof models>
