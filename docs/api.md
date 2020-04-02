@@ -7,7 +7,7 @@ The `createStore` is a main function exported from the library, which creates a 
 
 ## createStore
 
-`createStore(models)`
+`createStore(models, options)`
 
 The function called to create a store.
 
@@ -15,35 +15,27 @@ The function called to create a store.
 import { createStore } from '@ice/store';
 
 const { 
+  // major apis
   Provider,
   useModel,
-  useModelActions,
-  useModelEffectsState,
+  getModel,
   withModel,
-  withModelActions,
+
+  // auxiliary apis
+  useModelDispatchers,
+  useModelEffectsState,
+  withModelDispatchers,
   withModelEffectsState,
+  getModelState,
+  getModelDispatchers,
 } = createStore(models);
 ```
 
-### models
+### Arguments
 
-```js
-import { createStore } from '@ice/store'
+#### models
 
-const counterModel = {
-  state: {
-    value: 0,
-  },
-};
-
-const models = {
-  counter: counterModel,
-};
-
-createStore(models);
-```
-
-#### state
+##### state
 
 `state: any`: Required
 
@@ -55,7 +47,7 @@ const model = {
 };
 ```
 
-#### reducers
+##### reducers
 
 `reducers: { [string]: (prevState, payload) => any }`
 
@@ -70,45 +62,79 @@ const counter = {
 };
 ```
 
-#### effects
+Reducer could be use mutable method to achieve immutable state. Like the example:
 
-`effects: { [string]: (prevState, payload, actions, globalActions) => void }`
+```js
+const todo = {
+  state: [
+    {
+      todo: 'Learn typescript',
+      done: true,
+    },
+    {
+      todo: 'Try immer',
+      done: false,
+    },
+  ],
+  reducers: {
+    done(state) {
+      state.push({ todo: 'Tweet about it' });
+      state[1].done = true;
+    },
+  },
+}
+```
+
+In Immer, reducers perform mutations to achieve the next immutable state. Keep in mind, Immer only supports change detection on plain objects and arrays, so primitive values like strings or numbers will always return a change. Like the example:
+
+```js
+const count = {
+  state: 0,
+  reducers: {
+    add(state) {
+      state += 1;
+      return state;
+    },
+  },
+}
+```
+
+See [docs/recipes](./recipes.md#immutable-description) for more details.
+
+##### effects
+
+`effects: (dispatch) => ({ [string]: (payload, rootState) => void })`
 
 An object of functions that can handle the world outside of the model. Effects provide a simple way of handling async actions when used with async/await.
 
 ```js
 const counter = {
   state: 0,
-  effects: {
-    async add(prevState, payload, actions) {
+  effects: (dispatch) => ({
+    async add(payload, rootState) {
       // wait for data to load
       const response = await fetch('http://example.com/data');
       const data = await response.json();
       // pass the result to a local reducer
-      actions.update(data);
+      this.update(data);
     },
-  },
-  reducers: {
-    update(prev, data) {
-      return {...prev, ...data};
-    }
-  },
+  }),
 };
 ```
 
-You can call another action by useing `actions` or `globalActions`:
+You can call another action by useing `dispatch`:
 
 ```js
 const user = {
   state: {
     foo: [],
   },
-  effects: {
-    like(prevState, payload, actions, globalActions) => {
-      actions.foo(payload); // call user's actions
-      globalActions.user.foo(payload); // call actions of another model
+  effects: (dispatch) => ({
+    like(payload, rootState) => {
+      this.foo(payload); // call user's actions
+      dispatch.todos.foo(payload); // call actions of another model
     },
-  },
+  }),
   reducres: {
     foo(prevState, payload) {
       return {
@@ -119,9 +145,51 @@ const user = {
 };
 ```
 
-### Provider
+#### options
 
-`Provider(props: { children, initialStates })`
+- `initialState` (Object, optional, default=undefined)
+
+  Allows you to hydrate your store with initial state (for example state received from your server in a server rendering context).
+
+  ```jsx
+  import { createStore } from '@ice/store';
+
+  const models = {
+    todo: { state: {}, },
+    user: { state: {}, },
+  };
+
+  const initialState = {
+    todo: {
+      title: 'Foo',
+      done: true,
+    },
+    user: {
+      name: 'Alvin',
+      age: 18,
+    },
+  };
+  createStore(models, { initialState });
+  ```
+- `disableImmer` (boolean, optional, default=false)
+
+  If you set this to true, then [immer](https://github.com/immerjs/immer) will be disabled, meaning you can no longer mutate state directly within actions and will instead have to return immutable state as in a standard reducer.
+- `disableError` (boolean, optional, default=false)
+
+  If you set this to true, then `useModelEffectsError` and `withModelEffectsError` will not be available. Turn it on only if you are very focused on performance or intentionally throw errors.
+
+  > We will set this option to on in future releases to reduce it by default.
+- `disableLoading` (boolean, optional, default=false)
+
+  If you set this to true, then `useModelEffectsLoading` and `withModelEffectsLoading` will not be available.
+
+  > We will set this option to on in future releases to reduce it by default.
+
+### Returns
+
+#### Provider
+
+`Provider(props: { children })`
 
 Exposes the store to your React application, so that your components will be able to consume and interact with the store via the hooks.
 
@@ -139,45 +207,9 @@ ReactDOM.render(
 ); 
 ```
 
-Set initialStates:
+#### useModel
 
-```jsx
-import React from 'react';
-import ReactDOM from 'react-dom';
-import { createStore } from '@ice/store';
-
-const models = {
-  todo: {
-    state: {},
-  },
-  user: {
-    state: {},
-  }
-};
-const { Provider } = createStore(models);
-
-const initialStates = {
-  todo: {
-    title: 'Foo',
-    done: true,
-  },
-  user: {
-    name: 'Alvin',
-    age: 18,
-  },
-};
-
-ReactDOM.render(
-  <Provider initialStates={initialStates}>
-    <App />
-  </Provider>,
-  rootEl
-); 
-```
-
-### useModel
-
-`useModel(name: string): [ state, actions ]`
+`useModel(name: string): [ state, dispatchers ]`
 
 A hook granting your components access to the model instance.
 
@@ -187,77 +219,67 @@ const counter = {
     value: 0,
   },
   reducers: {
-    add: (prevState, payload) => ({...prevState, value: prevState.value + payload}),
+    add: (state, payload) => {
+      state.value = state.value + payload;
+    },
   },
 };
 
 const { useModel } = createStore({ counter });
 
 function FunctionComponent() {
-  const [ state, actions ] = useModel('counter');
+  const [ state, dispatchers ] = useModel('counter');
 
   state.value; // 0
 
-  actions.add(1); // state.value === 1
+  dispatchers.add(1); // state.value === 1
 }
 ```
 
-### useModelActions
+#### getModel
 
-`useModelActions(name: string): actions`
+`getModel(name: string): [ state, dispatchers ]`
 
-A hook granting your components access to the model actions.
+A API granting you access to the model instance.
 
 ```js
+import { useCallback } from 'react';
+import store from '@/store';
+
 function FunctionComponent() {
-  const actions = useModelActions('counter');
-  actions.add(1);
+  const memoizedCallback = useCallback(
+    () => {
+      const [state] = store.getModel('foo');
+      doSomething(a, b, state);
+    },
+    [a, b],
+  );
 }
 ```
 
-### useModelEffectsState
+#### withModel
 
-`useModelEffectsState(name: string): { [actionName: string]: { isLoading: boolean, error: Error } } `
+`withModel(name: string, mapModelToProps?: (model: [state, dispatchers]) => Object = (model) => ({ [name]: model }) ): (React.Component) => React.Component`
 
-A hook granting your components access to the action state of the model.
-
-```js
-function FunctionComponent() {
-  const actions = useModelActions('counter');
-  const effectsState = useModelEffectsState('counter');
-
-  useEffect(() => {
-    actions.fetch();
-  }, []);
-
-  effectsState.fetch.isLoading;
-  effectsState.fetch.error;
-}
-```
-
-### withModel
-
-`withModel(name: string, mapModelToProps?: (model: [state, actions]) => Object = (model) => ({ [name]: model }) ): (React.Component) => React.Component`
-
-Use withModel to connect the model and class component:
+Use withModel to connect the model and Class Component:
 
 ```jsx
-import { UseModelValue } from '@ice/store';
+import { ExtractIModelFromModelConfig } from '@ice/store';
 import todosModel from '@/models/todos';
 import store from '@/store';
 
 interface Props {
-  todos: UseModelValue<typeof todosModel>; // `withModel` automatically adds the name of the model as the property
+  todos: ExtractIModelFromModelConfig<typeof todosModel>; // `withModel` automatically adds the name of the model as the property
 }
 
 class TodoList extends Component<Props> {
   render() {
     const { counter } = this.props;
-    const [ state, actions ] = counter;
+    const [ state, dispatchers ] = counter;
     
     state.value; // 0
 
-    actions.add(1);
+    dispatchers.add(1);
   }
 } 
 
@@ -267,7 +289,7 @@ export default withModel('counter')(TodoList);
 use `mapModelToProps` to set the property:
 
 ```tsx
-import { UseModelValue } from '@ice/store';
+import { ExtractIModelFromModelConfig } from '@ice/store';
 import todosModel from '@/models/todos';
 import store from '@/store';
 
@@ -275,193 +297,202 @@ const { withModel } = store;
 
 interface Props {
   title: string;
-  customKey: UseModelValue<typeof todosModel>;
+  customKey: ExtractIModelFromModelConfig<typeof todosModel>;
 }
 
 class TodoList extends Component<Props> {
   render() {
     const { title, customKey } = this.props;
-    const [ state, actions ] = customKey;
+    const [ state, dispatchers ] = customKey;
     
     state.field; // get state
-    actions.add({ /* ... */}); // run action
+    dispatchers.add({ /* ... */}); // run action
   }
 }
 
 export default withModel(
   'todos', 
 
-  // mapModelToProps: (model: [state, actions]) => Object = (model) => ({ [modelName]: model }) )
+  // mapModelToProps: (model: [state, dispatchers]) => Object = (model) => ({ [modelName]: model }) )
   (model) => ({
     customKey: model,
   })
 )(TodoList);
 ```
 
-### withModelActions
+#### useModelDispatchers
 
-`withModelActions(name: string, mapModelActionsToProps?: (actions) => Object = (actions) => ({ [name]: actions }) ): (React.Component) => React.Component`
+`useModelDispatchers(name: string): dispatchers`
 
-```tsx
-import { ModelActionsState, ModelActions } from '@ice/store';
-import todosModel from '@/models/todos';
-import store from '@/store';
-
-const { withModelActions } = store;
-
-interface Props {
-  todosActions: ModelActions<typeof todosModel>;  // `withModelActions` automatically adds `${modelName}Actions` as the property
-}
-
-class TodoList extends Component<Props> {
-  render() {
-    const { todosActions } = this.props;
-
-    todosActions.add({ /* ... */}); // run action
-  }
-}
-
-export default withModelActions('todos')(TodoList);
-```
-
-You can use `mapModelActionsToProps` to set the property as the same way like `mapModelToProps`.
-
-### withModelEffectsState
-
-`withModelEffectsState(name: string, mapModelActionsStateToProps?: (effectsState) => Object = (effectsState) => ({ [name]: effectsState }) ): (React.Component) => React.Component`
-
-```tsx
-import { ModelActionsState, ModelActions } from '@ice/store';
-import todosModel from '@/models/todos';
-import store from '@/store';
-
-const { withModelEffectsState } = store;
-
-interface Props {
-  todosActionsState: ModelActionsState<typeof todosModel>; // `todosActionsState` automatically adds `${modelName}ActionsState` as the property
-}
-
-class TodoList extends Component<Props> {
-  render() {
-    const { todosActionsState } = this.props;
-
-    todosActionsState.add.isLoading; // get action state
-  }
-}
-
-export default withModelEffectsState('todos')(TodoList);
-```
-
-You can use `mapModelActionsStateToProps` to set the property as the same way like `mapModelToProps`.
-
-## createModel
-
-`createStore(model)`
-
-The function called to create a model.
-
-
-```js
-import { createModel } from '@ice/store';
-
-const [
-  Provider,
-  useState,
-  useActions,
-  useEffectsState,
-] = createModel(model);
-```
-
-### Provider
-
-`Provider(props: { children, initialState })`
-
-Exposes the model to your React application, so that your components will be able to consume and interact with the model via the hooks.
-
-```jsx
-import React from 'react';
-import ReactDOM from 'react-dom';
-import { createStore } from '@ice/store';
-
-const { Provider } = createModel(model);
-ReactDOM.render(
-  <Provider>
-    <Component />
-  </Provider>,
-  rootEl
-); 
-```
-
-Set initialState:
-
-```jsx
-import React from 'react';
-import ReactDOM from 'react-dom';
-import { createStore } from '@ice/store';
-
-const userModel = {
-  state: {},
-};
-const { Provider } = createModel(userModel);
-ReactDOM.render(
-  <Provider initialState={{ name: 'Alvin', age: 18, }}>
-    <Component />
-  </Provider>,
-  rootEl
-); 
-```
-
-#### useState
-
-`useState(): state`
-
-A hook granting your components access to the model state.
-
-```jsx
-const counter = {
-  state: {
-    value: 0,
-  },
-};
-
-const [, useState] = createModel(counter);
-
-function FunctionComponent() {
-  const state = useState();
-
-  state.value; // 0
-}
-```
-
-### useActions
-
-`useActions(): actions`
-
-A hook granting your components access to the model actions.
+A hook granting your components access to the model dispatchers.
 
 ```js
 function FunctionComponent() {
-  const actions = useActions();
-  actions.add(1);
+  const dispatchers = useModelDispatchers('counter');
+  dispatchers.add(1);
 }
 ```
 
-### useEffectsState
+#### useModelEffectsLoading
 
-`useEffectsState(): { [actionName: string]: { isLoading: boolean, error: Error } } `
+`useModelEffectsLoading(name: string): { [actionName: string]: boolean } `
 
-A hook granting your components access to the action state of the model.
+A hook granting your components access to the action loading state of the model.
 
 ```js
 function FunctionComponent() {
-  const actions = useActions();
-  const effectsState = useEffectsState();
+  const dispatchers = useModelDispatchers('counter');
+  const effectsLoading = useModelEffectsLoading('counter');
 
   useEffect(() => {
-    actions.fetch();
+    dispatchers.fetch();
   }, []);
 
-  effectsState.fetch.isLoading;
-  effectsState.fetch.error;
+  effectsLoading.fetch; // boolean
+}
+```
+
+#### useModelEffectsError
+
+`useModelEffectsError(name: string): { [actionName: string]: { error: Error; value: boolean;}} `
+
+A hook granting your components access to the action error state of the model.
+
+```js
+function FunctionComponent() {
+  const dispatchers = useModelDispatchers('counter');
+  const effectsError = useModelEffectsError('counter');
+
+  useEffect(() => {
+    dispatchers.fetch();
+  }, []);
+
+  effectsError.fetch.error; // Error
+}
+```
+
+#### withModelDispatchers
+
+`withModelDispatchers(name: string, mapModelDispatchersToProps?: (dispatchers) => Object = (dispatchers) => ({ [name]: dispatchers }) ): (React.Component) => React.Component`
+
+```tsx
+import { ExtractIModelDispatchersFromModelConfig } from '@ice/store';
+import todosModel from '@/models/todos';
+import store from '@/store';
+
+const { withModelDispatchers } = store;
+
+interface Props {
+  todosDispatchers: ExtractIModelDispatchersFromModelConfig<typeof todosModel>;  // `withModelDispatchers` automatically adds `${modelName}Dispatchers` as the property
+}
+
+class TodoList extends Component<Props> {
+  render() {
+    const { todosDispatchers } = this.props;
+
+    todosDispatchers.add({ /* ... */}); // run action
+  }
+}
+
+export default withModelDispatchers('todos')(TodoList);
+```
+
+You can use `mapModelDispatchersToProps` to set the property as the same way like `mapModelToProps`.
+
+#### withModelEffectsLoading
+
+`withModelEffectsLoading(name: string, mapModelEffectsLoadingToProps?: (effectsLoading) => Object = (effectsLoading) => ({ [name]: effectsLoading }) ): (React.Component) => React.Component`
+
+```tsx
+import { ExtractIModelEffectsLoadingFromModelConfig } from '@ice/store';
+import todosModel from '@/models/todos';
+import store from '@/store';
+
+const { withModelEffectsLoading } = store;
+
+interface Props {
+  todosEffectsLoading: ExtractIModelEffectsLoadingFromModelConfig<typeof todosModel>; // `todosEffectsLoading` automatically adds `${modelName}EffectsLoading` as the property
+}
+
+class TodoList extends Component<Props> {
+  render() {
+    const { todosEffectsLoading } = this.props;
+
+    todosEffectsLoading.add;
+  }
+}
+
+export default withModelEffectsLoading('todos')(TodoList);
+```
+
+You can use `mapModelEffectsLoadingToProps` to set the property as the same way like `mapModelToProps`.
+
+#### withModelEffectsError
+
+`withModelEffectsError(name: string, mapModelEffectsErrorToProps?: (effectsError) => Object = (effectsError) => ({ [name]: effectsError }) ): (React.Component) => React.Component`
+
+```tsx
+import { ExtractIModelEffectsErrorFromModelConfig } from '@ice/store';
+import todosModel from '@/models/todos';
+import store from '@/store';
+
+const { withModelEffectsError } = store;
+
+interface Props {
+  todosEffectsError: ExtractIModelEffectsErrorFromModelConfig<typeof todosModel>; // `todosEffectsError` automatically adds `${modelName}EffectsError` as the property
+}
+
+class TodoList extends Component<Props> {
+  render() {
+    const { todosEffectsError } = this.props;
+
+    todosEffectsError.add;
+  }
+}
+
+export default withModelEffectsError('todos')(TodoList);
+```
+
+You can use `mapModelEffectsErrorToProps` to set the property as the same way like `mapModelToProps`.
+
+#### getModelState
+
+`getModelState(name: string): state`
+
+A API granting you access to the model state.
+
+```js
+import { useCallback } from 'react';
+import store from '@/store';
+
+function FunctionComponent() {
+  const memoizedCallback = useCallback(
+    () => {
+      const state = store.getModelState('foo');
+      something(a, state);
+    },
+    [a, b],
+  );
+}
+```
+
+#### getModelDispatchers
+
+`getModelDispatchers(name: string): dispatchers`
+
+A API granting you access to the model dispatchers.
+
+```js
+import { useCallback } from 'react';
+import store from '@/store';
+
+function FunctionComponent() {
+  const memoizedCallback = useCallback(
+    () => {
+      const dispatchers = store.getModelDispatchers('foo');
+      dispatchers.foo(a, b);
+    },
+    [a, b],
+  );
 }
 ```

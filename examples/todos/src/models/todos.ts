@@ -1,4 +1,5 @@
 import { delay } from '../utils';
+import store from '../store';
 
 export interface Todo {
   name: string;
@@ -19,31 +20,21 @@ const todos = {
     ],
   },
   reducers: {
-    toggle(prevState: TodosState, index: number) {
-      const dataSource = [].concat(prevState.dataSource);
-      dataSource[index].done = !prevState.dataSource[index].done;
-      return {
-        ...prevState,
-        dataSource,
-      };
+    toggle(state: TodosState, index: number) {
+      state.dataSource[index].done = !state.dataSource[index].done;
     },
-    update(prevState: TodosState, payload) {
-      return {
-        ...prevState,
-        ...payload,
-      };
+    add(state, todo) {
+      state.dataSource.push(todo);
+    },
+    remove(state, index) {
+      state.dataSource.splice(index, 1);
     },
   },
-  effects: {
-    add(state: TodosState, todo: Todo, actions, globalActions) {
-      const dataSource = [].concat(state.dataSource);
-      dataSource.push(todo);
-      globalActions.user.setTodos(dataSource.length);
-      actions.update({
-        dataSource,
-      });
+  effects: (dispatch) => ({
+    add() {
+      dispatch.user.setTodos(store.getModelState('todos').dataSource.length);
     },
-    async refresh(state: TodosState, payload, actions, globalActions) {
+    async refresh() {
       await delay(2000);
 
       const dataSource: any[] = [
@@ -58,20 +49,17 @@ const todos = {
           name: 'angular',
         },
       ];
-      globalActions.user.setTodos(dataSource.length);
-      actions.update({
+      this.update({
         dataSource,
       });
-    },
-    async remove(state: TodosState, index: number, actions, globalActions) {
-      await delay(1000);
-      const dataSource = [].concat(state.dataSource);
-      dataSource.splice(index, 1);
 
-      globalActions.user.setTodos(dataSource.length);
-      actions.update(state);
+      dispatch.user.setTodos(dataSource.length);
     },
-  },
+    async remove() {
+      await delay(1000);
+      dispatch.user.setTodos(store.getModelState('todos').dataSource.length);
+    },
+  }),
 };
 
 export default todos;

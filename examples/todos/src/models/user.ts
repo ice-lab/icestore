@@ -9,30 +9,22 @@ const user = {
     auth: false,
   },
   reducers: {
-    setTodos(prevState, todos: number) {
-      return { ...prevState, todos };
-    },
-    update(prevState, payload) {
-      return {
-        ...prevState,
-        ...payload,
-      };
+    setTodos(state, todos: number) {
+      state.todos = todos;
     },
   },
-  effects: {
-    async login(prevState, payload, actions) {
+  effects: () => ({
+    async login() {
       await delay(1000);
-      const dataSource = {
-        name: 'Alvin',
-      };
-      const auth = true;
 
-      actions.update({
-        dataSource,
-        auth,
+      this.update({
+        dataSource: {
+          name: 'Alvin',
+        },
+        auth: true,
       });
     },
-  },
+  }),
 };
 
 export default user;

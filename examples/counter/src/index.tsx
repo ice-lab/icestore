@@ -11,12 +11,12 @@ const counter = {
     increment:(prevState) => prevState + 1,
     decrement:(prevState) => prevState - 1,
   },
-  effects: {
-    async decrementAsync(state, payload, actions) {
+  effects: (dispatch) => ({
+    async decrementAsync() {
       await delay(1000);
-      actions.decrement();
+      this.decrement();
     },
-  },
+  }),
 };
 
 const models = {
@@ -29,8 +29,8 @@ const store = createStore(models);
 // 3️⃣ Consume model
 const { useModel } = store;
 function Counter() {
-  const [ count, actions ] = useModel('counter');
-  const { increment, decrementAsync } = actions;
+  const [ count, dispatchers ] = useModel('counter');
+  const { increment, decrementAsync } = dispatchers;
   return (
     <div>
       <span>{count}</span>

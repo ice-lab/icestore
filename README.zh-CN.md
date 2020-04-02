@@ -1,8 +1,8 @@
-English | [简体中文](./README.zh-CN.md)
+[English](./README.md) | 简体中文
 
 # icestore
 
-> Simple and friendly state for React.
+> 简单友好的状态管理方案。
 
 [![NPM version](https://img.shields.io/npm/v/@ice/store.svg?style=flat)](https://npmjs.org/package/@ice/store)
 [![Package Quality](https://npm.packagequality.com/shield/@ice%2Fstore.svg)](https://packagequality.com/#?package=@ice/store)
@@ -25,18 +25,18 @@ English | [简体中文](./README.zh-CN.md)
   </tbody>
 </table>
 
-## Introduction
+## 安装
 
-icestore is a simple and friendly state management library for React. It has the following core features:
+icestore 是面向 React 应用的、简单友好的状态管理方案。它包含以下核心特征：
 
-* **Minimal & Familiar API**: No additional learning costs, easy to get started with the knowledge of Redux && React Hooks.
-* **Built in Async Status**: Records loading and error status of async actions, simplifying the rendering logic in the view layer.
-* **Class Component Support**: Make old projects enjoying the fun of lightweight state management with friendly compatibility strategy.
-* **TypeScript Support**: Provide complete type definitions to support intelliSense in VS Code.
+* **简单、熟悉的 API**：不需要额外的学习成本，只需要了解 React Hooks，对 Redux 用户友好。
+* **集成异步处理**：记录异步操作时的执行状态，简化视图中对于等待或错误的处理逻辑。
+* **支持组件 Class 写法**：友好的兼容策略可以让老项目享受轻量状态管理的乐趣。
+* **良好的 TypeScript 支持**：提供完整的 TypeScript 类型定义，在 VS Code 中能获得完整的类型检查和推断。
 
-See the [comparison table](docs/recipes.md#Comparison) for more details.
+查看[《能力对比表》](docs/recipes.md#Comparison)了解更多细节。
 
-## Basic example
+## 快速开始
 
 ```jsx
 import React from 'react';
@@ -45,7 +45,7 @@ import { createStore } from '@ice/store';
 
 const delay = (time) => new Promise((resolve) => setTimeout(() => resolve(), time));
 
-// 1️⃣ Use a model to define your store
+// 1️⃣ 使用模型定义你的状态
 const counter = {
   state: 0,
   reducers: {
@@ -64,10 +64,10 @@ const models = {
   counter,
 };
 
-// 2️⃣ Create the store
+// 2️⃣ 创建 Store
 const store = createStore(models);
 
-// 3️⃣ Consume model
+// 3️⃣ 消费模型
 const { useModel } = store;
 function Counter() {
   const [ count, dispatchers ] = useModel('counter');
@@ -81,7 +81,7 @@ function Counter() {
   );
 }
 
-// 4️⃣ Wrap your components with Provider
+// 4️⃣ 绑定视图
 const { Provider } = store;
 function App() {
   return (
@@ -95,9 +95,9 @@ const rootElement = document.getElementById('root');
 ReactDOM.render(<App />, rootElement);
 ```
 
-## Installation
+## 安装
 
-icestore requires React 16.8.0 or later.
+使用 icestore 需要 React 在 16.8.0 版本以上。
 
 ```bash
 npm install @ice/store --save
@@ -107,33 +107,33 @@ npm install @ice/store --save
 
 [docs/api](./docs/api.md)
 
-## Recipes
+## 更多技巧
 
 [docs/recipes](./docs/recipes.md)
 
-## Upgrade Guidelines
+## 从老版本升级
 
 [docs/upgrade-guidelines](./docs/upgrade-guidelines.md)
 
-## Browser Compatibility
+## 浏览器支持
 
 | ![Chrome](https://raw.github.com/alrra/browser-logos/master/src/chrome/chrome_48x48.png) | ![Firefox](https://raw.github.com/alrra/browser-logos/master/src/firefox/firefox_48x48.png) | ![Edge](https://raw.github.com/alrra/browser-logos/master/src/edge/edge_48x48.png) | ![IE](https://raw.github.com/alrra/browser-logos/master/src/archive/internet-explorer_9-11/internet-explorer_9-11_48x48.png) | ![Safari](https://raw.github.com/alrra/browser-logos/master/src/safari/safari_48x48.png) | ![Opera](https://raw.github.com/alrra/browser-logos/master/src/opera/opera_48x48.png) | ![UC](https://raw.github.com/alrra/browser-logos/master/src/uc/uc_48x48.png) |
 | :--------------------------------------------------------------------------------------: | :-----------------------------------------------------------------------------------------: | :--------------------------------------------------------------------------------: | :--------------------------------------------------------------------------------------------------------------------------: | :--------------------------------------------------------------------------------------: | :-----------------------------------------------------------------------------------: | :--------------------------------------------------------------------------: |
 |✔ |✔|✔|9+ ✔|✔|✔|✔|
 
-## Inspiration
+## 灵感
 
-icestore refines and builds upon the ideas of [rematch](https://github.com/rematch/rematch) & [constate](https://github.com/diegohaz/constate).
+创造 icestore 的灵感来自于 [rematch](https://github.com/rematch/rematch) 和 [constate](https://github.com/diegohaz/constate)。
 
-## Contributors
+## 参与贡献
 
-Feel free to report any questions as an [issue](https://github.com/alibaba/ice/issues/new), we'd love to have your helping hand on icestore.
+欢迎通过 [issue](https://github.com/alibaba/ice/issues/new) 反馈问题。
 
-If you're interested in icestore, see [CONTRIBUTING.md](https://github.com/alibaba/ice/blob/master/.github/CONTRIBUTING.md) for more information to learn how to get started.
+如果对 `icestore` 感兴趣，请参考 [CONTRIBUTING.md](https://github.com/alibaba/ice/blob/master/.github/CONTRIBUTING.md) 学习如何贡献代码。
 
-## Community
+## 社区
 
-| DingTalk community                               | GitHub issues |  Gitter |
+| 钉钉群	                             | GitHub issues |  Gitter |
 |-------------------------------------|--------------|---------|
 | <a href="https://ice.alicdn.com/assets/images/qrcode.png"><img src="https://ice.alicdn.com/assets/images/qrcode.png" width="150" /></a> | [issues]     | [gitter]|
 
