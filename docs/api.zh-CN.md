@@ -64,7 +64,7 @@ const counter = {
 };
 ```
 
-reducer 可以使用 mutable 方法来实现不可变状态。 例如：
+reducer 可以使用可变的方式来更新状态。在内部，我们是通过调用 [immer](https://github.com/immerjs/immer) 来实现的。例如：
 
 ```js
 const todo = {
@@ -87,7 +87,7 @@ const todo = {
 }
 ```
 
-在 Immer 中，reducer 对 state 进行变更以实现下一个不可变状态。Immer 只支持对普通对象和数组的变化检测，所以像字符串或数字这样的原始值需要会返回一个新值。 例如：
+在 Immer 中，reducer 对 state 进行变更检测以实现下一个不可变状态。Immer 只支持对普通对象和数组的变化检测，所以像字符串或数字这样的原始值需要返回一个新值。 例如：
 
 ```js
 const count = {
@@ -175,7 +175,7 @@ const user = {
   ```
 - `disableImmer` (布尔值, 可选, 默认值=false)
 
-  如果您将其设置为true，那么[immer]将被禁用，这意味着您不能再在操作中直接改变状态，而是必须返回标准还原器中的不可变状态。
+  如果您将其设置为true，那么 immer 将被禁用，这意味着您不能再在 reducer 中直接改变状态，而是必须返回新的状态。
 - `disableError` (布尔值, 可选, 默认值=false)
 
   如果将此设置为true，则“UseModelEffectsRor”和“WithModelEffectsRor”将不可用。仅当您非常关注性能或故意抛出错误时才启用该选项。

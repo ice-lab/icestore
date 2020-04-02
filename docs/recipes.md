@@ -96,14 +96,14 @@ You can also using icestore with Class Component. The `withModel()` function con
 ### Basic
 
 ```tsx
-import { UseModelValue } from '@ice/store';
+import { ExtractIModelFromModelConfig } from '@ice/store';
 import todosModel from '@/models/todos';
 import store from '@/store';
 
 const { withModel } = store;
 
 interface MapModelToProp {
-  todos: UseModelValue<typeof todosModel>;  // `withModel` automatically adds the name of the model as the property
+  todos: ExtractIModelFromModelConfig<typeof todosModel>;  // `withModel` automatically adds the name of the model as the property
 }
 
 interface Props extends MapModelToProp {
@@ -126,7 +126,7 @@ export default withModel('todos')<MapModelToProp, Props>(TodoList);
 ### With multiple models
 
 ```tsx
-import { UseModelValue } from '@ice/store';
+import { ExtractIModelFromModelConfig } from '@ice/store';
 import todosModel from '@/models/todos';
 import userModel from '@/models/user';
 import store from '@/store';
@@ -134,15 +134,15 @@ import store from '@/store';
 const { withModel } = store;
 
 interface Props {
-  todos: UseModelValue<typeof todosModel>;
-  user: UseModelValue<typeof userModel>;
+  todos: ExtractIModelFromModelConfig<typeof todosModel>;
+  user: ExtractIModelFromModelConfig<typeof userModel>;
 }
 
 class TodoList extends Component<Props> {
   render() {
     const { todos, user } = this.props;
-    const [ todoState, todoActions ] = todos;
-    const [ userState, userActions ] = user;
+    const [ todoState, todoDispatchers ] = todos;
+    const [ userState, userDispatchers ] = user;
   }
 }
 
@@ -234,27 +234,27 @@ const store = createStore(models, {
 });
 ```
 
-## Comparison
+## 能力对比表
 
-- O: Yes
-- X: No
-- +: Extra
+- O: 支持
+- X: 不支持
+- +: 需要额外地进行能力扩展
 
-| feature | constate | zustand | react-tracked | icestore |
+| 功能/库 | constate | zustand | react-tracked | icestore |
 | :--------| :-------- | :-------- | :-------- | :-------- |
-| Framework | React | React | React | React |
-| Simplicity | ★★★★ | ★★★ | ★★★ | ★★★★ |
-| Less boilerplate | ★★ | ★★★ | ★★★ | ★★★★ |
-| Configurable | ★★★ | ★★★ | ★★★ | ★★★★★ |
-| Shareable State | O | O | O | O |
-| Reusable State | O | O | O | O |
-| Interactive State | + | + | + | O |
-| Class Component | + | + | + | O |
-| Function Component | O | O | O | O |
-| Async Status | X | X | X | O |
+| 框架 | React | React | React | React |
+| 简单性 | ★★★★ | ★★★ | ★★★ | ★★★★ |
+| 更少的模板代码 | ★★ | ★★★ | ★★★ | ★★★★ |
+| 可配置性 | ★★★ | ★★★ | ★★★ | ★★★★★ |
+| 共享状态 | O | O | O | O |
+| 复用状态 | O | O | O | O |
+| 状态联动 | + | + | + | O |
+| Class 组件支持 | + | + | + | O |
+| Function 组件支持 | O | O | O | O |
+| 异步更新的状态 | X | X | X | O |
 | SSR | O | X | O | O |
-| Persist | X | X | X | O |
-| Lazy load models | + | + | + | O |
-| Centralization | X | X | X | O |
-| Middleware or Plug-in | X | O | X | O |
-| Devtools | X | O | X | O |
+| 持久化 | X | X | X | + |
+| 懒加载模型 | + | + | + | O |
+| 中心化 | X | X | X | O |
+| 中间件或插件机制 | X | O | X | O |
+| 开发者工具 | X | O | X | O |
