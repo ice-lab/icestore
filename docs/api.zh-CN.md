@@ -64,7 +64,7 @@ const counter = {
 };
 ```
 
-reducer 可以使用可变的方式来更新状态。在内部，我们是通过调用 [immer](https://github.com/immerjs/immer) 来实现的。例如：
+reducers 可以使用可变的方式来更新状态。在内部，我们是通过调用 [immer](https://github.com/immerjs/immer) 来实现的。例如：
 
 ```js
 const todo = {
@@ -137,7 +137,7 @@ const user = {
       dispatch.todos.foo(payload); // call actions of another model
     },
   }),
-  reducres: {
+  reducers: {
     foo(prevState, payload) {
       return {
         ...prevState,
@@ -175,10 +175,10 @@ const user = {
   ```
 - `disableImmer` (布尔值, 可选, 默认值=false)
 
-  如果您将其设置为true，那么 immer 将被禁用，这意味着您不能再在 reducer 中直接改变状态，而是必须返回新的状态。
+  如果您将其设置为true，那么 immer 将被禁用，这意味着您不能再在 reducers 中直接改变状态，而是必须返回新的状态。
 - `disableError` (布尔值, 可选, 默认值=false)
 
-  如果将此设置为true，则“UseModelEffectsRor”和“WithModelEffectsRor”将不可用。仅当您非常关注性能或故意抛出错误时才启用该选项。
+  如果将此设置为true，则 “UseModelEffectsError” 和 “WithModelEffectsError” 将不可用。仅当您非常关注性能或故意抛出错误时才启用该选项。
 
   > 我们将会在未来的版本中默认开启该选项。
 - `disableLoading` (布尔值, 可选, 默认值=false)
@@ -399,7 +399,7 @@ class TodoList extends Component<Props> {
 export default withModelDispatchers('todos')(TodoList);
 ```
 
-You can use `mapModelDispatchersToProps` to set the property as the same way like `mapModelToProps`.
+你可以使用 `mapModelDispatchersToProps` 来设置 props 的字段名，用法同 `mapModelToProps`。
 
 #### withModelEffectsLoading
 
