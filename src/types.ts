@@ -222,7 +222,7 @@ export interface ModelPluginAPI<M extends Models = Models> {
 }
 
 export interface ProviderPluginAPI {
-  Provider: (props: { children: any; initialStates?: any; }) => JSX.Element;
+  Provider: (props: { children: any; initialStates?: any }) => JSX.Element;
 }
 
 export type PresetIcestore<
