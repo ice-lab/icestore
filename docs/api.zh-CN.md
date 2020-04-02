@@ -5,25 +5,25 @@ title: API
 
 [English](./api.md) | 简体中文
 
-`createStore` 是 icestore 的 API 主要入口。创建后的 Store 将提供一些 Hooks 和 API。
+`createStore` 是 icestore 的 API 主要入口。创建后的 Store 将提供一些 Hooks 和 API 用于访问和操作数据。
 
 ## createStore
 
 `createStore(models, options)`
 
-该方法用于创建 store。
+该方法用于创建 Store。
 
 ```js
 import { createStore } from '@ice/store';
 
 const { 
-  // 主要的 apis
+  // 主要的 API
   Provider,
   useModel,
   getModel,
   withModel,
 
-  // 辅助的 apis
+  // 辅助的 API
   useModelDispatchers,
   useModelEffectsState,
   withModelDispatchers,

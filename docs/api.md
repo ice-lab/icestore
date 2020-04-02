@@ -17,13 +17,13 @@ The function called to create a store.
 import { createStore } from '@ice/store';
 
 const { 
-  // major apis
+  // major API
   Provider,
   useModel,
   getModel,
   withModel,
 
-  // auxiliary apis
+  // auxiliary API
   useModelDispatchers,
   useModelEffectsState,
   withModelDispatchers,

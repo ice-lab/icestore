@@ -11,7 +11,7 @@ title: Recipes
 
 ### 示例
 
-您有一个用户模型，记录了用户拥有多少个任务；还有一个任务模型，记录了任务的列表详情。每当添加任务时，都需要更新用户拥有的任务数。
+您有一个用户模型，记录了用户拥有多少个任务；还有一个任务模型，记录了任务的列表详情。每当添加任务到列表时，都需要更新用户拥有的任务数。
 
 ```tsx
 // src/models/user
@@ -63,13 +63,13 @@ export default createStore({
 
 模型间允许相互调用，需注意循环调用的问题。例如，模型 A 中的 a 方法调用了 模型 B 中的 b 方法，模型 B 中的 b 方法又调用模型 A 中的 a 方法，就会形成死循环。
 
-如果是多个模型间相互调用，死循环问题的出现概率就会提升。
+如果是多个模型间进行相互调用，死循环问题的出现概率就会提升。
 
 ## 模型副作用的执行状态
 
-icestore 内部集成了对于异步副作用的状态记录，方便您在不增加额外的状态的前提下访问异步副作用的执行状态（loading 与 error），从而使状态的渲染的处理逻辑更加简洁。
+icestore 内部集成了对于异步副作用的状态记录，方便您在不增加额外的状态的前提下访问异步副作用的执行状态（loading 与 error），从而使状态渲染的处理逻辑更加简洁。
 
-### Example
+### 示例
 
 ```js
 import { useModelDispatchers } from './store';
@@ -82,8 +82,8 @@ function FunctionComponent() {
     dispatchers.fetch();
   }, []);
 
-  effectsState.fetch.isLoading;
-  effectsState.fetch.error;
+  effectsState.fetch.isLoading; // 是否在调用中
+  effectsState.fetch.error; // 调用结果是否有错误
 }
 ```
 
@@ -91,7 +91,7 @@ function FunctionComponent() {
 
 您可以在 Class 组件中使用模型，只需要调用 `withModel()` 方法将模型绑定到 React 组件中。
 
-### Basic
+### 基础示例
 
 ```tsx
 import { ExtractIModelFromModelConfig } from '@ice/store';
@@ -105,7 +105,7 @@ interface MapModelToProp {
 }
 
 interface Props extends MapModelToProp {
-  title: string; // 自定义 props
+  title: string; // 自定义的 props
 }
 
 class TodoList extends Component<Props> {
@@ -113,8 +113,8 @@ class TodoList extends Component<Props> {
     const { title, todos } = this.props;
     const [ state, dispatchers ] = todos;
     
-    state.field; // get state
-    dispatchers.add({ /* ... */}); // run action
+    state.field; // 获取状态
+    dispatchers.add({ /* ... */}); // 调度模型的变更操作
   }
 }
 
@@ -148,7 +148,7 @@ export default withModel('user')(
   withModel('todos')(TodoList)
 );
 
-// 函数式编程的方式：
+// 可以通过组合的方式进行函数调用：
 import compose from 'lodash/fp/compose';
 export default compose(withModel('user'), withModel('todos'))(TodoList);
 ```
@@ -157,11 +157,11 @@ export default compose(withModel('user'), withModel('todos'))(TodoList);
 
 您可以使用 `withModelDispatchers` 用于使用模型的调度器而不订阅模型的更新，`withModelEffectsState` 的 API 签名与前者一致。
 
-查看 [docs/api](./api.zh-CN.md) 了解使用方式。
+查看 [docs/api](./api.zh-CN.md) 了解其使用方式。
 
 ## 项目的目录组织
 
-对于大多数中小型项目，建议集中管理模型，在 “src/models/” 目录中存放项目的所有模型：
+对于大多数中小型项目，建议集中管理模型，例如在 “src/models/” 目录中存放项目的所有模型：
 
 ```bash
 ├── src/
@@ -179,11 +179,13 @@ export default compose(withModel('user'), withModel('todos'))(TodoList);
 
 如果项目相对较大，可以按照页面来管理模型。但是，在这种情况下，应该避免跨页面使用模型。
 
-## 不可变数据
+## 可变状态的说明
+
+icestore 默认为 reducer 提供了状态可变的操作方式。
 
 ### 不要解构参数
 
-我们使用 [immer](https://github.com/immerjs/immer) 来实现不可变数据的操作 API。immer 使用代理（Proxy）来跟踪我们的变化，将它们转换为新的更新。因此，如果对提供用于操作的状态进行解构，则会脱离代理，在此之后，将不会检测到它的任何更新。
+icestore 内部使用 [immer](https://github.com/immerjs/immer) 来实现可变状态的操作 API。immer 使用代理（Proxy）来跟踪我们的变化，然后将它们转换为新的更新。因此，如果对提供的状态进行解构，则会脱离代理，在此之后，将不会检测到它的任何更新。
 
 下面是几个错误的示范：
 
@@ -206,9 +208,7 @@ const model = {
 
 ### 直接更新状态
 
-默认情况下，我们使用 immer 提供一个基于变更跟踪的 API。
-
-这是完全可选的，您可以像下面这样操作，返回新的状态。
+默认情况下，我们使用 immer 提供可变状态的操作。但这是完全可选的，您可以像下面这样操作，返回新的状态。
 
 ```js
 const model = {
@@ -222,7 +222,7 @@ const model = {
 }
 ```
 
-如果您喜欢这种方式，可以通过 createStore 的 disableImmer 选项禁用 immer。
+如果您喜欢这种方式，可以通过 createStore 的 disableImmer 选项来禁用 immer。
 
 ```js
 import { createStore } from '@ice/store';
@@ -231,28 +231,27 @@ const store = createStore(models, {
   disableImmer: true; // 👈 通过该配置禁用 immer
 });
 ```
+## 能力对比表
 
-## Comparison
+- O: 支持
+- X: 不支持
+- +: 需要额外地进行能力扩展
 
-- O: Yes
-- X: No
-- +: Extra
-
-| feature | constate | zustand | react-tracked | icestore |
+| 功能/库 | constate | zustand | react-tracked | icestore |
 | :--------| :-------- | :-------- | :-------- | :-------- |
-| Framework | React | React | React | React |
-| Simplicity | ★★★★ | ★★★ | ★★★ | ★★★★ |
-| Less boilerplate | ★★ | ★★★ | ★★★ | ★★★★ |
-| Configurable | ★★★ | ★★★ | ★★★ | ★★★★★ |
-| Shareable State | O | O | O | O |
-| Reusable State | O | O | O | O |
-| Interactive State | + | + | + | O |
-| Class Component | + | + | + | O |
-| Function Component | O | O | O | O |
-| Async Status | X | X | X | O |
+| 框架 | React | React | React | React |
+| 简单性 | ★★★★ | ★★★ | ★★★ | ★★★★ |
+| 更少的模板代码 | ★★ | ★★★ | ★★★ | ★★★★ |
+| 可配置性 | ★★★ | ★★★ | ★★★ | ★★★★★ |
+| 共享状态 | O | O | O | O |
+| 复用状态 | O | O | O | O |
+| 状态联动 | + | + | + | O |
+| Class 组件支持 | + | + | + | O |
+| Function 组件支持 | O | O | O | O |
+| 异步更新的状态 | X | X | X | O |
 | SSR | O | X | O | O |
-| Persist | X | X | X | O |
-| Lazy load models | + | + | + | O |
-| Centralization | X | X | X | O |
-| Middleware or Plug-in | X | O | X | O |
-| Devtools | X | O | X | O |
+| 持久化 | X | X | X | + |
+| 懒加载模型 | + | + | + | O |
+| 中心化 | X | X | X | O |
+| 中间件或插件机制 | X | O | X | O |
+| 开发者工具 | X | O | X | O |

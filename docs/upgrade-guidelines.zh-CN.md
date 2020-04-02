@@ -8,6 +8,7 @@ title: Upgrade Guidelines
 ## 1.2.0 to 1.3.0
 
 1.3.0 是完全向下兼容的，但是我们推荐您在新增代码中使用最新的 API。
+
 我们会在未来的版本中删除标记为「已过期」的 API。
 
 ### initialState
@@ -163,6 +164,7 @@ export default withModelDispatchers('todos')(TodoList);
 ## 1.0.0 to 1.3.0
 
 1.3.0 是完全向下兼容的，但是我们推荐您在新增代码中使用最新的 API。
+
 我们会在未来的版本中删除标记为「已过期」的 API。
 
 ### Define Model Actions
@@ -259,7 +261,9 @@ export default withModelEffectsState('todos')(TodoList);
 
 ## 0.x.x to 1.x.x
 
-从 0.x.x 到 1.x.x 是不兼容的。您可以选择性地进行升级。但 0.x.x 有一些已知的缺陷，您必须知晓：https://github.com/alibaba/ice/issues/3037
+从 0.x.x 到 1.x.x 是不兼容的。您可以选择性地进行升级。
+
+但 0.x.x 有一些已知的缺陷，您必须知晓：https://github.com/alibaba/ice/issues/3037
 
 ### Define Model
 

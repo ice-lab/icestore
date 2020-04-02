@@ -234,27 +234,27 @@ const store = createStore(models, {
 });
 ```
 
-## 能力对比表
+## Comparison
 
-- O: 支持
-- X: 不支持
-- +: 需要额外地进行能力扩展
+- O: Yes
+- X: No
+- +: Extra
 
-| 功能/库 | constate | zustand | react-tracked | icestore |
+| feature | constate | zustand | react-tracked | icestore |
 | :--------| :-------- | :-------- | :-------- | :-------- |
-| 框架 | React | React | React | React |
-| 简单性 | ★★★★ | ★★★ | ★★★ | ★★★★ |
-| 更少的模板代码 | ★★ | ★★★ | ★★★ | ★★★★ |
-| 可配置性 | ★★★ | ★★★ | ★★★ | ★★★★★ |
-| 共享状态 | O | O | O | O |
-| 复用状态 | O | O | O | O |
-| 状态联动 | + | + | + | O |
-| Class 组件支持 | + | + | + | O |
-| Function 组件支持 | O | O | O | O |
-| 异步更新的状态 | X | X | X | O |
+| Framework | React | React | React | React |
+| Simplicity | ★★★★ | ★★★ | ★★★ | ★★★★ |
+| Less boilerplate | ★★ | ★★★ | ★★★ | ★★★★ |
+| Configurable | ★★★ | ★★★ | ★★★ | ★★★★★ |
+| Shareable State | O | O | O | O |
+| Reusable State | O | O | O | O |
+| Interactive State | + | + | + | O |
+| Class Component | + | + | + | O |
+| Function Component | O | O | O | O |
+| Async Status | X | X | X | O |
 | SSR | O | X | O | O |
-| 持久化 | X | X | X | + |
-| 懒加载模型 | + | + | + | O |
-| 中心化 | X | X | X | O |
-| 中间件或插件机制 | X | O | X | O |
-| 开发者工具 | X | O | X | O |
+| Persist | X | X | X | O |
+| Lazy load models | + | + | + | O |
+| Centralization | X | X | X | O |
+| Middleware or Plug-in | X | O | X | O |
+| Devtools | X | O | X | O |
