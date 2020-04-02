@@ -30,7 +30,7 @@ English | [简体中文](./README.zh-CN.md)
 icestore is a simple and friendly state management library for React. It has the following core features:
 
 * **Minimal & Familiar API**: No additional learning costs, easy to get started with the knowledge of Redux && React Hooks.
-* **Built in Async Status**: Records loading and error status of async actions, simplifying the rendering logic in the view layer.
+* **Built in Async Status**: Records loading and error status of effects, simplifying the rendering logic in the view layer.
 * **Class Component Support**: Make old projects enjoying the fun of lightweight state management with friendly compatibility strategy.
 * **TypeScript Support**: Provide complete type definitions to support intelliSense in VS Code.
 

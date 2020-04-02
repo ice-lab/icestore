@@ -3,12 +3,13 @@ id: upgrade-guidelines
 title: Upgrade Guidelines
 ---
 
-English | [简体中文](./upgrade-guidelines.zh-CN.md)
+[English](./upgrade-guidelines.md) | 简体中文
 
 ## 1.2.0 to 1.3.0
 
-From 1.2.0 to 1.3.0 is fully compatible, but we recommend that you use the new API in incremental code.
-We will remove the deprecated API in future versions.
+1.3.0 是完全向下兼容的，但是我们推荐您在新增代码中使用最新的 API。
+
+我们会在未来的版本中删除标记为「已过期」的 API。
 
 ### initialState
 
@@ -59,8 +60,8 @@ const todos = {
   effects: {
     async refresh(state, payload, actions, globalActions) {
       console.log(state); // [ { title: 'Testing' } ]
-      actions.foo(); // call self actions
-      globalActions.user.foo(); // call another model's action
+      actions.foo(); // 调用本模型的方法
+      globalActions.user.foo(); // 调用其他模型的方法
     }
   },
 };
@@ -78,8 +79,8 @@ const todos = {
   effects: (dispatch) => ({
     async refresh(payload, rootState) {
       console.log(rootState.todos); // [ { title: 'Testing' } ]
-      this.foo(); // call self actions
-      dispatch.user.foo(); // call another model's action
+      this.foo(); // 调用本模型的方法
+      dispatch.user.foo(); // 调用其他模型的方法
     }
   }),
 };
@@ -150,6 +151,8 @@ export default withModelDispatchers('todos')(TodoList);
 
 ### Utility Types
 
+一些工具类型命名也发生了变更。我们在 1.3.0 中保留了老版本的工具类型，但强烈建议您使用最新的工具类型。
+
 - ConfigPropTypeState => ExtractIModelStateFromModelConfig
 - ConfigPropTypeEffects => ExtractIModelEffectsFromModelConfig
 - ConfigPropTypeReducers => ExtractIModelReducersFromModelConfig
@@ -160,8 +163,9 @@ export default withModelDispatchers('todos')(TodoList);
 
 ## 1.0.0 to 1.3.0
 
-From 1.0.0 to 1.3.0 is fully compatible, but we recommend that you use the new API in incremental code.
-We will remove the deprecated API in future versions.
+1.3.0 是完全向下兼容的，但是我们推荐您在新增代码中使用最新的 API。
+
+我们会在未来的版本中删除标记为「已过期」的 API。
 
 ### Define Model Actions
 
@@ -256,6 +260,10 @@ export default withModelEffectsState('todos')(TodoList);
 ```
 
 ## 0.x.x to 1.x.x
+
+从 0.x.x 到 1.x.x 是不兼容的。您可以选择性地进行升级。
+
+但 0.x.x 有一些已知的缺陷，您必须知晓：https://github.com/alibaba/ice/issues/3037
 
 ### Define Model
 
