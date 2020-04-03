@@ -1,5 +1,5 @@
 import { delay } from '../utils';
-import store from '../store';
+import store, { RootDispatch } from '../store';
 
 export interface Todo {
   name: string;
@@ -10,7 +10,7 @@ export interface TodosState {
   dataSource: Todo[];
 }
 
-const todos = {
+const model = {
   state: {
     dataSource: [
       {
@@ -23,21 +23,21 @@ const todos = {
     toggle(state: TodosState, index: number) {
       state.dataSource[index].done = !state.dataSource[index].done;
     },
-    add(state, todo) {
+    add(state: TodosState, todo: Todo) {
       state.dataSource.push(todo);
     },
-    remove(state, index) {
+    remove(state: TodosState, index: number) {
       state.dataSource.splice(index, 1);
     },
   },
-  effects: (dispatch) => ({
-    add() {
+  effects: (dispatch: RootDispatch) => ({
+    add(todo: Todo) {
       dispatch.user.setTodos(store.getModelState('todos').dataSource.length);
     },
     async refresh() {
       await delay(2000);
 
-      const dataSource: any[] = [
+      const dataSource: Todo[] = [
         {
           name: 'react',
         },
@@ -55,11 +55,11 @@ const todos = {
 
       dispatch.user.setTodos(dataSource.length);
     },
-    async remove() {
+    async remove(index: number) {
       await delay(1000);
       dispatch.user.setTodos(store.getModelState('todos').dataSource.length);
     },
   }),
 };
 
-export default todos;
+export default model;

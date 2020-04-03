@@ -1,6 +1,14 @@
 import { delay } from '../utils';
 
-const user = {
+export interface UserState {
+  dataSource: {
+    name: string;
+  };
+  todos: number;
+  auth: boolean;
+}
+
+const model = {
   state: {
     dataSource: {
       name: '',
@@ -9,7 +17,7 @@ const user = {
     auth: false,
   },
   reducers: {
-    setTodos(state, todos: number) {
+    setTodos(state: UserState, todos: number) {
       state.todos = todos;
     },
   },
@@ -27,4 +35,4 @@ const user = {
   }),
 };
 
-export default user;
+export default model;

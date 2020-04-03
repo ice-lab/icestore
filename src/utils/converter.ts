@@ -1,5 +1,8 @@
 import isFunction from 'lodash.isfunction';
 import warning from './warning';
+import actionTypes from '../actionTypes';
+
+const { SET_STATE } = actionTypes;
 
 /**
  * convertEffects
@@ -43,7 +46,6 @@ export function convertEffects(originModels: any) {
  */
 export function convertActions(originModels: any) {
   const models = {};
-  const setState = '__actionSetState__';
   Object.keys(originModels).forEach(function(name) {
     const model = originModels[name];
     const actions = model.actions;
@@ -52,7 +54,6 @@ export function convertActions(originModels: any) {
       if (!model.reducers) {
         model.reducers = {};
       }
-      model.reducers[setState] = (state, payload) => payload;
       model.effects = function(dispatch: any) {
         const effects = {};
         Object.keys(actions).forEach(function(key) {
@@ -64,7 +65,9 @@ export function convertActions(originModels: any) {
               dispatch[name],
               dispatch,
             );
-            dispatch[name][setState](result);
+            if (dispatch[name][SET_STATE]) {
+              dispatch[name][SET_STATE](result);
+            }
           };
         });
         return effects;

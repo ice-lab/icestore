@@ -3,6 +3,8 @@ id: recipes
 title: Recipes
 ---
 
+English | [简体中文](./recipes.zh-CN.md)
+
 ## Model interaction
 
 Model interaction is a common usage scene which can be implemented by calling actions from other model in a model's action.
@@ -94,14 +96,14 @@ You can also using icestore with Class Component. The `withModel()` function con
 ### Basic
 
 ```tsx
-import { UseModelValue } from '@ice/store';
+import { ExtractIModelFromModelConfig } from '@ice/store';
 import todosModel from '@/models/todos';
 import store from '@/store';
 
 const { withModel } = store;
 
 interface MapModelToProp {
-  todos: UseModelValue<typeof todosModel>;  // `withModel` automatically adds the name of the model as the property
+  todos: ExtractIModelFromModelConfig<typeof todosModel>;  // `withModel` automatically adds the name of the model as the property
 }
 
 interface Props extends MapModelToProp {
@@ -124,7 +126,7 @@ export default withModel('todos')<MapModelToProp, Props>(TodoList);
 ### With multiple models
 
 ```tsx
-import { UseModelValue } from '@ice/store';
+import { ExtractIModelFromModelConfig } from '@ice/store';
 import todosModel from '@/models/todos';
 import userModel from '@/models/user';
 import store from '@/store';
@@ -132,15 +134,15 @@ import store from '@/store';
 const { withModel } = store;
 
 interface Props {
-  todos: UseModelValue<typeof todosModel>;
-  user: UseModelValue<typeof userModel>;
+  todos: ExtractIModelFromModelConfig<typeof todosModel>;
+  user: ExtractIModelFromModelConfig<typeof userModel>;
 }
 
 class TodoList extends Component<Props> {
   render() {
     const { todos, user } = this.props;
-    const [ todoState, todoActions ] = todos;
-    const [ userState, userActions ] = user;
+    const [ todoState, todoDispatchers ] = todos;
+    const [ userState, userDispatchers ] = user;
   }
 }
 
@@ -238,8 +240,8 @@ const store = createStore(models, {
 - X: No
 - +: Extra
 
-| constate | zustand | react-tracked | icestore |
-| --------| -------- | -------- | -------- | -------- | -------- |
+| feature | constate | zustand | react-tracked | icestore |
+| :--------| :-------- | :-------- | :-------- | :-------- |
 | Framework | React | React | React | React |
 | Simplicity | ★★★★ | ★★★ | ★★★ | ★★★★ |
 | Less boilerplate | ★★ | ★★★ | ★★★ | ★★★★ |
@@ -253,6 +255,6 @@ const store = createStore(models, {
 | SSR | O | X | O | O |
 | Persist | X | X | X | O |
 | Lazy load models | + | + | + | O |
-| Centralization | X | X | X | O | 
+| Centralization | X | X | X | O |
 | Middleware or Plug-in | X | O | X | O |
 | Devtools | X | O | X | O |
