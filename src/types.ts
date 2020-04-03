@@ -1,8 +1,8 @@
 import * as Redux from 'redux';
 
-export type Optionalize<T extends K, K> = Omit<T, keyof K>;
+type Optionalize<T extends K, K> = Omit<T, keyof K>;
 
-export type PropType<Obj, Prop extends keyof Obj> = Obj[Prop];
+type PropType<Obj, Prop extends keyof Obj> = Obj[Prop];
 
 export interface EffectState {
   isLoading: boolean;
@@ -150,7 +150,7 @@ export interface Icestore<
   subscribe(listener: () => void): Redux.Unsubscribe;
 }
 
-export interface EffectsErrorPluginAPI<M extends Models = Models> {
+interface EffectsErrorPluginAPI<M extends Models = Models> {
   useModelEffectsError<K extends keyof M>(name: K): ExtractIModelEffectsErrorFromModelConfig<M[K]>;
   withModelEffectsError<
     K extends keyof M,
@@ -160,7 +160,7 @@ export interface EffectsErrorPluginAPI<M extends Models = Models> {
   (props: Optionalize<P, R>) => React.ReactElement;
 }
 
-export interface EffectsLoadingPluginAPI<M extends Models = Models> {
+interface EffectsLoadingPluginAPI<M extends Models = Models> {
   useModelEffectsLoading<K extends keyof M>(name: K): ExtractIModelEffectsLoadingFromModelConfig<M[K]>;
   withModelEffectsLoading<
     K extends keyof M,
@@ -183,7 +183,7 @@ export interface WithModelEffectsState<M extends Models> {
   (props: Optionalize<P, R>) => React.ReactElement;
 }
 
-export interface EffectsStatePluginAPI<M extends Models = Models> {
+interface EffectsStatePluginAPI<M extends Models = Models> {
   useModelEffectsState: UseModelEffectsState<M>;
 
   /**
@@ -211,7 +211,7 @@ export interface WithModelDispatchers<M extends Models = Models> {
   (props: Optionalize<P, R>) => React.ReactElement;
 }
 
-export interface ModelPluginAPI<M extends Models = Models> {
+interface ModelPluginAPI<M extends Models = Models> {
   useModel<K extends keyof M>(name: K): ExtractIModelFromModelConfig<M[K]>;
   useModelState<K extends keyof M>(name: K): ExtractIModelStateFromModelConfig<M[K]>;
   useModelDispatchers: UseModelDispatchers<M>;
@@ -237,7 +237,7 @@ export interface ModelPluginAPI<M extends Models = Models> {
   withModelActions: WithModelDispatchers<M>;
 }
 
-export interface ProviderProps {
+interface ProviderProps {
   children: any;
   initialState?: any;
 
@@ -247,7 +247,7 @@ export interface ProviderProps {
   initialStates?: any;
 }
 
-export interface ProviderPluginAPI {
+interface ProviderPluginAPI {
   Provider: (props: ProviderProps) => JSX.Element;
 }
 
