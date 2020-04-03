@@ -2,17 +2,7 @@
 import { createStore, IcestoreRootState, IcestoreDispatch } from '@ice/store';
 import models from './models';
 
-const initialState = {
-  user: {
-    dataSource: {
-      name: 'Tom',
-    },
-    auth: true,
-    todos: 5,
-  },
-};
-
-const store = createStore(models, { initialState });
+const store = createStore(models);
 
 export default store;
 export type Store = typeof store;
