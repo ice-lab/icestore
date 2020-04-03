@@ -65,7 +65,9 @@ export function convertActions(originModels: any) {
               dispatch[name],
               dispatch,
             );
-            dispatch[name][SET_STATE](result);
+            if (dispatch[name][SET_STATE]) {
+              dispatch[name][SET_STATE](result);
+            }
           };
         });
         return effects;
