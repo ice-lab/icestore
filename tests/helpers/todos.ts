@@ -20,40 +20,42 @@ const todos = {
   },
 
   reducers: {
-    update(prevState: TodosState, payload) {
-      return {
-        ...prevState,
-        ...payload,
-      };
+    add(state: TodosState, todo: Todo) {
+      state.dataSource.push(todo);
+    },
+    remove(state: TodosState, index: number) {
+      state.dataSource.splice(index, 1);
     },
   },
 
-  effects: {
-    add(state: TodosState, todo: Todo, actions, globalActions) {
-      const dataSource = [].concat(state.dataSource);
-      dataSource.push(todo);
-      actions.update({
-        dataSource,
-      });
-      globalActions.user.setTodos(dataSource.length);
+  effects: (dispatch) => ({
+    add(state: TodosState, todo: Todo) {
+      this.add(todo);
+      dispatch.user.setTodos(state.dataSource.length);
     },
 
-    async delete(state: TodosState, index: number, actions, globalActions) {
+    async delete(state: TodosState, index: number) {
       await delay(1000);
-      const dataSource = [].concat(state.dataSource);
-      dataSource.splice(index, 1);
-
-      actions.update({ dataSource });
-      globalActions.user.setTodos(dataSource.length);
+      this.remove(index);
+      dispatch.user.setTodos(state.dataSource.length);
     },
-  },
+  }),
 };
 
 export const todosWithAction = {
   state: {
     a: 1,
   },
-  actions: {
+  // actions: {
+  //   incrementA: (state, value) => {
+  //     return {
+  //       ...state,
+  //       a: state.a + value,
+  //     };
+  //   },
+  // },
+  // old version define effects
+  effects: {
     incrementA: (state, value) => {
       return {
         ...state,
@@ -62,4 +64,5 @@ export const todosWithAction = {
     },
   },
 };
+
 export default todos;
