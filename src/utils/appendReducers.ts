@@ -1,3 +1,7 @@
+import actionTypes from '../actionTypes';
+
+const { SET_STATE } = actionTypes;
+
 export default function(originModels: any) {
   const models = {};
   Object.keys(originModels).forEach(function(name) {
@@ -11,8 +15,8 @@ export default function(originModels: any) {
         ...payload,
       });
     }
-    if (!model.reducers.setState) {
-      model.reducers.setState = (state, payload) => payload;
+    if (!model.reducers[SET_STATE]) {
+      model.reducers[SET_STATE] = (state, payload) => payload;
     }
     models[name] = model;
   });
