@@ -149,30 +149,6 @@ const user = {
 
 #### options
 
-- `initialState` (对象, 可选, 默认值=undefined)
-
-  允许您声明初始状态（可以用在诸如服务端渲染等场景）。
-
-  ```jsx
-  import { createStore } from '@ice/store';
-
-  const models = {
-    todo: { state: {}, },
-    user: { state: {}, },
-  };
-
-  const initialState = {
-    todo: {
-      title: 'Foo',
-      done: true,
-    },
-    user: {
-      name: 'Alvin',
-      age: 18,
-    },
-  };
-  createStore(models, { initialState });
-  ```
 - `disableImmer` (布尔值, 可选, 默认值=false)
 
   如果您将其设置为true，那么 immer 将被禁用，这意味着您不能再在 reducers 中直接改变状态，而是必须返回新的状态。
@@ -207,6 +183,38 @@ ReactDOM.render(
   </Provider>,
   rootEl
 ); 
+```
+
+允许您声明初始状态（可以用在诸如服务端渲染等场景）。
+
+```jsx
+import { createStore } from '@ice/store';
+
+const models = {
+  todo: { state: {}, },
+  user: { state: {}, },
+};
+
+const store = createStore(models);
+const { Provider } = store;
+
+const initialState = {
+  todo: {
+    title: 'Foo',
+    done: true,
+  },
+  user: {
+    name: 'Alvin',
+    age: 18,
+  },
+};
+function App() {
+  return (
+    <Provider initialState={initialState}>
+      <App />
+    </Provider>
+  );
+}
 ```
 
 #### useModel

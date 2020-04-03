@@ -13,19 +13,6 @@ import createErrorPlugin from './plugins/error';
 import { convertEffects, convertActions } from './utils/converter';
 import appendReducers from './utils/appendReducers';
 
-/**
- * global createModel
- *
- * creates a model for the given object
- * this is for autocomplete purposes only
- * returns the same object that was received as argument
- */
-export function createModel<S = any, M extends T.ModelConfig<S> = any>(
-  model: M,
-) {
-  return model;
-}
-
 // incrementer used to provide a store name if none exists
 let count = 0;
 
@@ -35,7 +22,7 @@ let count = 0;
  * generates a Icestore with a set configuration
  * @param config
  */
-export const init = <M extends T.Models>(initConfig: T.InitConfig<M> = {}): T.Icestore<M> => {
+const init = <M extends T.Models>(initConfig: T.InitConfig<M> = {}): T.Icestore<M> => {
   const name = initConfig.name || count.toString();
   count += 1;
   const config: T.Config = mergeConfig({ ...initConfig, name });
@@ -54,7 +41,6 @@ export const createStore = <M extends T.Models, C extends T.CreateStoreConfig<M>
     disableImmer,
     disableLoading,
     disableError,
-    initialState,
     plugins = [],
     redux = {},
   } = initConfig || {};
@@ -98,7 +84,6 @@ export const createStore = <M extends T.Models, C extends T.CreateStoreConfig<M>
     plugins,
     redux: {
       ...redux,
-      initialState,
       middlewares,
     },
   });
