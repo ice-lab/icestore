@@ -374,7 +374,6 @@ export interface PrsetConfig {
   disableImmer?: boolean;
   disableLoading?: boolean;
   disableError?: boolean;
-  initialState?: any;
 }
 
 export type CreateStoreConfig<M extends Models = Models> = InitConfig<M> & PrsetConfig;

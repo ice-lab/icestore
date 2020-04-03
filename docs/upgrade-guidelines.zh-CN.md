@@ -35,15 +35,20 @@ function App() {
 #### 1.3.0
 
 ```js
-import { createStore } from '@ice/store';
-import * as models from './models';
+import store from './store';
+const { Provider } = store;
 
 const initialState = {
   foo: {
   },
 };
-
-export default createStore(models, { initialState });
+function App() {
+  return (
+    <Provider initialState={initialState}>
+      <Todos />
+    </Provider>
+  );
+}
 ```
 
 ### Define Model Effects

@@ -41,7 +41,6 @@ export const createStore = <M extends T.Models, C extends T.CreateStoreConfig<M>
     disableImmer,
     disableLoading,
     disableError,
-    initialState,
     plugins = [],
     redux = {},
   } = initConfig || {};
@@ -85,7 +84,6 @@ export const createStore = <M extends T.Models, C extends T.CreateStoreConfig<M>
     plugins,
     redux: {
       ...redux,
-      initialState,
       middlewares,
     },
   });
