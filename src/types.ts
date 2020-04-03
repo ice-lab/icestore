@@ -221,8 +221,18 @@ export interface ModelPluginAPI<M extends Models = Models> {
   withModelActions: WithModelDispatchers<M>;
 }
 
+export interface ProviderProps {
+  children: any;
+  initialState?: any;
+
+  /**
+   * @deprecated use `initialState` instead.
+   */
+  initialStates?: any;
+}
+
 export interface ProviderPluginAPI {
-  Provider: (props: { children: any; initialStates?: any }) => JSX.Element;
+  Provider: (props: ProviderProps) => JSX.Element;
 }
 
 export type PresetIcestore<
@@ -285,7 +295,11 @@ export interface ModelConfig<S = any, SS = S> {
   | ModelEffects<any>
   | ((dispatch: IcestoreDispatch) => ModelEffects<any>)
   | ConfigEffects;
-  actions?: ConfigActions<S>; // @deprecated
+
+  /**
+   * @deprecated use `effects` instead.
+   */
+  actions?: ConfigActions<S>;
 }
 
 export interface PluginFactory extends Plugin {
@@ -385,29 +399,79 @@ declare global {
   }
 }
 
-/** @deprecated */
+/**
+ * @deprecated
+ */
 export type ConfigAction<S = any> = (prevState: S, payload?: any, actions?: any, globalActions?: any) => S | Promise<S>;
+/**
+ * @deprecated
+ */
 export type ConfigEffect<S = any> = (state: S, payload?: any, actions?: any, globalActions?: any) => void | Promise<void>;
+/**
+ * @deprecated
+ */
 export type ConfigReducer<S = any> = (state: S, payload?: any,) => S;
+/**
+ * @deprecated
+ */
 export interface ConfigEffects<S = any> {
   [name: string]: ConfigEffect<S>;
 }
+/**
+ * @deprecated
+ */
 export interface ConfigReducers<S = any> {
   [name: string]: ConfigReducer<S>;
 }
+/**
+ * @deprecated
+ */
 export interface ConfigActions<S = any> {
   [name: string]: ConfigAction<S>;
 }
+/**
+ * @deprecated
+ */
 export type Actions<A extends ConfigEffects> = {
   [K in keyof A]: (payload?: Parameters<A[K]>[1]) => void;
 }
+/**
+ * @deprecated
+ */
 export type ConfigPropTypeState<C extends ModelConfig> = PropType<C, 'state'>;
+/**
+ * @deprecated
+ */
 export type ConfigPropTypeActions<C extends ModelConfig> = PropType<C, 'actions'>;
+/**
+ * @deprecated
+ */
 export type ConfigPropTypeEffects<C extends ModelConfig> = PropType<C, 'effects'>;
+/**
+ * @deprecated
+ */
 export type ConfigPropTypeReducers<C extends ModelConfig> = PropType<C, 'reducers'>;
+/**
+ * @deprecated
+ */
 export type ConfigMergedEffects<C extends ModelConfig> = ConfigPropTypeActions<C> & ConfigPropTypeEffects<C>;
-export type OldModelEffects<C extends ModelConfig> = Actions<ConfigMergedEffects<C>>;;
+/**
+ * @deprecated
+ */
+export type OldModelEffects<C extends ModelConfig> = Actions<ConfigMergedEffects<C>>;
+/**
+ * @deprecated
+ */
 export type ModelActions<C extends ModelConfig> = Actions<ConfigPropTypeReducers<C> & ConfigPropTypeEffects<C>>;
+/**
+ * @deprecated
+ */
 export type ModelEffectsState<C extends ModelConfig> = ExtractIModelEffectsStateFromModelConfig<C>;
+/**
+ * @deprecated
+ */
 export type ModelValue<C extends ModelConfig> = [ ConfigPropTypeState<C>, ModelActions<C>, ModelEffectsState<C> ];
+/**
+ * @deprecated
+ */
 export type UseModelValue<C extends ModelConfig> = [ ConfigPropTypeState<C>, ModelActions<C> ];

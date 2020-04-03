@@ -28,6 +28,9 @@ export default (): T.Plugin => {
         return states;
       };
 
+      /**
+       * @deprecated use `useModelEffectsState` instead
+       */
       function useModelActionsState(name) {
         if (!warnedUseModelActionsState) {
           warnedUseModelActionsState = true;
@@ -62,8 +65,6 @@ export default (): T.Plugin => {
       return {
         useModelEffectsState,
         withModelEffectsState: createWithModelEffectsState(),
-
-        // @deprecated
         useModelActionsState,
         withModelActionsState: createWithModelEffectsState(actionsSuffix),
       };

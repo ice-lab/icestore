@@ -27,6 +27,9 @@ export default (): T.Plugin => {
         return dispatch[name];
       }
 
+      /**
+       * @deprecated use `useModelDispatchers` instead.
+       */
       function useModelActions(name: string) {
         if (!warnedUseModelActions) {
           warnedUseModelActions = true;
@@ -89,6 +92,7 @@ export default (): T.Plugin => {
         useModel,
         useModelState,
         useModelDispatchers,
+        useModelActions,
 
         // real time
         getModel,
@@ -98,9 +102,6 @@ export default (): T.Plugin => {
         // Class component support
         withModel,
         withModelDispatchers: createWithModelDispatchers(),
-
-        // @deprecated
-        useModelActions,
         withModelActions: createWithModelDispatchers(actionsSuffix),
       };
     },
