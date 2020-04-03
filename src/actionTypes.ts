@@ -6,7 +6,7 @@ const randomString = () =>
     .join('.');
 
 const ActionTypes = {
-  SET_STATE: `@@icestore/SET_STATE${/* #__PURE__ */ randomString()}`,
+  SET_STATE: `@@icestore_SET_STATE${/* #__PURE__ */ randomString()}`,
 };
 
 export default ActionTypes;
