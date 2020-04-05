@@ -4,19 +4,19 @@ type Optionalize<T extends K, K> = Omit<T, keyof K>;
 
 type PropType<Obj, Prop extends keyof Obj> = Obj[Prop];
 
-export interface EffectState {
+interface EffectState {
   isLoading: boolean;
   error: Error;
 }
 
-export type EffectsState<Effects> = {
+type EffectsState<Effects> = {
   [K in keyof Effects]: EffectState;
 }
 
-export type EffectsLoading<Effects> = {
+type EffectsLoading<Effects> = {
   [K in keyof Effects]: boolean;
 }
-export type EffectsError<Effects> = {
+type EffectsError<Effects> = {
   [K in keyof Effects]: {
     error: Error;
     value: number;
@@ -31,7 +31,7 @@ export type IcestoreRootState<M extends Models> = ExtractIcestoreStateFromModels
 M
 >
 
-export type ExtractIModelDispatcherAsyncFromEffect<
+type ExtractIModelDispatcherAsyncFromEffect<
   E
 > = E extends () => Promise<infer R>
   ? IcestoreDispatcherAsync<void, void, R>
@@ -41,7 +41,7 @@ export type ExtractIModelDispatcherAsyncFromEffect<
       ? IcestoreDispatcherAsync<P, M, R>
       : IcestoreDispatcherAsync<any, any, any>
 
-export type ExtractIModelDispatchersFromEffectsObject<
+type ExtractIModelDispatchersFromEffectsObject<
   effects extends ModelEffects<any>
 > = {
   [effectKey in keyof effects]: ExtractIModelDispatcherAsyncFromEffect<
@@ -60,7 +60,7 @@ export type ExtractIModelDispatchersFromEffects<
     : effects extends ConfigEffects<any> ?
       OldModelEffects<any> : {};
 
-export type ExtractIModelDispatcherFromReducer<R> = R extends () => any
+type ExtractIModelDispatcherFromReducer<R> = R extends () => any
   ? IcestoreDispatcher<void, void>
   : R extends (state: infer S) => infer S
     ? IcestoreDispatcher<void, void>
@@ -74,7 +74,7 @@ type DefaultIModelDispatchersFromReducersObject = {
   update: IcestoreDispatcher<any, any>;
 }
 
-export type ExtractIModelDispatchersFromReducersObject<
+type ExtractIModelDispatchersFromReducersObject<
   reducers extends ModelReducers<any>
 > = {
   [reducerKey in keyof reducers]: ExtractIModelDispatcherFromReducer<
@@ -116,7 +116,7 @@ export type ExtractIcestoreDispatchersFromModels<M extends Models> = {
   [modelKey in keyof M]: ExtractIModelDispatchersFromModelConfig<M[modelKey]>
 }
 
-export type IcestoreDispatcher<P = void, M = void> = ([P] extends [void]
+type IcestoreDispatcher<P = void, M = void> = ([P] extends [void]
   ? ((...args: any[]) => Action<any, any>)
   : [M] extends [void]
     ? ((payload: P) => Action<P, void>)
@@ -124,7 +124,7 @@ export type IcestoreDispatcher<P = void, M = void> = ([P] extends [void]
 ((action: Action<P, M>) => Redux.Dispatch<Action<P, M>>) &
 ((action: Action<P, void>) => Redux.Dispatch<Action<P, void>>)
 
-export type IcestoreDispatcherAsync<P = void, M = void, R = void> = ([P] extends [void]
+type IcestoreDispatcherAsync<P = void, M = void, R = void> = ([P] extends [void]
   ? ((...args: any[]) => Promise<R>)
   : [M] extends [void]
     ? ((payload: P) => Promise<R>)
@@ -174,11 +174,11 @@ interface EffectsLoadingPluginAPI<M extends Models = Models> {
   (props: Optionalize<P, R>) => React.ReactElement;
 }
 
-export interface UseModelEffectsState<M extends Models> {
+interface UseModelEffectsState<M extends Models> {
   <K extends keyof M>(name: K): ExtractIModelEffectsStateFromModelConfig<M[K]>;
 }
 
-export interface WithModelEffectsState<M extends Models> {
+interface WithModelEffectsState<M extends Models> {
   <
     K extends keyof M,
     F extends (effectsState: ExtractIModelEffectsStateFromModelConfig<M[K]>) => Record<string, any>
@@ -202,11 +202,11 @@ interface EffectsStatePluginAPI<M extends Models = Models> {
   withModelActionsState: WithModelEffectsState<M>;
 }
 
-export interface UseModelDispatchers<M extends Models = Models> {
+interface UseModelDispatchers<M extends Models = Models> {
   <K extends keyof M>(name: K): ExtractIModelDispatchersFromModelConfig<M[K]>;
 }
 
-export interface WithModelDispatchers<M extends Models = Models> {
+interface WithModelDispatchers<M extends Models = Models> {
   <
     K extends keyof M,
     F extends (model: ExtractIModelDispatchersFromModelConfig<M[K]>) => Record<string, any>
@@ -271,16 +271,6 @@ export interface Action<P = any, M = any> {
   meta?: M;
 }
 
-export type EnhancedReducer<S, P = object, M = object> = (
-  state: S,
-  payload: P,
-  meta: M
-) => S
-
-export interface EnhancedReducers {
-  [key: string]: EnhancedReducer<any>;
-}
-
 export interface ModelReducers<S = any> {
   [key: string]: (state: S, payload: any, meta?: any) => S;
 }
@@ -297,9 +287,9 @@ export interface Models {
   [key: string]: ModelConfig;
 }
 
-export type ModelHook = (model: Model) => void
+type ModelHook = (model: Model) => void
 
-export type Validation = [boolean | undefined, string]
+type Validation = [boolean | undefined, string]
 
 export interface Model<S = any, SS = S> extends ModelConfig<S, SS> {
   name: string;
