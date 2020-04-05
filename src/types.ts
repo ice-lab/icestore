@@ -70,13 +70,17 @@ export type ExtractIModelDispatcherFromReducer<R> = R extends () => any
         ? IcestoreDispatcher<P, M>
         : IcestoreDispatcher<any, any>
 
+type DefaultIModelDispatchersFromReducersObject = {
+  update: IcestoreDispatcher<any, any>;
+}
+
 export type ExtractIModelDispatchersFromReducersObject<
   reducers extends ModelReducers<any>
 > = {
   [reducerKey in keyof reducers]: ExtractIModelDispatcherFromReducer<
-  reducers[reducerKey]
-  >
-}
+    reducers[reducerKey]
+  >;
+} & DefaultIModelDispatchersFromReducersObject;
 
 export type ExtractIModelDispatchersFromReducers<
   reducers extends ModelConfig['reducers']

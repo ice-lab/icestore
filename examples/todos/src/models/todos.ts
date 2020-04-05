@@ -36,8 +36,7 @@ const model = {
       dispatch.user.setTodos(store.getModelState('todos').dataSource.length);
     },
     async refresh() {
-      await delay(2000);
-
+      await delay(2000); // wait for data to load
       const dataSource: Todo[] = [
         {
           name: 'react',
@@ -50,6 +49,9 @@ const model = {
           name: 'angular',
         },
       ];
+
+      // pass the result to a local reducer
+      // update is a built-in reducer
       this.update({
         dataSource,
       });
