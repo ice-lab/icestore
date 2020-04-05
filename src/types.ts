@@ -281,7 +281,7 @@ export interface ModelReducers<S = any> {
   [key: string]: (state: S, payload: any, meta?: any) => S;
 }
 
-interface ModelEffects<S> {
+export interface ModelEffects<S> {
   [key: string]: (
     this: { [key: string]: (payload?: any, meta?: any) => Action<any, any> },
     payload: any,
@@ -427,7 +427,7 @@ export type ConfigEffect<S = any> = (state: S, payload?: any, actions?: any, glo
  */
 export type ConfigReducer<S = any> = (state: S, payload?: any,) => S;
 /**
- * @deprecated
+ * @deprecated use `ModelEffects` instead
  */
 export interface ConfigEffects<S = any> {
   [name: string]: ConfigEffect<S>;

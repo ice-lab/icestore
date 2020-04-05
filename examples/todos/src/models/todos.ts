@@ -31,6 +31,7 @@ const model = {
     },
   },
   effects: (dispatch: RootDispatch) => ({
+    // this will run after "add" reducer finished
     add(todo: Todo) {
       dispatch.user.setTodos(store.getModelState('todos').dataSource.length);
     },
