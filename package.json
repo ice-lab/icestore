@@ -31,7 +31,7 @@
     "lint": "npm run lint:nofix -- --fix",
     "lint:nofix": "eslint --cache --ext .ts,.tsx ./",
     "test": "cross-env NODE_ENV=unittest jest",
-    "test:watch": "jest --watch",
+    "test:w": "jest --watch",
     "coverage": "codecov"
   },
   "devDependencies": {

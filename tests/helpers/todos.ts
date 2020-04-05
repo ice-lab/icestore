@@ -42,7 +42,7 @@ const todos = {
   }),
 };
 
-export const todosWithAction = {
+export const todosWithUnsupportEffects = {
   state: {
     a: 1,
   },
