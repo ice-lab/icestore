@@ -287,9 +287,9 @@ export interface Models {
   [key: string]: ModelConfig;
 }
 
-type ModelHook = (model: Model) => void
+export type ModelHook = (model: Model) => void
 
-type Validation = [boolean | undefined, string]
+export type Validation = [boolean | undefined, string]
 
 export interface Model<S = any, SS = S> extends ModelConfig<S, SS> {
   name: string;
