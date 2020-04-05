@@ -52,7 +52,7 @@ const model = {
 
       // pass the result to a local reducer
       // update is a built-in reducer
-      this.update({
+      (this as any).update({
         dataSource,
       });
 
