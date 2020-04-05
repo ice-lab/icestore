@@ -20,11 +20,18 @@ export default (): T.Plugin => {
         return [state, dispatchers];
       }
       function useModelState(name: string) {
-        return store.useSelector(state => state[name]);
+        const selector = store.useSelector(state => state[name]);
+        if (selector) {
+          return selector;
+        }
+        throw new Error(`Not found model by namespace: ${name}.`);
       }
       function useModelDispatchers(name: string) {
         const dispatch = store.useDispatch();
-        return dispatch[name];
+        if (dispatch[name]) {
+          return dispatch[name];
+        }
+        throw new Error(`Not found model by namespace: ${name}.`);
       }
 
       /**
@@ -107,4 +114,3 @@ export default (): T.Plugin => {
     },
   };
 };
-
