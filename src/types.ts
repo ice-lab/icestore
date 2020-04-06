@@ -70,7 +70,7 @@ type ExtractIModelDispatcherFromReducer<R> = R extends () => any
         ? IcestoreDispatcher<P, M>
         : IcestoreDispatcher<any, any>
 
-type DefaultIModelDispatchersFromReducersObject = {
+interface DefaultIModelDispatchersFromReducersObject {
   setState: IcestoreDispatcher<any, any>;
 }
 
@@ -78,7 +78,7 @@ type ExtractIModelDispatchersFromReducersObject<
   reducers extends ModelReducers<any>
 > = {
   [reducerKey in keyof reducers]: ExtractIModelDispatcherFromReducer<
-    reducers[reducerKey]
+  reducers[reducerKey]
   >;
 } & DefaultIModelDispatchersFromReducersObject;
 
