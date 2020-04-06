@@ -118,7 +118,7 @@ const counter = {
       const response = await fetch('http://example.com/data');
       const data = await response.json();
       // pass the result to a local reducer
-      this.update(data);
+      this.setState(data);
     },
   }),
 };

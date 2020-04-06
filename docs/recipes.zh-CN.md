@@ -23,7 +23,7 @@ export default {
   effects: () => ({
     async refresh() {
       const data = await fetch('/user');
-      this.update(data);
+      this.setState(data);
     },
   }),
 };
@@ -34,7 +34,7 @@ export default {
   effects: (dispatch) => ({
     async refresh() {
       const data = await fetch('/tasks');
-      this.update(data);
+      this.setState(data);
     },
     async add(task) {
       await fetch('/tasks/add', task);

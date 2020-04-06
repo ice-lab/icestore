@@ -327,7 +327,7 @@ const todos = {
           name: 'angular',
         },
       ];
-      this.update({
+      this.setState({
         dataSource,
       });
 
