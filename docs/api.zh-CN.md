@@ -113,7 +113,7 @@ const counter = {
 };
 ```
 
-> 注意：如果您正在使用 TypeScript 并且配置了编译选项 `noImplicitThis: ture`，则会遇到类似 "Property 'setState' does not exist on type" 的编译错误。您可以通过删除该编译选项，或者使用下面示例中的 `dispatch.model.reducer` 方式来更新模型。
+> 注意：如果您正在使用 TypeScript 并且配置了编译选项 `noImplicitThis: ture`，则会遇到类似 "Property 'setState' does not exist on type" 的编译错误。您可以通过删除该编译选项，或者使用下面示例中的 `dispatch.model.reducer` 来避免此错误。
 
 ###### 同名处理
 
