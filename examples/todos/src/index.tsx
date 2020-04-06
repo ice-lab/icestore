@@ -6,7 +6,7 @@ import TodoAdd from './components/TodoAdd';
 import User from './components/User';
 import Car from './components/Car';
 
-const initialState = {
+const initialStates = {
   user: {
     dataSource: {
       name: 'Tom',
@@ -20,7 +20,7 @@ const { Provider } = store;;
 
 function App() {
   return (
-    <Provider initialState={initialState}>
+    <Provider initialStates={initialStates}>
       <Todos />
       <TodoAdd />
       <User />

@@ -13,17 +13,13 @@ interface ProviderConfig {
 export default ({ context }: ProviderConfig): T.Plugin => {
   return {
     onStoreCreated(store: any) {
-      const Provider = function(props: { children; initialStates?; initialState? }) {
-        const { children, initialStates, initialState } = props;
-        const states = initialState || initialStates;
-        if (states) {
-          if (initialStates) {
-            warning('`initialStates` API has been detected, please use `initialState` instead. \n\n\n Visit https://github.com/ice-lab/icestore/blob/master/docs/upgrade-guidelines.md#initialstate to learn about how to upgrade.');
-          }
-          Object.keys(states).forEach(name => {
-            const state = states[name];
-            if (state && store.dispatch[name][SET_STATE]) {
-              store.dispatch[name][SET_STATE](state);
+      const Provider = function(props: { children; initialStates?; }) {
+        const { children, initialStates } = props;
+        if (initialStates) {
+          Object.keys(initialStates).forEach(name => {
+            const initialState = initialStates[name];
+            if (initialState && store.dispatch[name][SET_STATE]) {
+              store.dispatch[name][SET_STATE](initialState);
             }
           });
         }

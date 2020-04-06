@@ -243,11 +243,6 @@ interface ModelPluginAPI<M extends Models = Models> {
 
 interface ProviderProps {
   children: any;
-  initialState?: any;
-
-  /**
-   * @deprecated use `initialState` instead.
-   */
   initialStates?: any;
 }
 
@@ -345,7 +340,7 @@ export interface DevtoolOptions {
 }
 
 export interface InitConfigRedux<S = any> {
-  initialState?: S;
+  initialStates?: S;
   reducers?: ModelReducers;
   enhancers?: Redux.StoreEnhancer<any>[];
   middlewares?: Middleware[];
@@ -390,7 +385,7 @@ export interface Middleware<
 }
 
 export interface ConfigRedux {
-  initialState?: any;
+  initialStates?: any;
   reducers: ModelReducers;
   enhancers: Redux.StoreEnhancer<any>[];
   middlewares: Middleware[];

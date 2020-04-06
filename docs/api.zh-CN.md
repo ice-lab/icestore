@@ -265,7 +265,7 @@ const models = {
 const store = createStore(models);
 const { Provider } = store;
 
-const initialState = {
+const initialStates = {
   todo: {
     title: 'Foo',
     done: true,
@@ -277,7 +277,7 @@ const initialState = {
 };
 function App() {
   return (
-    <Provider initialState={initialState}>
+    <Provider initialStates={initialStates}>
       <App />
     </Provider>
   );

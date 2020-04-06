@@ -23,8 +23,8 @@ export default function({
 }) {
   const combineReducers = redux.combineReducers || Redux.combineReducers;
   const createStore: Redux.StoreCreator = redux.createStore || Redux.createStore;
-  const initialState: any =
-    typeof redux.initialState !== 'undefined' ? redux.initialState : {};
+  const initialStates: any =
+    typeof redux.initialStates !== 'undefined' ? redux.initialStates : {};
 
   // Allows passing in of reducer functions, rather than models.
   // While not recommended,
@@ -98,7 +98,7 @@ export default function({
     middlewares,
   );
 
-  this.store = createStore(rootReducer, initialState, enhancers);
+  this.store = createStore(rootReducer, initialStates, enhancers);
 
   return this;
 }
