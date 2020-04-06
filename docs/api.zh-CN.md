@@ -53,18 +53,7 @@ const model = {
 
 `reducers: { [string]: (prevState, payload) => any }`
 
-一个改变该 model state 的所有函数的对象。这些函数采用 model 的上一次 state 和一个 payload 作为入参，并且返回 model 的下一个状态。这些函数应该是仅依赖于 state 和 payload 参数来计算下一个 state 的纯函数。对于不纯的函数，如 API 调用等的代码，请使用 effects。
-
-```js
-const counter = {
-  state: 0,
-  reducers: {
-    add: (state, payload) => state + payload,
-  }
-};
-```
-
-reducers 可以使用可变的方式来更新状态。在内部，我们是通过调用 [immer](https://github.com/immerjs/immer) 来实现的。例如：
+一个改变该模型状态的函数集合。这些方法以模型的上一次 state 和一个 payload 作为入参，在方法中使用可变的方式来更新状态。这些方法应该是仅依赖于 state 和 payload 参数来计算下一个 state 的纯函数。对于不纯的函数，请使用 effects。
 
 ```js
 const todo = {
@@ -80,14 +69,14 @@ const todo = {
   ],
   reducers: {
     done(state) {
-      state.push({ todo: 'Tweet about it' });
+      state.push({ todo: 'Tweet about it' }); // 直接更新了数组
       state[1].done = true;
     },
   },
 }
 ```
 
-在 Immer 中，reducer 对 state 进行变更检测以实现下一个不可变状态。Immer 只支持对普通对象和数组的变化检测，所以像字符串或数字这样的原始值需要返回一个新值。 例如：
+icestore 内部是通过调用 [immer](https://github.com/immerjs/immer) 来实现可变状态的。Immer 只支持对普通对象和数组的变化检测，所以像字符串或数字这样的类型需要返回一个新值。 例如：
 
 ```js
 const count = {
@@ -101,41 +90,113 @@ const count = {
 }
 ```
 
-参考 [docs/recipes](./recipes.zh-CN.md#immutable-description) 了解更多。
+参考 [docs/recipes](./recipes.zh-CN.md#可变状态的说明) 了解更多。
 
 ##### effects
 
 `effects: (dispatch) => ({ [string]: (payload, rootState) => void })`
 
-一个可以处理该模型副作用的函数对象。当与 async/await 一起使用时，Effects 提供了一种处理异步 action 方案：
+一个可以处理该模型副作用的函数集合。Effects 适用于进行异步调用、[模型联动](recipes.zh-CN.md#模型联动)等场景。在 effects 内部，通过调用 `this.reducer` 来更新模型状态：
 
 ```js
 const counter = {
-  state: { count: 0 },
-  effects: (dispatch) => ({
-    async add(payload, rootState) {
-      // wait for data to load
-      const response = await fetch('http://example.com/data');
-      const data = await response.json();
-      // pass the result to a local reducer
-      this.setState(data);
+  state: 0,
+  reducers: {
+    decrement:(prevState) => prevState - 1,
+  },
+  effects: () => ({
+    async decrementAsync() {
+      await delay(1000); // 进行一些异步操作
+      this.decrement(); // 调用模型 reducers 内的方法来更新状态
     },
   }),
 };
 ```
 
-您可以通过调用 `dispatch` 来调用其他模型的方法：
+> 注意：如果您正在使用 TypeScript 并且配置了编译选项 `noImplicitThis: ture`，则会遇到类似 "Property 'setState' does not exist on type" 的编译错误。您可以通过删除该编译选项，或者使用下面示例中的 `dispatch.model.reducer` 方式来更新模型。
+
+###### 同名处理
+
+如果 reducers 和 effects 中的方法重名，则会在先执行 reducer.foo 后再执行 effects.foo：
 
 ```js
+const model = {
+  state: [],
+  reducers: {
+    add(state, todo) {
+      state.push(todo);
+    },
+  },
+  effects: (dispatch: RootDispatch) => ({
+    // 将会在 reducers.add 执行完成后再执行该方法
+    add(todo) {
+      dispatch.user.setTodos(store.getModelState('todos').length);
+    },
+  })
+};
+```
+
+###### this.setState
+
+icestore 内置提供了名为 `setState` reducer ，其作用类似于 React Class 组件中的 [setState](https://zh-hans.reactjs.org/docs/react-component.html#setstate)，但仅支持一个参数且参数是对象类型。
+
+```js
+this.setState(stateChange);
+
+// stateChange 会将传入的对象浅层合并到新的 state 中，例如，调整购物车商品数：
+this.setState({quantity: 2});
+```
+
+setState 的 reducer 内部实现类似于：
+
+```js
+const setState = (prevState, payload) => ({
+  ...prevState,
+  ...payload,
+});
+```
+
+您可以通过在 reducers 中声明 `setState` 来覆盖默认的行为：
+
+```js
+const model = {
+  state: { count: 0, calledCounter: 0 },
+  reducers: {
+    setState: (prevState, payload) => ({
+      ...prevState,
+      ...payload,
+      calledCounter: prevState.calledCounter + 1,
+    })
+  },
+  effects: () => ({
+    foo() {
+      this.setState({ count: 1 });
+    }
+  })
+}
+```
+
+###### 模型联动
+
+您可以通过声明 effects 函数的第一个参数 `dispatch` 来调用其他模型的方法：
+
+```js
+import { createStore } from '@ice/store';
+
 const user = {
   state: {
     foo: [],
   },
   effects: (dispatch) => ({
-    like(payload, rootState) => {
-      this.foo(payload); // call user's actions
-      dispatch.todos.foo(payload); // call actions of another model
+    like(payload, rootState) {
+      this.dosomething(payload); // 调用 user 内的其他 effect 或 reducer
+      // 另一种调用方式：dispatch.user.dosomething(payload); 
+      dispatch.todos.foo(payload); // 调用其他模型的 effect 或 reducer
     },
+    dosomething(payload) {
+      // ...
+      this.foo(payload);
+    }
   }),
   reducers: {
     foo(prevState, payload) {
@@ -145,7 +206,13 @@ const user = {
     },
   }
 };
+
+const todos = { /* ... */ };
+
+const store = createStore({ user, todos });
 ```
+
+参考 [docs/recipes](./recipes.zh-CN.md#模型联动) 了解更多。
 
 #### options
 

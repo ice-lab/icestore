@@ -53,18 +53,7 @@ const model = {
 
 `reducers: { [string]: (prevState, payload) => any }`
 
-An object of functions that change the model's state. These functions take the model's previous state and a payload, and return the model's next state. These should be pure functions relying only on the state and payload args to compute the next state. For code that relies on the "outside world" (impure functions like api calls, etc.), use effects.
-
-```js
-const counter = {
-  state: 0,
-  reducers: {
-    add: (state, payload) => state + payload,
-  }
-};
-```
-
-Reducer could be use mutable method to achieve immutable state. Like the example:
+An object of functions that change the model's state. These functions take the model's previous state and a payload, use mutable method to achieve immutable state. These should be pure functions relying only on the state and payload args to compute the next state. For code that relies on the "outside world" (impure functions like api calls, etc.), use effects.
 
 ```js
 const todo = {
@@ -80,14 +69,14 @@ const todo = {
   ],
   reducers: {
     done(state) {
-      state.push({ todo: 'Tweet about it' });
+      state.push({ todo: 'Tweet about it' }); // array updated directly
       state[1].done = true;
     },
   },
 }
 ```
 
-In Immer, reducers perform mutations to achieve the next immutable state. Keep in mind, Immer only supports change detection on plain objects and arrays, so primitive values like strings or numbers will always return a change. Like the example:
+icestore use [immer](https://github.com/immerjs/immer) for immutable. In Immer, reducers perform mutations to achieve the next immutable state. Keep in mind, Immer only supports change detection on plain objects and arrays, so primitive values like strings or numbers will always return a change. Like the example:
 
 ```js
 const count = {
@@ -107,35 +96,107 @@ See [docs/recipes](./recipes.md#immutable-description) for more details.
 
 `effects: (dispatch) => ({ [string]: (payload, rootState) => void })`
 
-An object of functions that can handle the world outside of the model. Effects provide a simple way of handling async actions when used with async/await.
+An object of functions that can handle the world outside of the model. Effects provide a simple way of handling async actions when used with async/await. In effects, call `this.reducer` to update model's state:
 
 ```js
 const counter = {
-  state: { count: 0 },
-  effects: (dispatch) => ({
-    async add(payload, rootState) {
-      // wait for data to load
-      const response = await fetch('http://example.com/data');
-      const data = await response.json();
-      // pass the result to a local reducer
-      this.setState(data);
+  state: 0,
+  reducers: {
+    decrement:(prevState) => prevState - 1,
+  },
+  effects: () => ({
+    async decrementAsync() {
+      await delay(1000); // do some asynchronous operations
+      this.decrement(); // pass the result to a local reducer
     },
   }),
 };
 ```
 
-You can call another action by using `dispatch`:
+> Note: if you are using TypeScript and the compilerOptions `noimplicitthis: ture` is configured, you will encounter a compilation error similar to "property' setstate 'does not exist on type". You can fix it by delete the compile option or by using the `dispatch.model.reducer' method in the following example.
+
+###### Same name processing
+
+If the methods in the reducers and effects have the same name, the `reducer.foo` will be executed before the `effects.foo`:
 
 ```js
+const model = {
+  state: [],
+  reducers: {
+    add(state, todo) {
+      state.push(todo);
+    },
+  },
+  effects: (dispatch: RootDispatch) => ({
+    // this will run after "add" reducer finished
+    add(todo) {
+      dispatch.user.setTodos(store.getModelState('todos').length);
+    },
+  })
+};
+```
+
+###### this.setState
+
+By default icestore provides a reducer named `setState`, similar to [setState](https://zh-hans.reactjs.org/docs/react-component.html#setstate) in react Class Component， but only one parameter is supported and the parameter is of object type.
+
+```js
+this.setState(stateChange);
+
+// This performs a shallow merge of stateChange into the new state, e.g., to adjust a shopping cart item quantity:
+this.setState({quantity: 2});
+```
+
+The internal implementation of the reducer of setstate is similar to:
+
+```js
+const setState = (prevState, payload) => ({
+  ...prevState,
+  ...payload,
+});
+```
+
+You can override the default behavior by declaring `setstate` in reducers:
+
+```js
+const model = {
+  state: { count: 0, calledCounter: 0 },
+  reducers: {
+    setState: (prevState, payload) => ({
+      ...prevState,
+      ...payload,
+      calledCounter: prevState.calledCounter + 1,
+    })
+  },
+  effects: () => ({
+    foo() {
+      this.setState({ count: 1 });
+    }
+  })
+}
+```
+
+###### Model interaction
+
+You can call the methods of other models by declaring the first parameter `dispatch` of the effects function:
+
+```js
+import { createStore } from '@ice/store';
+
 const user = {
   state: {
     foo: [],
   },
   effects: (dispatch) => ({
-    like(payload, rootState) => {
-      this.foo(payload); // call user's actions
-      dispatch.todos.foo(payload); // call actions of another model
+    like(payload, rootState) {
+      this.dosomething(payload); // call other effect or reducer in user
+      // another waw：dispatch.user.dosomething(payload); 
+      dispatch.todos.foo(payload); // call the effect or reducer of other models
     },
+    dosomething(payload) {
+      // ...
+      this.foo(payload);
+    }
   }),
   reducers: {
     foo(prevState, payload) {
@@ -145,7 +206,13 @@ const user = {
     },
   }
 };
+
+const todos = { /* ... */ };
+
+const store = createStore({ user, todos });
 ```
+
+See [docs/recipes](./recipes.md#model-interaction) for more details.
 
 #### options
 
