@@ -20,24 +20,24 @@ const todos = {
   },
 
   reducers: {
-    add(state: TodosState, todo: Todo) {
+    addTodo(state: TodosState, todo: Todo) {
       state.dataSource.push(todo);
     },
-    remove(state: TodosState, index: number) {
+    removeTodo(state: TodosState, index: number) {
       state.dataSource.splice(index, 1);
     },
   },
 
   effects: (dispatch) => ({
-    add(state: TodosState, todo: Todo) {
-      this.add(todo);
-      dispatch.user.setTodos(state.dataSource.length);
+    add(store, todo: Todo) {
+      this.addTodo(todo);
+      dispatch.user.setTodos(store.getModelState('todos').dataSource.length);
     },
 
-    async delete(state: TodosState, index: number) {
+    async delete(store, index: number) {
       await delay(1000);
-      this.remove(index);
-      dispatch.user.setTodos(state.dataSource.length);
+      this.removeTodo(index);
+      dispatch.user.setTodos(store.getModelState('todos').dataSource.length);
     },
   }),
 };
