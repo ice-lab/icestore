@@ -11,46 +11,6 @@ title: Upgrade Guidelines
 
 我们会在未来的版本中删除标记为「已过期」的 API。
 
-### initialState
-
-#### 1.2.0
-
-```jsx
-import store from './store';
-const { Provider } = store;
-
-const initialStates = {
-  foo: {
-  },
-};
-function App() {
-  return (
-    <Provider initialStates={initialStates}>
-      <Todos />
-    </Provider>
-  );
-}
-```
-
-#### 1.3.0
-
-```js
-import store from './store';
-const { Provider } = store;
-
-const initialState = {
-  foo: {
-  },
-};
-function App() {
-  return (
-    <Provider initialState={initialState}>
-      <Todos />
-    </Provider>
-  );
-}
-```
-
 ### Define Model Effects
 
 #### 1.2.0
@@ -335,7 +295,7 @@ const todos = {
           name: 'angular',
         },
       ];
-      this.update({
+      this.setState({
         dataSource,
       });
 

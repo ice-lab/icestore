@@ -5,6 +5,7 @@ import models from './models';
 const store = createStore(models);
 
 export default store;
+export type Models = typeof models;
 export type Store = typeof store;
-export type RootDispatch = IcestoreDispatch<typeof models>;
-export type iRootState = IcestoreRootState<typeof models>;
+export type RootDispatch = IcestoreDispatch<Models>;
+export type iRootState = IcestoreRootState<Models>;

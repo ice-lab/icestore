@@ -75,9 +75,9 @@ export default (initConfig: T.InitConfig & { name: string }): T.Config => {
 
       // redux
       if (plugin.config.redux) {
-        config.redux.initialState = merge(
-          config.redux.initialState,
-          plugin.config.redux.initialState,
+        config.redux.initialStates = merge(
+          config.redux.initialStates,
+          plugin.config.redux.initialStates,
         );
         config.redux.reducers = merge(
           config.redux.reducers,

@@ -23,7 +23,7 @@ export default {
   effects: () => ({
     async refresh() {
       const data = await fetch('/user');
-      this.update(data);
+      this.setState(data);
     },
   }),
 };
@@ -34,7 +34,7 @@ export default {
   effects: (dispatch) => ({
     async refresh() {
       const data = await fetch('/tasks');
-      this.update(data);
+      this.setState(data);
     },
     async add(task) {
       await fetch('/tasks/add', task);
@@ -240,21 +240,21 @@ const store = createStore(models, {
 - X: No
 - +: Extra
 
-| feature | constate | zustand | react-tracked | icestore |
-| :--------| :-------- | :-------- | :-------- | :-------- |
-| Framework | React | React | React | React |
-| Simplicity | ★★★★ | ★★★ | ★★★ | ★★★★ |
-| Less boilerplate | ★★ | ★★★ | ★★★ | ★★★★ |
-| Configurable | ★★★ | ★★★ | ★★★ | ★★★★★ |
-| Shareable State | O | O | O | O |
-| Reusable State | O | O | O | O |
-| Interactive State | + | + | + | O |
-| Class Component | + | + | + | O |
-| Function Component | O | O | O | O |
-| Async Status | X | X | X | O |
-| SSR | O | X | O | O |
-| Persist | X | X | X | O |
-| Lazy load models | + | + | + | O |
-| Centralization | X | X | X | O |
-| Middleware or Plug-in | X | O | X | O |
-| Devtools | X | O | X | O |
+| feature | redux | constate | zustand | react-tracked | icestore |
+| :--------| :--------| :-------- | :-------- | :-------- | :-------- |
+| Framework | Any | React | React | React | React |
+| Simplicity | ★★ | ★★★★ | ★★★ | ★★★ | ★★★★ |
+| Less boilerplate | ★ | ★★ | ★★★ | ★★★ | ★★★★ |
+| Configurable | ★★ | ★★★ | ★★★ | ★★★ | ★★★★★ |
+| Shareable State | O | O | O | O | O |
+| Reusable State | O | O | O | O | O |
+| Interactive State | + | + | + | + | O |
+| Class Component | O | + | + | + | O |
+| Function Component | O | O | O | O | O |
+| Async Status | + | X | X | X | O |
+| SSR | O | O | X | O | O |
+| Persist | + | X | X | X | O |
+| Lazy load models | + | + | + | + | O |
+| Centralization | O | X | X | X | O |
+| Middleware or Plug-in | O | X | O | X | O |
+| Devtools | O | X | O | X | O |

@@ -31,12 +31,12 @@ const model = {
     },
   },
   effects: (dispatch: RootDispatch) => ({
+    // this will run after "add" reducer finished
     add(todo: Todo) {
       dispatch.user.setTodos(store.getModelState('todos').dataSource.length);
     },
     async refresh() {
-      await delay(2000);
-
+      await delay(2000); // wait for data to load
       const dataSource: Todo[] = [
         {
           name: 'react',
@@ -49,7 +49,10 @@ const model = {
           name: 'angular',
         },
       ];
-      this.update({
+
+      // pass the result to a local reducer
+      // setState is a built-in reducer
+      this.setState({
         dataSource,
       });
 

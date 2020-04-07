@@ -10,46 +10,6 @@ English | [简体中文](./upgrade-guidelines.zh-CN.md)
 From 1.2.0 to 1.3.0 is fully compatible, but we recommend that you use the new API in incremental code.
 We will remove the deprecated API in future versions.
 
-### initialState
-
-#### 1.2.0
-
-```jsx
-import store from './store';
-const { Provider } = store;
-
-const initialStates = {
-  foo: {
-  },
-};
-function App() {
-  return (
-    <Provider initialStates={initialStates}>
-      <Todos />
-    </Provider>
-  );
-}
-```
-
-#### 1.3.0
-
-```js
-import store from './store';
-const { Provider } = store;
-
-const initialState = {
-  foo: {
-  },
-};
-function App() {
-  return (
-    <Provider initialState={initialState}>
-      <Todos />
-    </Provider>
-  );
-}
-```
-
 ### Define Model Effects
 
 #### 1.2.0
@@ -327,7 +287,7 @@ const todos = {
           name: 'angular',
         },
       ];
-      this.update({
+      this.setState({
         dataSource,
       });
 

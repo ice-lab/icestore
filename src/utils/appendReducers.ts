@@ -9,8 +9,8 @@ export default function(originModels: any) {
     if (!model.reducers) {
       model.reducers = {};
     }
-    if (!model.reducers.update) {
-      model.reducers.update = (state, payload) => ({
+    if (!model.reducers.setState) {
+      model.reducers.setState = (state, payload) => ({
         ...state,
         ...payload,
       });
