@@ -96,7 +96,7 @@ See [docs/recipes](./recipes.md#immutable-description) for more details.
 
 `effects: (dispatch) => ({ [string]: (payload, rootState) => void })`
 
-An object of functions that can handle the world outside of the model. Effects provide a simple way of handling async actions when used with async/await. In effects, call `this.reducer` to update model's state:
+An object of functions that can handle the world outside of the model. Effects provide a simple way of handling async actions when used with async/await. In effects, call `this.reducerFoo` to update model's state:
 
 ```js
 const counter = {

@@ -53,7 +53,7 @@ const model = {
 
 `reducers: { [string]: (prevState, payload) => any }`
 
-一个改变该模型状态的函数集合。这些方法以模型的上一次 state 和一个 payload 作为入参，在方法中使用可变的方式来更新状态。这些方法应该是仅依赖于 state 和 payload 参数来计算下一个 state 的纯函数。对于不纯的函数，请使用 effects。
+一个改变该模型状态的函数集合。这些方法以模型的上一次 state 和一个 payload 作为入参，在方法中使用可变的方式来更新状态。这些方法应该是仅依赖于 state 和 payload 参数来计算下一个 state 的纯函数。对于有副作用的函数，请使用 effects。
 
 ```js
 const todo = {
@@ -96,7 +96,7 @@ const count = {
 
 `effects: (dispatch) => ({ [string]: (payload, rootState) => void })`
 
-一个可以处理该模型副作用的函数集合。Effects 适用于进行异步调用、[模型联动](recipes.zh-CN.md#模型联动)等场景。在 effects 内部，通过调用 `this.reducer` 来更新模型状态：
+一个可以处理该模型副作用的函数集合。Effects 适用于进行异步调用、[模型联动](recipes.zh-CN.md#模型联动)等场景。在 effects 内部，通过调用 `this.reducerFoo` 来更新模型状态：
 
 ```js
 const counter = {
