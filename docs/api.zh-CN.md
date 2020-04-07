@@ -189,11 +189,11 @@ const user = {
   },
   effects: (dispatch) => ({
     like(payload, rootState) {
-      this.dosomething(payload); // 调用 user 内的其他 effect 或 reducer
-      // 另一种调用方式：dispatch.user.dosomething(payload); 
+      this.doSomething(payload); // 调用 user 内的其他 effect 或 reducer
+      // 另一种调用方式：dispatch.user.doSomething(payload); 
       dispatch.todos.foo(payload); // 调用其他模型的 effect 或 reducer
     },
-    dosomething(payload) {
+    doSomething(payload) {
       // ...
       this.foo(payload);
     }

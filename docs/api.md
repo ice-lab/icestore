@@ -138,7 +138,7 @@ const model = {
 
 ###### this.setState
 
-By default icestore provides a reducer named `setState`, similar to [setState](https://zh-hans.reactjs.org/docs/react-component.html#setstate) in react Class Component， but only one parameter is supported and the parameter is of object type.
+By default icestore provides a reducer named `setState`, similar to [setState](https://reactjs.org/docs/react-component.html#setstate) in react Class Component， but only one parameter is supported and the parameter is of object type.
 
 ```js
 this.setState(stateChange);
@@ -189,11 +189,11 @@ const user = {
   },
   effects: (dispatch) => ({
     like(payload, rootState) {
-      this.dosomething(payload); // call other effect or reducer in user
-      // another waw：dispatch.user.dosomething(payload); 
+      this.doSomething(payload); // call other effect or reducer in user
+      // another waw：dispatch.user.doSomething(payload); 
       dispatch.todos.foo(payload); // call the effect or reducer of other models
     },
-    dosomething(payload) {
+    doSomething(payload) {
       // ...
       this.foo(payload);
     }
