@@ -1,7 +1,6 @@
 import React from 'react';
 import { Provider as ReduxProvider } from 'react-redux';
 import * as T from '../types';
-import warning from '../utils/warning';
 import actionTypes from '../actionTypes';
 
 const { SET_STATE } = actionTypes;
