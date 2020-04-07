@@ -16,7 +16,7 @@ const initialStates = {
   },
 };
 
-const { Provider } = store;;
+const { Provider } = store;
 
 function App() {
   return (
