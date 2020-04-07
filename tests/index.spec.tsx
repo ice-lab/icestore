@@ -1,10 +1,17 @@
 /* eslint-disable react/jsx-filename-extension */
-import React from "react";
+import React, { PureComponent } from "react";
 import * as rhl from "@testing-library/react-hooks";
 import * as rtl from "@testing-library/react";
 import { createStore } from "../src/index";
 import * as models from "./helpers/models";
 import { todosWithUnsupportEffects } from "./helpers/todos";
+import counterModel from './helpers/counter';
+import {
+  ExtractIModelFromModelConfig,
+  ExtractIModelDispatchersFromModelConfig,
+  ExtractIModelEffectsLoadingFromModelConfig,
+  ExtractIModelEffectsErrorFromModelConfig,
+} from '../src/types';
 
 describe("createStore", () => {
   test("creteStore should be defined", () => {
@@ -58,7 +65,7 @@ describe("createStore", () => {
     });
   });
 
-  describe("useModel", () => {
+  describe("function component model", () => {
     afterEach(() => rhl.cleanup());
 
     const store = createStore(models);
@@ -97,21 +104,138 @@ describe("createStore", () => {
     });
   });
 
-  describe("withModel", () => { });
+  describe("class component model", () => {
+    afterEach(() => rtl.cleanup());
+    const store = createStore({ counter: counterModel });
+    const {
+      Provider,
+      withModel,
+      withModelDispatchers,
+      withModelEffectsState,
+      withModelEffectsError,
+      withModelEffectsLoading,
+    } = store;
 
-  describe("getModel", () => { });
+    interface CounterProps {
+      counter: ExtractIModelFromModelConfig<typeof counterModel>;
+      children: React.ReactNode;
+    }
 
-  describe("useModelDispatchers", () => { });
+    class Counter extends PureComponent<CounterProps> {
+      render() {
+        const { counter, children } = this.props;
+        const [state, actions] = counter;
+        const { count } = state;
+        return (
+          <React.Fragment>
+            <div data-testid="count">{count}</div>
+            <div data-testid="increment" onClick={() => actions.increment()} />
+            <div data-testid="decrement" onClick={() => actions.decrement()} />
+            <div data-testid="decrementAsync" onClick={() => actions.decrementAsync()} />
+            {children}
+          </React.Fragment>
+        );
+      }
+    }
 
-  describe("useModelEffectsState", () => { });
+    interface CounterResetProps {
+      counterDispatchers: ExtractIModelDispatchersFromModelConfig<typeof counterModel>;
+    };
 
-  describe("withModelDispatchers", () => { });
+    class CounterReset extends PureComponent<CounterResetProps> {
+      render() {
+        const { counterDispatchers } = this.props;
+        return (
+          <div data-testid="reset" onClick={() => counterDispatchers.reset()} />
+        );
+      }
+    };
 
-  describe("withModelEffectsState", () => { });
+    interface CounterLoadingWrapperProps {
+      counterEffectsLoading: ExtractIModelEffectsLoadingFromModelConfig<typeof counterModel>;
+      counterEffectsError: ExtractIModelEffectsErrorFromModelConfig<typeof counterModel>;
+      children: React.ReactChild;
+    }
+    class CounterLoadingWrapper extends PureComponent<CounterLoadingWrapperProps> {
+      render() {
+        const { counterEffectsLoading, counterEffectsError, children } = this.props;
+        return (
+          <React.Fragment>
+            <code data-testid="decrementAsyncLoading">
+              {JSON.stringify(counterEffectsLoading.decrementAsync)}
+            </code>
+            <code data-testid="decrementAsyncError">
+              {JSON.stringify(counterEffectsError.decrementAsync)}
+            </code>
+            {children}
+          </React.Fragment>
+        );
+      }
+    };
+    const WithModelCounter = withModel('counter')(Counter);
+    const WithDispatchersCounterReset = withModelDispatchers('counter')(CounterReset);
+    const WithModelEffectsStateCounterWrapper = withModelEffectsState('counter')(CounterLoadingWrapper);
 
-  describe("getModelState", () => { });
+    it('passes the initial state', () => {
+      const initialState = { counter: { count: 5 } };
+      const tester = rtl.render(<Provider initialState={initialState}><WithModelCounter /></Provider>);
+      const { getByTestId } = tester;
+      expect(getByTestId('count').innerHTML).toBe('5');
+    });
 
-  describe("getModelDispatchers", () => { });
+    it('not pass the initial state', () => {
+      const tester = rtl.render(<Provider><WithModelCounter /></Provider>);
+      const { getByTestId } = tester;
+      expect(getByTestId('count').innerHTML).toBe('0');
+    });
+
+    it('applies the reducer to the initial state', () => {
+      const initialState = { counter: { count: 5 } };
+      const tester = rtl.render(<Provider initialState={initialState}><WithModelCounter /></Provider>);
+      const { getByTestId } = tester;
+      expect(getByTestId('count').innerHTML).toBe('5');
+
+      rtl.fireEvent.click(getByTestId('increment'));
+      expect(getByTestId('count').innerHTML).toBe('6');
+
+      rtl.fireEvent.click(getByTestId('decrement'));
+      expect(getByTestId('count').innerHTML).toBe('5');
+    });
+
+    it('withDispatchers', () => {
+      const tester = rtl.render(
+        <Provider>
+          <WithModelCounter>
+            <WithDispatchersCounterReset />
+          </WithModelCounter>
+        </Provider>,
+      );
+      const { getByTestId } = tester;
+      expect(getByTestId('count').innerHTML).toBe('0');
+
+      rtl.fireEvent.click(getByTestId('increment'));
+      expect(getByTestId('count').innerHTML).toBe('1');
+
+      rtl.fireEvent.click(getByTestId('reset'));
+      expect(getByTestId('count').innerHTML).toBe('0');
+    });
+  });
+
+  describe("getModel", () => {
+
+  });
+
+  // describe("useModelDispatchers", () => { });
+
+  // describe("useModelEffectsState", () => { });
+
+  // describe("withModelDispatchers", () => { });
+
+  // describe("withModelEffectsState", () => { });
+
+  // describe("getModelState", () => { });
+
+  // describe("getModelDispatchers", () => { });
 
   describe("disable immer", () => {
     const store = createStore(models, {
