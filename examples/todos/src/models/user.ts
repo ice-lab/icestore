@@ -25,7 +25,7 @@ const model = {
     async login() {
       await delay(1000);
 
-      this.update({
+      this.setState({
         dataSource: {
           name: 'Alvin',
         },

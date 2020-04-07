@@ -11,7 +11,7 @@ const counter = {
     increment:(prevState) => prevState + 1,
     decrement:(prevState) => prevState - 1,
   },
-  effects: (dispatch) => ({
+  effects: () => ({
     async decrementAsync() {
       await delay(1000);
       this.decrement();

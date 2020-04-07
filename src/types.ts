@@ -1,22 +1,22 @@
 import * as Redux from 'redux';
 
-export type Optionalize<T extends K, K> = Omit<T, keyof K>;
+type Optionalize<T extends K, K> = Omit<T, keyof K>;
 
-export type PropType<Obj, Prop extends keyof Obj> = Obj[Prop];
+type PropType<Obj, Prop extends keyof Obj> = Obj[Prop];
 
-export interface EffectState {
+interface EffectState {
   isLoading: boolean;
   error: Error;
 }
 
-export type EffectsState<Effects> = {
+type EffectsState<Effects> = {
   [K in keyof Effects]: EffectState;
 }
 
-export type EffectsLoading<Effects> = {
+type EffectsLoading<Effects> = {
   [K in keyof Effects]: boolean;
 }
-export type EffectsError<Effects> = {
+type EffectsError<Effects> = {
   [K in keyof Effects]: {
     error: Error;
     value: number;
@@ -31,7 +31,7 @@ export type IcestoreRootState<M extends Models> = ExtractIcestoreStateFromModels
 M
 >
 
-export type ExtractIModelDispatcherAsyncFromEffect<
+type ExtractIModelDispatcherAsyncFromEffect<
   E
 > = E extends () => Promise<infer R>
   ? IcestoreDispatcherAsync<void, void, R>
@@ -41,7 +41,7 @@ export type ExtractIModelDispatcherAsyncFromEffect<
       ? IcestoreDispatcherAsync<P, M, R>
       : IcestoreDispatcherAsync<any, any, any>
 
-export type ExtractIModelDispatchersFromEffectsObject<
+type ExtractIModelDispatchersFromEffectsObject<
   effects extends ModelEffects<any>
 > = {
   [effectKey in keyof effects]: ExtractIModelDispatcherAsyncFromEffect<
@@ -60,7 +60,7 @@ export type ExtractIModelDispatchersFromEffects<
     : effects extends ConfigEffects<any> ?
       OldModelEffects<any> : {};
 
-export type ExtractIModelDispatcherFromReducer<R> = R extends () => any
+type ExtractIModelDispatcherFromReducer<R> = R extends () => any
   ? IcestoreDispatcher<void, void>
   : R extends (state: infer S) => infer S
     ? IcestoreDispatcher<void, void>
@@ -70,13 +70,17 @@ export type ExtractIModelDispatcherFromReducer<R> = R extends () => any
         ? IcestoreDispatcher<P, M>
         : IcestoreDispatcher<any, any>
 
-export type ExtractIModelDispatchersFromReducersObject<
+interface DefaultIModelDispatchersFromReducersObject {
+  setState: IcestoreDispatcher<any, any>;
+}
+
+type ExtractIModelDispatchersFromReducersObject<
   reducers extends ModelReducers<any>
 > = {
   [reducerKey in keyof reducers]: ExtractIModelDispatcherFromReducer<
   reducers[reducerKey]
-  >
-}
+  >;
+} & DefaultIModelDispatchersFromReducersObject;
 
 export type ExtractIModelDispatchersFromReducers<
   reducers extends ModelConfig['reducers']
@@ -112,7 +116,7 @@ export type ExtractIcestoreDispatchersFromModels<M extends Models> = {
   [modelKey in keyof M]: ExtractIModelDispatchersFromModelConfig<M[modelKey]>
 }
 
-export type IcestoreDispatcher<P = void, M = void> = ([P] extends [void]
+type IcestoreDispatcher<P = void, M = void> = ([P] extends [void]
   ? ((...args: any[]) => Action<any, any>)
   : [M] extends [void]
     ? ((payload: P) => Action<P, void>)
@@ -120,7 +124,7 @@ export type IcestoreDispatcher<P = void, M = void> = ([P] extends [void]
 ((action: Action<P, M>) => Redux.Dispatch<Action<P, M>>) &
 ((action: Action<P, void>) => Redux.Dispatch<Action<P, void>>)
 
-export type IcestoreDispatcherAsync<P = void, M = void, R = void> = ([P] extends [void]
+type IcestoreDispatcherAsync<P = void, M = void, R = void> = ([P] extends [void]
   ? ((...args: any[]) => Promise<R>)
   : [M] extends [void]
     ? ((payload: P) => Promise<R>)
@@ -150,7 +154,7 @@ export interface Icestore<
   subscribe(listener: () => void): Redux.Unsubscribe;
 }
 
-export interface EffectsErrorPluginAPI<M extends Models = Models> {
+interface EffectsErrorPluginAPI<M extends Models = Models> {
   useModelEffectsError<K extends keyof M>(name: K): ExtractIModelEffectsErrorFromModelConfig<M[K]>;
   withModelEffectsError<
     K extends keyof M,
@@ -160,7 +164,7 @@ export interface EffectsErrorPluginAPI<M extends Models = Models> {
   (props: Optionalize<P, R>) => React.ReactElement;
 }
 
-export interface EffectsLoadingPluginAPI<M extends Models = Models> {
+interface EffectsLoadingPluginAPI<M extends Models = Models> {
   useModelEffectsLoading<K extends keyof M>(name: K): ExtractIModelEffectsLoadingFromModelConfig<M[K]>;
   withModelEffectsLoading<
     K extends keyof M,
@@ -170,11 +174,11 @@ export interface EffectsLoadingPluginAPI<M extends Models = Models> {
   (props: Optionalize<P, R>) => React.ReactElement;
 }
 
-export interface UseModelEffectsState<M extends Models> {
+interface UseModelEffectsState<M extends Models> {
   <K extends keyof M>(name: K): ExtractIModelEffectsStateFromModelConfig<M[K]>;
 }
 
-export interface WithModelEffectsState<M extends Models> {
+interface WithModelEffectsState<M extends Models> {
   <
     K extends keyof M,
     F extends (effectsState: ExtractIModelEffectsStateFromModelConfig<M[K]>) => Record<string, any>
@@ -183,7 +187,7 @@ export interface WithModelEffectsState<M extends Models> {
   (props: Optionalize<P, R>) => React.ReactElement;
 }
 
-export interface EffectsStatePluginAPI<M extends Models = Models> {
+interface EffectsStatePluginAPI<M extends Models = Models> {
   useModelEffectsState: UseModelEffectsState<M>;
 
   /**
@@ -198,11 +202,11 @@ export interface EffectsStatePluginAPI<M extends Models = Models> {
   withModelActionsState: WithModelEffectsState<M>;
 }
 
-export interface UseModelDispatchers<M extends Models = Models> {
+interface UseModelDispatchers<M extends Models = Models> {
   <K extends keyof M>(name: K): ExtractIModelDispatchersFromModelConfig<M[K]>;
 }
 
-export interface WithModelDispatchers<M extends Models = Models> {
+interface WithModelDispatchers<M extends Models = Models> {
   <
     K extends keyof M,
     F extends (model: ExtractIModelDispatchersFromModelConfig<M[K]>) => Record<string, any>
@@ -211,7 +215,7 @@ export interface WithModelDispatchers<M extends Models = Models> {
   (props: Optionalize<P, R>) => React.ReactElement;
 }
 
-export interface ModelPluginAPI<M extends Models = Models> {
+interface ModelPluginAPI<M extends Models = Models> {
   useModel<K extends keyof M>(name: K): ExtractIModelFromModelConfig<M[K]>;
   useModelState<K extends keyof M>(name: K): ExtractIModelStateFromModelConfig<M[K]>;
   useModelDispatchers: UseModelDispatchers<M>;
@@ -237,17 +241,12 @@ export interface ModelPluginAPI<M extends Models = Models> {
   withModelActions: WithModelDispatchers<M>;
 }
 
-export interface ProviderProps {
+interface ProviderProps {
   children: any;
-  initialState?: any;
-
-  /**
-   * @deprecated use `initialState` instead.
-   */
   initialStates?: any;
 }
 
-export interface ProviderPluginAPI {
+interface ProviderPluginAPI {
   Provider: (props: ProviderProps) => JSX.Element;
 }
 
@@ -267,21 +266,11 @@ export interface Action<P = any, M = any> {
   meta?: M;
 }
 
-export type EnhancedReducer<S, P = object, M = object> = (
-  state: S,
-  payload: P,
-  meta: M
-) => S
-
-export interface EnhancedReducers {
-  [key: string]: EnhancedReducer<any>;
-}
-
 export interface ModelReducers<S = any> {
   [key: string]: (state: S, payload: any, meta?: any) => S;
 }
 
-interface ModelEffects<S> {
+export interface ModelEffects<S> {
   [key: string]: (
     this: { [key: string]: (payload?: any, meta?: any) => Action<any, any> },
     payload: any,
@@ -351,7 +340,7 @@ export interface DevtoolOptions {
 }
 
 export interface InitConfigRedux<S = any> {
-  initialState?: S;
+  initialStates?: S;
   reducers?: ModelReducers;
   enhancers?: Redux.StoreEnhancer<any>[];
   middlewares?: Middleware[];
@@ -396,7 +385,7 @@ export interface Middleware<
 }
 
 export interface ConfigRedux {
-  initialState?: any;
+  initialStates?: any;
   reducers: ModelReducers;
   enhancers: Redux.StoreEnhancer<any>[];
   middlewares: Middleware[];
@@ -427,7 +416,7 @@ export type ConfigEffect<S = any> = (state: S, payload?: any, actions?: any, glo
  */
 export type ConfigReducer<S = any> = (state: S, payload?: any,) => S;
 /**
- * @deprecated
+ * @deprecated use `ModelEffects` instead
  */
 export interface ConfigEffects<S = any> {
   [name: string]: ConfigEffect<S>;
