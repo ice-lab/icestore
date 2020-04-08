@@ -2,15 +2,13 @@
 import React, { PureComponent } from "react";
 import * as rhl from "@testing-library/react-hooks";
 import * as rtl from "@testing-library/react";
-import { createStore } from "../src";
+import createStore from "../src/index";
 import * as models from "./helpers/models";
 import { todosWithUnsupportEffects } from "./helpers/todos";
 import counterModel from './helpers/counter';
 import {
   ExtractIModelFromModelConfig,
   ExtractIModelDispatchersFromModelConfig,
-  ExtractIModelEffectsLoadingFromModelConfig,
-  ExtractIModelEffectsErrorFromModelConfig,
   ExtractIModelEffectsStateFromModelConfig,
 } from '../src/types';
 
@@ -65,11 +63,48 @@ describe("createStore", () => {
       ).not.toThrow();
     });
   });
+  // mock an icestore object to use the spyOn API
+  const mockIcestoreApi = {
+    createStore,
+  };
 
   describe("function component model", () => {
-    afterEach(() => rhl.cleanup());
+    const spy = jest.spyOn(mockIcestoreApi, 'createStore');
 
-    const store = createStore(models);
+    afterEach(rhl.cleanup);
+
+    it("passes the initial state", () => {
+      const store = mockIcestoreApi.createStore(models);
+      const { Provider, useModel } = store;
+      const initialStates = {
+        todos: {
+          dataSource: [{ name: 'test', done: true }],
+        },
+        user: {
+          dataSource: [{ name: "test" }],
+        },
+      };
+      const wrapper = (props) => (
+        <Provider {...props} initialStates={initialStates}>
+          {props.children}
+        </Provider>
+      );
+      const { result: todosResult } = rhl.renderHook(() => useModel("todos"), {
+        wrapper,
+      });
+      const { result: userResult } = rhl.renderHook(() => useModel("user"), {
+        wrapper,
+      });
+      const [todosState] = todosResult.current;
+      const [userState] = userResult.current;
+      expect(todosState).toEqual(initialStates.todos);
+      expect(userState).toEqual(initialStates.user);
+      // restore the mock
+      // also reset the store
+      spy.mockRestore();
+    });
+
+    const store = mockIcestoreApi.createStore(models);
     const { Provider, useModel, useModelEffectsState } = store;
 
     it("throw error when trying to use the inexisted model", () => {
@@ -81,32 +116,6 @@ describe("createStore", () => {
         Error(`Not found model by namespace: ${namespace}.`),
       );
     });
-
-    // it("passes the initial state", () => {
-    //   const initialStates = {
-    //     todos: {
-    //       dataSource: [
-    //         { name: 'test', done: true },
-    //       ],
-    //     },
-    //     user: { dataSource: [{ name: "test" }] },
-    //   };
-    //   const wrapper = (props) => (
-    //     <Provider {...props} initialStates={initialStates}>
-    //       {props.children}
-    //     </Provider>
-    //   );
-    //   const { result: todosResult } = rhl.renderHook(() => useModel("todos"), {
-    //     wrapper,
-    //   });
-    //   const { result: userResult } = rhl.renderHook(() => useModel("user"), {
-    //     wrapper,
-    //   });
-    //   const [todosState] = todosResult.current;
-    //   const [userState] = userResult.current;
-    //   expect(todosState).toEqual(initialStates.todos);
-    //   expect(userState).toEqual(initialStates.user);
-    // });
 
     it("not pass the initial state", () => {
       const wrapper = (props) => (
@@ -138,7 +147,7 @@ describe("createStore", () => {
     });
 
     it('applies the reducer to the previous state', async () => {
-      const { result, waitForNextUpdate } = rhl.renderHook(() => useModel("todos"), {
+      const { result } = rhl.renderHook(() => useModel("todos"), {
         wrapper: props => (
           <Provider {...props}>
             {props.children}
@@ -152,7 +161,7 @@ describe("createStore", () => {
       expect(state).toEqual(todos.state);
       expect(Reflect.ownKeys(dispatchers)).toEqual([
         ...Reflect.ownKeys(todos.reducers),
-        ...Reflect.ownKeys(todos.effects(undefined)),
+        ...Reflect.ownKeys(todos.effects(jest.fn)),
       ]);
 
       rhl.act(() => {
@@ -163,25 +172,6 @@ describe("createStore", () => {
         [
           { name: 'Init', done: false },
           { name: 'testReducers', done: false },
-        ],
-      );
-      rhl.act(() => {
-        dispatchers.add(store, { name: 'testEffects', done: false });
-      });
-      expect(result.current[0].dataSource).toEqual(
-        [
-          { name: 'Init', done: false },
-          { name: 'testReducers', done: false },
-          { name: 'testEffects', done: false },
-        ],
-      );
-      await waitForNextUpdate();
-
-      expect(result.current[0].dataSource).toEqual(
-        [
-          { name: 'Init', done: false },
-          { name: 'testReducers', done: false },
-          { name: 'testEffects', done: false },
         ],
       );
     });
@@ -219,21 +209,14 @@ describe("createStore", () => {
       expect(result.current.state.dataSource).toEqual([]);
       expect(result.current.effectsState.delete).toEqual({ isLoading: false, error: null });
     });
+
+    spy.mockRestore();
   });
 
   describe("class component model", () => {
-    afterEach(() => {
-      rtl.cleanup();
-    });
-    const store = createStore({ counter: counterModel });
-    const {
-      Provider,
-      withModel,
-      withModelDispatchers,
-      withModelEffectsState,
-      withModelEffectsError,
-      withModelEffectsLoading,
-    } = store;
+    const spy = jest.spyOn(mockIcestoreApi, 'createStore');
+
+    afterEach(rtl.cleanup);
 
     interface CounterProps {
       counter: ExtractIModelFromModelConfig<typeof counterModel>;
@@ -271,8 +254,6 @@ describe("createStore", () => {
     };
 
     interface CounterLoadingWrapperProps {
-      // counterEffectsLoading: ExtractIModelEffectsLoadingFromModelConfig<typeof counterModel>;
-      // counterEffectsError: ExtractIModelEffectsErrorFromModelConfig<typeof counterModel>;
       counterEffectsState: ExtractIModelEffectsStateFromModelConfig<typeof counterModel>;
       children: React.ReactChild;
     }
@@ -289,16 +270,27 @@ describe("createStore", () => {
         );
       }
     };
-    const WithModelCounter = withModel('counter')(Counter);
-    const WithDispatchersCounterReset = withModelDispatchers('counter')(CounterReset);
-    const WithModelEffectsStateCounterLoadingWrapper = withModelEffectsState('counter')(CounterLoadingWrapper);
 
     it('passes the initial state', () => {
+      const store = mockIcestoreApi.createStore({ counter: counterModel });
+      const { Provider, withModel } = store;
+
+      const WithModelCounter = withModel('counter')(Counter);
+
       const initialStates = { counter: { count: 5 } };
       const tester = rtl.render(<Provider initialStates={initialStates}><WithModelCounter /></Provider>);
       const { getByTestId } = tester;
       expect(getByTestId('count').innerHTML).toBe('5');
+      // restore the mock
+      // also reset the store
+      spy.mockRestore();
     });
+    const store = mockIcestoreApi.createStore({ counter: counterModel });
+    const { Provider, withModel, withModelDispatchers, withModelEffectsState } = store;
+
+    const WithModelCounter = withModel('counter')(Counter);
+    const WithDispatchersCounterReset = withModelDispatchers('counter')(CounterReset);
+    const WithModelEffectsStateCounterLoadingWrapper = withModelEffectsState('counter')(CounterLoadingWrapper);
 
     it('not pass the initial state', () => {
       const tester = rtl.render(<Provider><WithModelCounter /></Provider>);
@@ -307,16 +299,15 @@ describe("createStore", () => {
     });
 
     it('applies the reducer to the initial state', () => {
-      const initialStates = { counter: { count: 5 } };
-      const tester = rtl.render(<Provider initialStates={initialStates}><WithModelCounter /></Provider>);
+      const tester = rtl.render(<Provider><WithModelCounter /></Provider>);
       const { getByTestId } = tester;
-      expect(getByTestId('count').innerHTML).toBe('5');
+      expect(getByTestId('count').innerHTML).toBe('0');
 
       rtl.fireEvent.click(getByTestId('increment'));
-      expect(getByTestId('count').innerHTML).toBe('6');
+      expect(getByTestId('count').innerHTML).toBe('1');
 
       rtl.fireEvent.click(getByTestId('decrement'));
-      expect(getByTestId('count').innerHTML).toBe('5');
+      expect(getByTestId('count').innerHTML).toBe('0');
     });
 
     it('withDispatchers', () => {
@@ -349,47 +340,105 @@ describe("createStore", () => {
       const { getByTestId } = tester;
 
       expect(getByTestId('count').innerHTML).toBe('0');
-      rtl.fireEvent.click(getByTestId('increment'));
-
-      expect(getByTestId('count').innerHTML).toBe('1');
       rtl.fireEvent.click(getByTestId('decrementAsync'));
+      await rtl.waitForDomChange();
+      expect(getByTestId('decrementAsyncEffectsState').innerHTML).toEqual(
+        {
+          isLoading: false,
+          error: Error(`count should be greater than or equal to 0`),
+        },
+      );
 
+      rtl.fireEvent.click(getByTestId('increment'));
+      expect(getByTestId('count').innerHTML).toBe('1');
+
+      rtl.fireEvent.click(getByTestId('decrementAsync'));
       expect(getByTestId('decrementAsyncEffectsState').innerHTML).toBe('{"isLoading":true,"error":null}');
 
       await rtl.waitForDomChange();
       expect(getByTestId('decrementAsyncEffectsState').innerHTML).toBe('{"isLoading":false,"error":null}');
       expect(getByTestId('count').innerHTML).toBe('0');
     });
+    spy.mockRestore();
   });
 
-  describe("getModel", () => {
+  describe("get model api", () => {
+    afterEach(() => {
+      rtl.cleanup();
+    });
+    const store = createStore({ counter: counterModel });
 
-  });
+    it('getModel', () => {
+      const [state] = store.getModel('counter');
+      expect(state).toEqual(counterModel.state);
+    });
 
-  describe("disable immer", () => {
-    const store = createStore(models, {
-      disableImmer: true,
+    it('getModelState', () => {
+      const state = store.getModelState('counter');
+      expect(state).toEqual(counterModel.state);
+    });
+
+    it('getModelDispatchers', () => {
+      const dispatchers = store.getModelDispatchers('counter');
+      expect(Object.keys(dispatchers)).toEqual([
+        ...Object.keys(counterModel.reducers),
+        ...Object.keys(counterModel.effects(jest.fn)),
+      ]);
     });
   });
 
-  describe("disable loading", () => {
-    const store = createStore(models, {
-      disableLoading: true,
+
+
+  describe("createStore options", () => {
+    const spy = jest.spyOn(mockIcestoreApi, 'createStore');
+    afterEach(rhl.cleanup);
+    it("disable loading", () => {
+      const store = mockIcestoreApi.createStore(models, {
+        disableLoading: true,
+      });
+      const methods = Reflect.ownKeys(store);
+
+      expect(methods).not.toContain("useModelEffectsLoading");
+      expect(methods).not.toContain("withModelEffectsLoading");
+
+      spy.mockRestore();
     });
-    const methods = Reflect.ownKeys(store);
 
-    expect(methods).not.toContain("useModelEffectsLoading");
-    expect(methods).not.toContain("withModelEffectsLoading");
-  });
+    it("disableError", () => {
+      const store = mockIcestoreApi.createStore(models, {
+        disableError: true,
+      });
 
-  describe("disable error", () => {
-    const store = createStore(models, {
-      disableError: true,
+      const methods = Reflect.ownKeys(store);
+
+      expect(methods).not.toContain("useModelEffectsError");
+      expect(methods).not.toContain("withModelEffectsError");
+
+      spy.mockRestore();
     });
 
-    const methods = Reflect.ownKeys(store);
+    it("disable immer", () => {
+      const store = mockIcestoreApi.createStore(models, {
+        disableImmer: true,
+      });
+      const { Provider, useModel } = store;
+      const { result } = rhl.renderHook(() => useModel("todos"), {
+        wrapper: props => (
+          <Provider {...props}>
+            {props.children}
+          </Provider>
+        ),
+      });
 
-    expect(methods).not.toContain("useModelEffectsError");
-    expect(methods).not.toContain("withModelEffectsError");
+      const [state, dispatchers] = result.current;
+      const todos = models.todos;
+      expect(state).toEqual(todos.state);
+      rhl.act(() => {
+        dispatchers.addTodo({ name: 'testReducers', done: false });
+      });
+      expect(result.current[0].dataSource).toEqual({ name: 'testReducers', done: false });
+
+      spy.mockRestore();
+    });
   });
 });
