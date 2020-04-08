@@ -53,7 +53,7 @@ export default (): T.Plugin => {
         return store.getState()[name];
       }
       function getModelDispatchers(name: string) {
-        return store.dispatch()[name];
+        return store.dispatch[name];
       }
       function withModel(name: string, mapModelToProps?) {
         mapModelToProps = (mapModelToProps || ((model) => ({ [name]: model })));
