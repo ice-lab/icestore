@@ -21,14 +21,14 @@ export default (): T.Plugin => {
       }
       function useModelState(name: string) {
         const selector = store.useSelector(state => state[name]);
-        if (selector !== undefined) {
+        if (typeof selector !== "undefined") {
           return selector;
         }
         throw new Error(`Not found model by namespace: ${name}.`);
       }
       function useModelDispatchers(name: string) {
         const dispatch = store.useDispatch();
-        if (dispatch[name] !== undefined) {
+        if (dispatch[name]) {
           return dispatch[name];
         }
         throw new Error(`Not found model by namespace: ${name}.`);
