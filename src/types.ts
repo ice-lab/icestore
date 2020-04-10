@@ -131,8 +131,8 @@ type IcestoreDispatcherAsync<P = void, M = void, R = void> = ([P] extends [void]
   : [M] extends [void]
     ? ((payload: P) => Promise<R>)
     : (payload: P, meta: M) => Promise<R>) &
-      ((action: Action<P, M>) => Promise<R>) &
-      ((action: Action<P, void>) => Promise<R>)
+((action: Action<P, M>) => Promise<R>) &
+((action: Action<P, void>) => Promise<R>)
 
 export type IcestoreDispatch<M extends Models | void = void> = (M extends Models
   ? ExtractIcestoreDispatchersFromModels<M>
