@@ -92,7 +92,7 @@ function Button() {
 }
 ```
 
-## Get the latest sate of the model
+## Get the latest state of the model
 
 In some scenarios, you may want to get the latest state of the model.
 
