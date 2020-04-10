@@ -21,7 +21,7 @@ export default (): T.Plugin => {
       }
       function useModelState(name: string) {
         const selector = store.useSelector(state => state[name]);
-        if (selector) {
+        if (typeof selector !== "undefined") {
           return selector;
         }
         throw new Error(`Not found model by namespace: ${name}.`);
