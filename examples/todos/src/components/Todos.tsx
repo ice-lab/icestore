@@ -15,6 +15,8 @@ export default function Todos() {
 
   useEffect(() => {
     refresh();
+
+  // eslint-disable-next-line
   }, []);
 
   const noTaskView = <div>no task</div>;
