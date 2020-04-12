@@ -11,7 +11,7 @@ export default function UserApp() {
 
   useEffect(() => {
     login();
-  }, []);
+  }, [login]);
 
   console.debug('UserApp rending...');
   return auth ?

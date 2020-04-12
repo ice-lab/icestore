@@ -275,7 +275,7 @@ describe("createStore", () => {
 
     const mockFn = jest.fn()
       .mockReturnValue(createStore({ counter: counterModel }))
-      .mockReturnValueOnce(createStore({ counter: counterModel }))
+      .mockReturnValueOnce(createStore({ counter: counterModel }));
 
     it('passes the initial state', () => {
       const store = mockFn();
@@ -390,12 +390,12 @@ describe("createStore", () => {
   describe("createStore options", () => {
     const testModel = {
       state: {
-        count: 1
+        count: 1,
       },
       reducers: {
-        increment: (prevState) => { return prevState.count + 1 },
-      }
-    }
+        increment: (prevState) => { return prevState.count + 1; },
+      },
+    };
     const mockFn = jest
       .fn()
       .mockReturnValueOnce(createStore({ testModel }, {
@@ -410,7 +410,7 @@ describe("createStore", () => {
       ;
 
     afterEach(() => {
-      rhl.cleanup()
+      rhl.cleanup();
     });
 
     it("disable loading", () => {

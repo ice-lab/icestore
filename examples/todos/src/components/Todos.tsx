@@ -15,7 +15,7 @@ export default function Todos() {
 
   useEffect(() => {
     refresh();
-  }, []);
+  }, [refresh]);
 
   const noTaskView = <div>no task</div>;
   const loadingView = <div>loading...</div>;
