@@ -137,13 +137,22 @@ export default withModelDispatchers('todos')(TodoList);
 #### 1.0.0
 
 ```js
-const todos = {
+const counter = {
+  state: {
+    value: 0,
+  },
   actions: {
-    increment:(prevState) => prevState + 1,
-    async incrementAsync(state, payload, actions) {
+    increment:(state) => ({ value: state.value + 1 }),
+    async incrementAsync(state, payload, actions, globalActions) {
+      console.log(state); // 0
       await delay(1000);
       actions.increment();
-    }
+      globalActions.todo.refresh();
+    },
+    async decrementAsync(state) {
+      await delay(1000);
+      return { value: state.value - 1 };
+    },
   }
 }
 ```
@@ -151,14 +160,23 @@ const todos = {
 #### 1.3.0
 
 ```js
-const todos = {
-  reducers: {
-    increment:(prevState) => prevState + 1,
+const counter = {
+  state: {
+    value: 0,
   },
-  effects: () => ({
-    async incrementAsync() {
+  reducers: {
+    increment:(prevState) => ({ value: prevState.value + 1 }),
+  },
+  effects: (dispatch) => ({
+    async incrementAsync(payload, rootState) {
+      console.log(rootState.counter); // 0
       await delay(1000);
       this.increment();
+      dispatch.todo.refresh();
+    },
+    async decrementAsync(payload, rootState) {
+      await delay(1000);
+      this.setState({ value: rootState.counter.value - 1 }); // setState 是一个内置的 reducer
     },
   }),
 }

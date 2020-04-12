@@ -7,7 +7,7 @@ const { useModel, useModelEffectsLoading } = store;
 
 export default function Todos() {
   const todos = useModel('todos');
-  const [ state, dispatchers ] = todos;
+  const [state, dispatchers] = todos;
   const effectsLoading = useModelEffectsLoading('todos');
 
   const { dataSource } = state;
@@ -15,7 +15,8 @@ export default function Todos() {
 
   useEffect(() => {
     refresh();
-  }, [refresh]);
+    // eslint-disable-next-line
+  }, []);
 
   const noTaskView = <div>no task</div>;
   const loadingView = <div>loading...</div>;

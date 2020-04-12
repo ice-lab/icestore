@@ -37,9 +37,11 @@ type ExtractIModelDispatcherAsyncFromEffect<
   ? IcestoreDispatcherAsync<void, void, R>
   : E extends (payload: infer P) => Promise<infer R>
     ? IcestoreDispatcherAsync<P, void, R>
-    : E extends (payload: infer P, meta: infer M) => Promise<infer R>
-      ? IcestoreDispatcherAsync<P, M, R>
-      : IcestoreDispatcherAsync<any, any, any>
+    : E extends (payload: infer P, rootState: any) => Promise<infer R>
+      ? IcestoreDispatcherAsync<P, void, R>
+      : E extends (payload: infer P, rootState: any, meta: infer M) => Promise<infer R>
+        ? IcestoreDispatcherAsync<P, M, R>
+        : IcestoreDispatcherAsync<any, any, any>
 
 type ExtractIModelDispatchersFromEffectsObject<
   effects extends ModelEffects<any>
@@ -64,9 +66,9 @@ type ExtractIModelDispatcherFromReducer<R> = R extends () => any
   ? IcestoreDispatcher<void, void>
   : R extends (state: infer S) => infer S
     ? IcestoreDispatcher<void, void>
-    : R extends (state: infer S, payload: infer P) => infer S
+    : R extends (state: infer S, payload: infer P) => (infer S | void)
       ? IcestoreDispatcher<P, void>
-      : R extends (state: infer S, payload: infer P, meta: infer M) => infer S
+      : R extends (state: infer S, payload: infer P, meta: infer M) => (infer S | void)
         ? IcestoreDispatcher<P, M>
         : IcestoreDispatcher<any, any>
 
