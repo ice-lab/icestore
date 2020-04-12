@@ -42,27 +42,4 @@ const todos = {
   }),
 };
 
-export const todosWithUnsupportEffects = {
-  state: {
-    a: 1,
-  },
-  // actions: {
-  //   incrementA: (state, value) => {
-  //     return {
-  //       ...state,
-  //       a: state.a + value,
-  //     };
-  //   },
-  // },
-  // old version define effects
-  effects: {
-    incrementA: (state, value) => {
-      return {
-        ...state,
-        a: state.a + value,
-      };
-    },
-  },
-};
-
 export default todos;

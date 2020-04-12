@@ -4,8 +4,8 @@ import * as rhl from "@testing-library/react-hooks";
 import * as rtl from "@testing-library/react";
 import createStore from "../src/index";
 import * as models from "./helpers/models";
-import { todosWithUnsupportEffects } from "./helpers/todos";
-import counterModel from './helpers/counter';
+import counterModel, { counterWithUnsupportEffects } from "./helpers/counter";
+
 import {
   ExtractIModelFromModelConfig,
   ExtractIModelDispatchersFromModelConfig,
@@ -35,7 +35,7 @@ describe("createStore", () => {
 
   it("create unsupported effects should console error", () => {
     const spy = jest.spyOn(console, "error");
-    createStore({ todosWithUnsupportEffects });
+    createStore({ counterWithUnsupportEffects });
     expect(spy).toHaveBeenCalled();
   });
 

@@ -24,4 +24,32 @@ const counter = {
   }),
 };
 
+export const counterWithUnsupportEffects = {
+  state: {
+    a: 1,
+  },
+  effects: {
+    incrementA: (state, value) => {
+      return {
+        ...state,
+        a: state.a + value,
+      };
+    },
+  },
+};
+
+export const counterWithUnsupportActions = {
+  state: {
+    a: 1,
+  },
+  actions: {
+    incrementA: (state, value) => {
+      return {
+        ...state,
+        a: state.a + value,
+      };
+    },
+  },
+};
+
 export default counter;

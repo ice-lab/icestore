@@ -59,6 +59,10 @@
   "jest": {
     "coverageDirectory": "./coverage/",
     "collectCoverage": true,
+    "coveragePathIgnorePatterns": [
+      "<rootDir>/tests/helpers/",
+      "<rootDir>/node_modules/"
+    ],
     "preset": "ts-jest"
   },
   "dependencies": {
