@@ -1,5 +1,5 @@
 import { delay } from '../utils';
-import store, { RootDispatch } from '../store';
+import store, { RootDispatch, RootState } from '../store';
 
 export interface Todo {
   name: string;
@@ -32,7 +32,8 @@ const model = {
   },
   effects: (dispatch: RootDispatch) => ({
     // this will run after "add" reducer finished
-    add(todo: Todo) {
+    add(todo: Todo, rootState: RootState) {
+      console.log(rootState.todos);
       dispatch.user.setTodos(store.getModelState('todos').dataSource.length);
     },
     async refresh() {
