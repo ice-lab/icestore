@@ -213,9 +213,11 @@ describe("createStore", () => {
   });
 
   describe("class component model", () => {
-    const spy = jest.spyOn(mockIcestoreApi, 'createStore');
+    // const spy = jest.spyOn(mockIcestoreApi, 'createStore');
 
-    afterEach(rtl.cleanup);
+    afterEach(() => {
+      rtl.cleanup();
+    });
 
     interface CounterProps {
       counter: ExtractIModelFromModelConfig<typeof counterModel>;
@@ -230,6 +232,7 @@ describe("createStore", () => {
         return (
           <React.Fragment>
             <div data-testid="count">{count}</div>
+            <div data-testid="setState" onClick={() => dispatchers.setState({ count: 1 })} />
             <div data-testid="increment" onClick={dispatchers.increment} />
             <div data-testid="decrement" onClick={dispatchers.decrement} />
             <div data-testid="decrementAsync" onClick={dispatchers.decrementAsync} />
@@ -270,20 +273,23 @@ describe("createStore", () => {
       }
     };
 
-    // it('passes the initial state', () => {
-    //   const store = mockIcestoreApi.createStore({ counter: counterModel });
-    //   const { Provider, withModel } = store;
+    const mockFn = jest.fn()
+      .mockReturnValue(createStore({ counter: counterModel }))
+      .mockReturnValueOnce(createStore({ counter: counterModel }))
 
-    //   const WithModelCounter = withModel('counter')(Counter);
+    it('passes the initial state', () => {
+      const store = mockFn();
+      const { Provider, withModel } = store;
 
-    //   const initialStates = { counter: { count: 5 } };
-    //   const tester = rtl.render(<Provider initialStates={initialStates}><WithModelCounter /></Provider>);
-    //   const { getByTestId } = tester;
-    //   expect(getByTestId('count').innerHTML).toBe('5');
+      const WithModelCounter = withModel('counter')(Counter);
 
-    //   spy.mockRestore();
-    // });
-    const store = mockIcestoreApi.createStore({ counter: counterModel });
+      const initialStates = { counter: { count: 5 } };
+      const tester = rtl.render(<Provider initialStates={initialStates}><WithModelCounter /></Provider>);
+      const { getByTestId } = tester;
+      expect(getByTestId('count').innerHTML).toBe('5');
+    });
+
+    const store = mockFn();
     const { Provider, withModel, withModelDispatchers, withModelEffectsState } = store;
 
     const WithModelCounter = withModel('counter')(Counter);
@@ -301,7 +307,7 @@ describe("createStore", () => {
       const { getByTestId } = tester;
       expect(getByTestId('count').innerHTML).toBe('0');
 
-      rtl.fireEvent.click(getByTestId('increment'));
+      rtl.fireEvent.click(getByTestId('setState'));
       expect(getByTestId('count').innerHTML).toBe('1');
 
       rtl.fireEvent.click(getByTestId('decrement'));
@@ -353,7 +359,7 @@ describe("createStore", () => {
       expect(getByTestId('count').innerHTML).toBe('0');
     });
 
-    spy.mockRestore();
+    // spy.mockRestore();
   });
 
   describe("get model api", () => {
@@ -381,56 +387,65 @@ describe("createStore", () => {
     });
   });
 
-  // describe("createStore options", () => {
-  //   const spy = jest.spyOn(mockIcestoreApi, 'createStore');
-  //   afterEach(rhl.cleanup);
-  //   it("disable loading", () => {
-  //     const store = mockIcestoreApi.createStore(models, {
-  //       disableLoading: true,
-  //     });
-  //     const methods = Reflect.ownKeys(store);
+  describe("createStore options", () => {
+    const testModel = {
+      state: {
+        count: 1
+      },
+      reducers: {
+        increment: (prevState) => { return prevState.count + 1 },
+      }
+    }
+    const mockFn = jest
+      .fn()
+      .mockReturnValueOnce(createStore({ testModel }, {
+        disableLoading: true,
+      }))
+      .mockReturnValueOnce(createStore({ testModel }, {
+        disableError: true,
+      }))
+      .mockReturnValueOnce(createStore({ testModel }, {
+        disableImmer: true,
+      }))
+      ;
 
-  //     expect(methods).not.toContain("useModelEffectsLoading");
-  //     expect(methods).not.toContain("withModelEffectsLoading");
+    afterEach(() => {
+      rhl.cleanup()
+    });
 
-  //     spy.mockRestore();
-  //   });
+    it("disable loading", () => {
+      const store = mockFn();
+      const methods = Reflect.ownKeys(store);
 
-  //   it("disableError", () => {
-  //     const store = mockIcestoreApi.createStore(models, {
-  //       disableError: true,
-  //     });
+      expect(methods).not.toContain("useModelEffectsLoading");
+      expect(methods).not.toContain("withModelEffectsLoading");
+    });
 
-  //     const methods = Reflect.ownKeys(store);
+    it("disableError", () => {
+      const store = mockFn();
+      const methods = Reflect.ownKeys(store);
 
-  //     expect(methods).not.toContain("useModelEffectsError");
-  //     expect(methods).not.toContain("withModelEffectsError");
+      expect(methods).not.toContain("useModelEffectsError");
+      expect(methods).not.toContain("withModelEffectsError");
+    });
 
-  //     spy.mockRestore();
-  //   });
+    it("disable immer", () => {
+      const store = mockFn();
+      const { Provider, useModel } = store;
+      const { result } = rhl.renderHook(() => useModel("testModel"), {
+        wrapper: props => (
+          <Provider {...props}>
+            {props.children}
+          </Provider>
+        ),
+      });
 
-  //   it("disable immer", () => {
-  //     const store = mockIcestoreApi.createStore(models, {
-  //       disableImmer: true,
-  //     });
-  //     const { Provider, useModel } = store;
-  //     const { result } = rhl.renderHook(() => useModel("todos"), {
-  //       wrapper: props => (
-  //         <Provider {...props}>
-  //           {props.children}
-  //         </Provider>
-  //       ),
-  //     });
-
-  //     const [state, dispatchers] = result.current;
-  //     const todos = models.todos;
-  //     expect(state).toEqual(todos.state);
-  //     rhl.act(() => {
-  //       dispatchers.addTodo({ name: 'testReducers', done: false });
-  //     });
-  //     expect(result.current[0].dataSource).toEqual({ name: 'testReducers', done: false });
-
-  //     spy.mockRestore();
-  //   });
-  // });
+      const [state, dispatchers] = result.current;
+      expect(state).toEqual(testModel.state);
+      rhl.act(() => {
+        dispatchers.increment();
+      });
+      expect(result.current[0]).toEqual(2);
+    });
+  });
 });
