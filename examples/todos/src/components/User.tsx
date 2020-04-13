@@ -11,6 +11,8 @@ export default function UserApp() {
 
   useEffect(() => {
     login();
+
+  // eslint-disable-next-line
   }, []);
 
   console.debug('UserApp rending...');

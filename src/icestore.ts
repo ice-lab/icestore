@@ -55,12 +55,12 @@ export default class Icestore {
       [typeof model.name !== 'string', 'model "name" [string] is required'],
       [
         model.state === undefined && model.baseReducer === undefined,
-        'model "state" is required',
+        `model(${model.name}) "state" is required`,
       ],
       [
         model.baseReducer !== undefined &&
 					typeof model.baseReducer !== 'function',
-        'model "baseReducer" must be a function',
+        `model(${model.name}) "baseReducer" must be a function`,
       ],
     ]);
     // run plugin model subscriptions

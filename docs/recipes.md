@@ -67,6 +67,81 @@ For example, the action A in Model A calls the action B in Model B and the actio
 
 Be careful the possibility of endless loop problem will arise when methods from different models call each other.
 
+## Readonly
+
+In some scenarios, you may only want to call the method returned by the model to update the state instead of subscribing to the update of the model state. For example, the button component in the "Basic example", you do not consume the state of the model in the component, so you may not expect the change of the state of the model to trigger the re-rende of the component.
+
+At this time, you can use the `useModelDispatchers` API, check following example:
+
+```js
+import store from '@/store';
+const { useModelDispatchers } = store;
+function Button() {
+  const [, dispatchers ] = useModel('counter'); // The update of model'state will be subscribed here
+  const { increment } = dispatchers;
+  return (
+    <button type="button" onClick={increment}> + </button>
+  );
+} 
+
+function Button() {
+  const { increment } = useModelDispatchers('counter'); // Updates to model'state will not be subscribed here
+  return (
+    <button type="button" onClick={increment}> + </button>
+  );
+}
+```
+
+## Get the latest state of the model
+
+In some scenarios, you may want to get the latest state of the model.
+
+### In Component
+
+```js
+import store from '@/store';
+
+function Logger({ foo }) {	
+  // case 1 use state only instead of subscribing to updates(a means of performance optimization)
+  function doSomeThing() {	
+    const counter = store.getModelState('counter');	
+    alert(counter);
+  };
+
+
+  // case 2 get the latest state in the closure
+  const doOhterThing = useCallback(
+    (payload) => {
+      const counter = store.getModelState('counter');	
+      alert(counter + foo);
+    },
+    [foo]
+  );
+  
+  return (
+    <div>
+      <button onClick={doSomeThing}>click 1<button>
+      <button onClick={doOhterThing}>click 2<button>
+    </div>
+  );
+} 
+```
+
+### In Model
+
+```js
+import store from '@/store';
+
+const user = {
+  effects: dispatch => ({
+    async addByAsync(payload, state) {
+      dispatch.todos.addTodo(payload); // Call methods of other models to update their state
+      const todos = store.getModelState('todos'); // Get the latest state of the updated model
+    }
+  })
+}
+```
+
 ## effects' executing status
 
 `icestore` has built-in support to access the executing status of effects. This enables users to have access to the isLoading and error executing status of effects without defining extra state, making the code more consise and clean.
@@ -161,26 +236,6 @@ You can use `withModelDispatchers` to call only model actions without listening 
 
 See [docs/api](./api.md) for more details.
 
-## Directory organization
-
-For most small and medium-sized projects, it is recommended to centrally manage all the project models in the global `src/models/` directory:
-
-```bash
-├── src/
-│   ├── components/
-│   │   └── NotFound/
-│   ├── pages/
-│   │   └── Home
-│   ├── models/
-│   │   ├── modelA.js
-│   │   ├── modelB.js
-│   │   ├── modelC.js
-│   │   └── index.js
-│   └── store.js
-```
-
-If the project is relatively large, or more likely to follow the page maintenance of the store,then you can declare a store instance in each page directory. However, in this case, cross page store calls should be avoided as much as possible.
-
 ## Immutable Description 
 
 ### Don't destructure the state argument
@@ -233,6 +288,26 @@ const store = createStore(models, {
   disableImmer: true; // 👈 set the flag
 });
 ```
+
+## Directory organization
+
+For most small and medium-sized projects, it is recommended to centrally manage all the project models in the global `src/models/` directory:
+
+```bash
+├── src/
+│   ├── components/
+│   │   └── NotFound/
+│   ├── pages/
+│   │   └── Home
+│   ├── models/
+│   │   ├── modelA.js
+│   │   ├── modelB.js
+│   │   ├── modelC.js
+│   │   └── index.js
+│   └── store.js
+```
+
+If the project is relatively large, or more likely to follow the page maintenance of the store,then you can declare a store instance in each page directory. However, in this case, cross page store calls should be avoided as much as possible.
 
 ## Comparison
 

@@ -65,6 +65,81 @@ export default createStore({
 
 如果是多个模型间进行相互调用，死循环问题的出现概率就会提升。
 
+
+## 只调用方法而不订阅更新
+
+在某些场景下，您可能只希望调用模型方法来更新状态而不订阅模型状态的更新。 例如「快速开始」示例中的 Button 组件，您没有在组件中消费模型的状态，因此可能不期望模型状态的变化触发组件的重新渲染。 这时候您可以使用 useModelDispatchers API，看下面的示例比较：
+
+```js
+import store from '@/store';
+
+const { useModelDispatchers } = store;
+function Button() {
+  const [, dispatchers ] = useModel('counter'); // 这里会订阅模型状态的更新
+  const { increment } = dispatchers;
+  return (
+    <button type="button" onClick={increment}> + </button>
+  );
+} 
+
+function Button() {
+  const { increment } = useModelDispatchers('counter'); // 这里不会订阅模型状态的更新
+  return (
+    <button type="button" onClick={increment}> + </button>
+  );
+}
+```
+
+## 获取模型最新状态
+
+在某些场景下，您可能需要获取到模型的最新状态。
+
+### 在组件中
+
+```js
+import store from '@/store';
+
+function Logger({ foo }) {	
+  // case 1 只使用状态而不订阅更新（性能优化的手段）
+  function doSomeThing() {	
+    const counter = store.getModelState('counter');	
+    alert(counter);
+  };
+
+
+  // case 2 在闭包中获取最新状态
+  const doOhterThing = useCallback(
+    (payload) => {
+      const counter = store.getModelState('counter');	
+      alert(counter + foo);
+    },
+    [foo]
+  );
+  
+  return (
+    <div>
+      <button onClick={doSomeThing}>click 1<button>
+      <button onClick={doOhterThing}>click 2<button>
+    </div>
+  );
+} 
+```
+
+### 在模型中
+
+```js
+import store from '@/store';
+
+const user = {
+  effects: dispatch => ({
+    async addByAsync(payload, state) {
+      dispatch.todos.addTodo(payload); // 调用其他模型的方法更新其状态
+      const todos = store.getModelState('todos'); // 获取更新后的模型最新状态
+    }
+  })
+}
+```
+
 ## 模型副作用的执行状态
 
 icestore 内部集成了对于异步副作用的状态记录，方便您在不增加额外的状态的前提下访问异步副作用的执行状态（loading 与 error），从而使状态渲染的处理逻辑更加简洁。
@@ -159,26 +234,6 @@ export default compose(withModel('user'), withModel('todos'))(TodoList);
 
 查看 [docs/api](./api.zh-CN.md) 了解其使用方式。
 
-## 项目的目录组织
-
-对于大多数中小型项目，建议集中管理模型，例如在 “src/models/” 目录中存放项目的所有模型：
-
-```bash
-├── src/
-│   ├── components/
-│   │   └── NotFound/
-│   ├── pages/
-│   │   └── Home
-│   ├── models/
-│   │   ├── modelA.js
-│   │   ├── modelB.js
-│   │   ├── modelC.js
-│   │   └── index.js
-│   └── store.js
-```
-
-如果项目相对较大，可以按照页面来管理模型。但是，在这种情况下，应该避免跨页面使用模型。
-
 ## 可变状态的说明
 
 icestore 默认为 reducer 提供了状态可变的操作方式。
@@ -231,6 +286,27 @@ const store = createStore(models, {
   disableImmer: true; // 👈 通过该配置禁用 immer
 });
 ```
+
+## 项目的目录组织
+
+对于大多数中小型项目，建议集中管理模型，例如在 “src/models/” 目录中存放项目的所有模型：
+
+```bash
+├── src/
+│   ├── components/
+│   │   └── NotFound/
+│   ├── pages/
+│   │   └── Home
+│   ├── models/
+│   │   ├── modelA.js
+│   │   ├── modelB.js
+│   │   ├── modelC.js
+│   │   └── index.js
+│   └── store.js
+```
+
+如果项目相对较大，可以按照页面来管理模型。但是，在这种情况下，应该避免跨页面使用模型。
+
 ## 能力对比表
 
 - O: 支持
