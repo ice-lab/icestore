@@ -5,9 +5,9 @@ import { counterWithUnsupportEffects, counterWithUnsupportActions } from '../hel
 describe('utils/convert', () => {
   it('withUnsupportEffects', () => {
     const spy = jest.spyOn(console, "error");
-    const models: Models = convertEffects({ counterWithUnsupportEffects });
+    const models: Models = convertEffects({ counter: counterWithUnsupportEffects });
     expect(spy).toHaveBeenCalled();
-    const { counterWithUnsupportEffects: counter } = models;
+    const { counter } = models;
     expect(Reflect.ownKeys(counter)).toEqual(['state', 'effects']);
     const effects = counter.effects as (dispatch: any) => ModelEffects<any>;
     expect(Reflect.ownKeys(effects(jest.fn))).toEqual(['incrementA']);
@@ -15,9 +15,9 @@ describe('utils/convert', () => {
 
   it('withUnsupportActions', () => {
     const spy = jest.spyOn(console, "error");
-    const models: Models = convertActions({ counterWithUnsupportActions });
+    const models: Models = convertActions({ counter: counterWithUnsupportActions });
     expect(spy).toHaveBeenCalled();
-    const { counterWithUnsupportActions: counter } = models;
+    const { counter } = models;
     expect(Reflect.ownKeys(counter)).toEqual(['state', 'actions', 'reducers', 'effects']);
 
     const effects = counter.effects as (dispatch: any) => ModelEffects<any>;
