@@ -185,7 +185,6 @@ describe("createStore", () => {
         },
       };
       const wrapper = props => <Provider {...props} initialStates={initialStates}>{props.children}</Provider>;
-
       //  Define a new hooks  for that renderHook api doesn't support render one more hooks 
       function useModelEffect() {
         const [state, dispatchers] = useModel("todos");
@@ -213,8 +212,6 @@ describe("createStore", () => {
   });
 
   describe("class component model", () => {
-    // const spy = jest.spyOn(mockIcestoreApi, 'createStore');
-
     afterEach(() => {
       rtl.cleanup();
     });
@@ -358,8 +355,6 @@ describe("createStore", () => {
       expect(getByTestId('decrementAsyncEffectsState').innerHTML).toBe('{"isLoading":false,"error":null}');
       expect(getByTestId('count').innerHTML).toBe('0');
     });
-
-    // spy.mockRestore();
   });
 
   describe("get model api", () => {
