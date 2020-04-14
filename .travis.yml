@@ -7,3 +7,11 @@ script:
   - npm run test
 after_success:
   - npm run coverage
+deploy:
+    provider: npm
+    email: alvin.hui@qq.com
+    api_key: $NPM_AUTH_TOKEN
+    skip_cleanup: true
+    on:
+      tags: true
+    tag: latest
