@@ -71,15 +71,10 @@ describe("createStore", () => {
   };
 
   describe("function component model", () => {
-    const mockIcestoreApi = {
-      createStore,
-    };
-    const spy = jest.spyOn(mockIcestoreApi, 'createStore');
-
     afterEach(rhl.cleanup);
 
     it("throw error when trying to use the inexisted model", () => {
-      const store = mockIcestoreApi.createStore(models);
+      const store = createStore(models);
       const { Provider, useModel } = store;
       const namespace = "test";
       const { result } = renderHook(useModel, namespace, Provider);
@@ -89,7 +84,7 @@ describe("createStore", () => {
     });
 
     describe("passes the initial states", () => {
-      const store = mockIcestoreApi.createStore(models);
+      const store = createStore(models);
       const { Provider, useModel } = store;
       const initialStates = {
         todos: {
@@ -107,8 +102,6 @@ describe("createStore", () => {
         const [userState] = userResult.current;
         expect(todosState).toEqual(initialStates.todos);
         expect(userState).toEqual(initialStates.user);
-
-        spy.mockRestore();
       });
 
       it('applies the reducer to the initial states', async () => {
@@ -124,25 +117,19 @@ describe("createStore", () => {
         ]);
 
         rhl.act(() => {
-          dispatchers.add({
-            todo: { name: 'testReducers', done: false },
-            currentLength: result.current.state.dataSource.length,
-          });
+          dispatchers.addTodo({ name: 'testReducers', done: false });
         });
-
         expect(result.current[0].dataSource).toEqual(
           [
             { name: 'test', done: true },
             { name: 'testReducers', done: false },
           ],
         );
-
-        spy.mockRestore();
       });
     });
 
     describe("not pass the initial states", () => {
-      const store = mockIcestoreApi.createStore(models);
+      const store = createStore(models);
       const { Provider, useModel, useModelEffectsState } = store;
 
       it("not pass the initial states", () => {
@@ -160,8 +147,6 @@ describe("createStore", () => {
           todos: 1,
           auth: false,
         });
-
-        spy.mockRestore();
       });
 
       it('applies the reducer to the previous state', async () => {
@@ -177,10 +162,7 @@ describe("createStore", () => {
         ]);
 
         rhl.act(() => {
-          dispatchers.addTodo({
-            todo: { name: 'testReducers', done: false },
-            currentLength: result.current.state.dataSource.length,
-          });
+          dispatchers.addTodo({ name: 'testReducers', done: false });
         });
 
         expect(result.current[0].dataSource).toEqual(
@@ -189,12 +171,16 @@ describe("createStore", () => {
             { name: 'testReducers', done: false },
           ],
         );
-
-        spy.mockRestore();
+        rhl.act(() => {
+          dispatchers.removeTodo(1);
+        });
+        expect(result.current[0].dataSource).toEqual([
+          { name: 'Init', done: false },
+        ]);
       });
 
       it('get model effects state', async () => {
-        //  Define a new hooks  for that renderHook api doesn't support render one more hooks 
+        //  Define a new hooks for that renderHook api doesn't support render one more hooks 
         function useModelEffect(namespace) {
           const [state, dispatchers] = useModel(namespace);
           const effectsState = useModelEffectsState(namespace);
@@ -207,7 +193,7 @@ describe("createStore", () => {
         expect(result.current.state.dataSource).toEqual(models.todos.state.dataSource);
         rhl.act(() => {
           result.current.dispatchers.delete({
-            index: 1,
+            index: 0,
             currentLength: result.current.state.dataSource.length,
           });
         });
@@ -218,8 +204,6 @@ describe("createStore", () => {
 
         expect(result.current.state.dataSource).toEqual([]);
         expect(result.current.effectsState.delete).toEqual({ isLoading: false, error: null });
-
-        spy.mockRestore();
       });
     });
   });
