@@ -14,7 +14,6 @@ const user = {
   reducers: {
     setTodos(state: UserStateProps, todos: number) {
       state.todos = todos;
-      return state;
     },
   },
 };

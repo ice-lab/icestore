@@ -52,4 +52,13 @@ export const counterWithUnsupportActions = {
   },
 };
 
+export const counterWithNoImmer = {
+  state: {
+    count: 1,
+  },
+  reducers: {
+    increment: (prevState) => { return prevState.count + 1; },
+  },
+};
+
 export default counter;
