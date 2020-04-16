@@ -1,5 +1,5 @@
 /* eslint-disable react/jsx-filename-extension */
-import React, { useCallback, useState } from "react";
+import React, { useCallback } from "react";
 import * as rhl from "@testing-library/react-hooks";
 import * as rtl from "@testing-library/react";
 import createStore from "../src/index";
