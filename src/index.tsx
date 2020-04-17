@@ -91,5 +91,19 @@ export const createStore = <M extends T.Models, C extends T.CreateStoreConfig<M>
   return store as T.PresetIcestore<M>;
 };
 
+export const withModel = function(model, initConfig) {
+  const store = createStore(model, initConfig);
+  const { Provider } = store;
+  return function(Component) {
+    return function(props): React.ReactElement {
+      return (
+        <Provider>
+          <Component {...props} />
+        </Provider>
+      );
+    };
+  };
+};
+
 export default createStore;
 export * from './types';
