@@ -29,15 +29,15 @@ const todos = {
   },
 
   effects: (dispatch) => ({
-    add(todo, rootState) {
+    add(todo, rootState, { store }) {
       this.addTodo(todo);
-      dispatch.user.setTodos(rootState.todos.dataSource.length + 1);
+      dispatch.user.setTodos(store.getModelState('todos').dataSource.length);
     },
 
-    async delete(index, rootState) {
+    async delete(index, rootState, { store }) {
       await delay(1000);
       this.removeTodo(index);
-      dispatch.user.setTodos(rootState.todos.dataSource.length - 1);
+      dispatch.user.setTodos(store.getModelState('todos').dataSource.length);
     },
   }),
 };

@@ -192,7 +192,7 @@ describe("createStore", () => {
 
         expect(result.current.state.dataSource).toEqual(models.todos.state.dataSource);
         rhl.act(() => {
-          result.current.dispatchers.delete(0);
+          result.current.dispatchers.delete(0, { store });
         });
 
         expect(result.current.effectsState.delete).toEqual({ isLoading: true, error: null });
