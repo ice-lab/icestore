@@ -5,6 +5,7 @@ import Todos from './components/Todos';
 import TodoAdd from './components/TodoAdd';
 import User from './components/User';
 import Car from './components/Car';
+import Product from './components/Product';
 
 const initialStates = {
   user: {
@@ -25,6 +26,7 @@ function App() {
       <TodoAdd />
       <User />
       <Car />
+      <Product />
     </Provider>
   );
 }

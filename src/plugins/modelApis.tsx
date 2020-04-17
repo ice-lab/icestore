@@ -17,19 +17,19 @@ export default (): T.Plugin => {
   return {
     onStoreCreated(store: any) {
       // hooks
-      function useModel(name: string) {
+      function useModel(name) {
         const state = useModelState(name);
         const dispatchers = useModelDispatchers(name);
         return [state, dispatchers];
       }
-      function useModelState(name: string) {
+      function useModelState(name) {
         const selector = store.useSelector(state => state[name]);
         if (typeof selector !== "undefined") {
           return selector;
         }
         throw new Error(`Not found model by namespace: ${name}.`);
       }
-      function useModelDispatchers(name: string) {
+      function useModelDispatchers(name) {
         const dispatch = store.useDispatch();
         if (dispatch[name]) {
           return dispatch[name];
@@ -71,7 +71,7 @@ export default (): T.Plugin => {
       /**
        * @deprecated use `useModelDispatchers` instead.
        */
-      function useModelActions(name: string) {
+      function useModelActions(name) {
         if (!warnedUseModelActions) {
           warnedUseModelActions = true;
           warning('`useModelActions` API has been detected, please use `useModelDispatchers` instead. \n\n\n Visit https://github.com/ice-lab/icestore/blob/master/docs/upgrade-guidelines.md#usemodelactions to learn about how to upgrade.');
@@ -80,18 +80,18 @@ export default (): T.Plugin => {
       }
 
       // other apis
-      function getModel(name: string) {
+      function getModel(name) {
         return [getModelState(name), getModelDispatchers(name)];
       }
-      function getModelState(name: string) {
+      function getModelState(name) {
         return store.getState()[name];
       }
-      function getModelDispatchers(name: string) {
+      function getModelDispatchers(name) {
         return store.dispatch[name];
       }
 
       // class component support
-      function withModel(name: string, mapModelToProps?) {
+      function withModel(name, mapModelToProps?) {
         mapModelToProps = (mapModelToProps || ((model) => ({ [name]: model })));
         return (Component) => {
           return (props): React.ReactElement => {
@@ -106,9 +106,10 @@ export default (): T.Plugin => {
           };
         };
       }
+
       const actionsSuffix = 'Actions';
-      function createWithModelDispatchers(fieldSuffix: string = 'Dispatchers') {
-        return function withModelDispatchers(name: string, mapModelDispatchersToProps?) {
+      function createWithModelDispatchers(fieldSuffix = 'Dispatchers') {
+        return function withModelDispatchers(name, mapModelDispatchersToProps?) {
           if (fieldSuffix === actionsSuffix && !warnedWithModelActions) {
             warnedWithModelActions = true;
             warning('`withModelActions` API has been detected, please use `withModelDispatchers` instead. \n\n\n Visit https://github.com/ice-lab/icestore/blob/master/docs/upgrade-guidelines.md#withmodelactions to learn about how to upgrade.');
@@ -128,10 +129,11 @@ export default (): T.Plugin => {
           };
         };
       }
+      const withModelDispatchers = createWithModelDispatchers();
 
       const actionsStateSuffix = 'ActionsState';
-      function createWithModelEffectsState(fieldSuffix: string = 'EffectsState') {
-        return function(name: string, mapModelEffectsStateToProps?) {
+      function createWithModelEffectsState(fieldSuffix = 'EffectsState') {
+        return function(name, mapModelEffectsStateToProps?) {
           if (fieldSuffix === actionsStateSuffix && !warnedWithModelActionsState) {
             warnedWithModelActionsState = true;
             warning('`withModelActionsState` API has been detected, please use `withModelEffectsState` instead. \n\n\n Visit https://github.com/ice-lab/icestore/blob/master/docs/upgrade-guidelines.md#withmodelactionsstate to learn about how to upgrade.');
@@ -152,8 +154,9 @@ export default (): T.Plugin => {
           };
         };
       }
+      const withModelEffectsState = createWithModelEffectsState();
 
-      function withModelEffectsError(name: string, mapModelEffectsErrorToProps?) {
+      function withModelEffectsError(name, mapModelEffectsErrorToProps?) {
         mapModelEffectsErrorToProps = (mapModelEffectsErrorToProps || ((errors) => ({ [`${name}EffectsError`]: errors })));
         return (Component) => {
           return (props): React.ReactElement => {
@@ -169,7 +172,7 @@ export default (): T.Plugin => {
         };
       }
 
-      function withModelEffectsLoading(name?: string, mapModelEffectsLoadingToProps?: any) {
+      function withModelEffectsLoading(name?, mapModelEffectsLoadingToProps?) {
         mapModelEffectsLoadingToProps = (mapModelEffectsLoadingToProps || ((loadings) => ({ [`${name}EffectsLoading`]: loadings })));
         return (Component) => {
           return (props): React.ReactElement => {
@@ -185,7 +188,28 @@ export default (): T.Plugin => {
         };
       }
 
+      function getModelApis(name) {
+        return {
+          useValue: () => useModel(name),
+          useState: () => useModelState(name),
+          useDispatchers: () => useModelDispatchers(name),
+          useEffectsState: () => useModelEffectsState(name),
+          useEffectsError: () => useModelEffectsError(name),
+          useEffectsLoading: () => useModelEffectsLoading(name),
+          getValue: () => getModel(name),
+          getState: () => getModelState(name),
+          getDispatchers: () => getModelDispatchers(name),
+          withValue: (mapToProps?) => withModel(name, mapToProps),
+          withDispatchers: (mapToProps?) => withModelDispatchers(name, mapToProps),
+          withEffectsState: (mapToProps?) => withModelEffectsState(name, mapToProps),
+          withEffectsError: (mapToProps?) => withModelEffectsError(name, mapToProps),
+          withEffectsLoading: (mapToProps?) => withModelEffectsLoading(name, mapToProps),
+        };
+      }
+
       return {
+        getModelApis,
+
         // Hooks
         useModel,
         useModelState,
@@ -203,8 +227,8 @@ export default (): T.Plugin => {
 
         // Class component support
         withModel,
-        withModelDispatchers: createWithModelDispatchers(),
-        withModelEffectsState: createWithModelEffectsState(),
+        withModelDispatchers,
+        withModelEffectsState,
         withModelEffectsError,
         withModelEffectsLoading,
         withModelActions: createWithModelDispatchers(actionsSuffix),

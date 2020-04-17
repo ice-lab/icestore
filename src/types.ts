@@ -156,7 +156,7 @@ export interface Icestore<
   subscribe(listener: () => void): Redux.Unsubscribe;
 }
 
-interface EffectsErrorPluginAPI<M extends Models = Models> {
+interface ModelEffectsErrorAPI<M extends Models = Models> {
   useModelEffectsError<K extends keyof M>(name: K): ExtractIModelEffectsErrorFromModelConfig<M[K]>;
   withModelEffectsError<
     K extends keyof M,
@@ -166,7 +166,7 @@ interface EffectsErrorPluginAPI<M extends Models = Models> {
   (props: Optionalize<P, R>) => React.ReactElement;
 }
 
-interface EffectsLoadingPluginAPI<M extends Models = Models> {
+interface ModelEffectsLoadingAPI<M extends Models = Models> {
   useModelEffectsLoading<K extends keyof M>(name: K): ExtractIModelEffectsLoadingFromModelConfig<M[K]>;
   withModelEffectsLoading<
     K extends keyof M,
@@ -189,7 +189,7 @@ interface WithModelEffectsState<M extends Models> {
   (props: Optionalize<P, R>) => React.ReactElement;
 }
 
-interface EffectsStatePluginAPI<M extends Models = Models> {
+interface ModelEffectsStateAPI<M extends Models = Models> {
   useModelEffectsState: UseModelEffectsState<M>;
 
   /**
@@ -217,24 +217,18 @@ interface WithModelDispatchers<M extends Models = Models> {
   (props: Optionalize<P, R>) => React.ReactElement;
 }
 
-interface ModelPluginAPI<M extends Models = Models> {
-  useModel<K extends keyof M>(name: K): ExtractIModelFromModelConfig<M[K]>;
+interface ModelStateAPI<M extends Models = Models> {
   useModelState<K extends keyof M>(name: K): ExtractIModelStateFromModelConfig<M[K]>;
-  useModelDispatchers: UseModelDispatchers<M>;
+  getModelState<K extends keyof M>(name: K): ExtractIModelStateFromModelConfig<M[K]>;
+}
 
+interface ModelDispathersAPI<M extends Models = Models> {
+  useModelDispatchers: UseModelDispatchers<M>;
   /**
    * @deprecated use `useModelDispatchers` instead.
    */
   useModelActions: UseModelDispatchers<M>;
-  getModel<K extends keyof M>(name: K): ExtractIModelFromModelConfig<M[K]>;
-  getModelState<K extends keyof M>(name: K): ExtractIModelStateFromModelConfig<M[K]>;
   getModelDispatchers<K extends keyof M>(name: K): ExtractIModelDispatchersFromModelConfig<M[K]>;
-  withModel<
-    K extends keyof M,
-    F extends (model: ExtractIModelFromModelConfig<M[K]>) => Record<string, any>
-  >(name: K, mapModelToProps?: F):
-  <R extends ReturnType<F>, P extends R>(Component: React.ComponentType<P>) =>
-  (props: Optionalize<P, R>) => React.ReactElement;
   withModelDispatchers: WithModelDispatchers<M>;
 
   /**
@@ -242,6 +236,34 @@ interface ModelPluginAPI<M extends Models = Models> {
    */
   withModelActions: WithModelDispatchers<M>;
 }
+
+interface ModelValueAPI<M extends Models = Models> {
+  useModel<K extends keyof M>(name: K): ExtractIModelFromModelConfig<M[K]>;
+  getModel<K extends keyof M>(name: K): ExtractIModelFromModelConfig<M[K]>;
+  withModel<
+    K extends keyof M,
+    F extends (model: ExtractIModelFromModelConfig<M[K]>) => Record<string, any>
+  >(name: K, mapModelToProps?: F):
+  <R extends ReturnType<F>, P extends R>(Component: React.ComponentType<P>) =>
+  (props: Optionalize<P, R>) => React.ReactElement;
+}
+
+interface GetModelAPI<M extends Models = Models> {
+  <K extends keyof M>(name: K): {
+
+  }
+}
+
+type ModelAPI<M extends Models = Models> =
+  {
+    getModelApis: GetModelAPI<M>;
+  } &
+  ModelValueAPI<M> &
+  ModelStateAPI<M> &
+  ModelDispathersAPI<M> &
+  ModelEffectsLoadingAPI<M> &
+  ModelEffectsErrorAPI<M> &
+  ModelEffectsStateAPI<M>;
 
 interface ProviderProps {
   children: any;
@@ -256,11 +278,8 @@ export type PresetIcestore<
   M extends Models = Models,
   A extends Action = Action,
 > = Icestore<M, A> &
-ModelPluginAPI<M> &
-ProviderPluginAPI &
-EffectsLoadingPluginAPI<M> &
-EffectsErrorPluginAPI<M> &
-EffectsStatePluginAPI<M>;
+ModelAPI<M> &
+ProviderPluginAPI;
 
 export interface Action<P = any, M = any> {
   type: string;

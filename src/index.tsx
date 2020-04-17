@@ -87,14 +87,15 @@ export const createStore = <M extends T.Models, C extends T.CreateStoreConfig<M>
   return store as T.PresetIcestore<M>;
 };
 
-export const withModel = function(model, initConfig) {
-  const store = createStore(model, initConfig);
-  const { Provider } = store;
+export const withModel = function(model, initConfig?) {
+  const store = createStore({ model }, initConfig);
+  const { Provider, getModelApis } = store;
+  const modedApis = getModelApis('model');
   return function(Component) {
     return function(props): React.ReactElement {
       return (
         <Provider>
-          <Component {...props} />
+          <Component model={modedApis} {...props} />
         </Provider>
       );
     };
