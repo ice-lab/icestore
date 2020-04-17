@@ -29,15 +29,15 @@ const todos = {
   },
 
   effects: (dispatch) => ({
-    add({ todo, currentLength }) {
+    add(todo, rootState) {
       this.addTodo(todo);
-      dispatch.user.setTodos(currentLength + 1);
+      dispatch.user.setTodos(rootState.todos.dataSource.length + 1);
     },
 
-    async delete({ index, currentLength }) {
+    async delete(index, rootState) {
       await delay(1000);
       this.removeTodo(index);
-      dispatch.user.setTodos(currentLength - 1);
+      dispatch.user.setTodos(rootState.todos.dataSource.length - 1);
     },
   }),
 };
