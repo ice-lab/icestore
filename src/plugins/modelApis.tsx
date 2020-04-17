@@ -4,6 +4,9 @@ import warning from '../utils/warning';
 
 let warnedUseModelActions = false;
 let warnedWithModelActions = false;
+let warnedUseModelActionsState = false;
+let warnedWithModelActionsState = false;
+
 
 /**
  * ModelApis Plugin
@@ -33,6 +36,37 @@ export default (): T.Plugin => {
         }
         throw new Error(`Not found model by namespace: ${name}.`);
       }
+      function useModelEffectsState(name) {
+        const dispatch = useModelDispatchers(name);
+        const effectsLoading = useModelEffectsLoading(name);
+        const effectsError = useModelEffectsError(name);
+
+        const states = {};
+        Object.keys(dispatch).forEach(key => {
+          states[key] = {
+            isLoading: effectsLoading[key],
+            error: effectsError[key] ? effectsError[key].error : null,
+          };
+        });
+        return states;
+      }
+      function useModelEffectsError(name) {
+        return store.useSelector(state => state.error ? state.error.effects[name] : undefined);
+      }
+      function useModelEffectsLoading(name) {
+        return store.useSelector(state => state.loading ? state.loading.effects[name] : undefined);
+      }
+
+      /**
+       * @deprecated use `useModelEffectsState` instead
+       */
+      function useModelActionsState(name) {
+        if (!warnedUseModelActionsState) {
+          warnedUseModelActionsState = true;
+          warning('`useModelActionsState` API has been detected, please use `useModelEffectsState` instead. \n\n\n Visit https://github.com/ice-lab/icestore/blob/master/docs/upgrade-guidelines.md#usemodelactionsstate to learn about how to upgrade.');
+        }
+        return useModelEffectsState(name);
+      }
 
       /**
        * @deprecated use `useModelDispatchers` instead.
@@ -55,6 +89,8 @@ export default (): T.Plugin => {
       function getModelDispatchers(name: string) {
         return store.dispatch[name];
       }
+
+      // class component support
       function withModel(name: string, mapModelToProps?) {
         mapModelToProps = (mapModelToProps || ((model) => ({ [name]: model })));
         return (Component) => {
@@ -70,7 +106,6 @@ export default (): T.Plugin => {
           };
         };
       }
-
       const actionsSuffix = 'Actions';
       function createWithModelDispatchers(fieldSuffix: string = 'Dispatchers') {
         return function withModelDispatchers(name: string, mapModelDispatchersToProps?) {
@@ -94,12 +129,72 @@ export default (): T.Plugin => {
         };
       }
 
+      const actionsStateSuffix = 'ActionsState';
+      function createWithModelEffectsState(fieldSuffix: string = 'EffectsState') {
+        return function(name: string, mapModelEffectsStateToProps?) {
+          if (fieldSuffix === actionsStateSuffix && !warnedWithModelActionsState) {
+            warnedWithModelActionsState = true;
+            warning('`withModelActionsState` API has been detected, please use `withModelEffectsState` instead. \n\n\n Visit https://github.com/ice-lab/icestore/blob/master/docs/upgrade-guidelines.md#withmodelactionsstate to learn about how to upgrade.');
+          }
+
+          mapModelEffectsStateToProps = (mapModelEffectsStateToProps || ((effectsState) => ({ [`${name}${fieldSuffix}`]: effectsState })));
+          return (Component) => {
+            return (props): React.ReactElement => {
+              const value = useModelEffectsState(name);
+              const withProps = mapModelEffectsStateToProps(value);
+              return (
+                <Component
+                  {...withProps}
+                  {...props}
+                />
+              );
+            };
+          };
+        };
+      }
+
+      function withModelEffectsError(name: string, mapModelEffectsErrorToProps?) {
+        mapModelEffectsErrorToProps = (mapModelEffectsErrorToProps || ((errors) => ({ [`${name}EffectsError`]: errors })));
+        return (Component) => {
+          return (props): React.ReactElement => {
+            const value = useModelEffectsError(name);
+            const withProps = mapModelEffectsErrorToProps(value);
+            return (
+              <Component
+                {...withProps}
+                {...props}
+              />
+            );
+          };
+        };
+      }
+
+      function withModelEffectsLoading(name?: string, mapModelEffectsLoadingToProps?: any) {
+        mapModelEffectsLoadingToProps = (mapModelEffectsLoadingToProps || ((loadings) => ({ [`${name}EffectsLoading`]: loadings })));
+        return (Component) => {
+          return (props): React.ReactElement => {
+            const value = useModelEffectsLoading(name);
+            const withProps = mapModelEffectsLoadingToProps(value);
+            return (
+              <Component
+                {...withProps}
+                {...props}
+              />
+            );
+          };
+        };
+      }
+
       return {
         // Hooks
         useModel,
         useModelState,
         useModelDispatchers,
+        useModelEffectsState,
+        useModelEffectsError,
+        useModelEffectsLoading,
         useModelActions,
+        useModelActionsState,
 
         // real time
         getModel,
@@ -109,7 +204,11 @@ export default (): T.Plugin => {
         // Class component support
         withModel,
         withModelDispatchers: createWithModelDispatchers(),
+        withModelEffectsState: createWithModelEffectsState(),
+        withModelEffectsError,
+        withModelEffectsLoading,
         withModelActions: createWithModelDispatchers(actionsSuffix),
+        withModelActionsState: createWithModelEffectsState(actionsStateSuffix),
       };
     },
   };

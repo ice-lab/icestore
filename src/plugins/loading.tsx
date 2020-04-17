@@ -179,26 +179,5 @@ export default (config: LoadingConfig = {}): T.Plugin => {
         this.dispatch[name][action] = effectWrapper;
       });
     },
-    onStoreCreated(store: any) {
-      function useModelEffectsLoading(name) {
-        return store.useSelector(state => (state as any).loading.effects[name]);
-      };
-      function withModelEffectsLoading(name?: string, mapModelEffectsLoadingToProps?: any) {
-        mapModelEffectsLoadingToProps = (mapModelEffectsLoadingToProps || ((loadings) => ({ [`${name}EffectsLoading`]: loadings })));
-        return (Component) => {
-          return (props): React.ReactElement => {
-            const value = useModelEffectsLoading(name);
-            const withProps = mapModelEffectsLoadingToProps(value);
-            return (
-              <Component
-                {...withProps}
-                {...props}
-              />
-            );
-          };
-        };
-      };
-      return { useModelEffectsLoading, withModelEffectsLoading };
-    },
   };
 };

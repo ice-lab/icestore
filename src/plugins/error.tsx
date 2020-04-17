@@ -222,26 +222,5 @@ export default (config: ErrorConfig = {}): T.Plugin => {
         this.dispatch[name][action] = effectWrapper;
       });
     },
-    onStoreCreated(store: any) {
-      function useModelEffectsError(name) {
-        return store.useSelector(state => state.error.effects[name]);
-      };
-      function withModelEffectsError(name: string, mapModelEffectsErrorToProps?) {
-        mapModelEffectsErrorToProps = (mapModelEffectsErrorToProps || ((errors) => ({ [`${name}EffectsError`]: errors })));
-        return (Component) => {
-          return (props): React.ReactElement => {
-            const value = useModelEffectsError(name);
-            const withProps = mapModelEffectsErrorToProps(value);
-            return (
-              <Component
-                {...withProps}
-                {...props}
-              />
-            );
-          };
-        };
-      };
-      return { useModelEffectsError, withModelEffectsError };
-    },
   };
 };

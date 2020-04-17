@@ -6,7 +6,6 @@ import mergeConfig from './utils/mergeConfig';
 import createProviderPlugin from './plugins/provider';
 import createReduxHooksPlugin from './plugins/reduxHooks';
 import createModelApisPlugin from './plugins/modelApis';
-import createEffectsStateApisPlugin from './plugins/effectsStateApis';
 import createImmerPlugin from './plugins/immer';
 import createLoadingPlugin from './plugins/loading';
 import createErrorPlugin from './plugins/error';
@@ -67,9 +66,6 @@ export const createStore = <M extends T.Models, C extends T.CreateStoreConfig<M>
   }
   if (!disableError) {
     plugins.push(error);
-  }
-  if (!disableLoading || !disableError) {
-    plugins.push(createEffectsStateApisPlugin());
   }
 
   // compatibility handling
