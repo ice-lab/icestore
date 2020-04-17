@@ -26,7 +26,7 @@ function App() {
       <TodoAdd />
       <User />
       <Car />
-      <Product />
+      <Product title="Product's title" />
     </Provider>
   );
 }

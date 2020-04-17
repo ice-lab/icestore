@@ -1,14 +1,25 @@
 import React from 'react';
-import { withModel } from '@ice/store';
+import { Assign } from 'utility-types';
+import { withModel, ExtractIModelAPIsFromModelConfig } from '@ice/store';
 import model from './model';
 
-function Product({ model }) {
-  const product = model.useState();
+interface MapModelToProp {
+  model: ExtractIModelAPIsFromModelConfig<typeof model>;
+}
+
+interface CustomProp {
+  title: string;
+}
+
+type Props = Assign<CustomProp, MapModelToProp>;
+
+function Product({ model, title }: Props) {
+  const [product] = model.useValue();
   return (
     <div>
-      Product's title: {product.title}
+      {title}: {product.title}
     </div>
   );
 }
 
-export default withModel(model)(Product);
+export default withModel(model)<MapModelToProp, Props>(Product);

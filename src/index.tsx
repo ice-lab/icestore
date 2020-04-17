@@ -87,15 +87,29 @@ export const createStore = <M extends T.Models, C extends T.CreateStoreConfig<M>
   return store as T.PresetIcestore<M>;
 };
 
-export const withModel = function(model, initConfig?) {
-  const store = createStore({ model }, initConfig);
-  const { Provider, getModelApis } = store;
-  const modedApis = getModelApis('model');
-  return function(Component) {
-    return function(props): React.ReactElement {
+interface MapModelToProps<M extends T.ModelConfig> {
+  (model: T.ExtractIModelAPIsFromModelConfig<M>): Record<string, any>
+}
+
+export const withModel = <
+  M extends T.ModelConfig,
+  F extends MapModelToProps<M>,
+  C extends T.CreateStoreConfig<{ model: M }>
+>(model: M, mapModelToProps?: F, initConfig?: C) => {
+  const modelName = 'model';
+  mapModelToProps = (mapModelToProps || ((modelApis) => ({ [modelName]: modelApis }))) as F;
+  const store = createStore({ [modelName]: model }, initConfig);
+  const { Provider, getModelAPIs } = store;
+  const modelApis = getModelAPIs(modelName);
+  const withProps = mapModelToProps(modelApis);
+  return <R extends ReturnType<F>, P extends R>(Component: React.ComponentType<P>) => {
+    return (props: T.Optionalize<P, R>): React.ReactElement => {
       return (
         <Provider>
-          <Component model={modedApis} {...props} />
+          <Component
+            {...withProps}
+            {...props as P}
+          />
         </Provider>
       );
     };
