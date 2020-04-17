@@ -188,7 +188,7 @@ export default (): T.Plugin => {
         };
       }
 
-      function getModelApis(name) {
+      function getModelAPIs(name) {
         return {
           useValue: () => useModel(name),
           useState: () => useModelState(name),
@@ -208,7 +208,7 @@ export default (): T.Plugin => {
       }
 
       return {
-        getModelApis,
+        getModelAPIs,
 
         // Hooks
         useModel,
