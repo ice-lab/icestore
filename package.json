@@ -30,7 +30,8 @@
     "prepublishOnly": "npm run lint:nofix && npm run test && npm run build",
     "lint": "npm run lint:nofix -- --fix",
     "lint:nofix": "eslint --cache --ext .ts,.tsx ./",
-    "test": "NODE_ENV=unittest jest",
+    "test": "cross-env NODE_ENV=unittest jest",
+    "test:w": "jest --watch",
     "coverage": "codecov"
   },
   "devDependencies": {
@@ -38,15 +39,18 @@
     "@commitlint/config-conventional": "^8.2.0",
     "@ice/spec": "^0.1.9",
     "@testing-library/react": "^9.0.0",
-    "@types/jest": "^24.0.12",
+    "@testing-library/react-hooks": "^3.2.1",
+    "@types/jest": "^25.2.1",
     "@types/node": "^12.0.0",
     "codecov": "^3.3.0",
+    "cross-env": "^7.0.2",
     "eslint": "^6.7.2",
     "husky": "^3.0.9",
-    "jest": "^24.7.1",
+    "jest": "^25.2.1",
     "react": "^16.8.0",
     "react-dom": "^16.8.0",
-    "ts-jest": "^24.0.2",
+    "react-test-renderer": "^16.13.0",
+    "ts-jest": "^25.2.1",
     "typescript": "^3.7.4"
   },
   "peerDependencies": {
@@ -55,6 +59,10 @@
   "jest": {
     "coverageDirectory": "./coverage/",
     "collectCoverage": true,
+    "coveragePathIgnorePatterns": [
+      "<rootDir>/tests/helpers/",
+      "<rootDir>/node_modules/"
+    ],
     "preset": "ts-jest"
   },
   "dependencies": {

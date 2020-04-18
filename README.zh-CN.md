@@ -10,6 +10,7 @@
 [![NPM downloads](http://img.shields.io/npm/dm/@ice/store.svg?style=flat)](https://npmjs.org/package/@ice/store)
 [![Known Vulnerabilities](https://snyk.io/test/npm/@ice/store/badge.svg)](https://snyk.io/test/npm/@ice/store)
 [![David deps](https://img.shields.io/david/ice-lab/icestore.svg?style=flat-square)](https://david-dm.org/ice-lab/icestore)
+[![codecov](https://codecov.io/gh/ice-lab/icestore/branch/master/graph/badge.svg)](https://codecov.io/gh/ice-lab/icestore)
 
 <table>
   <thead>
