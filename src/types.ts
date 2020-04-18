@@ -161,13 +161,13 @@ interface UseModelEffectsError<M extends Models = Models, Key extends keyof M = 
 }
 
 interface MapModelEffectsErrorToProps<M extends Models = Models, Key extends keyof M = undefined> {
-  <K extends keyof M>(effectsLoading: ExtractIModelEffectsErrorFromModelConfig<Key extends undefined ? M[K] : M[Key]>): Record<string, any>
+  <K extends keyof M>(effectsLoading: ExtractIModelEffectsErrorFromModelConfig<Key extends undefined ? M[K] : M[Key]>): Record<string, any>;
 }
 
 interface WithModelEffectsError<M extends Models = Models, F extends MapModelEffectsErrorToProps<M> = MapModelEffectsErrorToProps<M>> {
   <K extends keyof M>(name: K, mapModelEffectsErrorToProps?: F):
-    <R extends ReturnType<F>, P extends R>(Component: React.ComponentType<P>) =>
-      (props: Optionalize<P, R>) => React.ReactElement;
+  <R extends ReturnType<F>, P extends R>(Component: React.ComponentType<P>) =>
+  (props: Optionalize<P, R>) => React.ReactElement;
 }
 
 interface ModelEffectsErrorAPI<M extends Models = Models> {
@@ -180,18 +180,18 @@ interface UseModelEffectsLoading<M extends Models = Models, Key extends keyof M 
 }
 
 interface MapModelEffectsLoadingToProps<M extends Models = Models, Key extends keyof M = undefined> {
-  <K extends keyof M>(effectsLoading: ExtractIModelEffectsLoadingFromModelConfig<Key extends undefined ? M[K] : M[Key]>): Record<string, any>
+  <K extends keyof M>(effectsLoading: ExtractIModelEffectsLoadingFromModelConfig<Key extends undefined ? M[K] : M[Key]>): Record<string, any>;
 }
 
 interface WithModelEffectsLoading<M extends Models = Models, F extends MapModelEffectsLoadingToProps<M> = MapModelEffectsLoadingToProps<M>> {
   <K extends keyof M>(name: K, mapModelEffectsLoadingToProps?: F):
-    <R extends ReturnType<F>, P extends R>(Component: React.ComponentType<P>) =>
-      (props: Optionalize<P, R>) => React.ReactElement;
+  <R extends ReturnType<F>, P extends R>(Component: React.ComponentType<P>) =>
+  (props: Optionalize<P, R>) => React.ReactElement;
 }
 
 interface ModelEffectsLoadingAPI<M extends Models = Models> {
   useModelEffectsLoading: UseModelEffectsLoading<M>;
-  withModelEffectsLoading: WithModelEffectsLoading<M>
+  withModelEffectsLoading: WithModelEffectsLoading<M>;
 }
 
 interface UseModelEffectsState<M extends Models, Key extends keyof M = undefined> {
@@ -199,13 +199,13 @@ interface UseModelEffectsState<M extends Models, Key extends keyof M = undefined
 }
 
 interface MapModelEffectsStateToProps<M extends Models = Models, Key extends keyof M = undefined> {
-  <K extends keyof M>(effectsState: ExtractIModelEffectsStateFromModelConfig<Key extends undefined ? M[K] : M[Key]>): Record<string, any>
+  <K extends keyof M>(effectsState: ExtractIModelEffectsStateFromModelConfig<Key extends undefined ? M[K] : M[Key]>): Record<string, any>;
 }
 
 interface WithModelEffectsState<M extends Models = Models, F extends MapModelEffectsStateToProps<M> = MapModelEffectsStateToProps<M>> {
   <K extends keyof M>(name: K, mapModelEffectsStateToProps?: F):
-    <R extends ReturnType<F>, P extends R>(Component: React.ComponentType<P>) =>
-      (props: Optionalize<P, R>) => React.ReactElement;
+  <R extends ReturnType<F>, P extends R>(Component: React.ComponentType<P>) =>
+  (props: Optionalize<P, R>) => React.ReactElement;
 }
 
 interface ModelEffectsStateAPI<M extends Models = Models> {
@@ -237,13 +237,13 @@ interface UseModelDispatchers<M extends Models = Models, Key extends keyof M = u
 }
 
 interface MapModelDispatchersToProps<M extends Models = Models, Key extends keyof M = undefined> {
-  <K extends keyof M>(dispatchers: ExtractIModelDispatchersFromModelConfig<Key extends undefined ? M[K] : M[Key]>): Record<string, any>
+  <K extends keyof M>(dispatchers: ExtractIModelDispatchersFromModelConfig<Key extends undefined ? M[K] : M[Key]>): Record<string, any>;
 }
 
 interface WithModelDispatchers<M extends Models = Models, F extends MapModelDispatchersToProps<M> = MapModelDispatchersToProps<M>> {
   <K extends keyof M>(name: K, mapModelDispatchersToProps?: F):
-    <R extends ReturnType<F>, P extends R>(Component: React.ComponentType<P>) =>
-      (props: Optionalize<P, R>) => React.ReactElement;
+  <R extends ReturnType<F>, P extends R>(Component: React.ComponentType<P>) =>
+  (props: Optionalize<P, R>) => React.ReactElement;
 }
 
 interface ModelDispathersAPI<M extends Models = Models> {
@@ -265,13 +265,13 @@ interface UseModel<M extends Models = Models, Key extends keyof M = undefined> {
 }
 
 interface MapModelToProps<M extends Models = Models, Key extends keyof M = undefined> {
-  <K extends keyof M>(model: ExtractIModelFromModelConfig<Key extends undefined ? M[K] : M[Key]>): Record<string, any>
+  <K extends keyof M>(model: ExtractIModelFromModelConfig<Key extends undefined ? M[K] : M[Key]>): Record<string, any>;
 }
 
 interface WithModel<M extends Models = Models, F extends MapModelToProps<M> = MapModelToProps<M>> {
   <K extends keyof M>(name: K, mapModelToProps?: F):
-    <R extends ReturnType<F>, P extends R>(Component: React.ComponentType<P>) =>
-      (props: Optionalize<P, R>) => React.ReactElement;
+  <R extends ReturnType<F>, P extends R>(Component: React.ComponentType<P>) =>
+  (props: Optionalize<P, R>) => React.ReactElement;
 }
 
 interface ModelValueAPI<M extends Models = Models> {
@@ -304,7 +304,7 @@ interface GetModelAPIsValue<M extends Models = Models, K extends keyof M = keyof
 }
 
 interface GetModelAPIs<M extends Models = Models, Key extends keyof M = undefined> {
-  <K extends keyof M>(name: K): GetModelAPIsValue<M, Key extends undefined ? K : Key>
+  <K extends keyof M>(name: K): GetModelAPIsValue<M, Key extends undefined ? K : Key>;
 }
 
 type ModelAPI<M extends Models = Models> =

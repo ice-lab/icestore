@@ -88,7 +88,7 @@ export const createStore = <M extends T.Models, C extends T.CreateStoreConfig<M>
 };
 
 interface MapModelToProps<M extends T.ModelConfig> {
-  (model: T.ExtractIModelAPIsFromModelConfig<M>): Record<string, any>
+  (model: T.ExtractIModelAPIsFromModelConfig<M>): Record<string, any>;
 }
 
 export const withModel = <
