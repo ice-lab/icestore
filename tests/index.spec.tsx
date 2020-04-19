@@ -347,12 +347,6 @@ describe("createStore", () => {
   describe("createStore options", () => {
     const mockFn = jest
       .fn()
-      .mockReturnValueOnce(createStore(models, {
-        disableLoading: true,
-      }))
-      .mockReturnValueOnce(createStore(models, {
-        disableError: true,
-      }))
       .mockReturnValueOnce(createStore({ counterWithNoImmer }, {
         disableImmer: true,
       }));
