@@ -180,7 +180,7 @@ describe("createStore", () => {
       });
 
       it('get model effects state', async () => {
-        //  Define a new hooks for that renderHook api doesn't support render one more hooks 
+        //  Define a new hooks for that renderHook api doesn't support render one more hooks
         function useModelEffect(namespace) {
           const [state, dispatchers] = useModel(namespace);
           const effectsState = useModelEffectsState(namespace);
@@ -359,22 +359,6 @@ describe("createStore", () => {
 
     afterEach(() => {
       rhl.cleanup();
-    });
-
-    it("disableLoading", () => {
-      const store = mockFn();
-      const methods = Reflect.ownKeys(store);
-
-      expect(methods).not.toContain("useModelEffectsLoading");
-      expect(methods).not.toContain("withModelEffectsLoading");
-    });
-
-    it("disableError", () => {
-      const store = mockFn();
-      const methods = Reflect.ownKeys(store);
-
-      expect(methods).not.toContain("useModelEffectsError");
-      expect(methods).not.toContain("withModelEffectsError");
     });
 
     it("disableImmer", () => {
