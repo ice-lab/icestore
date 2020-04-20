@@ -33,7 +33,7 @@ const model = {
   effects: (dispatch: RootDispatch) => ({
     // this will run after "add" reducer finished
     add(todo: Todo, rootState: RootState) {
-      console.log(rootState.todos);
+      console.debug(rootState.todos);
       dispatch.user.setTodos(store.getModelState('todos').dataSource.length);
     },
     async refresh() {

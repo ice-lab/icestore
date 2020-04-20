@@ -96,7 +96,6 @@ export default (): T.Plugin => {
         return (Component) => {
           return (props): React.ReactElement => {
             const value = useModel(name);
-            console.log('value', value);
             const withProps = mapModelToProps(value);
             return (
               <Component
