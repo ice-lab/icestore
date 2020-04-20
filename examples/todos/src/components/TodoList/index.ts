@@ -1,4 +1,4 @@
-import FunctionComponent from './Function';
-// import ClassComponent from './Class';
+import Component from './Function';
+// import Component from './Class';
 
-export default FunctionComponent;
+export default Component;
