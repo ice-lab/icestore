@@ -1,3 +1,4 @@
+/* eslint-disable react/prefer-stateless-function */
 import React from 'react';
 import { Assign } from 'utility-types';
 import { withModel, ExtractIModelAPIsFromModelConfig, ExtractIModelFromModelConfig } from '@ice/store';

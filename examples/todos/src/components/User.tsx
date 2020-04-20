@@ -19,18 +19,18 @@ export default function UserApp() {
     <hr/>
     {
       auth ?
-      <div>
-        <h2>
+        <div>
+          <h2>
           User Information
-        </h2>
-        <ul>
-          <li>Name：{name}</li>
-          <li>Todos：{todos}</li>
-        </ul>
-      </div> :
-      <div>
+          </h2>
+          <ul>
+            <li>Name：{name}</li>
+            <li>Todos：{todos}</li>
+          </ul>
+        </div> :
+        <div>
         Not logged in
-      </div>
+        </div>
     }
   </div>;
 }
