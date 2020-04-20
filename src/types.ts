@@ -16,6 +16,7 @@ type EffectsState<Effects> = {
 type EffectsLoading<Effects> = {
   [K in keyof Effects]: boolean;
 }
+
 type EffectsError<Effects> = {
   [K in keyof Effects]: {
     error: Error;
@@ -102,9 +103,11 @@ export type ExtractIModelFromModelConfig<M extends ModelConfig> = [
 export type ExtractIModelEffectsErrorFromModelConfig<M extends ModelConfig> = EffectsError<
 ExtractIModelDispatchersFromEffects<ExtractIModelEffectsFromModelConfig<M>>
 >;
+
 export type ExtractIModelEffectsLoadingFromModelConfig<M extends ModelConfig> = EffectsLoading<
 ExtractIModelDispatchersFromEffects<ExtractIModelEffectsFromModelConfig<M>>
 >;
+
 export type ExtractIModelEffectsStateFromModelConfig<M extends ModelConfig> = EffectsState<
 ExtractIModelDispatchersFromEffects<ExtractIModelEffectsFromModelConfig<M>>
 >;
