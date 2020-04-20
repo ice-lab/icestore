@@ -51,25 +51,23 @@ const model = {
 
 ##### reducers
 
-`reducers: { [string]: (prevState, payload) => any }`
+`reducers: { [string]: (state, payload) => any }`
 
 An object of functions that change the model's state. These functions take the model's previous state and a payload, use mutable method to achieve immutable state. These should be pure functions relying only on the state and payload args to compute the next state. For code that relies on the "outside world" (impure functions like api calls, etc.), use effects.
 
+e.g.:
+
 ```js
-const todo = {
+const todos = {
   state: [
     {
-      todo: 'Learn typescript',
+      title: 'Learn typescript',
       done: true,
-    },
-    {
-      todo: 'Try immer',
-      done: false,
     },
   ],
   reducers: {
-    done(state) {
-      state.push({ todo: 'Tweet about it' }); // array updated directly
+    foo(state) {
+      state.push({ title: 'Tweet about it' }); // array updated directly
       state[1].done = true;
     },
   },
@@ -92,11 +90,43 @@ const count = {
 
 See [docs/recipes](./recipes.md#immutable-description) for more details.
 
+The second parameter of reducer is the parameter passed when calling:
+
+```js
+const todos = {
+  state: [
+    {
+      title: 'Learn typescript',
+      done: true,
+    },
+  ],
+  reducers: {
+    // correct
+    add(state, todo) {
+      state.push(todo);
+    },
+    // wrong
+    add(state, title, done) {
+      state.push({ title, done });
+    },
+  },
+};
+
+// use:
+function Component() {
+  const { add } = store.useModelDispathers('todos');
+  function handleClick () {
+    add({ title: 'Learn React', done: false }); // correct
+    add('Learn React', false); // wrong
+  }
+}
+```
+
 ##### effects
 
 `effects: (dispatch) => ({ [string]: (payload, rootState) => void })`
 
-An object of functions that can handle the world outside of the model. Effects provide a simple way of handling async actions when used with async/await. In effects, call `this.reducerFoo` to update model's state:
+An object of functions that can handle the world outside of the model. These functions take payload and rootstate, sprovide a simple way of handling async actions when used with async/await. In effects, call `this.reducerFoo` to update model's state:
 
 ```js
 const counter = {
@@ -397,6 +427,19 @@ export default withModel(
 )(TodoList);
 ```
 
+#### useModelState
+
+`useModelState(name: string): stgate`
+
+The hooks use the state of the model and subscribe to its updates.
+
+```js
+function FunctionComponent() {
+  const state = useModelState('counter');
+  console.log(state.value);
+}
+```
+
 #### useModelDispatchers
 
 `useModelDispatchers(name: string): dispatchers`
@@ -573,3 +616,71 @@ function FunctionComponent() {
   );
 }
 ```
+
+## withModel
+
+`withModel(model, mapModelToProps?, options?)(ReactFunctionComponent)`
+
+This method is used to quickly use model in component.
+
+```js
+import { withModel } from '@ice/store';
+import model from './model';
+
+function Todos({ model }) {
+  const {
+    useState,
+    useDispatchers,
+    useEffectsState,
+    getState,
+    getDispatchers,
+  } = model;
+  const [ state, dispatchers ] = useValue();
+}
+
+export default withModel(model)(Todos);
+```
+
+### Arguments
+
+#### modelConfig
+
+Consistent with modelConfig in the createStore.
+
+#### mapModelToProps
+
+`mapModelToProps = (model) => ({ model })`
+
+Use this function to customize the value mapped to the component, for example:
+
+```js
+import { withModel } from '@ice/store';
+import model from './model';
+
+function Todos({ todo }) {
+  const [ state, dispatchers ] = todo.useValue();
+}
+
+export default withModel(model, function(model) {
+  return { todo: model };
+})(Todos);
+```
+
+#### options
+
+The same with createStore.
+
+### Returns
+
+- useValue
+- useState
+- useDispathers
+- useEffectsState
+- getValue
+- getState
+- getDispatchers
+- withValue
+- withDispatchers
+- withModelEffectsState
+
+Its usage refers to the return value of createStore.
