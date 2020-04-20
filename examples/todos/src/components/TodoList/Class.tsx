@@ -2,9 +2,9 @@ import { Component } from 'react';
 import { Assign } from 'utility-types';
 import { ExtractIModelFromModelConfig, ExtractIModelEffectsLoadingFromModelConfig } from '@ice/store';
 // import compose from 'lodash/fp/compose';
-import store from '../store';
-import { TodoList as TodoListFn } from './TodoList';
-import todosModel from '../models/todos';
+import store from '../../store';
+import TodoListFn from './TodoList';
+import todosModel from '../../models/todos';
 
 const { withModel, withModelEffectsLoading } = store;
 

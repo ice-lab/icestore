@@ -1,6 +1,5 @@
 import React, { useEffect } from 'react';
 import store from '../store';
-// import TodoList from './TodoListClass';
 import TodoList from './TodoList';
 
 const { useModel, useModelEffectsLoading } = store;
