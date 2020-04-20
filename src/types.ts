@@ -350,8 +350,8 @@ export interface ModelEffects<S> {
   [key: string]: (
     this: { [key: string]: (payload?: any, meta?: any) => Action<any, any> },
     payload: any,
-    rootState: S,
-    meta: any
+    rootState?: S,
+    meta?: any
   ) => void;
 }
 
