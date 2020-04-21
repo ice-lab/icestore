@@ -104,17 +104,12 @@ ReactDOM.render(<App />, rootElement);
 npm install @ice/store --save
 ```
 
-## API
+## 文档
 
-[docs/api](./docs/api.zh-CN.md)
-
-## 更多技巧
-
-[docs/recipes](./docs/recipes.zh-CN.md)
-
-## 从老版本升级
-
-[docs/upgrade-guidelines](./docs/upgrade-guidelines.zh-CN.md)
+- [API](./docs/api.zh-CN.md)
+- [更多技巧](./docs/recipes.zh-CN.md)
+- [从老版本升级](./docs/upgrade-guidelines.zh-CN.md)
+- [从其他方案迁移](./docs/migration.zh-CN.md)
 
 ## 浏览器支持
 

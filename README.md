@@ -104,17 +104,12 @@ icestore requires React 16.8.0 or later.
 npm install @ice/store --save
 ```
 
-## API
+## Documents
 
-[docs/api](./docs/api.md)
-
-## Recipes
-
-[docs/recipes](./docs/recipes.md)
-
-## Upgrade Guidelines
-
-[docs/upgrade-guidelines](./docs/upgrade-guidelines.md)
+- [API](./docs/api.md)
+- [Recipes](./docs/recipes.md)
+- [Upgrade Guidelines](./docs/upgrade-guidelines.md)
+- [Migration](./docs/migration.md)
 
 ## Browser Compatibility
 
