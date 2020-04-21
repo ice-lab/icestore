@@ -5,7 +5,7 @@ title: Upgrade Guidelines
 
 English | [简体中文](./upgrade-guidelines.zh-CN.md)
 
-## 1.2.0 to 1.3.0
+## Upgrade from 1.2.0 to 1.3.0
 
 From 1.2.0 to 1.3.0 is fully compatible, but we recommend that you use the new API in incremental code.
 We will remove the deprecated API in future versions.
@@ -123,7 +123,7 @@ export default withModelDispatchers('todos')(TodoList);
 - ModelEffectsState => ExtractIModelEffectsStateFromModelConfig
 - UseModelValue => ExtractIModelFromModelConfig
 
-## 1.0.0 to 1.3.0
+## Upgrade from 1.0.0 to 1.3.0
 
 From 1.0.0 to 1.3.0 is fully compatible, but we recommend that you use the new API in incremental code.
 We will remove the deprecated API in future versions.
@@ -238,7 +238,7 @@ class TodoList extends Component {
 export default withModelEffectsState('todos')(TodoList);	
 ```
 
-## 0.x.x to 1.x.x
+## Upgrade from 0.x.x to 1.x.x
 
 ### Define Model
 
