@@ -15,22 +15,17 @@ export default function UserApp() {
   }, []);
 
   console.debug('UserApp rending...');
-  return <div>
-    <hr/>
-    {
-      auth ?
-        <div>
-          <h2>
-          User Information
-          </h2>
-          <ul>
-            <li>Name：{name}</li>
-            <li>Todos：{todos}</li>
-          </ul>
-        </div> :
-        <div>
-        Not logged in
-        </div>
-    }
-  </div>;
+  return auth ?
+    (<div>
+      <h2>
+        User Information
+      </h2>
+      <ul>
+        <li>Name：{name}</li>
+        <li>Todos：{todos}</li>
+      </ul>
+    </div>) :
+    (<div>
+      Not logged in
+    </div>);
 }

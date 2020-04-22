@@ -1,10 +1,10 @@
-import React from 'react';
+import { Component } from 'react';
 import { Assign } from 'utility-types';
 import { ExtractIModelFromModelConfig, ExtractIModelEffectsLoadingFromModelConfig } from '@ice/store';
 // import compose from 'lodash/fp/compose';
-import store from '../../store';
-import TodoList from './TodoList';
-import todosModel from '../../models/todos';
+import store from '../store';
+import { TodoList as TodoListFn } from './TodoList';
+import todosModel from '../models/todos';
 
 const { withModel, withModelEffectsLoading } = store;
 
@@ -23,7 +23,7 @@ interface CustomProp {
 type PropsWithModel = Assign<MapModelToProp, MapModelEffectsStateToProp>;
 type Props = Assign<CustomProp, PropsWithModel>;
 
-class Component extends React.Component<Props> {
+class TodoList extends Component<Props> {
   onRemove = (index) => {
     const [, dispatchers] = this.props.todos;
     dispatchers.remove(index);
@@ -38,7 +38,7 @@ class Component extends React.Component<Props> {
     const { title, todos, todosEffectsLoading } = this.props;
     const [ state ] = todos;
     const { dataSource } = state;
-    return TodoList({
+    return TodoListFn({
       state: { title, dataSource, subTitle: 'Class Component' },
       dispatchers: { toggle: this.onToggle, remove: this.onRemove },
       effectsLoading: todosEffectsLoading,
@@ -47,8 +47,8 @@ class Component extends React.Component<Props> {
 }
 
 export default withModelEffectsLoading('todos')<PropsWithModel, Props>(
-  withModel('todos')(Component),
+  withModel('todos')(TodoList),
 );
 
 // functional flavor:
-// export default compose(withModelEffectsLoading('todos'), withModel('todos'))(Component);
+// export default compose(withModelEffectsLoading('todos'), withModel('todos'))(TodoList);

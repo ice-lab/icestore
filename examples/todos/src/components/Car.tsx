@@ -10,8 +10,7 @@ export default function UserApp() {
   console.debug('Car rending...');
   return (
     <div>
-      <hr/>
-      Car Logo is: {logo}
+      {logo}
     </div>
   );
 }
