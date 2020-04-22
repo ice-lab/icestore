@@ -22,7 +22,7 @@ export default class Counter extends PureComponent<CounterProps> {
         <div data-testid="setState" onClick={() => dispatchers.setState({ count: 1 })} />
         <div data-testid="increment" onClick={dispatchers.increment} />
         <div data-testid="decrement" onClick={dispatchers.decrement} />
-        <div data-testid="decrementAsync" onClick={dispatchers.decrementAsync} />
+        <div data-testid="asyncDecrement" onClick={dispatchers.asyncDecrement} />
         {children}
       </React.Fragment>
     );
@@ -51,7 +51,7 @@ export class CounterUseEffectsState extends PureComponent<CounterUseEffectsState
     return (
       <React.Fragment>
         <code data-testid="decrementAsyncEffectsState">
-          {JSON.stringify(counterEffectsState.decrementAsync)}
+          {JSON.stringify(counterEffectsState.asyncDecrement)}
         </code>
         {children}
       </React.Fragment>

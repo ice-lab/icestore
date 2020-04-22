@@ -1,6 +1,6 @@
 import React from 'react';
 
-export default function({ completed, text, onRemove, onToggle, isLoading }) {
+export default function({ completed, text, onAsyncRemove, onRemove, onToggle, isLoading }) {
   return (
     <li>
       <label
@@ -15,9 +15,15 @@ export default function({ completed, text, onRemove, onToggle, isLoading }) {
       <button
         type="button"
         onClick={onRemove}
+      >
+        delete
+      </button>
+      <button
+        type="button"
+        onClick={onAsyncRemove}
         disabled={isLoading}
       >
-        -
+        async delete
       </button>
     </li>
   );

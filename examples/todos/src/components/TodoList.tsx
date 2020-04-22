@@ -7,7 +7,7 @@ export default function TodoList() {
   const todos = useModel('todos');
   const effectsLoading = useModelEffectsLoading('todos');
   const [ state, dispatchers ] = todos;
-  const { refresh, removeAsync, toggle } = dispatchers;
+  const { refresh, asyncRemove, remove, toggle } = dispatchers;
 
   useEffect(() => {
     refresh();
@@ -23,9 +23,10 @@ export default function TodoList() {
           key={index}
           text={text}
           completed={completed}
-          onRemove={() => removeAsync(index)}
+          onAsyncRemove={() => asyncRemove(index)}
+          onRemove={() => remove(index)}
           onToggle={() => toggle(index)}
-          isLoading={effectsLoading.removeAsync}
+          isLoading={effectsLoading.asyncRemove}
         />
       ))}
     </ul>

@@ -43,7 +43,7 @@ const model = {
         },
       ]);
     },
-    async removeAsync(index: number) {
+    async asyncRemove(index: number) {
       await delay(1000);
       this.remove(index);
     },
