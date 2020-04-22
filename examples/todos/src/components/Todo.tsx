@@ -7,7 +7,7 @@ export default function({ completed, text, onAsyncRemove, onRemove, onToggle, is
         onClick={onToggle}
         style={{
           marginRight: 4,
-          textDecoration: completed ? 'line-through' : 'none'
+          textDecoration: completed ? 'line-through' : 'none',
         }}
       >
         {text}

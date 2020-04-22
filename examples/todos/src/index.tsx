@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom';
 import store from './store';
 import TodoList from './components/TodoList';
 import AddTodo from './components/AddTodo';
+import Footer from './components/Footer';
 
 const { Provider } = store;
 
@@ -11,6 +12,7 @@ function App() {
     <Provider>
       <AddTodo />
       <TodoList />
+      <Footer />
     </Provider>
   );
 }

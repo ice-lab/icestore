@@ -12,7 +12,7 @@ export default function() {
       <form onSubmit={e => {
         e.preventDefault();
         if (!input.value.trim()) {
-          return
+          return;
         }
         add({ text: input.value });
         input.value = '';
@@ -23,5 +23,5 @@ export default function() {
         </button>
       </form>
     </div>
-  )
+  );
 }

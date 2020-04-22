@@ -26,7 +26,7 @@ class Component extends React.Component<Props> {
     return User({
       name,
       title,
-      type: 'Class'
+      type: 'Class',
     });
   }
 }
