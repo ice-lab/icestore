@@ -3,7 +3,7 @@ id: migration
 title: Migration
 ---
 
-## Migrating From Redux
+## 从 Redux 迁移
 
 ...
 
