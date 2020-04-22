@@ -1,16 +1,16 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import store from './store';
-import TodoList from './components/TodoList';
-import AddTodo from './components/AddTodo';
+import User from './components/User';
+import Product from './components/Product';
 
 const { Provider } = store;
 
 function App() {
   return (
     <Provider>
-      <AddTodo />
-      <TodoList />
+      <User title="User's name" />
+      <Product title="Product's title" />
     </Provider>
   );
 }

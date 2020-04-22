@@ -1,11 +1,11 @@
 import { Models } from '@ice/store';
-import todos from './todos';
+import user from './user';
 
-const rootModels: RootModels = { todos };
+const rootModels: RootModels = { user };
 
 // add interface to avoid recursive type checking
 export interface RootModels extends Models {
-  todos: typeof todos;
+  user: typeof user;
 }
 
 export default rootModels;

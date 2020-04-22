@@ -1,67 +1,51 @@
 import { delay } from '../utils';
-import store, { RootDispatch, RootState } from '../store';
 
 export interface Todo {
-  name: string;
-  done?: boolean;
+  text: string;
+  completed?: boolean;
 }
 
-export interface TodosState {
-  dataSource: Todo[];
-}
+export type TodosState = Todo[];
 
 const model = {
-  state: {
-    dataSource: [
-      {
-        name: 'Init',
-        done: false,
-      },
-    ],
-  },
+  state: [
+    {
+      text: 'Init',
+      completed: false,
+    },
+  ],
   reducers: {
     toggle(state: TodosState, index: number) {
-      state.dataSource[index].done = !state.dataSource[index].done;
+      state[index].completed = !state[index].completed;
     },
     add(state: TodosState, todo: Todo) {
-      state.dataSource.push(todo);
+      state.push(todo);
     },
     remove(state: TodosState, index: number) {
-      state.dataSource.splice(index, 1);
+      state.splice(index, 1);
+    },
+    setState(state: TodosState, payload: TodosState) {
+      return payload;
     },
   },
-  effects: (dispatch: RootDispatch) => ({
-    // this will run after "add" reducer finished
-    add(todo: Todo, rootState: RootState) {
-      console.log(rootState.todos);
-      dispatch.user.setTodos(store.getModelState('todos').dataSource.length);
-    },
+  effects: () => ({
     async refresh() {
       await delay(2000); // wait for data to load
-      const dataSource: Todo[] = [
-        {
-          name: 'react',
-        },
-        {
-          name: 'vue',
-          done: true,
-        },
-        {
-          name: 'angular',
-        },
-      ];
 
       // pass the result to a local reducer
-      // setState is a built-in reducer
-      this.setState({
-        dataSource,
-      });
-
-      dispatch.user.setTodos(dataSource.length);
+      this.setState([
+        {
+          text: 'react',
+        },
+        {
+          text: 'vue',
+          completed: true,
+        },
+      ]);
     },
-    async remove(index: number) {
+    async removeAsync(index: number) {
       await delay(1000);
-      dispatch.user.setTodos(store.getModelState('todos').dataSource.length);
+      this.remove(index);
     },
   }),
 };

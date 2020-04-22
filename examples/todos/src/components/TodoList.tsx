@@ -1,49 +1,35 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import store from '../store';
-
+import Todo from './Todo';
 const { useModel, useModelEffectsLoading } = store;
 
-export function TodoList({ state, dispatchers, effectsLoading }) {
-  const { title, subTitle, dataSource } = state;
-  const { toggle, remove } = dispatchers;
-
-  return (
-    <div>
-      <h2>{title}</h2>
-      <p>
-        Now is using {subTitle}.
-      </p>
-      <ul>
-        {dataSource.map(({ name, done = false }, index) => (
-          <li key={index}>
-            <label>
-              <input
-                type="checkbox"
-                checked={done}
-                onChange={() => toggle(index)}
-              />
-              {done ? <s>{name}</s> : <span>{name}</span>}
-            </label>
-            {
-              effectsLoading.remove ?
-                '...deleting...' :
-                <button type="submit" onClick={() => remove(index)}>-</button>
-            }
-          </li>
-        ))}
-      </ul>
-    </div>
-  );
-}
-
-export default function({ title }) {
-  const [ state, dispatchers ] = useModel('todos');
+export default function TodoList() {
+  const todos = useModel('todos');
   const effectsLoading = useModelEffectsLoading('todos');
-  return TodoList(
-    {
-      state: { ...state, title, subTitle: 'Function Component' },
-      dispatchers,
-      effectsLoading,
-    },
-  );
+  const [ state, dispatchers ] = todos;
+  const { refresh, removeAsync, toggle } = dispatchers;
+
+  useEffect(() => {
+    refresh();
+    // eslint-disable-next-line
+  }, []);
+
+  const noTaskView = <div>No task</div>;
+  const loadingView = <div>Loading...</div>;
+  const taskView = state.length ? (
+    <ul>
+      {state.map(({ text, completed }, index) => (
+        <Todo
+          key={index}
+          text={text}
+          completed={completed}
+          onRemove={() => removeAsync(index)}
+          onToggle={() => toggle(index)}
+          isLoading={effectsLoading.removeAsync}
+        />
+      ))}
+    </ul>
+  ) : noTaskView;
+
+  return effectsLoading.refresh ? loadingView : taskView;
 }
