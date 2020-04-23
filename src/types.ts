@@ -1,4 +1,5 @@
 import * as Redux from 'redux';
+import React from 'react';
 
 type Optionalize<T extends K, K> = Omit<T, keyof K>;
 
@@ -250,6 +251,7 @@ interface ProviderProps {
 
 interface ProviderPluginAPI {
   Provider: (props: ProviderProps) => JSX.Element;
+  context: React.Context<{ store: PresetIcestore }>;
 }
 
 export type PresetIcestore<
