@@ -36,7 +36,7 @@ import { createStore } from 'icestore';
 import sharks from './reducers/sharks';
 import dolphins from './reducers/dolphins';
 
-// 使用 icestore 的 createStore 方法
+// Using createStore from icestore
 const store = createStore(
   { /* No models */ },
   {
