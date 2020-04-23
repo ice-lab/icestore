@@ -11,6 +11,8 @@ title: Migration
 
 ### 第一步：替换 createStore 方法
 
+参考：[CodeSandbox](https://codesandbox.io/s/github/ice-lab/icestore/tree/master/examples/migration-redux-1?module=/src/index.js)
+
 #### Redux 创建 Store 的方式
 
 ```js
@@ -50,7 +52,9 @@ const store = createStore(
 
 ### 第二步：将 reducer 替换为 model
 
-您可以局部渐进式地将项目中的 redux reducer 替换为 icestore model：
+您可以局部渐进式地将项目中的 redux reducer 替换为 icestore model。
+
+参考：[CodeSandbox](https://codesandbox.io/s/github/ice-lab/icestore/tree/master/examples/migration-redux-2?module=/src/index.js)
 
 #### 声明层
 
@@ -118,6 +122,8 @@ export default connect(undefined, mapDispatch)(ReactComponent);
 ```
 
 ### 第三步：替换 Provider 
+
+参考：[CodeSandbox](https://codesandbox.io/s/github/ice-lab/icestore/tree/master/examples/migration-redux-3?module=/src/index.js)
 
 #### 将 react-redux Provider 替换为 icestore Provider
 
@@ -212,7 +218,9 @@ export default connect(
 
 ### 第四步：将 react-redux 替换为 icestore 
 
-您可以局部渐进式地将项目中的 react-redux API 替换为 icestore API
+您可以局部渐进式地将项目中的 react-redux API 替换为 icestore API。
+
+参考：[CodeSandbox](https://codesandbox.io/s/github/ice-lab/icestore/tree/master/examples/migration-redux-4?module=/src/index.js)
 
 #### 替换 react-redux Hooks
 
