@@ -5,47 +5,34 @@ title: Migration
 
 ## 从 Redux 迁移
 
-我们提供了渐进式的方案帮您将项目从 Redux 迁移到 icestore。
+我们提供了渐进式的方案使得您的项目可以局部从 Redux 迁移到 icestore。
 
 > 请确保在项目中使用的 react-redux >= 7.0 且 react >= 16.8 。
 
-### 第一阶段：替换 createStore 方法
+### 第一步：替换 createStore 方法
 
-#### Redux: 创建 Store
+#### Redux 创建 Store 的方式
 
 ```js
 import { createStore, combineReducers } from 'redux';
-import { Provider } from 'react-redux';
-import { render } from 'react-dom';
 
 import sharks from './reducers/sharks';
 import dolphins from './reducers/dolphins';
-import App from './components/App';
 
 const rootReducer = combineReducers({
   sharks,
   dolphins
 });
 const store = createStore(rootReducer);
-
-render(
-  <Provider store={store}>
-    <App />
-  </Provider>,
-  document.getElementById('root')
-);
 ```
 
-#### icestore: 创建 Store
+#### icestore 创建 Store 的方式
 
 ```js
 import { createStore } from 'icestore';
-import { Provider } from 'react-redux';
-import { render } from 'react-dom';
 
 import sharks from './reducers/sharks';
 import dolphins from './reducers/dolphins';
-import App from './components/App';
 
 // 使用 icestore 的 createStore 方法
 const store = createStore(
@@ -59,16 +46,9 @@ const store = createStore(
     }
   }
 );
-
-render(
-  <Provider store={store}>
-    <App />
-  </Provider>,
-  document.getElementById('root')
-);
 ```
 
-### 第二阶段：将 reducer 替换为 model
+### 第二步：将 reducer 替换为 model
 
 您可以局部渐进式地将项目中的 redux reducer 替换为 icestore model：
 
@@ -105,7 +85,6 @@ export default {
 }
 ```
 
-
 #### 消费层
 
 ##### redux 中 mapDispatch 的返回值
@@ -115,17 +94,12 @@ import { connect } from 'react-redux';
 import { incrementSharks } from './reducers/sharks';
 import { incrementDolphins } from './reducers/dolphins';
 
-const mapState = state => ({
-  sharks: state.sharks,
-  dolphins: state.dolphins,
-});
-
 const mapDispatch = dispatch => ({
   incrementSharks: () => dispatch(incrementSharks(1)),
   incrementDolphins: () => dispatch(incrementDolphins(1))
 });
 
-export default connect(mapState, mapDispatch)(ReactComponent);
+export default connect(undefined, mapDispatch)(ReactComponent);
 ```
 
 ##### icestore 中 mapDispatch 的返回值
@@ -140,10 +114,10 @@ const mapDispatch = dispatch => ({
   incrementDolphins: () => dispatch(incrementDolphins(1)),
 });
 
-export default connect(mapState, mapDispatch)(ReactComponent);
+export default connect(undefined, mapDispatch)(ReactComponent);
 ```
 
-### 第三阶段：替换 Provider 
+### 第三步：替换 Provider 
 
 #### 将 react-redux Provider 替换为 icestore Provider
 
@@ -236,7 +210,7 @@ export default connect(
 )(ReactComponent);
 ```
 
-### 第四阶段：将 react-redux 替换为 icestore 
+### 第四步：将 react-redux 替换为 icestore 
 
 您可以局部渐进式地将项目中的 react-redux API 替换为 icestore API
 
