@@ -445,7 +445,7 @@ export default withModel(
 
 #### useModelState
 
-`useModelState(name: string): stgate`
+`useModelState(name: string): state`
 
 通过该 hooks 使用模型的状态并订阅其更新。
 

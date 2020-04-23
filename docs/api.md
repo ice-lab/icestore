@@ -429,7 +429,7 @@ export default withModel(
 
 #### useModelState
 
-`useModelState(name: string): stgate`
+`useModelState(name: string): state`
 
 The hooks use the state of the model and subscribe to its updates.
 
