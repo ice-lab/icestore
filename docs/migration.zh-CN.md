@@ -7,7 +7,7 @@ title: Migration
 
 我们提供了渐进式的方案使得您的项目可以局部从 Redux 迁移到 icestore。
 
-> 请确保在项目中使用的 react-redux >= 7.0 且 react >= 16.8 。
+> 请确保在项目中使用的 react-redux >= 7.0.0 且 react >= 16.8.0 。
 
 ### 第一步：替换 createStore 方法
 
@@ -52,7 +52,7 @@ const store = createStore(
 
 ### 第二步：将 reducer 替换为 model
 
-您可以局部渐进式地将项目中的 redux reducer 替换为 icestore model。
+您可以局部渐进式地将项目中的 Redux reducer 替换为 icestore model。
 
 参考：[CodeSandbox](https://codesandbox.io/s/github/ice-lab/icestore/tree/master/examples/migration-redux-2?module=/src/index.js)
 
@@ -91,7 +91,7 @@ export default {
 
 #### 消费层
 
-##### redux 中 mapDispatch 的返回值
+##### Redux 中 mapDispatch 的返回值
 
 ```js
 import { connect } from 'react-redux';
@@ -134,7 +134,6 @@ import { Provider } from 'react-redux';
 import App from './App';
 import store from './store';
 
-
 const Root = () => (
   <Provider store={store}>
     <App />
@@ -154,7 +153,6 @@ const Root = () => (
   </store.Provider>
 );
 ```
-
 
 #### 兼容 react-redux Hooks
 
