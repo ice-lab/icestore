@@ -1,0 +1,31 @@
+{
+  "name": "icestore-migration-part-2",
+  "version": "1.0.0",
+  "description": "Using icestore with Redux & icestore.",
+  "private": true,
+  "dependencies": {
+    "@ice/store": "^1.4.0",
+    "react": "^16.8.6",
+    "react-dom": "^16.8.6",
+    "react-redux": "^7.2.0"
+  },
+  "devDependencies": {
+    "react-scripts": "3.4.0"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
+}
