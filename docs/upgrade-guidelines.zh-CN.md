@@ -5,7 +5,7 @@ title: Upgrade Guidelines
 
 [English](./upgrade-guidelines.md) | 简体中文
 
-## 1.2.0 to 1.3.0
+## 从 1.2.0 升级到 1.3.0
 
 1.3.0 是完全向下兼容的，但是我们推荐您在新增代码中使用最新的 API。
 
@@ -126,7 +126,7 @@ export default withModelDispatchers('todos')(TodoList);
 - ModelEffectsState => ExtractIModelEffectsStateFromModelConfig
 - UseModelValue => ExtractIModelFromModelConfig
 
-## 1.0.0 to 1.3.0
+## 从 1.0.0 升级到 1.3.0
 
 1.3.0 是完全向下兼容的，但是我们推荐您在新增代码中使用最新的 API。
 
@@ -242,7 +242,7 @@ class TodoList extends Component {
 export default withModelEffectsState('todos')(TodoList);	
 ```
 
-## 0.x.x to 1.x.x
+## 从 0.x.x 升级到 1.x.x
 
 从 0.x.x 到 1.x.x 是不兼容的。您可以选择性地进行升级。
 

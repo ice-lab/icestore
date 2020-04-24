@@ -29,7 +29,7 @@
     "watch": "tsc -w",
     "prepublishOnly": "npm run lint:nofix && npm run test && npm run build",
     "lint": "npm run lint:nofix -- --fix",
-    "lint:nofix": "eslint --cache --ext .ts,.tsx ./",
+    "lint:nofix": "eslint --cache --ext .ts,.tsx,.js ./",
     "test": "cross-env NODE_ENV=unittest jest",
     "test:w": "jest --watch",
     "coverage": "codecov"

@@ -28,7 +28,7 @@ export default ({ context }: ProviderConfig): T.Plugin => {
           </ReduxProvider>
         );
       };
-      return { Provider };
+      return { Provider, context };
     },
   };
 };

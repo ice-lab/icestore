@@ -1,4 +1,5 @@
 import * as Redux from 'redux';
+import React from 'react';
 
 export type Optionalize<T extends K, K> = Omit<T, keyof K>;
 
@@ -328,6 +329,7 @@ interface ProviderProps {
 
 interface ProviderPluginAPI {
   Provider: (props: ProviderProps) => JSX.Element;
+  context: React.Context<{ store: PresetIcestore }>;
 }
 
 export type ExtractIModelAPIsFromModelConfig<M extends ModelConfig> = ReturnType<GetModelAPIs<{ model: M }, 'model'>>;
