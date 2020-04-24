@@ -24,9 +24,6 @@ const model = {
     remove(state: TodosState, index: number) {
       state.splice(index, 1);
     },
-    setState(state: TodosState, payload: TodosState) {
-      return payload;
-    },
   },
   effects: () => ({
     async refresh() {

@@ -347,34 +347,12 @@ describe("createStore", () => {
   describe("createStore options", () => {
     const mockFn = jest
       .fn()
-      .mockReturnValueOnce(createStore(models, {
-        disableLoading: true,
-      }))
-      .mockReturnValueOnce(createStore(models, {
-        disableError: true,
-      }))
       .mockReturnValueOnce(createStore({ counterWithNoImmer }, {
         disableImmer: true,
       }));
 
     afterEach(() => {
       rhl.cleanup();
-    });
-
-    it("disableLoading", () => {
-      const store = mockFn();
-      const methods = Reflect.ownKeys(store);
-
-      expect(methods).not.toContain("useModelEffectsLoading");
-      expect(methods).not.toContain("withModelEffectsLoading");
-    });
-
-    it("disableError", () => {
-      const store = mockFn();
-      const methods = Reflect.ownKeys(store);
-
-      expect(methods).not.toContain("useModelEffectsError");
-      expect(methods).not.toContain("withModelEffectsError");
     });
 
     it("disableImmer", () => {

@@ -6,7 +6,6 @@ import mergeConfig from './utils/mergeConfig';
 import createProviderPlugin from './plugins/provider';
 import createReduxHooksPlugin from './plugins/reduxHooks';
 import createModelApisPlugin from './plugins/modelApis';
-import createEffectsStateApisPlugin from './plugins/effectsStateApis';
 import createImmerPlugin from './plugins/immer';
 import createLoadingPlugin from './plugins/loading';
 import createErrorPlugin from './plugins/error';
@@ -68,9 +67,6 @@ export const createStore = <M extends T.Models, C extends T.CreateStoreConfig<M>
   if (!disableError) {
     plugins.push(error);
   }
-  if (!disableLoading || !disableError) {
-    plugins.push(createEffectsStateApisPlugin());
-  }
 
   // compatibility handling
   const wrappedModels = appendReducers(
@@ -89,6 +85,35 @@ export const createStore = <M extends T.Models, C extends T.CreateStoreConfig<M>
   });
 
   return store as T.PresetIcestore<M>;
+};
+
+interface MapModelToProps<M extends T.ModelConfig> {
+  (model: T.ExtractIModelAPIsFromModelConfig<M>): Record<string, any>;
+}
+
+export const withModel = <
+  M extends T.ModelConfig,
+  F extends MapModelToProps<M>,
+  C extends T.CreateStoreConfig<{ model: M }>
+>(model: M, mapModelToProps?: F, initConfig?: C) => {
+  const modelName = 'model';
+  mapModelToProps = (mapModelToProps || ((modelApis) => ({ [modelName]: modelApis }))) as F;
+  const store = createStore({ [modelName]: model }, initConfig);
+  const { Provider, getModelAPIs } = store;
+  const modelApis = getModelAPIs(modelName);
+  const withProps = mapModelToProps(modelApis);
+  return <R extends ReturnType<F>, P extends R>(Component: React.ComponentType<P>) => {
+    return (props: T.Optionalize<P, R>): React.ReactElement => {
+      return (
+        <Provider>
+          <Component
+            {...withProps}
+            {...props as P}
+          />
+        </Provider>
+      );
+    };
+  };
 };
 
 export default createStore;
