@@ -1,49 +1,53 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import store from '../store';
+import Todo from './Todo';
+import { VisibilityFilters } from '../models/visibilityFilter';
 
 const { useModel, useModelEffectsLoading } = store;
 
-export function TodoList({ state, dispatchers, effectsLoading }) {
-  const { title, subTitle, dataSource } = state;
-  const { toggle, remove } = dispatchers;
+const getVisibleTodos = (todos, filter) => {
+  switch (filter) {
+    case VisibilityFilters.ALL:
+      return todos;
+    case VisibilityFilters.COMPLETED:
+      return todos.filter(t => t.completed);
+    case VisibilityFilters.ACTIVE:
+      return todos.filter(t => !t.completed);
+    default:
+      throw new Error(`Unknown filter: ${  filter}`);
+  }
+};
 
-  return (
-    <div>
-      <h2>{title}</h2>
-      <p>
-        Now is using {subTitle}.
-      </p>
-      <ul>
-        {dataSource.map(({ name, done = false }, index) => (
-          <li key={index}>
-            <label>
-              <input
-                type="checkbox"
-                checked={done}
-                onChange={() => toggle(index)}
-              />
-              {done ? <s>{name}</s> : <span>{name}</span>}
-            </label>
-            {
-              effectsLoading.remove ?
-                '...deleting...' :
-                <button type="submit" onClick={() => remove(index)}>-</button>
-            }
-          </li>
-        ))}
-      </ul>
-    </div>
-  );
-}
-
-export default function({ title }) {
-  const [ state, dispatchers ] = useModel('todos');
+export default function TodoList() {
+  const [ todos, dispatchers ] = useModel('todos');
+  const [ visibilityFilter ] = useModel('visibilityFilter');
   const effectsLoading = useModelEffectsLoading('todos');
-  return TodoList(
-    {
-      state: { ...state, title, subTitle: 'Function Component' },
-      dispatchers,
-      effectsLoading,
-    },
-  );
+
+  const { refresh, asyncRemove, remove, toggle } = dispatchers;
+  const visableTodos = getVisibleTodos(todos, visibilityFilter);
+
+  useEffect(() => {
+    refresh();
+    // eslint-disable-next-line
+  }, []);
+
+  const noTaskView = <div>No task</div>;
+  const loadingView = <div>Loading...</div>;
+  const taskView = visableTodos.length ? (
+    <ul>
+      {visableTodos.map(({ text, completed }, index) => (
+        <Todo
+          key={index}
+          text={text}
+          completed={completed}
+          onAsyncRemove={() => asyncRemove(index)}
+          onRemove={() => remove(index)}
+          onToggle={() => toggle(index)}
+          isLoading={effectsLoading.asyncRemove}
+        />
+      ))}
+    </ul>
+  ) : noTaskView;
+
+  return effectsLoading.refresh ? loadingView : taskView;
 }

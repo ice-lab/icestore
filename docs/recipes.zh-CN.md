@@ -132,7 +132,7 @@ import store from '@/store';
 
 const user = {
   effects: dispatch => ({
-    async addByAsync(payload, state) {
+    async asyncAdd(payload, state) {
       dispatch.todos.addTodo(payload); // 调用其他模型的方法更新其状态
       const todos = store.getModelState('todos'); // 获取更新后的模型最新状态
     }

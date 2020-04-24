@@ -134,7 +134,7 @@ import store from '@/store';
 
 const user = {
   effects: dispatch => ({
-    async addByAsync(payload, state) {
+    async asyncAdd(payload, state) {
       dispatch.todos.addTodo(payload); // Call methods of other models to update their state
       const todos = store.getModelState('todos'); // Get the latest state of the updated model
     }

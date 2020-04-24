@@ -105,7 +105,7 @@ const counter = {
     decrement:(prevState) => prevState - 1,
   },
   effects: () => ({
-    async decrementAsync() {
+    async asyncDecrement() {
       await delay(1000); // 进行一些异步操作
       this.decrement(); // 调用模型 reducers 内的方法来更新状态
     },

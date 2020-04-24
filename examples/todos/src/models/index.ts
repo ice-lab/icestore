@@ -1,15 +1,13 @@
 import { Models } from '@ice/store';
 import todos from './todos';
-import user from './user';
-import car from './car';
+import visibilityFilter from './visibilityFilter';
 
-const rootModels: RootModels = { todos, user, car };
+const rootModels: RootModels = { todos, visibilityFilter };
 
 // add interface to avoid recursive type checking
 export interface RootModels extends Models {
   todos: typeof todos;
-  user: typeof user;
-  car: typeof car;
+  visibilityFilter: typeof visibilityFilter;
 }
 
 export default rootModels;
