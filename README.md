@@ -54,7 +54,7 @@ const counter = {
     decrement:(prevState) => prevState - 1,
   },
   effects: () => ({
-    async decrementAsync() {
+    async asyncDecrement() {
       await delay(1000);
       this.decrement();
     },
@@ -72,12 +72,12 @@ const store = createStore(models);
 const { useModel } = store;
 function Counter() {
   const [ count, dispatchers ] = useModel('counter');
-  const { increment, decrementAsync } = dispatchers;
+  const { increment, asyncDecrement } = dispatchers;
   return (
     <div>
       <span>{count}</span>
       <button type="button" onClick={increment}>+</button>
-      <button type="button" onClick={decrementAsync}>-</button>
+      <button type="button" onClick={asyncDecrement}>-</button>
     </div>
   );
 }
@@ -115,6 +115,13 @@ npm install @ice/store --save
 ## Upgrade Guidelines
 
 [docs/upgrade-guidelines](./docs/upgrade-guidelines.md)
+
+## Examples
+
+- [Counter](https://codesandbox.io/s/github/ice-lab/icestore/tree/master/examples/counter)
+- [Todos](https://codesandbox.io/s/github/ice-lab/icestore/tree/master/examples/todos)
+- [Class Component Support](https://codesandbox.io/s/github/ice-lab/icestore/tree/master/examples/classComponent)
+- [withModel](https://codesandbox.io/s/github/ice-lab/icestore/tree/master/examples/withModel)
 
 ## Browser Compatibility
 

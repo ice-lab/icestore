@@ -143,13 +143,13 @@ const counter = {
   },
   actions: {
     increment:(state) => ({ value: state.value + 1 }),
-    async incrementAsync(state, payload, actions, globalActions) {
+    async asyncIncrement(state, payload, actions, globalActions) {
       console.log(state); // 0
       await delay(1000);
       actions.increment();
       globalActions.todo.refresh();
     },
-    async decrementAsync(state) {
+    async asyncDecrement(state) {
       await delay(1000);
       return { value: state.value - 1 };
     },
@@ -168,13 +168,13 @@ const counter = {
     increment:(prevState) => ({ value: prevState.value + 1 }),
   },
   effects: (dispatch) => ({
-    async incrementAsync(payload, rootState) {
+    async asyncIncrement(payload, rootState) {
       console.log(rootState.counter); // 0
       await delay(1000);
       this.increment();
       dispatch.todo.refresh();
     },
-    async decrementAsync(payload, rootState) {
+    async asyncDecrement(payload, rootState) {
       await delay(1000);
       this.setState({ value: rootState.counter.value - 1 }); // setState 是一个内置的 reducer
     },

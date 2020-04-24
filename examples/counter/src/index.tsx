@@ -12,7 +12,7 @@ const counter = {
     decrement:(prevState) => prevState - 1,
   },
   effects: () => ({
-    async decrementAsync() {
+    async asyncDecrement() {
       await delay(1000);
       this.decrement();
     },
@@ -30,12 +30,12 @@ const store = createStore(models);
 const { useModel } = store;
 function Counter() {
   const [ count, dispatchers ] = useModel('counter');
-  const { increment, decrementAsync } = dispatchers;
+  const { increment, asyncDecrement } = dispatchers;
   return (
     <div>
       <span>{count}</span>
       <button type="button" onClick={increment}>+</button>
-      <button type="button" onClick={decrementAsync}>Async -</button>
+      <button type="button" onClick={asyncDecrement}>-</button>
     </div>
   );
 }

@@ -135,7 +135,7 @@ const counter = {
     decrement:(prevState) => prevState - 1,
   },
   effects: () => ({
-    async decrementAsync() {
+    async asyncDecrement() {
       await delay(1000); // do some asynchronous operations
       this.decrement(); // pass the result to a local reducer
     },
