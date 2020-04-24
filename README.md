@@ -10,6 +10,7 @@ English | [简体中文](./README.zh-CN.md)
 [![NPM downloads](http://img.shields.io/npm/dm/@ice/store.svg?style=flat)](https://npmjs.org/package/@ice/store)
 [![Known Vulnerabilities](https://snyk.io/test/npm/@ice/store/badge.svg)](https://snyk.io/test/npm/@ice/store)
 [![David deps](https://img.shields.io/david/ice-lab/icestore.svg?style=flat-square)](https://david-dm.org/ice-lab/icestore)
+[![codecov](https://codecov.io/gh/ice-lab/icestore/branch/master/graph/badge.svg)](https://codecov.io/gh/ice-lab/icestore)
 
 <table>
   <thead>
@@ -53,7 +54,7 @@ const counter = {
     decrement:(prevState) => prevState - 1,
   },
   effects: () => ({
-    async decrementAsync() {
+    async asyncDecrement() {
       await delay(1000);
       this.decrement();
     },
@@ -71,12 +72,12 @@ const store = createStore(models);
 const { useModel } = store;
 function Counter() {
   const [ count, dispatchers ] = useModel('counter');
-  const { increment, decrementAsync } = dispatchers;
+  const { increment, asyncDecrement } = dispatchers;
   return (
     <div>
       <span>{count}</span>
       <button type="button" onClick={increment}>+</button>
-      <button type="button" onClick={decrementAsync}>-</button>
+      <button type="button" onClick={asyncDecrement}>-</button>
     </div>
   );
 }
@@ -103,17 +104,19 @@ icestore requires React 16.8.0 or later.
 npm install @ice/store --save
 ```
 
-## API
+## Documents
 
-[docs/api](./docs/api.md)
+- [API](./docs/api.md)
+- [Recipes](./docs/recipes.md)
+- [Upgrade Guidelines](./docs/upgrade-guidelines.md)
+- [Migration](./docs/migration.md)
 
-## Recipes
+## Examples
 
-[docs/recipes](./docs/recipes.md)
-
-## Upgrade Guidelines
-
-[docs/upgrade-guidelines](./docs/upgrade-guidelines.md)
+- [Counter](https://codesandbox.io/s/github/ice-lab/icestore/tree/master/examples/counter)
+- [Todos](https://codesandbox.io/s/github/ice-lab/icestore/tree/master/examples/todos)
+- [Class Component Support](https://codesandbox.io/s/github/ice-lab/icestore/tree/master/examples/classComponent)
+- [withModel](https://codesandbox.io/s/github/ice-lab/icestore/tree/master/examples/withModel)
 
 ## Browser Compatibility
 

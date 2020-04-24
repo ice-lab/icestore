@@ -5,7 +5,7 @@ title: Upgrade Guidelines
 
 [English](./upgrade-guidelines.md) | 简体中文
 
-## 1.2.0 to 1.3.0
+## 从 1.2.0 升级到 1.3.0
 
 1.3.0 是完全向下兼容的，但是我们推荐您在新增代码中使用最新的 API。
 
@@ -126,7 +126,7 @@ export default withModelDispatchers('todos')(TodoList);
 - ModelEffectsState => ExtractIModelEffectsStateFromModelConfig
 - UseModelValue => ExtractIModelFromModelConfig
 
-## 1.0.0 to 1.3.0
+## 从 1.0.0 升级到 1.3.0
 
 1.3.0 是完全向下兼容的，但是我们推荐您在新增代码中使用最新的 API。
 
@@ -143,13 +143,13 @@ const counter = {
   },
   actions: {
     increment:(state) => ({ value: state.value + 1 }),
-    async incrementAsync(state, payload, actions, globalActions) {
+    async asyncIncrement(state, payload, actions, globalActions) {
       console.log(state); // 0
       await delay(1000);
       actions.increment();
       globalActions.todo.refresh();
     },
-    async decrementAsync(state) {
+    async asyncDecrement(state) {
       await delay(1000);
       return { value: state.value - 1 };
     },
@@ -168,13 +168,13 @@ const counter = {
     increment:(prevState) => ({ value: prevState.value + 1 }),
   },
   effects: (dispatch) => ({
-    async incrementAsync(payload, rootState) {
+    async asyncIncrement(payload, rootState) {
       console.log(rootState.counter); // 0
       await delay(1000);
       this.increment();
       dispatch.todo.refresh();
     },
-    async decrementAsync(payload, rootState) {
+    async asyncDecrement(payload, rootState) {
       await delay(1000);
       this.setState({ value: rootState.counter.value - 1 }); // setState 是一个内置的 reducer
     },
@@ -242,7 +242,7 @@ class TodoList extends Component {
 export default withModelEffectsState('todos')(TodoList);	
 ```
 
-## 0.x.x to 1.x.x
+## 从 0.x.x 升级到 1.x.x
 
 从 0.x.x 到 1.x.x 是不兼容的。您可以选择性地进行升级。
 

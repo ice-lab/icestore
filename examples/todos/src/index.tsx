@@ -1,30 +1,18 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import store from './store';
-import Todos from './components/Todos';
-import TodoAdd from './components/TodoAdd';
-import User from './components/User';
-import Car from './components/Car';
-
-const initialStates = {
-  user: {
-    dataSource: {
-      name: 'Tom',
-    },
-    auth: true,
-    todos: 5,
-  },
-};
+import TodoList from './components/TodoList';
+import AddTodo from './components/AddTodo';
+import Footer from './components/Footer';
 
 const { Provider } = store;
 
 function App() {
   return (
-    <Provider initialStates={initialStates}>
-      <Todos />
-      <TodoAdd />
-      <User />
-      <Car />
+    <Provider>
+      <AddTodo />
+      <TodoList />
+      <Footer />
     </Provider>
   );
 }

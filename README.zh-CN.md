@@ -10,6 +10,7 @@
 [![NPM downloads](http://img.shields.io/npm/dm/@ice/store.svg?style=flat)](https://npmjs.org/package/@ice/store)
 [![Known Vulnerabilities](https://snyk.io/test/npm/@ice/store/badge.svg)](https://snyk.io/test/npm/@ice/store)
 [![David deps](https://img.shields.io/david/ice-lab/icestore.svg?style=flat-square)](https://david-dm.org/ice-lab/icestore)
+[![codecov](https://codecov.io/gh/ice-lab/icestore/branch/master/graph/badge.svg)](https://codecov.io/gh/ice-lab/icestore)
 
 <table>
   <thead>
@@ -53,7 +54,7 @@ const counter = {
     decrement:(prevState) => prevState - 1,
   },
   effects: () => ({
-    async decrementAsync() {
+    async asyncDecrement() {
       await delay(1000);
       this.decrement();
     },
@@ -71,12 +72,12 @@ const store = createStore(models);
 const { useModel } = store;
 function Counter() {
   const [ count, dispatchers ] = useModel('counter');
-  const { increment, decrementAsync } = dispatchers;
+  const { increment, asyncDecrement } = dispatchers;
   return (
     <div>
       <span>{count}</span>
       <button type="button" onClick={increment}>+</button>
-      <button type="button" onClick={decrementAsync}>-</button>
+      <button type="button" onClick={asyncDecrement}>-</button>
     </div>
   );
 }
@@ -103,17 +104,19 @@ ReactDOM.render(<App />, rootElement);
 npm install @ice/store --save
 ```
 
-## API
+## 文档
 
-[docs/api](./docs/api.zh-CN.md)
+- [API](./docs/api.zh-CN.md)
+- [更多技巧](./docs/recipes.zh-CN.md)
+- [从老版本升级](./docs/upgrade-guidelines.zh-CN.md)
+- [从其他方案迁移](./docs/migration.zh-CN.md)
 
-## 更多技巧
+## 示例
 
-[docs/recipes](./docs/recipes.zh-CN.md)
-
-## 从老版本升级
-
-[docs/upgrade-guidelines](./docs/upgrade-guidelines.zh-CN.md)
+- [Counter](https://codesandbox.io/s/github/ice-lab/icestore/tree/master/examples/counter)
+- [Todos](https://codesandbox.io/s/github/ice-lab/icestore/tree/master/examples/todos)
+- [Class Component Support](https://codesandbox.io/s/github/ice-lab/icestore/tree/master/examples/classComponent)
+- [withModel](https://codesandbox.io/s/github/ice-lab/icestore/tree/master/examples/withModel)
 
 ## 浏览器支持
 

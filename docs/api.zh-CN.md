@@ -37,6 +37,20 @@ const {
 
 #### models
 
+`createStore({ [string]: modelConfig });`
+
+```js
+import { createStore } from '@ice/store'
+
+const count = {
+  state: 0,
+};
+
+createStore({
+  count
+});
+```
+
 ##### state
 
 `state: any`: 必填
@@ -51,32 +65,32 @@ const model = {
 
 ##### reducers
 
-`reducers: { [string]: (prevState, payload) => any }`
+`reducers: { [string]: (state, payload) => any }`
 
-一个改变该模型状态的函数集合。这些方法以模型的上一次 state 和一个 payload 作为入参，在方法中使用可变的方式来更新状态。这些方法应该是仅依赖于 state 和 payload 参数来计算下一个 state 的纯函数。对于有副作用的函数，请使用 effects。
+一个改变该模型状态的函数集合。这些方法以模型的上一次 state 和一个 payload 作为入参，在方法中使用可变的方式来更新状态。
+这些方法应该是仅依赖于 state 和 payload 参数来计算下一个 state 的纯函数。对于有副作用的函数，请使用 effects。
+
+一个简单的示例：
 
 ```js
-const todo = {
+const todos = {
   state: [
     {
-      todo: 'Learn typescript',
+      title: 'Learn typescript',
       done: true,
-    },
-    {
-      todo: 'Try immer',
-      done: false,
     },
   ],
   reducers: {
-    done(state) {
-      state.push({ todo: 'Tweet about it' }); // 直接更新了数组
+    foo(state) {
+      state.push({ title: 'Tweet about it' }); // 直接更新了数组
       state[1].done = true;
     },
   },
-}
+};
 ```
 
-icestore 内部是通过调用 [immer](https://github.com/immerjs/immer) 来实现可变状态的。Immer 只支持对普通对象和数组的变化检测，所以像字符串或数字这样的类型需要返回一个新值。 例如：
+icestore 内部是通过调用 [immer](https://github.com/immerjs/immer) 来实现可变状态的。
+Immer 只支持对普通对象和数组的变化检测，所以像字符串或数字这样的类型需要返回一个新值。 例如：
 
 ```js
 const count = {
@@ -92,11 +106,43 @@ const count = {
 
 参考 [docs/recipes](./recipes.zh-CN.md#可变状态的说明) 了解更多。
 
+reducer 的第二个参数即是调用时传递的参数：
+
+```js
+const todos = {
+  state: [
+    {
+      title: 'Learn typescript',
+      done: true,
+    },
+  ],
+  reducers: {
+    // 正确用法
+    add(state, todo) {
+      state.push(todo);
+    },
+    // 错误用法
+    add(state, title, done) {
+      state.push({ title, done });
+    },
+  },
+};
+
+// 使用时：
+function Component() {
+  const { add } = store.useModelDispathers('todos');
+  function handleClick () {
+    add({ title: 'Learn React', done: false }); // 正确用法
+    add('Learn React', false); // 错误用法
+  }
+}
+```
+
 ##### effects
 
 `effects: (dispatch) => ({ [string]: (payload, rootState) => void })`
 
-一个可以处理该模型副作用的函数集合。Effects 适用于进行异步调用、[模型联动](recipes.zh-CN.md#模型联动)等场景。在 effects 内部，通过调用 `this.reducerFoo` 来更新模型状态：
+一个可以处理该模型副作用的函数集合。这些方法以 payload 和 rootState 作为入参，适用于进行异步调用、[模型联动](recipes.zh-CN.md#模型联动)等场景。在 effects 内部，通过调用 `this.reducerFoo` 来更新模型状态：
 
 ```js
 const counter = {
@@ -105,7 +151,7 @@ const counter = {
     decrement:(prevState) => prevState - 1,
   },
   effects: () => ({
-    async decrementAsync() {
+    async asyncDecrement() {
       await delay(1000); // 进行一些异步操作
       this.decrement(); // 调用模型 reducers 内的方法来更新状态
     },
@@ -113,7 +159,7 @@ const counter = {
 };
 ```
 
-> 注意：如果您正在使用 TypeScript 并且配置了编译选项 `noImplicitThis: ture`，则会遇到类似 "Property 'setState' does not exist on type" 的编译错误。您可以通过删除该编译选项，或者使用下面示例中的 `dispatch.model.reducer` 来避免此错误。
+> 注意：如果您正在使用 TypeScript ，并且配置了编译选项 `noImplicitThis: ture`，则会遇到类似 "Property 'setState' does not exist on type" 的编译错误。您可以通过删除该编译选项，或者使用下面示例中的 `dispatch.model.reducer` 来避免此错误。
 
 ###### 同名处理
 
@@ -397,6 +443,19 @@ export default withModel(
 )(TodoList);
 ```
 
+#### useModelState
+
+`useModelState(name: string): state`
+
+通过该 hooks 使用模型的状态并订阅其更新。
+
+```js
+function FunctionComponent() {
+  const state = useModelState('counter');
+  console.log(state.value);
+}
+```
+
 #### useModelDispatchers
 
 `useModelDispatchers(name: string): dispatchers`
@@ -573,3 +632,71 @@ function FunctionComponent() {
   );
 }
 ```
+
+## withModel
+
+`withModel(model, mapModelToProps?, options?)(ReactFunctionComponent)`
+
+该方法用于在组件中快速使用 Model。
+
+```js
+import { withModel } from '@ice/store';
+import model from './model';
+
+function Todos({ model }) {
+  const {
+    useState,
+    useDispatchers,
+    useEffectsState,
+    getState,
+    getDispatchers,
+  } = model;
+  const [ state, dispatchers ] = useValue();
+}
+
+export default withModel(model)(Todos);
+```
+
+### 参数
+
+#### modelConfig
+
+与 createStore 方法中的 modelConfig 一致。
+
+#### mapModelToProps
+
+`mapModelToProps = (model) => ({ model })`
+
+使用该函数来自定义映射到组件中的值，使用示例：
+
+```js
+import { withModel } from '@ice/store';
+import model from './model';
+
+function Todos({ todo }) {
+  const [ state, dispatchers ] = todo.useValue();
+}
+
+export default withModel(model, function(model) {
+  return { todo: model };
+})(Todos);
+```
+
+#### options
+
+与 createStore 方法中的 options 一致。
+
+### 返回值
+
+- useValue
+- useState
+- useDispathers
+- useEffectsState
+- getValue
+- getState
+- getDispatchers
+- withValue
+- withDispatchers
+- withModelEffectsState
+
+其用法参考 createStore 的返回值。

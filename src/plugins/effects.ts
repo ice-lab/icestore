@@ -23,6 +23,13 @@ const effectsPlugin: T.Plugin = {
         ? model.effects(this.dispatch)
         : model.effects;
 
+    this.validate([
+      [
+        typeof effects!== 'object',
+        `Invalid effects from Model(${model.name}), effects should return an object`,
+      ],
+    ]);
+
     for (const effectName of Object.keys(effects)) {
       this.validate([
         [
