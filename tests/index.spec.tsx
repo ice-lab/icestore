@@ -180,7 +180,7 @@ describe("createStore", () => {
       });
 
       it('get model effects state', async () => {
-        //  Define a new hooks for that renderHook api doesn't support render one more hooks 
+        //  Define a new hooks for that renderHook api doesn't support render one more hooks
         function useModelEffect(namespace) {
           const [state, dispatchers] = useModel(namespace);
           const effectsState = useModelEffectsState(namespace);
@@ -292,14 +292,14 @@ describe("createStore", () => {
         const { getByTestId } = tester;
 
         expect(getByTestId('count').innerHTML).toBe('0');
-        rtl.fireEvent.click(getByTestId('decrementAsync'));
+        rtl.fireEvent.click(getByTestId('asyncDecrement'));
         await rtl.waitForDomChange();
         expect(JSON.parse(getByTestId('decrementAsyncEffectsState').innerHTML).error).not.toBeNull();
 
         rtl.fireEvent.click(getByTestId('increment'));
         expect(getByTestId('count').innerHTML).toBe('1');
 
-        rtl.fireEvent.click(getByTestId('decrementAsync'));
+        rtl.fireEvent.click(getByTestId('asyncDecrement'));
         expect(getByTestId('decrementAsyncEffectsState').innerHTML).toBe('{"isLoading":true,"error":null}');
 
         await rtl.waitForDomChange();

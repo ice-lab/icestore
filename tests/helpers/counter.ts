@@ -14,7 +14,7 @@ const counter = {
     reset: () => ({ count: 0 }),
   },
   effects: (dispatch) => ({
-    async decrementAsync(_, rootState) {
+    async asyncDecrement(_, rootState) {
       if (rootState.counter.count <= 0) {
         throw new Error('count should be greater than or equal to 0');
       }
