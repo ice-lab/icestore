@@ -26,7 +26,7 @@ const model = {
     },
     setState(state: TodosState, nextState: TodosState) {
       return nextState;
-    }
+    },
   },
   effects: () => ({
     async refresh() {
