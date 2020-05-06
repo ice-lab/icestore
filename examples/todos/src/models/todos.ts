@@ -24,13 +24,16 @@ const model = {
     remove(state: TodosState, index: number) {
       state.splice(index, 1);
     },
+    set(state: TodosState, nextState: TodosState) {
+      return nextState;
+    },
   },
   effects: () => ({
     async refresh() {
       await delay(2000); // wait for data to load
 
       // pass the result to a local reducer
-      this.setState([
+      this.set([
         {
           text: 'react',
         },
