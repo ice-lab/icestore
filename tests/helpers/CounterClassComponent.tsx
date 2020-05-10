@@ -3,6 +3,7 @@ import {
   ExtractIModelFromModelConfig,
   ExtractIModelDispatchersFromModelConfig,
   ExtractIModelEffectsStateFromModelConfig,
+  ExtractIModelEffectsLoadingFromModelConfig,
 } from '../../src';
 import counterModel from './counter';
 
@@ -50,9 +51,28 @@ export class CounterUseEffectsState extends PureComponent<CounterUseEffectsState
     const { counterEffectsState, children } = this.props;
     return (
       <React.Fragment>
-        <code data-testid="decrementAsyncEffectsState">
+        <span data-testid="decrementAsyncEffectsState">
           {JSON.stringify(counterEffectsState.asyncDecrement)}
-        </code>
+        </span>
+        {children}
+      </React.Fragment>
+    );
+  }
+}
+
+interface CounterUseEffectsLoadingProps {
+  counterEffectsLoading: ExtractIModelEffectsLoadingFromModelConfig<typeof counterModel>;
+  children: React.ReactChild;
+}
+
+export class CounterUseEffectsLoading extends PureComponent<CounterUseEffectsLoadingProps> {
+  render() {
+    const { counterEffectsLoading, children } = this.props;
+    return (
+      <React.Fragment>
+        <span data-testid="asyncDecrementEffectsLoading">
+          {JSON.stringify(counterEffectsLoading.asyncDecrement)}
+        </span>
         {children}
       </React.Fragment>
     );

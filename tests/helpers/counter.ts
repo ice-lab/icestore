@@ -6,7 +6,7 @@ export interface CounterState {
 
 const counter = {
   state: {
-    count: 0,
+    count: 1,
   },
   reducers: {
     increment: (prevState: CounterState) => prevState.count += 1,
@@ -18,7 +18,7 @@ const counter = {
       if (rootState.counter.count <= 0) {
         throw new Error('count should be greater than or equal to 0');
       }
-      await delay(1000);
+      await delay(100);
       this.decrement();
     },
   }),
