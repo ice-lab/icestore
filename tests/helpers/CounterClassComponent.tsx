@@ -4,6 +4,7 @@ import {
   ExtractIModelDispatchersFromModelConfig,
   ExtractIModelEffectsStateFromModelConfig,
   ExtractIModelEffectsLoadingFromModelConfig,
+  ExtractIModelEffectsErrorFromModelConfig,
 } from '../../src';
 import counterModel from './counter';
 
@@ -23,6 +24,7 @@ export default class Counter extends PureComponent<CounterProps> {
         <div data-testid="setState" onClick={() => dispatchers.setState({ count: 1 })} />
         <div data-testid="increment" onClick={dispatchers.increment} />
         <div data-testid="decrement" onClick={dispatchers.decrement} />
+        <div data-testid="asyncIncrement" onClick={dispatchers.asyncIncrement} />
         <div data-testid="asyncDecrement" onClick={dispatchers.asyncDecrement} />
         {children}
       </React.Fragment>
@@ -70,8 +72,27 @@ export class CounterUseEffectsLoading extends PureComponent<CounterUseEffectsLoa
     const { counterEffectsLoading, children } = this.props;
     return (
       <React.Fragment>
-        <span data-testid="asyncDecrementEffectsLoading">
-          {JSON.stringify(counterEffectsLoading.asyncDecrement)}
+        <span data-testid="asyncIncrementEffectsLoading">
+          {JSON.stringify(counterEffectsLoading.asyncIncrement)}
+        </span>
+        {children}
+      </React.Fragment>
+    );
+  }
+}
+
+interface CounterUseEffectsErrorProps {
+  counterEffectsError: ExtractIModelEffectsErrorFromModelConfig<typeof counterModel>;
+  children: React.ReactChild;
+}
+
+export class CounterUseEffectsError extends PureComponent<CounterUseEffectsErrorProps> {
+  render() {
+    const { counterEffectsError, children } = this.props;
+    return (
+      <React.Fragment>
+        <span data-testid="asyncDecrementEffectsError">
+          {JSON.stringify(counterEffectsError.asyncDecrement)}
         </span>
         {children}
       </React.Fragment>

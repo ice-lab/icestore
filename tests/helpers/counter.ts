@@ -6,14 +6,20 @@ export interface CounterState {
 
 const counter = {
   state: {
-    count: 1,
+    count: 0,
   },
   reducers: {
     increment: (prevState: CounterState) => prevState.count += 1,
-    decrement: (prevState: CounterState) => prevState.count -= 1,
+    decrement: (prevState: CounterState) => {
+      prevState.count--;
+    },
     reset: () => ({ count: 0 }),
   },
-  effects: (dispatch) => ({
+  effects: () => ({
+    async asyncIncrement() {
+      await delay(100);
+      this.increment();
+    },
     async asyncDecrement(_, rootState) {
       if (rootState.counter.count <= 0) {
         throw new Error('count should be greater than or equal to 0');

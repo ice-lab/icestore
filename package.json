@@ -50,7 +50,7 @@
     "react": "^16.8.0",
     "react-dom": "^16.8.0",
     "react-test-renderer": "^16.13.0",
-    "ts-jest": "^25.2.1",
+    "ts-jest": "^25.5.1",
     "typescript": "^3.7.4"
   },
   "peerDependencies": {

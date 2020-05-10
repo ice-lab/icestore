@@ -38,7 +38,7 @@ describe('createLoadingPlugin', () => {
     });
   });
 
-  describe('loading state in function component', () => {
+  describe('loading effects in function component', () => {
     test('normal', done => {
       const store = createStore({ counter });
       const { Provider, useModel, useModelEffectsLoading } = store;
@@ -52,42 +52,42 @@ describe('createLoadingPlugin', () => {
 
       const { result } = createHook(Provider, useModelLoading, "counter");
       const { dispatchers } = result.current;
-
-      expect(result.current.effectsLoading.asyncDecrement).toBeFalsy();
+      expect(result.current.effectsLoading.asyncIncrement).toBeFalsy();
       rhl.act(() => {
-        dispatchers.asyncDecrement();
+        dispatchers.asyncIncrement();
       });
-      expect(result.current.effectsLoading.asyncDecrement).toBeTruthy();
+      expect(result.current.effectsLoading.asyncIncrement).toBeTruthy();
       setTimeout(() => {
-        expect(result.current.effectsLoading.asyncDecrement).toBeFalsy();
+        expect(result.current.effectsLoading.asyncIncrement).toBeFalsy();
         done();
       }, 200);
     });
 
 
   });
-  describe('loading state in class component', () => {
+
+  describe('loading effects in class component', () => {
     const store = createStore({ counter });
     const { Provider, withModel, withModelEffectsLoading } = store;
     const WithModelCounter = withModel('counter')(Counter);
-    const WithCounterUseEffectsState = withModelEffectsLoading('counter')(CounterUseEffectsLoading);
+    const WithCounterUseEffectsLoading = withModelEffectsLoading('counter')(CounterUseEffectsLoading);
 
     test('normal', done => {
       const tester = rtl.render(
         <Provider>
-          <WithCounterUseEffectsState>
+          <WithCounterUseEffectsLoading>
             <WithModelCounter />
-          </WithCounterUseEffectsState>
+          </WithCounterUseEffectsLoading>
         </Provider>,
       );
       const { getByTestId } = tester;
-      expect(getByTestId('asyncDecrementEffectsLoading').innerHTML).toBe('false');
+      expect(getByTestId('asyncIncrementEffectsLoading').innerHTML).toBe('false');
 
-      rtl.fireEvent.click(getByTestId('asyncDecrement'));
-      expect(getByTestId('asyncDecrementEffectsLoading').innerHTML).toBe('true');
+      rtl.fireEvent.click(getByTestId('asyncIncrement'));
+      expect(getByTestId('asyncIncrementEffectsLoading').innerHTML).toBe('true');
 
       setTimeout(() => {
-        expect(getByTestId('asyncDecrementEffectsLoading').innerHTML).toBe('false');
+        expect(getByTestId('asyncIncrementEffectsLoading').innerHTML).toBe('false');
         done();
       }, 200);
     });
