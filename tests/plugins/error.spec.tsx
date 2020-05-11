@@ -50,7 +50,7 @@ describe('createErrorPlugin', () => {
       return { state, dispatchers, effectsError };
     }
 
-    test('normal', async () => {
+    test('normal usage', async () => {
       const { result, waitForNextUpdate } = createHook(Provider, useModelError, "counter");
       expect(result.current.effectsError.throwError).toEqual({ error: null, value: false });
       rhl.act(() => {
@@ -78,7 +78,7 @@ describe('createErrorPlugin', () => {
     const WithModelCounter = withModel('counter')(Counter);
     const WithCounterUseEffectsError = withModelEffectsError('counter')(CounterUseEffectsError);
 
-    test('normal', async () => {
+    test('normal usage', async () => {
       const tester = rtl.render(
         <Provider>
           <WithCounterUseEffectsError>

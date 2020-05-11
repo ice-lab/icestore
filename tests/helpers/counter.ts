@@ -10,9 +10,7 @@ const counter = {
   },
   reducers: {
     increment: (prevState: CounterState) => prevState.count += 1,
-    decrement: (prevState: CounterState) => {
-      prevState.count--;
-    },
+    decrement: (prevState: CounterState) => prevState.count -= 1,
     reset: () => ({ count: 0 }),
   },
   effects: () => ({
@@ -20,19 +18,68 @@ const counter = {
       await delay(100);
       this.increment();
     },
-    async asyncDecrement(_, rootState) {
+
+    async asyncDecrement() {
       await delay(100);
-      if (rootState.counter.count <= 0) {
-        throw new Error('count should be greater than or equal to 0.');
-      }
       this.decrement();
     },
+
     async throwError(message = 'Error!') {
       await delay(100);
       throw new Error(message);
     },
   }),
 };
+
+export const counterWithImmer = {
+  state: {
+    a: {
+      b: {
+        c: 0,
+      },
+    },
+    d: {
+      b: {
+        c: 0,
+      },
+    },
+  },
+  reducers: {
+    add(state) {
+      state.a.b.c += 1;
+    },
+  },
+};
+
+export const counterWithNoImmer = {
+  state: {
+    a: {
+      b: {
+        c: 0,
+      },
+    },
+    d: {
+      b: {
+        c: 0,
+      },
+    },
+  },
+  reducers: {
+    add(state) {
+      return {
+        ...state,
+        a: {
+          ...state.a,
+          b: {
+            ...state.a.b,
+            c: state.a.b.c + 1,
+          },
+        },
+      };
+    },
+  },
+};
+
 
 export const counterWithUnsupportEffects = {
   state: {
@@ -59,15 +106,6 @@ export const counterWithUnsupportActions = {
         a: state.a + value,
       };
     },
-  },
-};
-
-export const counterWithNoImmer = {
-  state: {
-    count: 1,
-  },
-  reducers: {
-    increment: (prevState) => { return prevState.count + 1; },
   },
 };
 

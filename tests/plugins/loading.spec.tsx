@@ -48,7 +48,7 @@ describe('createLoadingPlugin', () => {
 
       return { state, dispatchers, effectsLoading };
     }
-    test('normal', async () => {
+    test('normal usage', async () => {
       const { result, waitForNextUpdate } = createHook(Provider, useModelLoading, "counter");
       expect(result.current.effectsLoading.asyncIncrement).toBeFalsy();
       rhl.act(() => {
@@ -105,7 +105,7 @@ describe('createLoadingPlugin', () => {
     const WithModelCounter = withModel('counter')(Counter);
     const WithCounterUseEffectsLoading = withModelEffectsLoading('counter')(CounterUseEffectsLoading);
 
-    test('normal', done => {
+    test('normal usage', done => {
       const tester = rtl.render(
         <Provider>
           <WithCounterUseEffectsLoading>
