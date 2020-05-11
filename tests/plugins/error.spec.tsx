@@ -39,7 +39,7 @@ describe('createErrorPlugin', () => {
   });
 
   describe('error effects in function component', () => {
-    test('normal', () => {
+    test('normal', async () => {
       const store = createStore({ counter });
       const { Provider, useModel, useModelEffectsError } = store;
 
@@ -50,15 +50,13 @@ describe('createErrorPlugin', () => {
         return { state, dispatchers, effectsError };
       }
 
-      const { result } = createHook(Provider, useModelError, "counter");
-      const { dispatchers } = result.current;
-
-      expect(result.current.effectsError.asyncDecrement).toEqual({ error: null, value: false });
-
+      const { result, waitForNextUpdate } = createHook(Provider, useModelError, "counter");
+      expect(result.current.effectsError.throwError).toEqual({ error: null, value: false });
       rhl.act(() => {
-        dispatchers.asyncDecrement();
+        result.current.dispatchers.throwError();
       });
-      // expect(result.current.effectsError.asyncDecrement).toEqual({ error: Error('count should be greater than or equal to 0'), value: true });
+      await waitForNextUpdate({ timeout: 200 });
+      expect(result.current.effectsError.throwError).toEqual({ error: Error('Error!'), value: true });
     });
   });
 
@@ -77,12 +75,12 @@ describe('createErrorPlugin', () => {
         </Provider>,
       );
       const { getByTestId } = tester;
-      expect(JSON.parse(getByTestId('asyncDecrementEffectsError').innerHTML)).toEqual({ error: null, value: false });
+      expect(JSON.parse(getByTestId('counterEffectsError').innerHTML)).toEqual({ error: null, value: false });
 
-      rtl.fireEvent.click(getByTestId('asyncDecrement'));
-      await rtl.waitForDomChange();
+      rtl.fireEvent.click(getByTestId('throwError'));
+      await rtl.waitForDomChange({ timeout: 200 });
 
-      expect(JSON.parse(getByTestId('asyncDecrementEffectsError').innerHTML)).toEqual({ error: {}, value: true });
+      expect(JSON.parse(getByTestId('counterEffectsError').innerHTML)).toEqual({ error: {}, value: true });
     });
   });
 });

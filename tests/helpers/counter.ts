@@ -21,11 +21,15 @@ const counter = {
       this.increment();
     },
     async asyncDecrement(_, rootState) {
-      if (rootState.counter.count <= 0) {
-        throw new Error('count should be greater than or equal to 0');
-      }
       await delay(100);
+      if (rootState.counter.count <= 0) {
+        throw new Error('count should be greater than or equal to 0.');
+      }
       this.decrement();
+    },
+    async throwError() {
+      await delay(100);
+      throw new Error('Error!');
     },
   }),
 };

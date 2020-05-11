@@ -39,31 +39,65 @@ describe('createLoadingPlugin', () => {
   });
 
   describe('loading effects in function component', () => {
-    test('normal', done => {
-      const store = createStore({ counter });
-      const { Provider, useModel, useModelEffectsLoading } = store;
+    afterEach(rhl.cleanup);
+    const store = createStore({ counter });
+    const { Provider, useModel, useModelEffectsLoading } = store;
 
-      function useModelLoading(namespace) {
-        const [state, dispatchers] = useModel(namespace);
-        const effectsLoading = useModelEffectsLoading(namespace);
+    function useModelLoading(namespace) {
+      const [state, dispatchers] = useModel(namespace);
+      const effectsLoading = useModelEffectsLoading(namespace);
 
-        return { state, dispatchers, effectsLoading };
-      }
-
-      const { result } = createHook(Provider, useModelLoading, "counter");
-      const { dispatchers } = result.current;
+      return { state, dispatchers, effectsLoading };
+    }
+    test('normal', async () => {
+      const { result, waitForNextUpdate } = createHook(Provider, useModelLoading, "counter");
       expect(result.current.effectsLoading.asyncIncrement).toBeFalsy();
       rhl.act(() => {
-        dispatchers.asyncIncrement();
+        result.current.dispatchers.asyncIncrement();
       });
       expect(result.current.effectsLoading.asyncIncrement).toBeTruthy();
-      setTimeout(() => {
-        expect(result.current.effectsLoading.asyncIncrement).toBeFalsy();
-        done();
-      }, 200);
+      await waitForNextUpdate({ timeout: 200 });
+      expect(result.current.effectsLoading.asyncIncrement).toBeFalsy();
     });
 
+    test('take latest effects loading', async () => {
+      const { result, waitForNextUpdate } = createHook(Provider, useModelLoading, "counter");
+      expect(result.current.effectsLoading.asyncIncrement).toBeFalsy();
+      rhl.act(() => {
+        result.current.dispatchers.asyncIncrement();
+        result.current.dispatchers.asyncIncrement();
+      });
+      expect(result.current.effectsLoading.asyncIncrement).toBeTruthy();
+      await waitForNextUpdate({ timeout: 180 });
+      expect(result.current.effectsLoading.asyncIncrement).toBeFalsy();
+    });
 
+    test('multiple effects loading', async () => {
+      const { result, waitForNextUpdate } = createHook(Provider, useModelLoading, "counter");
+      expect(result.current.effectsLoading.asyncIncrement).toBeFalsy();
+      expect(result.current.effectsLoading.asyncDecrement).toBeFalsy();
+      rhl.act(() => {
+        result.current.dispatchers.asyncIncrement();
+        result.current.dispatchers.asyncDecrement();
+      });
+      expect(result.current.effectsLoading.asyncIncrement).toBeTruthy();
+      expect(result.current.effectsLoading.asyncDecrement).toBeTruthy();
+      await waitForNextUpdate({ timeout: 200 });
+      expect(result.current.effectsLoading.asyncIncrement).toBeFalsy();
+      expect(result.current.effectsLoading.asyncDecrement).toBeFalsy();
+    });
+
+    test('throw error', async () => {
+      const { result, waitForNextUpdate } = createHook(Provider, useModelLoading, "counter");
+      expect(result.current.effectsLoading.throwError).toBeFalsy();
+      rhl.act(() => {
+        result.current.dispatchers.throwError();
+      });
+
+      expect(result.current.effectsLoading.throwError).toBeTruthy();
+      await waitForNextUpdate({ timeout: 200 });
+      expect(result.current.effectsLoading.throwError).toBeFalsy();
+    });
   });
 
   describe('loading effects in class component', () => {
@@ -88,6 +122,69 @@ describe('createLoadingPlugin', () => {
 
       setTimeout(() => {
         expect(getByTestId('asyncIncrementEffectsLoading').innerHTML).toBe('false');
+        done();
+      }, 200);
+    });
+
+    test('take latest effects loading', (done) => {
+      const tester = rtl.render(
+        <Provider>
+          <WithCounterUseEffectsLoading>
+            <WithModelCounter />
+          </WithCounterUseEffectsLoading>
+        </Provider>,
+      );
+      const { getByTestId } = tester;
+      expect(getByTestId('asyncIncrementEffectsLoading').innerHTML).toBe('false');
+
+      rtl.fireEvent.click(getByTestId('asyncIncrement'));
+      rtl.fireEvent.click(getByTestId('asyncIncrement'));
+      expect(getByTestId('asyncIncrementEffectsLoading').innerHTML).toBe('true');
+
+      setTimeout(() => {
+        expect(getByTestId('asyncIncrementEffectsLoading').innerHTML).toBe('false');
+        done();
+      }, 180);
+    });
+
+    test('multiple effects loading', (done) => {
+      const tester = rtl.render(
+        <Provider>
+          <WithCounterUseEffectsLoading>
+            <WithModelCounter />
+          </WithCounterUseEffectsLoading>
+        </Provider>,
+      );
+      const { getByTestId } = tester;
+      expect(getByTestId('asyncIncrementEffectsLoading').innerHTML).toBe('false');
+
+      rtl.fireEvent.click(getByTestId('asyncIncrement'));
+      rtl.fireEvent.click(getByTestId('asyncDecrement'));
+      expect(getByTestId('asyncIncrementEffectsLoading').innerHTML).toBe('true');
+      expect(getByTestId('asyncDecrementEffectsLoading').innerHTML).toBe('true');
+
+      setTimeout(() => {
+        expect(getByTestId('asyncIncrementEffectsLoading').innerHTML).toBe('false');
+        expect(getByTestId('asyncDecrementEffectsLoading').innerHTML).toBe('false');
+        done();
+      }, 200);
+    });
+
+    test('throw error', (done) => {
+      const tester = rtl.render(
+        <Provider>
+          <WithCounterUseEffectsLoading>
+            <WithModelCounter />
+          </WithCounterUseEffectsLoading>
+        </Provider>,
+      );
+      const { getByTestId } = tester;
+      expect(getByTestId('throwErrorEffectsLoading').innerHTML).toBe('false');
+      rtl.fireEvent.click(getByTestId('throwError'));
+      expect(getByTestId('throwErrorEffectsLoading').innerHTML).toBe('true');
+
+      setTimeout(() => {
+        expect(getByTestId('throwErrorEffectsLoading').innerHTML).toBe('false');
         done();
       }, 200);
     });

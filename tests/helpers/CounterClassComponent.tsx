@@ -26,6 +26,7 @@ export default class Counter extends PureComponent<CounterProps> {
         <div data-testid="decrement" onClick={dispatchers.decrement} />
         <div data-testid="asyncIncrement" onClick={dispatchers.asyncIncrement} />
         <div data-testid="asyncDecrement" onClick={dispatchers.asyncDecrement} />
+        <div data-testid="throwError" onClick={dispatchers.throwError} />
         {children}
       </React.Fragment>
     );
@@ -75,6 +76,12 @@ export class CounterUseEffectsLoading extends PureComponent<CounterUseEffectsLoa
         <span data-testid="asyncIncrementEffectsLoading">
           {JSON.stringify(counterEffectsLoading.asyncIncrement)}
         </span>
+        <span data-testid="asyncDecrementEffectsLoading">
+          {JSON.stringify(counterEffectsLoading.asyncDecrement)}
+        </span>
+        <span data-testid="throwErrorEffectsLoading">
+          {JSON.stringify(counterEffectsLoading.throwError)}
+        </span>
         {children}
       </React.Fragment>
     );
@@ -91,8 +98,8 @@ export class CounterUseEffectsError extends PureComponent<CounterUseEffectsError
     const { counterEffectsError, children } = this.props;
     return (
       <React.Fragment>
-        <span data-testid="asyncDecrementEffectsError">
-          {JSON.stringify(counterEffectsError.asyncDecrement)}
+        <span data-testid="counterEffectsError">
+          {JSON.stringify(counterEffectsError.throwError)}
         </span>
         {children}
       </React.Fragment>
