@@ -27,9 +27,9 @@ const counter = {
       }
       this.decrement();
     },
-    async throwError() {
+    async throwError(message = 'Error!') {
       await delay(100);
-      throw new Error('Error!');
+      throw new Error(message);
     },
   }),
 };

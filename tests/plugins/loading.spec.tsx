@@ -39,7 +39,6 @@ describe('createLoadingPlugin', () => {
   });
 
   describe('loading effects in function component', () => {
-    afterEach(rhl.cleanup);
     const store = createStore({ counter });
     const { Provider, useModel, useModelEffectsLoading } = store;
 

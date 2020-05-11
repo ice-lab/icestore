@@ -39,17 +39,18 @@ describe('createErrorPlugin', () => {
   });
 
   describe('error effects in function component', () => {
+    afterEach(rtl.cleanup);
+    const store = createStore({ counter });
+    const { Provider, useModel, useModelEffectsError } = store;
+
+    function useModelError(namespace) {
+      const [state, dispatchers] = useModel(namespace);
+      const effectsError = useModelEffectsError(namespace);
+
+      return { state, dispatchers, effectsError };
+    }
+
     test('normal', async () => {
-      const store = createStore({ counter });
-      const { Provider, useModel, useModelEffectsError } = store;
-
-      function useModelError(namespace) {
-        const [state, dispatchers] = useModel(namespace);
-        const effectsError = useModelEffectsError(namespace);
-
-        return { state, dispatchers, effectsError };
-      }
-
       const { result, waitForNextUpdate } = createHook(Provider, useModelError, "counter");
       expect(result.current.effectsError.throwError).toEqual({ error: null, value: false });
       rhl.act(() => {
@@ -57,6 +58,17 @@ describe('createErrorPlugin', () => {
       });
       await waitForNextUpdate({ timeout: 200 });
       expect(result.current.effectsError.throwError).toEqual({ error: Error('Error!'), value: true });
+    });
+
+    test('take latest effects error', async () => {
+      const { result, waitForNextUpdate } = createHook(Provider, useModelError, "counter");
+
+      rhl.act(() => {
+        result.current.dispatchers.throwError('1');
+        result.current.dispatchers.throwError('2');
+      });
+      await waitForNextUpdate({ timeout: 200 });
+      expect(result.current.effectsError.throwError).toEqual({ error: Error('2'), value: true });
     });
   });
 
@@ -75,12 +87,14 @@ describe('createErrorPlugin', () => {
         </Provider>,
       );
       const { getByTestId } = tester;
-      expect(JSON.parse(getByTestId('counterEffectsError').innerHTML)).toEqual({ error: null, value: false });
+      expect(getByTestId('throwErrorEffectsErrorValue').innerHTML).toEqual('false');
+      expect(getByTestId('throwErrorEffectsErrorMessage').innerHTML).toEqual('null');
 
       rtl.fireEvent.click(getByTestId('throwError'));
       await rtl.waitForDomChange({ timeout: 200 });
 
-      expect(JSON.parse(getByTestId('counterEffectsError').innerHTML)).toEqual({ error: {}, value: true });
+      expect(getByTestId('throwErrorEffectsErrorValue').innerHTML).toEqual('true');
+      expect(getByTestId('throwErrorEffectsErrorMessage').innerHTML).toEqual('Error: Error!');
     });
   });
 });
