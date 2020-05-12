@@ -9,19 +9,19 @@ const counter = {
     count: 0,
   },
   reducers: {
-    increment: (prevState: CounterState) => prevState.count += 1,
-    decrement: (prevState: CounterState) => prevState.count -= 1,
+    increment: (prevState: CounterState, count: number) => prevState.count += count,
+    decrement: (prevState: CounterState, count: number) => prevState.count -= count,
     reset: () => ({ count: 0 }),
   },
   effects: () => ({
-    async asyncIncrement() {
+    async asyncIncrement(count = 1) {
       await delay(100);
-      this.increment();
+      this.increment(count);
     },
 
-    async asyncDecrement() {
+    async asyncDecrement(count = 1) {
       await delay(100);
-      this.decrement();
+      this.decrement(count);
     },
 
     async throwError(message = 'Error!') {

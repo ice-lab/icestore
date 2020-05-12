@@ -55,7 +55,7 @@ export class CounterUseEffectsState extends PureComponent<CounterUseEffectsState
     return (
       <React.Fragment>
         <span data-testid="decrementAsyncEffectsState">
-          {JSON.stringify(counterEffectsState.asyncDecrement)}
+          {String(counterEffectsState.asyncDecrement)}
         </span>
         {children}
       </React.Fragment>
@@ -74,13 +74,13 @@ export class CounterUseEffectsLoading extends PureComponent<CounterUseEffectsLoa
     return (
       <React.Fragment>
         <span data-testid="asyncIncrementEffectsLoading">
-          {JSON.stringify(counterEffectsLoading.asyncIncrement)}
+          {String(counterEffectsLoading.asyncIncrement)}
         </span>
         <span data-testid="asyncDecrementEffectsLoading">
-          {JSON.stringify(counterEffectsLoading.asyncDecrement)}
+          {String(counterEffectsLoading.asyncDecrement)}
         </span>
         <span data-testid="throwErrorEffectsLoading">
-          {JSON.stringify(counterEffectsLoading.throwError)}
+          {String(counterEffectsLoading.throwError)}
         </span>
         {children}
       </React.Fragment>

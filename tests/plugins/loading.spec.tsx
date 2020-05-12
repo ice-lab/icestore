@@ -81,7 +81,7 @@ describe('createLoadingPlugin', () => {
       });
       expect(result.current.effectsLoading.asyncIncrement).toBeTruthy();
       expect(result.current.effectsLoading.asyncDecrement).toBeTruthy();
-      await waitForNextUpdate({ timeout: 200 });
+      await waitForNextUpdate({ timeout: 300 });
       expect(result.current.effectsLoading.asyncIncrement).toBeFalsy();
       expect(result.current.effectsLoading.asyncDecrement).toBeFalsy();
     });
@@ -92,7 +92,6 @@ describe('createLoadingPlugin', () => {
       rhl.act(() => {
         result.current.dispatchers.throwError();
       });
-
       expect(result.current.effectsLoading.throwError).toBeTruthy();
       await waitForNextUpdate({ timeout: 200 });
       expect(result.current.effectsLoading.throwError).toBeFalsy();
