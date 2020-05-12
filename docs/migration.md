@@ -3,6 +3,8 @@ id: migration
 title: Migration
 ---
 
+English | [简体中文](./migration.zh-CN.md)
+
 ## Migrating From Redux
 
 We provide a gradual solution to allow your project to be partially migrated from Redux to icestore.
