@@ -1,5 +1,5 @@
 import createStore from "../src/index";
-import * as models from "./helpers/models";
+import counter from './helpers/counter';
 
 describe("createStore", () => {
   test("creteStore should be defined", () => {
@@ -7,7 +7,7 @@ describe("createStore", () => {
   });
 
   it("exposes the public API", () => {
-    const store = createStore(models);
+    const store = createStore({ counter });
     const methods = Reflect.ownKeys(store);
 
     expect(methods).toContain("Provider");

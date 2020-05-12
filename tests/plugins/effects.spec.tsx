@@ -1,7 +1,8 @@
 import React from 'react';
 import * as rhl from "@testing-library/react-hooks";
 import { createStore } from '../../src/index';
-import counter from '../helpers/counter';
+import counter, { counterCustomSetState } from '../helpers/counter';
+import todos from '../helpers/todos';
 
 describe('effects', () => {
 
@@ -29,29 +30,24 @@ describe('effects', () => {
     expect(() => createStore(({ testModel } as any))).toThrow('Invalid effect (testModel/test). Must be a function');
   });
 
-  const todos = {
-    state: [],
-    reducers: {
-      add(state, todo = {}) {
-        state.push(todo);
-      },
-    },
-    effects: (dispatch) => ({
-      add(todo) {
-        dispatch.counter.asyncIncrement();
-      },
-      decreCounter() {
-        dispatch.counter.asyncDecrement(1);
-      },
-    }),
-  };
-  const store = createStore({ counter, todos });
+  const store = createStore({ counter, todos, counterCustomSetState });
   const { Provider, useModel } = store;
 
   test('normal effects usage', async () => {
     const { result, waitForNextUpdate } = createHook(Provider, useModel, 'counter');
     expect(result.current[0].count).toBe(0);
     rhl.act(() => result.current[1].asyncIncrement());
+    await waitForNextUpdate({ timeout: 200 });
+    expect(result.current[0].count).toBe(1);
+    rhl.act(() => result.current[1].asyncDecrement());
+    await waitForNextUpdate({ timeout: 200 });
+    expect(result.current[0].count).toBe(0);
+  });
+
+  test('dispatch inner effect', async () => {
+    const { result, waitForNextUpdate } = createHook(Provider, useModel, 'counter');
+    expect(result.current[0].count).toBe(0);
+    rhl.act(() => result.current[1].asyncCallIncrement());
     await waitForNextUpdate({ timeout: 200 });
     expect(result.current[0].count).toBe(1);
   });
@@ -63,6 +59,32 @@ describe('effects', () => {
     rhl.act(() => todosResult.current[1].decreCounter());
     await waitForNextUpdate();
     expect(counterResult.current[0].count).toBe(0);
+  });
+
+  test('multiple actions', (done) => {
+    const { result } = createHook(Provider, useModel, 'counter');
+    expect(result.current[0].count).toBe(0);
+    rhl.act(() => result.current[1].incrementSome());
+    setTimeout(() => {
+      expect(result.current[0].count).toBe(4);
+      done();
+    }, 1000);
+  });
+
+  test('normal setState', async () => {
+    const { result, waitForNextUpdate } = createHook(Provider, useModel, 'counter');
+    expect(result.current[0].count).toBe(4);
+    rhl.act(() => result.current[1].setCount(0));
+    await waitForNextUpdate();
+    expect(result.current[0].count).toBe(0);
+  });
+
+  test('custom setState in reducers', async () => {
+    const { result, waitForNextUpdate } = createHook(Provider, useModel, 'counterCustomSetState');
+    expect(result.current[0].count).toBe(0);
+    rhl.act(() => result.current[1].setCount(1));
+    await waitForNextUpdate();
+    expect(result.current[0].count).toBe(2);
   });
 
   test('a effect that shares a name with a reducer', async () => {
