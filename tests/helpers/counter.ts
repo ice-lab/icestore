@@ -1,8 +1,8 @@
-import { delay } from './utils';
-
 export interface CounterState {
   count: number;
 }
+
+export const delay = (time) => new Promise((resolve) => setTimeout(resolve, time));
 
 const counter = {
   state: {

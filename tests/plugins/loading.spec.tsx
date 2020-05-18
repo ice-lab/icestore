@@ -1,6 +1,7 @@
 import React from 'react';
 import * as rhl from "@testing-library/react-hooks";
 import * as rtl from "@testing-library/react";
+import createHook from '../helpers/createHook';
 import createLoadingPlugin from '../../src/plugins/loading';
 import createStore from "../../src/index";
 import counter from '../helpers/counter';
@@ -55,7 +56,7 @@ describe('createLoadingPlugin', () => {
         result.current.dispatchers.asyncIncrement();
       });
       expect(result.current.effectsLoading.asyncIncrement).toBeTruthy();
-      await waitForNextUpdate({ timeout: 200 });
+      await waitForNextUpdate();
       expect(result.current.effectsLoading.asyncIncrement).toBeFalsy();
     });
 
@@ -81,7 +82,7 @@ describe('createLoadingPlugin', () => {
       });
       expect(result.current.effectsLoading.asyncIncrement).toBeTruthy();
       expect(result.current.effectsLoading.asyncDecrement).toBeTruthy();
-      await waitForNextUpdate({ timeout: 300 });
+      await waitForNextUpdate();
       expect(result.current.effectsLoading.asyncIncrement).toBeFalsy();
       expect(result.current.effectsLoading.asyncDecrement).toBeFalsy();
     });
@@ -93,7 +94,7 @@ describe('createLoadingPlugin', () => {
         result.current.dispatchers.throwError();
       });
       expect(result.current.effectsLoading.throwError).toBeTruthy();
-      await waitForNextUpdate({ timeout: 200 });
+      await waitForNextUpdate();
       expect(result.current.effectsLoading.throwError).toBeFalsy();
     });
   });
@@ -188,13 +189,3 @@ describe('createLoadingPlugin', () => {
     });
   });
 });
-
-function createHook(Provider, callback, namespace) {
-  return rhl.renderHook(() => callback(namespace), {
-    wrapper: (props) => (
-      <Provider {...props}>
-        {props.children}
-      </Provider>
-    ),
-  });
-}

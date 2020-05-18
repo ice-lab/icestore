@@ -1,11 +1,10 @@
-import React from 'react';
 import * as rhl from "@testing-library/react-hooks";
 import { createStore } from '../../src/index';
 import counter, { counterCustomSetState } from '../helpers/counter';
 import todos from '../helpers/todos';
+import createHook from '../helpers/createHook';
 
 describe('effects', () => {
-
   test('invalidate effects', () => {
     const testModel = {
       state: 0,
@@ -97,13 +96,3 @@ describe('effects', () => {
     expect(todosResult.current[0]).toEqual([{ name: 'test' }]);
   });
 });
-
-function createHook(Provider, callback, namespace) {
-  return rhl.renderHook(() => callback(namespace), {
-    wrapper: (props) => (
-      <Provider {...props}>
-        {props.children}
-      </Provider>
-    ),
-  });
-}

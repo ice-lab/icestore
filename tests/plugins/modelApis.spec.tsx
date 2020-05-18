@@ -1,4 +1,4 @@
-import react from 'react';
+import React from 'react';
 import { createStore } from '../../src/index';
 
 describe('modelApis', () => {

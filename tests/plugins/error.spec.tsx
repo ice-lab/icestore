@@ -5,6 +5,7 @@ import createErrorPlugin from '../../src/plugins/error';
 import createStore from "../../src/index";
 import counter from '../helpers/counter';
 import Counter, { CounterUseEffectsError } from '../helpers/CounterClassComponent';
+import createHook from '../helpers/createHook';
 
 describe('createErrorPlugin', () => {
   describe('validate config', () => {
@@ -98,13 +99,3 @@ describe('createErrorPlugin', () => {
     });
   });
 });
-
-function createHook(Provider, callback, namespace) {
-  return rhl.renderHook(() => callback(namespace), {
-    wrapper: (props) => (
-      <Provider {...props}>
-        {props.children}
-      </Provider>
-    ),
-  });
-}

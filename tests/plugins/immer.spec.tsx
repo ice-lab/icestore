@@ -1,7 +1,7 @@
-import React from 'react';
 import * as rhl from "@testing-library/react-hooks";
 import createStore from '../../src/index';
 import { counterWithImmer, counterWithNoImmer } from '../helpers/counter';
+import createHook from '../helpers/createHook';
 
 describe('createImmerPlugin', () => {
   const store = createStore({ counterWithNoImmer, counterWithImmer });
@@ -31,13 +31,3 @@ describe('createImmerPlugin', () => {
     expect(nextState.d.b.c).toBe(0);
   });
 });
-
-function createHook(Provider, callback, namespace) {
-  return rhl.renderHook(() => callback(namespace), {
-    wrapper: (props) => (
-      <Provider {...props}>
-        {props.children}
-      </Provider>
-    ),
-  });
-}
