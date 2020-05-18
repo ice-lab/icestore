@@ -23,7 +23,7 @@ function createCombineReducersWithImmer(blacklist: string[] = []) {
     });
 
     return combineReducers(reducersWithImmer);
-  }
+  };
 }
 
 // icestore plugin
