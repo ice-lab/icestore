@@ -1,10 +1,14 @@
+import React from 'react';
 import * as rhl from "@testing-library/react-hooks";
+import * as rtl from "@testing-library/react";
 import { createStore } from '../../src/index';
 import counter from '../helpers/counter';
 import createHook from '../helpers/createHook';
+import Counter, { CounterUseDispathcers, CounterUseActions } from '../helpers/CounterClassComponent';
+import * as warning from '../../src/utils/warning';
 
 describe('dispatchPlugin', () => {
-  test('invalidate effects', () => {
+  it('invalidate effects', () => {
     const testModel = {
       state: 0,
       reducers: { foo: 1 },
@@ -12,7 +16,7 @@ describe('dispatchPlugin', () => {
     expect(() => createStore(({ testModel } as any))).toThrow('Invalid reducer (testModel/foo). Must be a function');
   });
 
-  test('invalidate reducers name', () => {
+  it('invalidate reducers name', () => {
     const testModel = {
       state: 0,
       reducers: {
@@ -22,13 +26,68 @@ describe('dispatchPlugin', () => {
     expect(() => createStore(({ testModel } as any))).toThrow('Invalid reducer name (testModel//reducer/)');
   });
 
-  test('dispatch reducer normally', async () => {
-    const store = createStore({ counter });
-    const { Provider, useModel } = store;
+  const store = createStore({ counter });
+  const {
+    Provider,
+    useModelState,
+    useModelDispatchers,
+    withModel,
+    withModelDispatchers,
+    useModelActions,
+    withModelActions,
+  } = store;
+  const WithModelCounter = withModel('counter')(Counter);
 
-    const { result } = createHook(Provider, useModel, 'counter');
-    const dispatchers = result.current[1];
-    rhl.act(() => dispatchers.increment(12));
-    expect(result.current[0].count).toBe(12);
+  it('dispatch reducer in function component', async () => {
+    const { result: dispatchersResult } = createHook(Provider, useModelDispatchers, 'counter');
+    const { result: modelResult } = createHook(Provider, useModelState, "counter");
+    const dispatchers = dispatchersResult.current;
+
+    rhl.act(() => dispatchers.increment(6));
+    expect(modelResult.current.count).toBe(6);
+  });
+
+  it('dispatch reducer in class component', async () => {
+    const WithCounterUseDispathcers = withModelDispatchers('counter')(CounterUseDispathcers);
+    const tester = rtl.render(
+      <Provider>
+        <WithModelCounter>
+          <WithCounterUseDispathcers />
+        </WithModelCounter>
+      </Provider>,
+    );
+    const { getByTestId } = tester;
+    rtl.fireEvent.click(getByTestId('reset'));
+    expect(getByTestId('count').innerHTML).toBe('0');
+  });
+
+  it('use the compatible useModelActions API to get the actions', async () => {
+    const spy = jest.spyOn(warning, "default");
+
+    const { result: actionsResult } = createHook(Provider, useModelActions, 'counter');
+    const { result: modelResult } = createHook(Provider, useModelState, "counter");
+    const actions = actionsResult.current;
+
+    rhl.act(() => actions.increment(6));
+    expect(modelResult.current.count).toBe(6);
+    expect(spy).toHaveBeenCalled();
+  });
+
+  it('use the compatible WithModelActions API to get the actions', async () => {
+    const spy = jest.spyOn(warning, "default");
+
+    const WithCounterUseActions = withModelActions('counter')(CounterUseActions);
+    const tester = rtl.render(
+      <Provider>
+        <WithModelCounter>
+          <WithCounterUseActions />
+        </WithModelCounter>
+      </Provider>,
+    );
+    const { getByTestId } = tester;
+    rtl.fireEvent.click(getByTestId('reset'));
+    expect(getByTestId('count').innerHTML).toBe('0');
+
+    expect(spy).toHaveBeenCalled();
   });
 });

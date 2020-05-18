@@ -45,6 +45,18 @@ export class CounterUseDispathcers extends PureComponent<CounterUseDispathcersPr
   }
 };
 
+interface CounterUseActionsProps {
+  counterActions: ExtractIModelDispatchersFromModelConfig<typeof counterModel>;
+}
+export class CounterUseActions extends PureComponent<CounterUseActionsProps> {
+  render() {
+    const { counterActions } = this.props;
+    return (
+      <div data-testid="reset" onClick={() => counterActions.reset()} />
+    );
+  }
+}
+
 interface CounterUseEffectsStateProps {
   counterEffectsState: ExtractIModelEffectsStateFromModelConfig<typeof counterModel>;
   children: React.ReactChild;
@@ -56,6 +68,24 @@ export class CounterUseEffectsState extends PureComponent<CounterUseEffectsState
       <React.Fragment>
         <span data-testid="decrementAsyncEffectsState">
           {String(counterEffectsState.asyncDecrement)}
+        </span>
+        {children}
+      </React.Fragment>
+    );
+  }
+}
+
+interface CounterUseActionsStateProps {
+  counterActionsState: ExtractIModelEffectsStateFromModelConfig<typeof counterModel>;
+  children: React.ReactChild;
+}
+export class CounterUseActionsState extends PureComponent<CounterUseActionsStateProps> {
+  render() {
+    const { counterActionsState, children } = this.props;
+    return (
+      <React.Fragment>
+        <span data-testid="throwErrorActionsState">
+          {String(counterActionsState.throwError)}
         </span>
         {children}
       </React.Fragment>
