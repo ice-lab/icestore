@@ -55,17 +55,17 @@ export const createStore = <M extends T.Models, C extends T.CreateStoreConfig<M>
   plugins.push(createReduxHooksPlugin({context}));
   plugins.push(createModelApisPlugin());
 
-  const loading = createLoadingPlugin();
-  const error = createErrorPlugin();
-  const immer = createImmerPlugin();
-  if (!disableImmer) {
-    plugins.push(immer);
-  }
+  const immerBlacklist = [];
   if (!disableLoading) {
-    plugins.push(loading);
+    plugins.push(createLoadingPlugin());
+    immerBlacklist.push('loading');
   }
   if (!disableError) {
-    plugins.push(error);
+    plugins.push(createErrorPlugin());
+    immerBlacklist.push('error');
+  }
+  if (!disableImmer) {
+    plugins.push(createImmerPlugin({ blacklist: immerBlacklist }));
   }
 
   // compatibility handling
