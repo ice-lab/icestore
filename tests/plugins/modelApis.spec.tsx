@@ -1,7 +1,7 @@
 import React from 'react';
 import { createStore } from '../../src/index';
 
-describe('modelApis', () => {
+describe('modelApisPlugin', () => {
   test('#modelApis', () => {
     expect(true).toBeTruthy();
   });

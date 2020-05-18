@@ -3,7 +3,7 @@ import createStore from '../../src/index';
 import { counterWithImmer, counterWithNoImmer } from '../helpers/counter';
 import createHook from '../helpers/createHook';
 
-describe('createImmerPlugin', () => {
+describe('immerPlugin', () => {
   const store = createStore({ counterWithNoImmer, counterWithImmer });
   const { Provider, useModel } = store;
 

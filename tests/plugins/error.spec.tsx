@@ -7,7 +7,7 @@ import counter from '../helpers/counter';
 import Counter, { CounterUseEffectsError } from '../helpers/CounterClassComponent';
 import createHook from '../helpers/createHook';
 
-describe('createErrorPlugin', () => {
+describe('errorPlugin', () => {
   describe('validate config', () => {
     test('should not throw error when not passing config', () => {
       expect(() => createErrorPlugin()).not.toThrow();

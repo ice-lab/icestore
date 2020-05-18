@@ -7,7 +7,7 @@ import createStore from "../../src/index";
 import counter from '../helpers/counter';
 import Counter, { CounterUseEffectsLoading } from '../helpers/CounterClassComponent';
 
-describe('createLoadingPlugin', () => {
+describe('loadingPlugin', () => {
   describe('validate config', () => {
     test('should not throw error when not passing config', () => {
       expect(() => createLoadingPlugin()).not.toThrow();

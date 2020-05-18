@@ -4,7 +4,7 @@ import counter, { counterCustomSetState } from '../helpers/counter';
 import todos from '../helpers/todos';
 import createHook from '../helpers/createHook';
 
-describe('effects', () => {
+describe('effectsPlugin', () => {
   test('invalidate effects', () => {
     const testModel = {
       state: 0,

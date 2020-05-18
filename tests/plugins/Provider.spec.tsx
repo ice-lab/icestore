@@ -5,7 +5,7 @@ import Counter from '../helpers/CounterClassComponent';
 import createStore from "../../src/index";
 import createHook from '../helpers/createHook';
 
-describe('createProviderPlugin', () => {
+describe('providerPlugin', () => {
   const store = createStore({ counter });
   const { Provider, useModel, withModel } = store;
   afterEach(() => rtl.cleanup());
