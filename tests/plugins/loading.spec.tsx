@@ -80,12 +80,12 @@ describe('loadingPlugin', () => {
       expect(result.current.effectsLoading.asyncIncrement).toBeFalsy();
     });
 
-    test('multiple effects loading', async () => {
+    test('multiple effects loading', async (done) => {
       const store = createStore({ counter });
       const { Provider, useModel, useModelEffectsLoading } = store;
       const useModelLoading = generateUseModelLoadingHook("counter", useModel, useModelEffectsLoading);
 
-      const { result, waitForNextUpdate } = createHook(Provider, useModelLoading, "counter");
+      const { result } = createHook(Provider, useModelLoading, "counter");
       expect(result.current.effectsLoading.asyncIncrement).toBeFalsy();
       expect(result.current.effectsLoading.asyncDecrement).toBeFalsy();
       rhl.act(() => {
@@ -94,9 +94,11 @@ describe('loadingPlugin', () => {
       });
       expect(result.current.effectsLoading.asyncIncrement).toBeTruthy();
       expect(result.current.effectsLoading.asyncDecrement).toBeTruthy();
-      await waitForNextUpdate({ timeout: 500 });
-      expect(result.current.effectsLoading.asyncIncrement).toBeFalsy();
-      expect(result.current.effectsLoading.asyncDecrement).toBeFalsy();
+      setTimeout(() => {
+        expect(result.current.effectsLoading.asyncIncrement).toBeFalsy();
+        expect(result.current.effectsLoading.asyncDecrement).toBeFalsy();
+        done();
+      }, 500);
     });
 
     test('throw error', async () => {
