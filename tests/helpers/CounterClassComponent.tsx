@@ -84,8 +84,11 @@ export class CounterUseActionsState extends PureComponent<CounterUseActionsState
     const { counterActionsState, children } = this.props;
     return (
       <React.Fragment>
-        <span data-testid="throwErrorActionsState">
-          {String(counterActionsState.throwError)}
+        <span data-testid="throwErrorActionsLoading">
+          {String(counterActionsState.throwError.isLoading)}
+        </span>
+        <span data-testid="throwErrorActionsErrorMessage">
+          {String(counterActionsState.throwError.error)}
         </span>
         {children}
       </React.Fragment>

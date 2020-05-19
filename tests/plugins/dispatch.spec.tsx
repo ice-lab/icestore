@@ -43,11 +43,11 @@ describe('dispatchPlugin', () => {
     const { result: modelResult } = createHook(Provider, useModelState, "counter");
     const dispatchers = dispatchersResult.current;
 
-    rhl.act(() => dispatchers.increment(6));
+    await rhl.act(async () => dispatchers.increment(6));
     expect(modelResult.current.count).toBe(6);
   });
 
-  it('dispatch reducer in class component', async () => {
+  it('dispatch reducer in class component', () => {
     const WithCounterUseDispathcers = withModelDispatchers('counter')(CounterUseDispathcers);
     const tester = rtl.render(
       <Provider>
@@ -68,12 +68,12 @@ describe('dispatchPlugin', () => {
     const { result: modelResult } = createHook(Provider, useModelState, "counter");
     const actions = actionsResult.current;
 
-    rhl.act(() => actions.increment(6));
+    await rhl.act(async () => actions.increment(6));
     expect(modelResult.current.count).toBe(6);
     expect(spy).toHaveBeenCalled();
   });
 
-  it('use the compatible WithModelActions API to get the actions', async () => {
+  it('use the compatible WithModelActions API to get the actions', () => {
     const spy = jest.spyOn(warning, "default");
 
     const WithCounterUseActions = withModelActions('counter')(CounterUseActions);

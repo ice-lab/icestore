@@ -82,7 +82,7 @@ describe('loadingPlugin', () => {
       });
       expect(result.current.effectsLoading.asyncIncrement).toBeTruthy();
       expect(result.current.effectsLoading.asyncDecrement).toBeTruthy();
-      await waitForNextUpdate();
+      await waitForNextUpdate({ timeout: 300 });
       expect(result.current.effectsLoading.asyncIncrement).toBeFalsy();
       expect(result.current.effectsLoading.asyncDecrement).toBeFalsy();
     });

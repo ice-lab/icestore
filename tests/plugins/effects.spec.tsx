@@ -30,7 +30,6 @@ describe('effectsPlugin', () => {
   });
 
   const store = createStore({ counter, todos, counterCustomSetState });
-  // TODO: 使用 useModelEffectsState 代替 useModel
   const { Provider, useModel } = store;
 
   test('normal effects usage', async () => {
