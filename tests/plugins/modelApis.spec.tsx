@@ -3,7 +3,7 @@ import * as rhl from '@testing-library/react-hooks';
 import * as rtl from "@testing-library/react";
 import createStore, { withModel } from '../../src/index';
 import counter, { counterWithUnsupportEffects } from '../helpers/counter';
-import Counter, { CounterUseActionsState } from '../helpers/CounterClassComponent';
+import Counter, { CounterUseActionsState, CounterUseEffectsState } from '../helpers/CounterClassComponent';
 import createHook from '../helpers/createHook';
 import * as warning from '../../src/utils/warning';
 
@@ -64,6 +64,38 @@ describe('modelApisPlugin', () => {
     expect(result.current.effectsState.throwError).toEqual({ isLoading: false, error: Error('Error!') });
   });
 
+  it('withModelEffectsState', (done) => {
+    const store = createStore({ counter });
+    const {
+      Provider,
+      withModel,
+      withModelEffectsState,
+    } = store;
+
+    const WithCounterUseEffectsState = withModelEffectsState('counter')(CounterUseEffectsState);
+    const WithModelCounter = withModel('counter')(Counter);
+    const spy = jest.spyOn(warning, 'default');
+
+    const tester = rtl.render(
+      <Provider>
+        <WithCounterUseEffectsState>
+          <WithModelCounter />
+        </WithCounterUseEffectsState>
+      </Provider>,
+    );
+    const { getByTestId } = tester;
+    rtl.fireEvent.click(getByTestId('throwError'));
+    expect(getByTestId('throwErrorEffectsLoading').innerHTML).toBe('true');
+    expect(getByTestId('throwErrorEffectsError').innerHTML).toBe('null');
+
+    setTimeout(() => {
+      expect(getByTestId('throwErrorEffectsLoading').innerHTML).toBe('false');
+      expect(getByTestId('throwErrorEffectsError').innerHTML).toBe('Error: Error!');
+      done();
+    }, 200);
+
+    expect(spy).toHaveBeenCalled();
+  });
 
   it('use the compatible useModelActionsState API to get the effects state', async () => {
     const store = createStore({ counter });

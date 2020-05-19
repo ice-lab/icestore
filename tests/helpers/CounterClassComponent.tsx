@@ -66,8 +66,11 @@ export class CounterUseEffectsState extends PureComponent<CounterUseEffectsState
     const { counterEffectsState, children } = this.props;
     return (
       <React.Fragment>
-        <span data-testid="decrementAsyncEffectsState">
-          {String(counterEffectsState.asyncDecrement)}
+        <span data-testid="throwErrorEffectsLoading">
+          {String(counterEffectsState.throwError.isLoading)}
+        </span>
+        <span data-testid="throwErrorEffectsError">
+          {String(counterEffectsState.throwError.error)}
         </span>
         {children}
       </React.Fragment>
