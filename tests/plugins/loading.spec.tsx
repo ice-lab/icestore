@@ -68,7 +68,7 @@ describe('loadingPlugin', () => {
         result.current.dispatchers.asyncIncrement();
       });
       expect(result.current.effectsLoading.asyncIncrement).toBeTruthy();
-      await waitForNextUpdate({ timeout: 180 });
+      await waitForNextUpdate({ timeout: 200 });
       expect(result.current.effectsLoading.asyncIncrement).toBeFalsy();
     });
 
@@ -143,7 +143,7 @@ describe('loadingPlugin', () => {
       setTimeout(() => {
         expect(getByTestId('asyncIncrementEffectsLoading').innerHTML).toBe('false');
         done();
-      }, 180);
+      }, 200);
     });
 
     test('multiple effects loading', (done) => {
