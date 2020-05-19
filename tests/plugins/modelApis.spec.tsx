@@ -1,25 +1,21 @@
 import React, { useCallback } from 'react';
 import * as rhl from '@testing-library/react-hooks';
 import * as rtl from "@testing-library/react";
-import { createStore } from '../../src/index';
+import createStore, { withModel } from '../../src/index';
 import counter, { counterWithUnsupportEffects } from '../helpers/counter';
 import Counter, { CounterUseActionsState } from '../helpers/CounterClassComponent';
 import createHook from '../helpers/createHook';
 import * as warning from '../../src/utils/warning';
 
 describe('modelApisPlugin', () => {
-  const store = createStore({ counter });
-  const {
-    Provider,
-    useModel,
-    useModelDispatchers,
-    useModelEffectsState,
-    useModelActionsState,
-    withModelActionsState,
-    withModel,
-  } = store;
-
   it('throw error when trying to use the inexisted model', () => {
+    const store = createStore({ counter });
+    const {
+      Provider,
+      useModel,
+      useModelDispatchers,
+      useModelEffectsState,
+    } = store;
     const namespace = 'test';
     const { result: useModelActionsStateResult } = createHook(Provider, useModelEffectsState, namespace);
     expect(useModelActionsStateResult.error).toEqual(
@@ -44,6 +40,13 @@ describe('modelApisPlugin', () => {
   });
 
   it('useModelEffectsState', async () => {
+    const store = createStore({ counter });
+    const {
+      Provider,
+      useModel,
+      useModelEffectsState,
+    } = store;
+
     function useModelEffect(namespace) {
       const [state, dispatchers] = useModel(namespace);
       const effectsState = useModelEffectsState(namespace);
@@ -63,6 +66,13 @@ describe('modelApisPlugin', () => {
 
 
   it('use the compatible useModelActionsState API to get the effects state', async () => {
+    const store = createStore({ counter });
+    const {
+      Provider,
+      useModel,
+      useModelActionsState,
+    } = store;
+
     const spy = jest.spyOn(warning, 'default');
 
     function useModelEffect(namespace) {
@@ -84,6 +94,13 @@ describe('modelApisPlugin', () => {
   });
 
   it('use the compatible withModelActionsState API to get the effects state', done => {
+    const store = createStore({ counter });
+    const {
+      Provider,
+      withModelActionsState,
+      withModel,
+    } = store;
+
     const WithCounterUseActionsState = withModelActionsState('counter')(CounterUseActionsState);
     const WithModelCounter = withModel('counter')(Counter);
     const spy = jest.spyOn(warning, 'default');
@@ -110,6 +127,8 @@ describe('modelApisPlugin', () => {
   });
 
   it('get model api: should set counter to updated initial value', () => {
+    const store = createStore({ counter });
+
     function useCounter(initialValue = 0) {
       const setCounter = useCallback(() => {
         const [state, dispatchers] = store.getModel('counter');
@@ -138,5 +157,250 @@ describe('modelApisPlugin', () => {
       result.current.setCounter(); // fail to update the state
     });
     expect(store.getModelState('counter').count).toBe(10);
+  });
+
+  it('useState', () => {
+    function CounterComponent({ model }) {
+      const { useState } = model;
+      const counterState = useState('counter');
+      expect(counterState).toEqual({ count: 0 });
+      return (
+        <div />
+      );
+    }
+
+    const WithModelCounter = withModel(counter)(CounterComponent);
+    rtl.render(
+      <WithModelCounter />,
+    );
+  });
+
+  it('useDispatchers', () => {
+    function CounterComponent({ model }) {
+      const { useDispatchers, useState } = model;
+      const dispatchers = useDispatchers('counter');
+      const state = useState('counter');
+      return (
+        <div>
+          <div data-testid="count">{state.count}</div>
+          <div data-testid="increment" onClick={() => dispatchers.increment(1)} />
+        </div>
+      );
+    }
+
+    const WithModelCounter = withModel(counter)(CounterComponent);
+    const tester = rtl.render(
+      <WithModelCounter />,
+    );
+    const { getByTestId } = tester;
+    expect(getByTestId('count').innerHTML).toBe('0');
+    rtl.fireEvent.click(getByTestId('increment'));
+    expect(getByTestId('count').innerHTML).toBe('1');
+  });
+
+  it('useValue', () => {
+    function CounterComponent({ model }) {
+      const [state, dispatchers] = model.useValue('counter');
+      const { increment } = dispatchers;
+      const { count } = state;
+      return (
+        <div>
+          <div data-testid="count">{count}</div>
+          <div data-testid="increment" onClick={() => increment(1)} />
+        </div>
+      );
+    }
+
+    const WithModelCounter = withModel(counter)(CounterComponent);
+    const tester = rtl.render(
+      <WithModelCounter />,
+    );
+    const { getByTestId } = tester;
+    expect(getByTestId('count').innerHTML).toBe('0');
+    rtl.fireEvent.click(getByTestId('increment'));
+    expect(getByTestId('count').innerHTML).toBe('1');
+  });
+
+  it('useEffectsError', (done) => {
+    function CounterComponent({ model }) {
+      const dispatchers = model.useDispatchers('counter');
+      const effectsError = model.useEffectsError('counter');
+      const { throwError } = dispatchers;
+      return (
+        <div>
+          <div data-testid="error">{String(effectsError.throwError.error)}</div>
+          <div data-testid="throwError" onClick={() => throwError()} />
+        </div>
+      );
+    };
+    const WithModelCounter = withModel(counter)(CounterComponent);
+    const tester = rtl.render(
+      <WithModelCounter />,
+    );
+    const { getByTestId } = tester;
+    expect(getByTestId('error').innerHTML).toBe('null');
+    rtl.fireEvent.click(getByTestId('throwError'));
+    setTimeout(() => {
+      expect(getByTestId('error').innerHTML).toBe('Error: Error!');
+      done();
+    }, 200);
+  });
+
+  it('useEffectsLoading', (done) => {
+    function CounterComponent({ model }) {
+      const dispatchers = model.useDispatchers('counter');
+      const effectsloading = model.useEffectsLoading('counter');
+      const { asyncIncrement } = dispatchers;
+      return (
+        <div>
+          <div data-testid="loading">{String(effectsloading.asyncIncrement)}</div>
+          <div data-testid="asyncIncrement" onClick={() => asyncIncrement()} />
+        </div>
+      );
+    };
+    const WithModelCounter = withModel(counter)(CounterComponent);
+    const tester = rtl.render(
+      <WithModelCounter />,
+    );
+    const { getByTestId } = tester;
+    expect(getByTestId('loading').innerHTML).toBe('false');
+    rtl.fireEvent.click(getByTestId('asyncIncrement'));
+    expect(getByTestId('loading').innerHTML).toBe('true');
+    setTimeout(() => {
+      expect(getByTestId('loading').innerHTML).toBe('false');
+      done();
+    }, 200);
+  });
+
+  it('useEffectsState', (done) => {
+    function CounterComponent({ model }) {
+      const dispatchers = model.useDispatchers('counter');
+      const effectsState = model.useEffectsState('counter');
+      const { throwError } = dispatchers;
+      return (
+        <div>
+          <div data-testid="loading">{String(effectsState.throwError.isLoading)}</div>
+          <div data-testid="error">{String(effectsState.throwError.error)}</div>
+          <div data-testid="throwError" onClick={() => throwError()} />
+        </div>
+      );
+    };
+    const WithModelCounter = withModel(counter)(CounterComponent);
+    const tester = rtl.render(
+      <WithModelCounter />,
+    );
+    const { getByTestId } = tester;
+    expect(getByTestId('loading').innerHTML).toBe('false');
+    expect(getByTestId('error').innerHTML).toBe('null');
+    rtl.fireEvent.click(getByTestId('throwError'));
+    expect(getByTestId('loading').innerHTML).toBe('true');
+    expect(getByTestId('error').innerHTML).toBe('null');
+    setTimeout(() => {
+      expect(getByTestId('loading').innerHTML).toBe('false');
+      expect(getByTestId('error').innerHTML).toBe('Error: Error!');
+      done();
+    }, 200);
+  });
+
+  it('withValue', () => {
+
+  });
+
+  it('withDispatchers & withEffectsState', () => {
+    class DispatchersComponent extends React.PureComponent<any> {
+      render() {
+        const { counterDispatchers } = this.props;
+        return (
+          <div data-testid="reset" onClick={() => counterDispatchers.increment()} />
+        );
+      }
+    }
+    class ValueComponent extends React.PureComponent<any> {
+      render() {
+        const { counterDispatchers } = this.props;
+        return (
+          <div data-testid="reset" onClick={() => counterDispatchers.increment()} />
+        );
+      }
+    }
+
+    function CounterComponent({ model }) {
+      const WithDispatcherComponent = model.withDispatchers()(DispatchersComponent);
+      const withValueComponent = model.withEffectsState()(ValueComponent);
+
+      return <WithDispatcherComponent />;
+    }
+
+    const WithModelCounter = withModel(counter)(CounterComponent);
+    // function CounterComponent({ model }) {
+    //   const { useDispatchers, useState } = model;
+    //   const dispatchers = useDispatchers('counter');
+    //   const state = useState('counter');
+    //   return (
+    //     <div>
+    //       <div data-testid="count">{state.count}</div>
+    //       <div data-testid="increment" onClick={() => dispatchers.increment(1)} />
+    //     </div>
+    //   );
+    // }
+
+    // const WithModelCounter = withModel(counter)(CounterComponent);
+    // const tester = rtl.render(
+    //   <WithModelCounter />,
+    // );
+    // const { getByTestId } = tester;
+    // expect(getByTestId('count').innerHTML).toBe('0');
+    // rtl.fireEvent.click(getByTestId('increment'));
+    // expect(getByTestId('count').innerHTML).toBe('1');
+  });
+
+  it('withEffectsLoading', () => {
+
+    class DispatchersComponent extends React.PureComponent<any> {
+      render() {
+        const { counterDispatchers } = this.props;
+        console.log('--------', counterDispatchers);
+        return (
+          <div data-testid="asyncIncrement" onClick={() => counterDispatchers.asyncIncrement()} />
+        );
+      }
+    }
+    class LoadingComponent extends React.PureComponent<any> {
+      render() {
+        const { counterEffectsLoading } = this.props;
+        return (
+          <div data-testid="loading">{String(counterEffectsLoading.asyncIncrement)}</div>
+        );
+      }
+    }
+
+    function CounterComponent({ model }) {
+      const WithDispatcherComponent = model.withDispatchers()(DispatchersComponent);
+      const WithLoadingComponent = model.withEffectsLoading()(LoadingComponent);
+
+      return (
+        <>
+          <WithDispatcherComponent />
+          <WithLoadingComponent />
+        </>
+      );
+    }
+
+    const WithModelCounter = withModel(counter)(CounterComponent);
+    const tester = rtl.render(
+      <WithModelCounter />,
+    );
+    const { getByTestId } = tester;
+    // expect(getByTestId('loading').innerHTML).toBe('false');
+    // rtl.fireEvent.click(getByTestId('asyncIncrement'));
+    // expect(getByTestId('loading').innerHTML).toBe('true');
+  });
+
+  it('withEffectsError', () => {
+
+  });
+
+  it('withEffectsState', () => {
+
   });
 });

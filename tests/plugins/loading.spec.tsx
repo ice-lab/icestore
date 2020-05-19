@@ -40,16 +40,20 @@ describe('loadingPlugin', () => {
   });
 
   describe('loading effects in function component', () => {
-    const store = createStore({ counter });
-    const { Provider, useModel, useModelEffectsLoading } = store;
+    function generateUseModelLoadingHook(nsp, useModel, useModelEffectsLoading) {
+      return function (nsp) {
+        const [state, dispatchers] = useModel(nsp);
+        const effectsLoading = useModelEffectsLoading(nsp);
 
-    function useModelLoading(namespace) {
-      const [state, dispatchers] = useModel(namespace);
-      const effectsLoading = useModelEffectsLoading(namespace);
-
-      return { state, dispatchers, effectsLoading };
+        return { state, dispatchers, effectsLoading };
+      };
     }
+
     test('normal usage', async () => {
+      const store = createStore({ counter });
+      const { Provider, useModel, useModelEffectsLoading } = store;
+      const useModelLoading = generateUseModelLoadingHook("counter", useModel, useModelEffectsLoading);
+
       const { result, waitForNextUpdate } = createHook(Provider, useModelLoading, "counter");
       expect(result.current.effectsLoading.asyncIncrement).toBeFalsy();
       rhl.act(() => {
@@ -61,6 +65,10 @@ describe('loadingPlugin', () => {
     });
 
     test('take latest effects loading', async () => {
+      const store = createStore({ counter });
+      const { Provider, useModel, useModelEffectsLoading } = store;
+      const useModelLoading = generateUseModelLoadingHook("counter", useModel, useModelEffectsLoading);
+
       const { result, waitForNextUpdate } = createHook(Provider, useModelLoading, "counter");
       expect(result.current.effectsLoading.asyncIncrement).toBeFalsy();
       rhl.act(() => {
@@ -73,6 +81,10 @@ describe('loadingPlugin', () => {
     });
 
     test('multiple effects loading', async () => {
+      const store = createStore({ counter });
+      const { Provider, useModel, useModelEffectsLoading } = store;
+      const useModelLoading = generateUseModelLoadingHook("counter", useModel, useModelEffectsLoading);
+
       const { result, waitForNextUpdate } = createHook(Provider, useModelLoading, "counter");
       expect(result.current.effectsLoading.asyncIncrement).toBeFalsy();
       expect(result.current.effectsLoading.asyncDecrement).toBeFalsy();
@@ -82,12 +94,16 @@ describe('loadingPlugin', () => {
       });
       expect(result.current.effectsLoading.asyncIncrement).toBeTruthy();
       expect(result.current.effectsLoading.asyncDecrement).toBeTruthy();
-      await waitForNextUpdate({ timeout: 300 });
+      await waitForNextUpdate({ timeout: 200 });
       expect(result.current.effectsLoading.asyncIncrement).toBeFalsy();
       expect(result.current.effectsLoading.asyncDecrement).toBeFalsy();
     });
 
     test('throw error', async () => {
+      const store = createStore({ counter });
+      const { Provider, useModel, useModelEffectsLoading } = store;
+
+      const useModelLoading = generateUseModelLoadingHook("counter", useModel, useModelEffectsLoading);
       const { result, waitForNextUpdate } = createHook(Provider, useModelLoading, "counter");
       expect(result.current.effectsLoading.throwError).toBeFalsy();
       rhl.act(() => {
