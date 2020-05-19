@@ -8,7 +8,7 @@ import Counter, { CounterUseDispathcers, CounterUseActions } from '../helpers/Co
 import * as warning from '../../src/utils/warning';
 
 describe('dispatchPlugin', () => {
-  it('invalidate effects', () => {
+  it('invalidate reducers', () => {
     const testModel = {
       state: 0,
       reducers: { foo: 1 },
@@ -16,7 +16,7 @@ describe('dispatchPlugin', () => {
     expect(() => createStore(({ testModel } as any))).toThrow('Invalid reducer (testModel/foo). Must be a function');
   });
 
-  it('invalidate reducers name', () => {
+  it('invalidate reducer name', () => {
     const testModel = {
       state: 0,
       reducers: {
@@ -26,19 +26,10 @@ describe('dispatchPlugin', () => {
     expect(() => createStore(({ testModel } as any))).toThrow('Invalid reducer name (testModel//reducer/)');
   });
 
-  const store = createStore({ counter });
-  const {
-    Provider,
-    useModelState,
-    useModelDispatchers,
-    withModel,
-    withModelDispatchers,
-    useModelActions,
-    withModelActions,
-  } = store;
-  const WithModelCounter = withModel('counter')(Counter);
-
   it('dispatch reducer in function component', async () => {
+    const store = createStore({ counter });
+    const { Provider, useModelDispatchers, useModelState } = store;
+
     const { result: dispatchersResult } = createHook(Provider, useModelDispatchers, 'counter');
     const { result: modelResult } = createHook(Provider, useModelState, "counter");
     const dispatchers = dispatchersResult.current;
@@ -48,6 +39,10 @@ describe('dispatchPlugin', () => {
   });
 
   it('dispatch reducer in class component', () => {
+    const store = createStore({ counter });
+    const { Provider, withModelDispatchers, withModel } = store;
+    const WithModelCounter = withModel('counter')(Counter);
+
     const WithCounterUseDispathcers = withModelDispatchers('counter')(CounterUseDispathcers);
     const tester = rtl.render(
       <Provider>
@@ -63,6 +58,8 @@ describe('dispatchPlugin', () => {
 
   it('use the compatible useModelActions API to get the actions', async () => {
     const spy = jest.spyOn(warning, "default");
+    const store = createStore({ counter });
+    const { Provider, useModelActions, useModelState } = store;
 
     const { result: actionsResult } = createHook(Provider, useModelActions, 'counter');
     const { result: modelResult } = createHook(Provider, useModelState, "counter");
@@ -74,6 +71,10 @@ describe('dispatchPlugin', () => {
   });
 
   it('use the compatible WithModelActions API to get the actions', () => {
+    const store = createStore({ counter });
+    const { Provider, withModelActions, withModel } = store;
+    const WithModelCounter = withModel('counter')(Counter);
+
     const spy = jest.spyOn(warning, "default");
 
     const WithCounterUseActions = withModelActions('counter')(CounterUseActions);

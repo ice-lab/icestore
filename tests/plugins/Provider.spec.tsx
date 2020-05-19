@@ -6,11 +6,11 @@ import createStore from "../../src/index";
 import createHook from '../helpers/createHook';
 
 describe('providerPlugin', () => {
-  const store = createStore({ counter });
-  const { Provider, useModel, withModel } = store;
   afterEach(() => rtl.cleanup());
 
   it('should not enforce one child', () => {
+    const store = createStore({ counter });
+    const { Provider } = store;
     expect(() => {
       rtl.render(
         <Provider>
@@ -30,12 +30,18 @@ describe('providerPlugin', () => {
   });
 
   it('should add the store to function component context', () => {
+    const store = createStore({ counter });
+    const { Provider, useModel } = store;
+
     const { result } = createHook(Provider, useModel, "counter");
     const [state] = result.current;
     expect(state.count).toEqual(0);
   });
 
   it('should add the store to class component context', () => {
+    const store = createStore({ counter });
+    const { Provider, withModel } = store;
+
     const WithModelCounter = withModel('counter')(Counter);
 
     const tester = rtl.render(<Provider><WithModelCounter /></Provider>);
@@ -50,12 +56,18 @@ describe('providerPlugin', () => {
   };
 
   it('pass the initialStates to the function component', () => {
+    const store = createStore({ counter });
+    const { Provider, useModel } = store;
+
     const { result } = createHook(Provider, useModel, "counter", initialStates);
     const [state] = result.current;
     expect(state).toEqual(initialStates.counter);
   });
 
   it('pass the initialStates to the class component', () => {
+    const store = createStore({ counter });
+    const { Provider, withModel } = store;
+
     const WithModelCounter = withModel('counter')(Counter);
 
     const tester = rtl.render(<Provider initialStates={initialStates}><WithModelCounter /></Provider>);

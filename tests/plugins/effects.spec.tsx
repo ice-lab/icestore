@@ -29,10 +29,10 @@ describe('effectsPlugin', () => {
     expect(() => createStore(({ testModel } as any))).toThrow('Invalid effect (testModel/test). Must be a function');
   });
 
-  const store = createStore({ counter, todos, counterCustomSetState });
-  const { Provider, useModel } = store;
-
   test('normal effects usage', async () => {
+    const store = createStore({ counter });
+    const { useModel, Provider } = store;
+
     const { result, waitForNextUpdate } = createHook(Provider, useModel, 'counter');
     expect(result.current[0].count).toBe(0);
     rhl.act(() => result.current[1].asyncIncrement());
@@ -44,6 +44,9 @@ describe('effectsPlugin', () => {
   });
 
   test('dispatch inner effect', async () => {
+    const store = createStore({ counter });
+    const { useModel, Provider } = store;
+
     const { result, waitForNextUpdate } = createHook(Provider, useModel, 'counter');
     expect(result.current[0].count).toBe(0);
     rhl.act(() => result.current[1].asyncCallIncrement());
@@ -52,15 +55,21 @@ describe('effectsPlugin', () => {
   });
 
   test('dispatch action for other models', async () => {
+    const store = createStore({ counter, todos });
+    const { useModel, Provider } = store;
+
     const { result: counterResult, waitForNextUpdate } = createHook(Provider, useModel, 'counter');
     const { result: todosResult } = createHook(Provider, useModel, 'todos');
-
+    expect(counterResult.current[0].count).toBe(0);
     rhl.act(() => todosResult.current[1].decreCounter());
     await waitForNextUpdate();
-    expect(counterResult.current[0].count).toBe(0);
+    expect(counterResult.current[0].count).toBe(-1);
   });
 
   test('multiple actions', (done) => {
+    const store = createStore({ counter });
+    const { useModel, Provider } = store;
+
     const { result } = createHook(Provider, useModel, 'counter');
     expect(result.current[0].count).toBe(0);
     rhl.act(() => result.current[1].incrementSome());
@@ -71,7 +80,11 @@ describe('effectsPlugin', () => {
   });
 
   test('normal setState', async () => {
+    const store = createStore({ counter });
+    const { useModel, Provider } = store;
+
     const { result, waitForNextUpdate } = createHook(Provider, useModel, 'counter');
+    rhl.act(() => result.current[1].increment(4));
     expect(result.current[0].count).toBe(4);
     rhl.act(() => result.current[1].setCount(0));
     await waitForNextUpdate();
@@ -79,6 +92,9 @@ describe('effectsPlugin', () => {
   });
 
   test('custom setState in reducers', async () => {
+    const store = createStore({ counterCustomSetState });
+    const { useModel, Provider } = store;
+
     const { result, waitForNextUpdate } = createHook(Provider, useModel, 'counterCustomSetState');
     expect(result.current[0].count).toBe(0);
     rhl.act(() => result.current[1].setCount(1));
@@ -87,9 +103,13 @@ describe('effectsPlugin', () => {
   });
 
   test('a effect that shares a name with a reducer', async () => {
+    const store = createStore({ counter, todos });
+    const { useModel, Provider } = store;
+
     const { result: counterResult, waitForNextUpdate } = createHook(Provider, useModel, 'counter');
     const { result: todosResult } = createHook(Provider, useModel, 'todos');
 
+    expect(counterResult.current[0].count).toBe(0);
     rhl.act(() => todosResult.current[1].add({ name: 'test' }));
     await waitForNextUpdate();
     expect(counterResult.current[0].count).toBe(1);
