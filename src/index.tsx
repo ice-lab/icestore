@@ -55,6 +55,8 @@ export const createStore = <M extends T.Models, C extends T.CreateStoreConfig<M>
   plugins.push(createReduxHooksPlugin({context}));
   plugins.push(createModelApisPlugin());
 
+  // https://github.com/ice-lab/icestore/issues/94
+  // TODO: fix error & loading plugin immer problem
   const immerBlacklist = [];
   if (!disableLoading) {
     plugins.push(createLoadingPlugin());
