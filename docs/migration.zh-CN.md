@@ -3,6 +3,8 @@ id: migration
 title: Migration
 ---
 
+[English](./migration.md) | 简体中文
+
 ## 从 Redux 迁移
 
 我们提供了渐进式的方案使得您的项目可以局部从 Redux 迁移到 icestore。
