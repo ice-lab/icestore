@@ -3,8 +3,8 @@ import { combineReducers, ReducersMapObject } from 'redux';
 import * as T from '../types';
 
 function produce(state, func) {
-  enableES5()
-  return origProduce.apply(null, [state, func])
+  enableES5();
+  return origProduce.apply(null, [state, func]);
 }
 
 export interface ImmerConfig {

@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { createStore } from '@ice/store';
-import 'react-app-polyfill/ie11'
+import 'react-app-polyfill/ie11';
 import 'react-app-polyfill/stable';
 
 const delay = (time) => new Promise((resolve) => setTimeout(() => resolve(), time));
