@@ -1,13 +1,18 @@
-import produce from 'immer';
+import origProduce, { enableES5 } from 'immer';
 import { combineReducers, ReducersMapObject } from 'redux';
 import * as T from '../types';
+
+function produce(state, func) {
+  enableES5()
+  return origProduce.apply(null, [state, func])
+}
 
 export interface ImmerConfig {
   blacklist?: string[];
 }
 
 function createCombineReducersWithImmer(blacklist: string[] = []) {
-  return function(reducers: ReducersMapObject) {
+  return function (reducers: ReducersMapObject) {
     const reducersWithImmer: ReducersMapObject<any, T.Action<any>> = {};
     // reducer must return value because literal don't support immer
 

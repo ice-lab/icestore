@@ -1,6 +1,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { createStore } from '@ice/store';
+import 'react-app-polyfill/ie11'
+import 'react-app-polyfill/stable';
 
 const delay = (time) => new Promise((resolve) => setTimeout(() => resolve(), time));
 
@@ -8,8 +10,8 @@ const delay = (time) => new Promise((resolve) => setTimeout(() => resolve(), tim
 const counter = {
   state: 0,
   reducers: {
-    increment:(prevState) => prevState + 1,
-    decrement:(prevState) => prevState - 1,
+    increment: (prevState) => prevState + 1,
+    decrement: (prevState) => prevState - 1,
   },
   effects: () => ({
     async asyncDecrement() {
@@ -29,7 +31,7 @@ const store = createStore(models);
 // 3️⃣ Consume model
 const { useModel } = store;
 function Counter() {
-  const [ count, dispatchers ] = useModel('counter');
+  const [count, dispatchers] = useModel('counter');
   const { increment, asyncDecrement } = dispatchers;
   return (
     <div>
