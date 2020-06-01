@@ -1,11 +1,9 @@
-import origProduce, { enableES5 } from 'immer';
+import produce, { enableES5 } from 'immer';
 import { combineReducers, ReducersMapObject } from 'redux';
 import * as T from '../types';
 
-function produce(state, func) {
-  enableES5();
-  return origProduce.apply(null, [state, func]);
-}
+// make it work in IE11
+enableES5()
 
 export interface ImmerConfig {
   blacklist?: string[];
