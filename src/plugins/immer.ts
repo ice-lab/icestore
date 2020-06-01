@@ -3,7 +3,7 @@ import { combineReducers, ReducersMapObject } from 'redux';
 import * as T from '../types';
 
 // make it work in IE11
-enableES5()
+enableES5();
 
 export interface ImmerConfig {
   blacklist?: string[];
