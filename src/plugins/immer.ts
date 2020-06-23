@@ -1,13 +1,16 @@
-import produce from 'immer';
+import produce, { enableES5 } from 'immer';
 import { combineReducers, ReducersMapObject } from 'redux';
 import * as T from '../types';
+
+// make it work in IE11
+enableES5();
 
 export interface ImmerConfig {
   blacklist?: string[];
 }
 
 function createCombineReducersWithImmer(blacklist: string[] = []) {
-  return function(reducers: ReducersMapObject) {
+  return function (reducers: ReducersMapObject) {
     const reducersWithImmer: ReducersMapObject<any, T.Action<any>> = {};
     // reducer must return value because literal don't support immer
 
