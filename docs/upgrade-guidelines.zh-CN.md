@@ -1,6 +1,6 @@
 ---
 id: upgrade-guidelines
-title: Upgrade Guidelines
+title: 从老版本升级
 ---
 
 [English](./upgrade-guidelines.md) | 简体中文

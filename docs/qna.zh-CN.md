@@ -1,6 +1,6 @@
 ---
 id: qna
-title: QnA
+title: 常见问题
 ---
 
 [English](./qna.md) | 简体中文
