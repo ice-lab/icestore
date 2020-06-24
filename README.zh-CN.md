@@ -110,6 +110,7 @@ npm install @ice/store --save
 - [更多技巧](./docs/recipes.zh-CN.md)
 - [从老版本升级](./docs/upgrade-guidelines.zh-CN.md)
 - [从其他方案迁移](./docs/migration.zh-CN.md)
+- [常见问题](./docs/QnA.zh-CN.md)
 
 ## 示例
 
@@ -141,7 +142,7 @@ npm install @ice/store --save
 | [icejs] | [![icejs-status]][icejs-package] | [docs][icejs-docs] | 基于 React.js 的通用框架 |
 | [icestark] | [![icestark-status]][icestark-package] | [docs][icestark-docs] | 面向大型应用的微前端解决方案 |
 | [icestore] | [![icestore-status]][icestore-package] | [docs][icestore-docs] | 简单友好的轻量级状态管理方案 |
-| [iceworks]| [![iceworks-cli-status]][iceworks-cli-package] | [docs][iceworks-docs] | 基于 VS Code 的多端研发套件 |
+| [iceworks]| [![iceworks-status]][iceworks-package] | [docs][iceworks-docs] | 基于 VS Code 的多端研发套件 |
 
 [icejs]: https://github.com/alibaba/ice
 [icestark]: https://github.com/ice-lab/icestark
@@ -151,12 +152,12 @@ npm install @ice/store --save
 [icejs-status]: https://img.shields.io/npm/v/ice.js.svg
 [icestark-status]: https://img.shields.io/npm/v/@ice/stark.svg
 [icestore-status]: https://img.shields.io/npm/v/@ice/store.svg
-[iceworks-cli-status]: https://img.shields.io/npm/v/iceworks.svg
+[iceworks-status]: https://vsmarketplacebadge.apphb.com/version/iceworks-team.iceworks.svg
 
 [icejs-package]: https://npmjs.com/package/ice.js
 [icestark-package]: https://npmjs.com/package/@ice/stark
 [icestore-package]: https://npmjs.com/package/@ice/store
-[iceworks-cli-package]: https://npmjs.com/package/iceworks
+[iceworks-package]: https://marketplace.visualstudio.com/items?itemName=iceworks-team.iceworks
 
 [icejs-docs]: https://ice.work/docs/guide/intro
 [icestark-docs]: https://ice.work/docs/icestark/guide/about

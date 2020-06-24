@@ -1,6 +1,6 @@
 ---
 id: ana
-title: QnA
+title: Q & A
 ---
 
 English | [简体中文](./qna.zh-CN.md)

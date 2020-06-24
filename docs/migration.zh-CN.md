@@ -1,6 +1,6 @@
 ---
 id: migration
-title: Migration
+title: 从其他方案迁移
 ---
 
 [English](./migration.md) | 简体中文

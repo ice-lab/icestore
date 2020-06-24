@@ -1,6 +1,6 @@
 ---
 id: recipes
-title: Recipes
+title: 更多技巧
 ---
 
 [English](./recipes.md) | 简体中文
