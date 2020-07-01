@@ -242,15 +242,15 @@ class TodoList extends Component {
 export default withModelEffectsState('todos')(TodoList);	
 ```
 
-## 从 0.x.x 升级到 1.x.x
+## 从 0.4.x 升级到 1.x.x
 
-从 0.x.x 到 1.x.x 是不兼容的。您可以选择性地进行升级。
+从 0.4.x 到 1.x.x 是不兼容的。您可以选择性地进行升级。
 
-但 0.x.x 有一些已知的[缺陷](https://github.com/alibaba/ice/issues/3037)，您必须知晓。
+但 0.4.x 有一些已知的[缺陷](https://github.com/alibaba/ice/issues/3037)，您必须知晓。
 
 ### Define Model
 
-#### 0.x.x
+#### 0.4.x
 
 ```ts
 import user from './user';
@@ -325,7 +325,7 @@ const todos = {
 
 ### Create store
 
-#### 0.x.x
+#### 0.4.x
 
 ```js
 import Icestore from '@ice/store';
@@ -346,7 +346,7 @@ export default createStore(models);
 
 ### Consume model
 
-#### 0.x.x
+#### 0.4.x
 
 ```js
 function App() {
@@ -367,7 +367,7 @@ function App() {
 
 ### Binding View
 
-#### 0.x.x
+#### 0.4.x
 
 No need.
 
@@ -378,4 +378,97 @@ const { Provider } = store;
 ReactDOM.render(<Provider>
   <App />
 </Provider>, document.getElementById('root'));
+```
+
+## 从 0.1.0 升级到 0.4.0
+
+### 创建 Stores
+
+#### 0.1.0
+
+```js
+import todos from './todos';
+import user from './user';
+import Icestore from '@ice/store';
+
+const icestore = new Icestore();
+icestore.registerStore('todos', todos);
+icestore.registerStore('user', user);
+
+export default icestore;
+```
+
+#### 0.4.0
+
+```js
+import todos from './todos';
+import user from './user';
+import Icestore from '@ice/store';
+
+const icestore = new Icestore();
+const stores = icestore.registerStores({
+  todos,
+  user,
+});
+
+export default stores;
+```
+
+### 使用 Store
+
+#### 0.1.0
+
+```js
+function Todo() {
+  const todos = stores.useStore('todos');
+  const { dataSource } = todos;
+
+  useEffect(() => {
+    async function refresh() {
+      const newTodos = await todos.refresh();
+      console.log(newTodos.dataSource);
+    }
+    refresh();
+  }, []);
+
+  return (
+    <div>
+      <h2>Todo</h2>
+      <ul>
+        {dataSource.map(({ name }) => (
+          <li>{name}</li>
+        ))}
+      </ul>
+    </div>
+  );
+};
+```
+
+#### 0.4.0
+
+```js
+function Todo() {
+  const todos = stores.useStore('todos');
+  const { dataSource } = todos;
+
+  useEffect(() => {
+     async function refresh() {
+      await todos.refresh();
+      const newTodos = stores.getState('todos');
+      console.log(newTodos.dataSource);
+    }
+    refresh();
+  }, []);
+
+  return (
+    <div>
+      <h2>Todo</h2>
+      <ul>
+        {dataSource.map(({ name }) => (
+          <li>{name}</li>
+        ))}
+      </ul>
+    </div>
+  );
+};
 ```
