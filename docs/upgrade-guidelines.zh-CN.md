@@ -433,12 +433,9 @@ function Todo() {
 
   return (
     <div>
-      <h2>Todo</h2>
-      <ul>
-        {dataSource.map(({ name }) => (
-          <li>{name}</li>
-        ))}
-      </ul>
+      {dataSource.map(({ name }) => (
+        <div>{name}</div>
+      ))}
     </div>
   );
 };
@@ -462,12 +459,9 @@ function Todo() {
 
   return (
     <div>
-      <h2>Todo</h2>
-      <ul>
-        {dataSource.map(({ name }) => (
-          <li>{name}</li>
-        ))}
-      </ul>
+      {dataSource.map(({ name }) => (
+        <div>{name}</div>
+      ))}
     </div>
   );
 };
