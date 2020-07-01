@@ -238,11 +238,11 @@ class TodoList extends Component {
 export default withModelEffectsState('todos')(TodoList);	
 ```
 
-## Upgrade from 0.x.x to 1.x.x
+## Upgrade from 0.4.x to 1.x.x
 
 ### Define Model
 
-#### 0.x.x
+#### 0.4.x
 
 ```ts
 import user from './user';
@@ -317,7 +317,7 @@ const todos = {
 
 ### Create store
 
-#### 0.x.x
+#### 0.4.x
 
 ```js
 import Icestore from '@ice/store';
@@ -338,7 +338,7 @@ export default createStore(models);
 
 ### Consume model
 
-#### 0.x.x
+#### 0.4.x
 
 ```js
 function App() {
@@ -359,7 +359,7 @@ function App() {
 
 ### Binding View
 
-#### 0.x.x
+#### 0.4.x
 
 No need.
 
@@ -370,4 +370,97 @@ const { Provider } = store;
 ReactDOM.render(<Provider>
   <App />
 </Provider>, document.getElementById('root'));
+```
+
+## Upgrade from 0.1.x to 0.4.x
+
+### Create Stores
+
+#### 0.1.0
+
+```js
+import todos from './todos';
+import user from './user';
+import Icestore from '@ice/store';
+
+const icestore = new Icestore();
+icestore.registerStore('todos', todos);
+icestore.registerStore('user', user);
+
+export default icestore;
+```
+
+#### 0.4.0
+
+```js
+import todos from './todos';
+import user from './user';
+import Icestore from '@ice/store';
+
+const icestore = new Icestore();
+const stores = icestore.registerStores({
+  todos,
+  user,
+});
+
+export default stores;
+```
+
+### Use Store
+
+#### 0.1.0
+
+```js
+function Todo() {
+  const todos = stores.useStore('todos');
+  const { dataSource } = todos;
+
+  useEffect(() => {
+    async function refresh() {
+      const newTodos = await todos.refresh();
+      console.log(newTodos.dataSource);
+    }
+    refresh();
+  }, []);
+
+  return (
+    <div>
+      <h2>Todo</h2>
+      <ul>
+        {dataSource.map(({ name }) => (
+          <li>{name}</li>
+        ))}
+      </ul>
+    </div>
+  );
+};
+```
+
+#### 0.4.0
+
+```js
+function Todo() {
+  const todos = stores.useStore('todos');
+  const { dataSource } = todos;
+
+  useEffect(() => {
+     async function refresh() {
+      await todos.refresh();
+      const newTodos = stores.getState('todos');
+      console.log(newTodos.dataSource);
+    }
+    refresh();
+  }, []);
+
+  return (
+    <div>
+      <h2>Todo</h2>
+      <ul>
+        {dataSource.map(({ name }) => (
+          <li>{name}</li>
+        ))}
+      </ul>
+    </div>
+  );
+};
 ```
