@@ -250,6 +250,8 @@ export default withModelEffectsState('todos')(TodoList);
 
 ### Define Model
 
+从对象式升级为声明式。
+
 #### 0.4.x
 
 ```ts
@@ -382,76 +384,37 @@ ReactDOM.render(<Provider>
 
 ## 从 0.1.0 升级到 0.4.0
 
-### 创建 Stores
+### Create Stores
 
-#### 0.1.0
-
-```js
+```diff
 import todos from './todos';
 import user from './user';
 import Icestore from '@ice/store';
 
 const icestore = new Icestore();
-icestore.registerStore('todos', todos);
-icestore.registerStore('user', user);
+- icestore.registerStore('todos', todos);
+- icestore.registerStore('user', user);
++ const stores = icestore.registerStores({
++   todos,
++   user,
++ });
 
-export default icestore;
+- export default icestore;
++ export default stores;
 ```
 
-#### 0.4.0
+### Use Store
 
-```js
-import todos from './todos';
-import user from './user';
-import Icestore from '@ice/store';
-
-const icestore = new Icestore();
-const stores = icestore.registerStores({
-  todos,
-  user,
-});
-
-export default stores;
-```
-
-### 使用 Store
-
-#### 0.1.0
-
-```js
+```diff
 function Todo() {
   const todos = stores.useStore('todos');
   const { dataSource } = todos;
 
   useEffect(() => {
     async function refresh() {
-      const newTodos = await todos.refresh();
-      console.log(newTodos.dataSource);
-    }
-    refresh();
-  }, []);
-
-  return (
-    <div>
-      {dataSource.map(({ name }) => (
-        <div>{name}</div>
-      ))}
-    </div>
-  );
-};
-```
-
-#### 0.4.0
-
-```js
-function Todo() {
-  const todos = stores.useStore('todos');
-  const { dataSource } = todos;
-
-  useEffect(() => {
-     async function refresh() {
-      await todos.refresh();
-      const newTodos = stores.getState('todos');
+-     const newTodos = await todos.refresh();
++     await todos.refresh();
++     const newTodos = stores.getState('todos');
       console.log(newTodos.dataSource);
     }
     refresh();
