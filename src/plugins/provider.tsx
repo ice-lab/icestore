@@ -12,7 +12,7 @@ interface ProviderConfig {
 export default ({ context }: ProviderConfig): T.Plugin => {
   return {
     onStoreCreated(store: any) {
-      const Provider = function(props: { children; initialStates? }) {
+      const Provider = function (props) {
         const { children, initialStates } = props;
         if (initialStates) {
           Object.keys(initialStates).forEach(name => {
