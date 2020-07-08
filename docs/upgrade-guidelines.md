@@ -238,11 +238,11 @@ class TodoList extends Component {
 export default withModelEffectsState('todos')(TodoList);	
 ```
 
-## Upgrade from 0.x.x to 1.x.x
+## Upgrade from 0.4.x to 1.x.x
 
 ### Define Model
 
-#### 0.x.x
+#### 0.4.x
 
 ```ts
 import user from './user';
@@ -317,7 +317,7 @@ const todos = {
 
 ### Create store
 
-#### 0.x.x
+#### 0.4.x
 
 ```js
 import Icestore from '@ice/store';
@@ -338,7 +338,7 @@ export default createStore(models);
 
 ### Consume model
 
-#### 0.x.x
+#### 0.4.x
 
 ```js
 function App() {
@@ -359,7 +359,7 @@ function App() {
 
 ### Binding View
 
-#### 0.x.x
+#### 0.4.x
 
 No need.
 
@@ -370,4 +370,52 @@ const { Provider } = store;
 ReactDOM.render(<Provider>
   <App />
 </Provider>, document.getElementById('root'));
+```
+
+## Upgrade from 0.1.x to 0.4.x
+
+### Create Stores
+
+```diff
+import todos from './todos';
+import user from './user';
+import Icestore from '@ice/store';
+
+const icestore = new Icestore();
+- icestore.registerStore('todos', todos);
+- icestore.registerStore('user', user);
++ const stores = icestore.registerStores({
++   todos,
++   user,
++ });
+
+- export default icestore;
++ export default stores;
+```
+
+### Use Store
+
+```diff
+function Todo() {
+  const todos = stores.useStore('todos');
+  const { dataSource } = todos;
+
+  useEffect(() => {
+    async function refresh() {
+-     const newTodos = await todos.refresh();
++     await todos.refresh();
++     const newTodos = stores.getState('todos');
+      console.log(newTodos.dataSource);
+    }
+    refresh();
+  }, []);
+
+  return (
+    <div>
+      {dataSource.map(({ name }) => (
+        <div>{name}</div>
+      ))}
+    </div>
+  );
+};
 ```
