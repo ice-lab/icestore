@@ -110,6 +110,7 @@ npm install @ice/store --save
 - [Recipes](./docs/recipes.md)
 - [Upgrade Guidelines](./docs/upgrade-guidelines.md)
 - [Migration](./docs/migration.md)
+- [Q & A](./docs/QnA.md)
 
 ## Examples
 
@@ -133,6 +134,35 @@ icestore refines and builds upon the ideas of [rematch](https://github.com/remat
 Feel free to report any questions as an [issue](https://github.com/alibaba/ice/issues/new), we'd love to have your helping hand on icestore.
 
 If you're interested in icestore, see [CONTRIBUTING.md](https://github.com/alibaba/ice/blob/master/.github/CONTRIBUTING.md) for more information to learn how to get started.
+
+## ICE Ecosystem
+
+|    Project         |    Version      |     Docs    |   Description       |
+|----------------|------------------|--------------|-----------|
+| [icejs] | [![icejs-status]][icejs-package] | [docs][icejs-docs] | A universal framework based on react.js |
+| [icestark] | [![icestark-status]][icestark-package] | [docs][icestark-docs] | Micro Frontends solution for large application |
+| [icestore] | [![icestore-status]][icestore-package] | [docs][icestore-docs] | Simple and friendly state for React |
+| [iceworks]| [![iceworks-status]][iceworks-package] | [docs][iceworks-docs] | Universal Application Development Pack for VS Code |
+
+[icejs]: https://github.com/alibaba/ice
+[icestark]: https://github.com/ice-lab/icestark
+[icestore]: https://github.com/ice-lab/icestore
+[iceworks]: https://github.com/ice-lab/iceworks
+
+[icejs-status]: https://img.shields.io/npm/v/ice.js.svg
+[icestark-status]: https://img.shields.io/npm/v/@ice/stark.svg
+[icestore-status]: https://img.shields.io/npm/v/@ice/store.svg
+[iceworks-status]: https://vsmarketplacebadge.apphb.com/version/iceworks-team.iceworks.svg
+
+[icejs-package]: https://npmjs.com/package/ice.js
+[icestark-package]: https://npmjs.com/package/@ice/stark
+[icestore-package]: https://npmjs.com/package/@ice/store
+[iceworks-package]: https://marketplace.visualstudio.com/items?itemName=iceworks-team.iceworks
+
+[icejs-docs]: https://ice.work/docs/guide/intro
+[icestark-docs]: https://ice.work/docs/icestark/guide/about
+[icestore-docs]: https://github.com/ice-lab/icestore#icestore
+[iceworks-docs]: https://ice.work/docs/iceworks/about
 
 ## Community
 
