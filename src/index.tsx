@@ -6,7 +6,6 @@ import mergeConfig from './utils/mergeConfig';
 import createProviderPlugin from './plugins/provider';
 import createReduxHooksPlugin from './plugins/reduxHooks';
 import createModelApisPlugin from './plugins/modelApis';
-import { convertEffects, convertActions } from './utils/converter';
 import appendReducers from './utils/appendReducers';
 
 // incrementer used to provide a store name if none exists
@@ -49,12 +48,7 @@ export const createStore = <M extends T.Models, C extends T.CreateStoreConfig<M>
   plugins.push(createReduxHooksPlugin({context}));
   plugins.push(createModelApisPlugin());
 
-  // compatibility handling
-  const wrappedModels = appendReducers(
-    convertEffects(
-      convertActions(models),
-    ),
-  );
+  const wrappedModels = appendReducers(models);
 
   const store = init({
     models: wrappedModels,
