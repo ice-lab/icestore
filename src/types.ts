@@ -441,13 +441,8 @@ export interface InitConfig<M extends Models = Models> {
   redux?: InitConfigRedux;
 }
 
-export interface PrsetConfig {
-  disableImmer?: boolean;
-  disableLoading?: boolean;
-  disableError?: boolean;
-}
 
-export type CreateStoreConfig<M extends Models = Models> = InitConfig<M> & PrsetConfig;
+export type CreateStoreConfig<M extends Models = Models> = InitConfig<M>;
 
 export interface Config<M extends Models = Models> extends InitConfig {
   name: string;

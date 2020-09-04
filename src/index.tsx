@@ -6,9 +6,6 @@ import mergeConfig from './utils/mergeConfig';
 import createProviderPlugin from './plugins/provider';
 import createReduxHooksPlugin from './plugins/reduxHooks';
 import createModelApisPlugin from './plugins/modelApis';
-import createImmerPlugin from './plugins/immer';
-import createLoadingPlugin from './plugins/loading';
-import createErrorPlugin from './plugins/error';
 import { convertEffects, convertActions } from './utils/converter';
 import appendReducers from './utils/appendReducers';
 
@@ -37,9 +34,6 @@ const init = <M extends T.Models>(initConfig: T.InitConfig<M> = {}): T.Icestore<
  */
 export const createStore = <M extends T.Models, C extends T.CreateStoreConfig<M>>(models: M, initConfig?: C): T.PresetIcestore<M> => {
   const {
-    disableImmer,
-    disableLoading,
-    disableError,
     plugins = [],
     redux = {},
   } = initConfig || {};
@@ -54,21 +48,6 @@ export const createStore = <M extends T.Models, C extends T.CreateStoreConfig<M>
   plugins.push(createProviderPlugin({context}));
   plugins.push(createReduxHooksPlugin({context}));
   plugins.push(createModelApisPlugin());
-
-  // https://github.com/ice-lab/icestore/issues/94
-  // TODO: fix error & loading plugin immer problem
-  const immerBlacklist = [];
-  if (!disableLoading) {
-    plugins.push(createLoadingPlugin());
-    immerBlacklist.push('loading');
-  }
-  if (!disableError) {
-    plugins.push(createErrorPlugin());
-    immerBlacklist.push('error');
-  }
-  if (!disableImmer) {
-    plugins.push(createImmerPlugin({ blacklist: immerBlacklist }));
-  }
 
   // compatibility handling
   const wrappedModels = appendReducers(
