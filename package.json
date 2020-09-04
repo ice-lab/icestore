@@ -1,6 +1,6 @@
 {
   "name": "@ice/store",
-  "version": "1.4.2",
+  "version": "2.0.0",
   "description": "Simple and friendly state for React",
   "main": "lib/index.js",
   "files": [

@@ -5,6 +5,10 @@ title: 从老版本升级
 
 [English](./upgrade-guidelines.md) | 简体中文
 
+## 从 1.x 升级到 2.x
+
+_WIP_
+
 ## 从 1.2.0 升级到 1.3.0
 
 1.3.0 是完全向下兼容的，但是我们推荐您在新增代码中使用最新的 API。1.2.x 有一些已知的[功能不完备](https://github.com/alibaba/ice/issues/3037)，您必须知晓。
