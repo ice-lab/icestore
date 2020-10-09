@@ -110,7 +110,7 @@ npm install @ice/store --save
 - [更多技巧](./docs/recipes.zh-CN.md)
 - [从老版本升级](./docs/upgrade-guidelines.zh-CN.md)
 - [从其他方案迁移](./docs/migration.zh-CN.md)
-- [常见问题](./docs/QnA.zh-CN.md)
+- [常见问题](./docs/qna.zh-CN.md)
 
 ## 示例
 

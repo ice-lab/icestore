@@ -26,11 +26,31 @@ English | [简体中文](./qna.zh-CN.md)
 
 ### How?
 
-Method 1:
+Method 1: Use `dispatch`
+
+```diff
+const counter = {
+  state: 0,
+  reducers: {
+    increment: (prevState) => prevState + 1,
+    decrement: (prevState) => prevState - 1,
+  },
+-  effects: () => ({
++  effects: (dispatch) => ({
+    async asyncDecrement() {
+      await delay(1000);
+-     // this.decrement();
++     dispatch.counter.decrement();
+    },
+  }),
+};
+```
+
+Method 2:
 
 Set `"noImplicitThis": false` in tsconfig.json.
 
-Method 2:
+Method 3:
 
 Replace `this` use `this as any`:
 

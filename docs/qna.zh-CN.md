@@ -26,11 +26,31 @@ title: 常见问题
 
 ### 解决方法
 
-方法一：
+方法一：使用 `dispatch`
+
+```diff
+const counter = {
+  state: 0,
+  reducers: {
+    increment: (prevState) => prevState + 1,
+    decrement: (prevState) => prevState - 1,
+  },
+-  effects: () => ({
++  effects: (dispatch) => ({
+    async asyncDecrement() {
+      await delay(1000);
+-     // this.decrement();
++     dispatch.counter.decrement();
+    },
+  }),
+};
+```
+
+方法二：
 
 在 tsconfig.json 中设置 `"noImplicitThis": false`。
 
-方法二：
+方法三：
 
 使用到 `this` 时使用断言：`this as any`：
 

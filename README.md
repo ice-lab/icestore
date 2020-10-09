@@ -110,7 +110,7 @@ npm install @ice/store --save
 - [Recipes](./docs/recipes.md)
 - [Upgrade Guidelines](./docs/upgrade-guidelines.md)
 - [Migration](./docs/migration.md)
-- [Q & A](./docs/QnA.md)
+- [Q & A](./docs/qna.md)
 
 ## Examples
 
