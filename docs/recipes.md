@@ -309,6 +309,34 @@ For most small and medium-sized projects, it is recommended to centrally manage 
 
 If the project is relatively large, or more likely to follow the page maintenance of the store,then you can declare a store instance in each page directory. However, in this case, cross page store calls should be avoided as much as possible.
 
+## Devtools
+
+icestore works with [Redux Devtools](https://github.com/zalmoxisus/redux-devtools-extension) out of the box. No configuration required.
+
+```js
+import { createStore } from '@ice/store';
+
+const models = { counter: {} };
+createStore(models); // devtools up and running
+```
+
+Its also possible to add redux devtools [configuration options](https://github.com/zalmoxisus/redux-devtools-extension/blob/master/docs/API/Arguments.md).
+
+```js
+import { createStore } from '@ice/store';
+
+const models = { counter: {} };
+
+createStore(
+  models,
+  {
+    redux: {
+      devtoolOptions: options,
+    },
+  }
+);
+```
+
 ## Comparison
 
 - O: Yes
