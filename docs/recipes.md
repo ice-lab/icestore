@@ -326,7 +326,6 @@ Its also possible to add redux devtools [configuration options](https://github.c
 import { createStore } from '@ice/store';
 
 const models = { counter: {} };
-
 createStore(
   models,
   {

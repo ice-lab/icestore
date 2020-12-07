@@ -324,7 +324,6 @@ createStore(models); // devtools up and running
 import { createStore } from '@ice/store';
 
 const models = { counter: {} };
-
 createStore(
   models,
   {
