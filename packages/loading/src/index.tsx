@@ -1,5 +1,4 @@
-import React from 'react';
-import * as T from '../types';
+import * as T from '../../core/src/types';
 
 export interface LoadingConfig {
   name?: string;

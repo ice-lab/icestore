@@ -1,6 +1,6 @@
 import produce, { enableES5 } from 'immer';
 import { combineReducers, ReducersMapObject } from 'redux';
-import * as T from '../types';
+import * as T from '../../core/src/types';
 
 // make it work in IE11
 enableES5();
