@@ -307,6 +307,33 @@ const store = createStore(models, {
 
 如果项目相对较大，可以按照页面来管理模型。但是，在这种情况下，应该避免跨页面使用模型。
 
+## Devtools
+
+icestore 默认支持 [Redux Devtools](https://github.com/zalmoxisus/redux-devtools-extension)，不需要额外的配置。
+
+```js
+import { createStore } from '@ice/store';
+
+const models = { counter: {} };
+createStore(models); // devtools up and running
+```
+
+可以通过额外的参数添加 Redux Devtools 的[配置选项](https://github.com/zalmoxisus/redux-devtools-extension/blob/master/docs/API/Arguments.md)。
+
+```js
+import { createStore } from '@ice/store';
+
+const models = { counter: {} };
+createStore(
+  models,
+  {
+    redux: {
+      devtoolOptions: options,
+    },
+  }
+);
+```
+
 ## 能力对比表
 
 - O: 支持
