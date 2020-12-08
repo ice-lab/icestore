@@ -3,9 +3,7 @@ import thunkMiddleware from 'redux-thunk';
 import Icestore from './icestore';
 import * as T from './types';
 import mergeConfig from './utils/mergeConfig';
-import createProviderPlugin from './plugins/provider';
-import createReduxHooksPlugin from './plugins/reduxHooks';
-import createModelApisPlugin from './plugins/modelApis';
+import createModelApisPlugin from './plugins/model';
 import appendReducers from './utils/appendReducers';
 
 // incrementer used to provide a store name if none exists
@@ -44,9 +42,7 @@ export const createStore = <M extends T.Models, C extends T.CreateStoreConfig<M>
   middlewares.push(thunkMiddleware);
 
   // defaults plugins
-  plugins.push(createProviderPlugin({context}));
-  plugins.push(createReduxHooksPlugin({context}));
-  plugins.push(createModelApisPlugin());
+  plugins.push(createModelApisPlugin({context}));
 
   const wrappedModels = appendReducers(models);
 

@@ -1,21 +1,45 @@
 import React from 'react';
+import { createSelectorHook, createDispatchHook, Provider as ReduxProvider } from 'react-redux';
 import * as T from '../types';
 import warning from '../utils/warning';
+import actionTypes from '../actionTypes';
 
-let warnedUseModelActions = false;
+const { SET_STATE } = actionTypes;
+
 let warnedWithModelActions = false;
-let warnedUseModelActionsState = false;
 let warnedWithModelActionsState = false;
 
+interface ModelConfig {
+  context: React.Context<null>;
+}
 
 /**
- * ModelApis Plugin
+ * Model Plugin
  *
  * generates hooks for store
  */
-export default (): T.Plugin => {
+export default ({ context }: ModelConfig): T.Plugin => {
   return {
     onStoreCreated(store: any) {
+      const useSelector = createSelectorHook(context);
+      const useDispatch = createDispatchHook(context);
+      const Provider = function (props) {
+        const { children, initialStates } = props;
+        if (initialStates) {
+          Object.keys(initialStates).forEach(name => {
+            const initialState = initialStates[name];
+            if (initialState && store.dispatch[name][SET_STATE]) {
+              store.dispatch[name][SET_STATE](initialState);
+            }
+          });
+        }
+        return (
+          <ReduxProvider store={store} context={context}>
+            {children}
+          </ReduxProvider>
+        );
+      };
+
       // hooks
       function useModel(name) {
         const state = useModelState(name);
@@ -23,14 +47,14 @@ export default (): T.Plugin => {
         return [state, dispatchers];
       }
       function useModelState(name) {
-        const selector = store.useSelector(state => state[name]);
+        const selector = useSelector(state => state[name]);
         if (typeof selector !== "undefined") {
           return selector;
         }
         throw new Error(`Not found model by namespace: ${name}.`);
       }
       function useModelDispatchers(name) {
-        const dispatch = store.useDispatch();
+        const dispatch = useDispatch();
         if (dispatch[name]) {
           return dispatch[name];
         }
@@ -51,32 +75,10 @@ export default (): T.Plugin => {
         return states;
       }
       function useModelEffectsError(name) {
-        return store.useSelector(state => state.error ? state.error.effects[name] : undefined);
+        return useSelector(state => state.error ? state.error.effects[name] : undefined);
       }
       function useModelEffectsLoading(name) {
-        return store.useSelector(state => state.loading ? state.loading.effects[name] : undefined);
-      }
-
-      /**
-       * @deprecated use `useModelEffectsState` instead
-       */
-      function useModelActionsState(name) {
-        if (!warnedUseModelActionsState) {
-          warnedUseModelActionsState = true;
-          warning('`useModelActionsState` API has been detected, please use `useModelEffectsState` instead. \n\n\n Visit https://github.com/ice-lab/icestore/blob/master/docs/upgrade-guidelines.md#usemodelactionsstate to learn about how to upgrade.');
-        }
-        return useModelEffectsState(name);
-      }
-
-      /**
-       * @deprecated use `useModelDispatchers` instead.
-       */
-      function useModelActions(name) {
-        if (!warnedUseModelActions) {
-          warnedUseModelActions = true;
-          warning('`useModelActions` API has been detected, please use `useModelDispatchers` instead. \n\n\n Visit https://github.com/ice-lab/icestore/blob/master/docs/upgrade-guidelines.md#usemodelactions to learn about how to upgrade.');
-        }
-        return useModelDispatchers(name);
+        return useSelector(state => state.loading ? state.loading.effects[name] : undefined);
       }
 
       // other apis
@@ -210,15 +212,20 @@ export default (): T.Plugin => {
       return {
         getModelAPIs,
 
-        // Hooks
+        Provider,
+        context,
+
+        // Hooks for redux
+        useSelector,
+        useDispatch,
+
+        // Hooks for model
         useModel,
         useModelState,
         useModelDispatchers,
         useModelEffectsState,
         useModelEffectsError,
         useModelEffectsLoading,
-        useModelActions,
-        useModelActionsState,
 
         // real time
         getModel,
