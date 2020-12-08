@@ -311,12 +311,7 @@ const store = createStore(models, {
 
 icestore 默认支持 [Redux Devtools](https://github.com/zalmoxisus/redux-devtools-extension)，不需要额外的配置。
 
-```js
-import { createStore } from '@ice/store';
-
-const models = { counter: {} };
-createStore(models); // devtools up and running
-```
+![Redux Devtools](https://img.alicdn.com/tfs/TB16vJ24uL2gK0jSZFmXXc7iXXa-2880-1754.png)
 
 可以通过额外的参数添加 Redux Devtools 的[配置选项](https://github.com/zalmoxisus/redux-devtools-extension/blob/master/docs/API/Arguments.md)。
 

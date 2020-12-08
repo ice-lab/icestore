@@ -313,12 +313,7 @@ If the project is relatively large, or more likely to follow the page maintenanc
 
 icestore works with [Redux Devtools](https://github.com/zalmoxisus/redux-devtools-extension) out of the box. No configuration required.
 
-```js
-import { createStore } from '@ice/store';
-
-const models = { counter: {} };
-createStore(models); // devtools up and running
-```
+![Redux Devtools](https://img.alicdn.com/tfs/TB16vJ24uL2gK0jSZFmXXc7iXXa-2880-1754.png)
 
 Its also possible to add redux devtools [configuration options](https://github.com/zalmoxisus/redux-devtools-extension/blob/master/docs/API/Arguments.md).
 
