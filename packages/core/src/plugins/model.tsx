@@ -210,14 +210,15 @@ export default ({ context }: ModelConfig): T.Plugin => {
       }
 
       return {
-        getModelAPIs,
-
+        // APIs for redux
         Provider,
         context,
 
         // Hooks for redux
         useSelector,
         useDispatch,
+
+        getModelAPIs,
 
         // Hooks for model
         useModel,
