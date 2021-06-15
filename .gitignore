@@ -59,3 +59,7 @@ jspm_packages/
 
 # Compile directory
 lib
+
+package-lock.json
+
+yarn.lock
