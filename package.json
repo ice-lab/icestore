@@ -1,6 +1,6 @@
 {
   "name": "@ice/store",
-  "version": "1.4.2",
+  "version": "1.4.3",
   "description": "Simple and friendly state for React",
   "main": "lib/index.js",
   "files": [
@@ -54,7 +54,7 @@
     "typescript": "^3.7.4"
   },
   "peerDependencies": {
-    "react": "^16.8.0"
+    "react": ">=16.8.0"
   },
   "jest": {
     "coverageDirectory": "./coverage/",
