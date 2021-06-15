@@ -15,9 +15,10 @@ jobs:
         with:
           node-version: ${{ matrix.node_version }}
       - name: Cache node_modules
+        id: cache-node-modules
         uses: actions/cache@v2
         with:
-          path: node_modules
+          path: ~/.npm
           key: ${{ runner.os }}-${{ matrix.node_version }}-nodemodules-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
             ${{ runner.os }}-${{ matrix.node_version }}-nodemodules-
