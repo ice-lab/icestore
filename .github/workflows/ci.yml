@@ -5,7 +5,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        node_version: [12.x, 14.x]
+        node_version: [12.x]
         os: [ubuntu-latest]
       fail-fast: false
     steps:
@@ -14,16 +14,17 @@ jobs:
         uses: actions/setup-node@v2
         with:
           node-version: ${{ matrix.node_version }}
-      # - name: Cache node_modules
-      #   uses: actions/cache@v2
-      #   with:
-      #     path: node_modules
-      #     key: ${{ runner.os }}-${{ matrix.node_version }}-nodemodules-${{ hashFiles('**/package-lock.json') }}
-      #     restore-keys: |
-      #       ${{ runner.os }}-${{ matrix.node_version }}-nodemodules-
+      - name: Cache node_modules
+        uses: actions/cache@v2
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-${{ matrix.node_version }}-nodemodules-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-${{ matrix.node_version }}-nodemodules-
       - name: Install Dep
         run: npm install
       - run: npm run lint:nofix
+      - run: npm run build
       - run: npm run test
       - name: Generate coverage
         if: matrix.node_version == '12.x' && matrix.os == 'ubuntu-latest'

@@ -30,35 +30,36 @@ English | [简体中文](./README.zh-CN.md)
 
 icestore is a simple and friendly state management library for React. It has the following core features:
 
-* **Minimal & Familiar API**: No additional learning costs, easy to get started with the knowledge of Redux && React Hooks.
-* **Built in Async Status**: Records loading and error status of effects, simplifying the rendering logic in the view layer.
-* **Class Component Support**: Make old projects enjoying the fun of lightweight state management with friendly compatibility strategy.
-* **TypeScript Support**: Provide complete type definitions to support intelliSense in VS Code.
+- **Minimal & Familiar API**: No additional learning costs, easy to get started with the knowledge of Redux && React Hooks.
+- **Built in Async Status**: Records loading and error status of effects, simplifying the rendering logic in the view layer.
+- **Class Component Support**: Make old projects enjoying the fun of lightweight state management with friendly compatibility strategy.
+- **TypeScript Support**: Provide complete type definitions to support intelliSense in VS Code.
 
 See the [comparison table](docs/recipes.md#Comparison) for more details.
 
 ## Basic example
 
 ```jsx
-import React from 'react';
-import ReactDOM from 'react-dom';
-import { createStore } from '@ice/store';
+import React from "react";
+import ReactDOM from "react-dom";
+import { createStore } from "@ice/store";
 
-const delay = (time) => new Promise((resolve) => setTimeout(() => resolve(), time));
+const delay = (time) =>
+  new Promise((resolve) => setTimeout(() => resolve(), time));
 
 // 1️⃣ Use a model to define your store
 const counter = {
   state: 0,
   reducers: {
-    increment:(prevState) => prevState + 1,
-    decrement:(prevState) => prevState - 1,
+    increment: (prevState) => prevState + 1,
+    decrement: (prevState) => prevState - 1,
   },
   effects: () => ({
     async asyncDecrement() {
       await delay(1000);
       this.decrement();
     },
-  })
+  }),
 };
 
 const models = {
@@ -71,13 +72,17 @@ const store = createStore(models);
 // 3️⃣ Consume model
 const { useModel } = store;
 function Counter() {
-  const [ count, dispatchers ] = useModel('counter');
+  const [count, dispatchers] = useModel("counter");
   const { increment, asyncDecrement } = dispatchers;
   return (
     <div>
       <span>{count}</span>
-      <button type="button" onClick={increment}>+</button>
-      <button type="button" onClick={asyncDecrement}>-</button>
+      <button type="button" onClick={increment}>
+        +
+      </button>
+      <button type="button" onClick={asyncDecrement}>
+        -
+      </button>
     </div>
   );
 }
@@ -92,7 +97,7 @@ function App() {
   );
 }
 
-const rootElement = document.getElementById('root');
+const rootElement = document.getElementById("root");
 ReactDOM.render(<App />, rootElement);
 ```
 
@@ -123,7 +128,7 @@ npm install @ice/store --save
 
 | ![Chrome](https://raw.github.com/alrra/browser-logos/master/src/chrome/chrome_48x48.png) | ![Firefox](https://raw.github.com/alrra/browser-logos/master/src/firefox/firefox_48x48.png) | ![Edge](https://raw.github.com/alrra/browser-logos/master/src/edge/edge_48x48.png) | ![IE](https://raw.github.com/alrra/browser-logos/master/src/archive/internet-explorer_9-11/internet-explorer_9-11_48x48.png) | ![Safari](https://raw.github.com/alrra/browser-logos/master/src/safari/safari_48x48.png) | ![Opera](https://raw.github.com/alrra/browser-logos/master/src/opera/opera_48x48.png) | ![UC](https://raw.github.com/alrra/browser-logos/master/src/uc/uc_48x48.png) |
 | :--------------------------------------------------------------------------------------: | :-----------------------------------------------------------------------------------------: | :--------------------------------------------------------------------------------: | :--------------------------------------------------------------------------------------------------------------------------: | :--------------------------------------------------------------------------------------: | :-----------------------------------------------------------------------------------: | :--------------------------------------------------------------------------: |
-|✔ |✔|✔|9+ ✔|✔|✔|✔|
+|                                            ✔                                             |                                              ✔                                              |                                         ✔                                          |                                                             9+ ✔                                                             |                                            ✔                                             |                                           ✔                                           |                                      ✔                                       |
 
 ## Inspiration
 
@@ -131,34 +136,31 @@ icestore refines and builds upon the ideas of [rematch](https://github.com/remat
 
 ## Contributors
 
-Feel free to report any questions as an [issue](https://github.com/alibaba/ice/issues/new), we'd love to have your helping hand on icestore.
+Feel free to report any questions as an [issue](https://github.com/ice-lab/icestore/issues/new), we'd love to have your helping hand on icestore.
 
 If you're interested in icestore, see [CONTRIBUTING.md](https://github.com/alibaba/ice/blob/master/.github/CONTRIBUTING.md) for more information to learn how to get started.
 
 ## ICE Ecosystem
 
-|    Project         |    Version      |     Docs    |   Description       |
-|----------------|------------------|--------------|-----------|
-| [icejs] | [![icejs-status]][icejs-package] | [docs][icejs-docs] | A universal framework based on react.js |
-| [icestark] | [![icestark-status]][icestark-package] | [docs][icestark-docs] | Micro Frontends solution for large application |
-| [icestore] | [![icestore-status]][icestore-package] | [docs][icestore-docs] | Simple and friendly state for React |
-| [iceworks]| [![iceworks-status]][iceworks-package] | [docs][iceworks-docs] | Universal Application Development Pack for VS Code |
+| Project    | Version                                | Docs                  | Description                                        |
+| ---------- | -------------------------------------- | --------------------- | -------------------------------------------------- |
+| [icejs]    | [![icejs-status]][icejs-package]       | [docs][icejs-docs]    | A universal framework based on react.js            |
+| [icestark] | [![icestark-status]][icestark-package] | [docs][icestark-docs] | Micro Frontends solution for large application     |
+| [icestore] | [![icestore-status]][icestore-package] | [docs][icestore-docs] | Simple and friendly state for React                |
+| [iceworks] | [![iceworks-status]][iceworks-package] | [docs][iceworks-docs] | Universal Application Development Pack for VS Code |
 
 [icejs]: https://github.com/alibaba/ice
 [icestark]: https://github.com/ice-lab/icestark
 [icestore]: https://github.com/ice-lab/icestore
 [iceworks]: https://github.com/ice-lab/iceworks
-
 [icejs-status]: https://img.shields.io/npm/v/ice.js.svg
 [icestark-status]: https://img.shields.io/npm/v/@ice/stark.svg
 [icestore-status]: https://img.shields.io/npm/v/@ice/store.svg
 [iceworks-status]: https://vsmarketplacebadge.apphb.com/version/iceworks-team.iceworks.svg
-
 [icejs-package]: https://npmjs.com/package/ice.js
 [icestark-package]: https://npmjs.com/package/@ice/stark
 [icestore-package]: https://npmjs.com/package/@ice/store
 [iceworks-package]: https://marketplace.visualstudio.com/items?itemName=iceworks-team.iceworks
-
 [icejs-docs]: https://ice.work/docs/guide/intro
 [icestark-docs]: https://ice.work/docs/icestark/guide/about
 [icestore-docs]: https://github.com/ice-lab/icestore#icestore
@@ -166,9 +168,9 @@ If you're interested in icestore, see [CONTRIBUTING.md](https://github.com/aliba
 
 ## Community
 
-| DingTalk community                               | GitHub issues |  Gitter |
-|-------------------------------------|--------------|---------|
-| <a href="https://ice.alicdn.com/assets/images/qrcode.png"><img src="https://ice.alicdn.com/assets/images/qrcode.png" width="150" /></a> | [issues]     | [gitter]|
+| DingTalk community                                                                                                                      | GitHub issues | Gitter   |
+| --------------------------------------------------------------------------------------------------------------------------------------- | ------------- | -------- |
+| <a href="https://ice.alicdn.com/assets/images/qrcode.png"><img src="https://ice.alicdn.com/assets/images/qrcode.png" width="150" /></a> | [issues]      | [gitter] |
 
 [issues]: https://github.com/alibaba/ice/issues
 [gitter]: https://gitter.im/alibaba/ice
