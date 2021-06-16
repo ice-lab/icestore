@@ -50,11 +50,12 @@ if (!branchName) {
     data: {
       msgtype: 'markdown',
       markdown: {
+        title: '我是一个工具人',
         text: `@ice/store@${version} 发布成功`,
       },
     },
   });
-  console.log('notify success', response);
+  console.log('notify success', response.data);
 
 })().catch(err => {
   console.error(err);
