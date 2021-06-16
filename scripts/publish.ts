@@ -1,4 +1,4 @@
-import { execSync, spawnSync } from 'child_process';
+import { execSync } from 'child_process';
 import { join } from 'path';
 import * as fse from 'fs-extra';
 import checkVersionExist from './checkVersionExist';
@@ -32,8 +32,8 @@ if (!branchName) {
     process.exit(0);
   }
 
-  console.log('start publish', version, npmTag, process.env.NODE_AUTH_TOKEN);
-  spawnSync('npm', ['publish', '--tag', npmTag, '--ignore-scripts'], {
+  console.log('start publish', version, npmTag);
+  execSync(`npm publish --tag ${npmTag} --ignore-scripts`, {
     cwd: rootDir,
     stdio: 'inherit',
   });

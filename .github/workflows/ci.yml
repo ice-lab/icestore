@@ -20,6 +20,6 @@ jobs:
       - name: Generate coverage
         run: npm run coverage
       - name: Publish
-        run: npm run publish
+        run: npm publish --tag beta --ignore-scripts
         env:
           NODE_AUTH_TOKEN: ${{secrets.TEST_NPM_TOKEN}}
