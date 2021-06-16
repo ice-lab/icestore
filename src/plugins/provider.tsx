@@ -23,6 +23,7 @@ export default ({ context }: ProviderConfig): T.Plugin => {
           });
         }
         return (
+          // @ts-ignore
           <ReduxProvider store={store} context={context}>
             {children}
           </ReduxProvider>

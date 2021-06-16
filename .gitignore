@@ -63,3 +63,5 @@ lib
 package-lock.json
 
 yarn.lock
+
+.ice
