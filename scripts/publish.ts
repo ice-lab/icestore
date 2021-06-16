@@ -34,6 +34,7 @@ if (!branchName) {
     process.exit(0);
   }
 
+  console.log('start publish', version, npmTag);
   execSync(`npm publish --tag ${npmTag} --ignore-scripts`, {
     cwd: rootDir,
   });
