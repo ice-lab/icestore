@@ -40,7 +40,8 @@ if (!branchName) {
     stdio: 'inherit',
   });
 
-  await axios.default({
+  console.log('start notify');
+  const response = await axios.default({
     url: process.env.DING_WEBHOOK,
     method: 'post',
     headers: {
@@ -53,6 +54,8 @@ if (!branchName) {
       },
     },
   });
+  console.log('notify success', response);
+
 })().catch(err => {
   console.error(err);
   process.exit(1);
