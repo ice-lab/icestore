@@ -35,7 +35,7 @@ if (!branchName) {
     process.exit(0);
   }
 
-  console.log('start publish', version, npmTag);
+  console.log('start publish', version, npmTag, process.env.NODE_AUTH_TOKEN);
   execSync(`npm publish --tag ${npmTag} --ignore-scripts`, {
     cwd: rootDir,
     stdio: 'inherit',
