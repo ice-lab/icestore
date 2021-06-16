@@ -33,7 +33,7 @@
     "test": "cross-env NODE_ENV=unittest jest",
     "test:w": "jest --watch",
     "coverage": "codecov",
-    "publish": "node scripts/publish"
+    "publish": "ts-node scripts/publish"
   },
   "devDependencies": {
     "@commitlint/cli": "^8.2.0",
