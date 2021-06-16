@@ -37,8 +37,8 @@ if (!branchName) {
   console.log('start publish', version, npmTag);
   execSync(`npm publish --tag ${npmTag} --ignore-scripts`, {
     cwd: rootDir,
+    stdio: 'inherit',
   });
-
 })().catch(err => {
   console.error(err);
   process.exit(1);
