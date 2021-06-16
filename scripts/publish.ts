@@ -25,11 +25,12 @@ if (!branchName) {
     process.exit(0);
   }
 
-  if (branchName === 'master' && !/\d+\.\d+\.\d+/.test(version)) {
+  const isProdVersion = /^\d+\.\d+\.\d+$/.test(version);
+  if (branchName === 'master' && !isProdVersion) {
     throw new Error(`禁止在 master 分支发布非正式版本 ${version}`);
   }
 
-  if (branchName !== 'master' && /\d+\.\d+\.\d+/.test(version)) {
+  if (branchName !== 'master' && isProdVersion) {
     console.log(`非 master 分支 ${branchName}，不发布正式版本 ${version}`);
     process.exit(0);
   }
