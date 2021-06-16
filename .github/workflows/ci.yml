@@ -20,7 +20,8 @@ jobs:
       - run: npm run test
       - name: Generate coverage
         run: npm run coverage
-      - name: Publish
+      - name: Publish And Notify
         run: npm run publish
         env:
-          NODE_AUTH_TOKEN: ${{secrets.TEST_NPM_TOKEN}}
+          NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
+          DING_WEBHOOK: ${{secrets.DING_WEBHOOK}}

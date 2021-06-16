@@ -1,6 +1,6 @@
 {
   "name": "@ice/store",
-  "version": "1.4.3-1",
+  "version": "1.4.3-2",
   "description": "Simple and friendly state for React",
   "main": "lib/index.js",
   "files": [
@@ -44,6 +44,7 @@
     "@types/fs-extra": "^9.0.11",
     "@types/jest": "^25.2.1",
     "@types/node": "^12.0.0",
+    "axios": "^0.21.1",
     "codecov": "^3.3.0",
     "cross-env": "^7.0.2",
     "eslint": "^6.7.2",

@@ -1,6 +1,8 @@
 import { execSync } from 'child_process';
 import { join } from 'path';
 import * as fse from 'fs-extra';
+import * as axios from 'axios';
+
 import checkVersionExist from './checkVersionExist';
 
 // Set by github actions
@@ -36,6 +38,20 @@ if (!branchName) {
   execSync(`npm publish --tag ${npmTag} --ignore-scripts`, {
     cwd: rootDir,
     stdio: 'inherit',
+  });
+
+  await axios.default({
+    url: process.env.DING_WEBHOOK,
+    method: 'post',
+    headers: {
+      'Content-Type': 'application/json;charset=utf-8',
+    },
+    data: {
+      msgtype: 'markdown',
+      markdown: {
+        text: `@ice/store@${version} 发布成功`,
+      },
+    },
   });
 })().catch(err => {
   console.error(err);
