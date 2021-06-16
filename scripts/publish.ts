@@ -1,7 +1,4 @@
-/**
- * Scripts to check unpublished version and run publish
- */
-import { execSync } from 'child_process';
+import { execSync, spawnSync } from 'child_process';
 import { join } from 'path';
 import * as fse from 'fs-extra';
 import checkVersionExist from './checkVersionExist';
@@ -36,7 +33,7 @@ if (!branchName) {
   }
 
   console.log('start publish', version, npmTag, process.env.NODE_AUTH_TOKEN);
-  execSync(`npm publish --tag ${npmTag} --ignore-scripts`, {
+  spawnSync('npm', ['publish', '--tag', npmTag, '--ignore-scripts'], {
     cwd: rootDir,
     stdio: 'inherit',
   });
