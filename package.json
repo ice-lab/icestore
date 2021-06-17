@@ -1,10 +1,11 @@
 {
   "name": "@ice/store",
-  "version": "1.4.3",
+  "version": "1.4.3-6",
   "description": "Simple and friendly state for React",
   "main": "lib/index.js",
   "files": [
-    "lib"
+    "lib",
+    "lib/!(*.map)"
   ],
   "repository": {
     "type": "git",

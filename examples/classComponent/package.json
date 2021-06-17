@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "dependencies": {
-    "@ice/store": "^1.4.0",
+    "@ice/store": "^1.4.3-5",
     "react-dom": "^16.8.6"
   },
   "devDependencies": {
@@ -12,7 +12,6 @@
     "@types/react": "^16.9.0",
     "@types/react-dom": "^16.9.0",
     "ice.js": "^1.18.1",
-    "react-scripts": "^3.4.0",
     "typescript": "^3.7.5",
     "utility-types": "^3.10.0"
   },
