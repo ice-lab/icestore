@@ -40,9 +40,9 @@ See the [comparison table](docs/recipes.md#Comparison) for more details.
 ## Basic example
 
 ```jsx
-import React from "react";
-import ReactDOM from "react-dom";
-import { createStore } from "@ice/store";
+import React from 'react';
+import ReactDOM from 'react-dom';
+import { createStore } from '@ice/store';
 
 const delay = (time) =>
   new Promise((resolve) => setTimeout(() => resolve(), time));
@@ -72,7 +72,7 @@ const store = createStore(models);
 // 3️⃣ Consume model
 const { useModel } = store;
 function Counter() {
-  const [count, dispatchers] = useModel("counter");
+  const [count, dispatchers] = useModel('counter');
   const { increment, asyncDecrement } = dispatchers;
   return (
     <div>
@@ -97,7 +97,7 @@ function App() {
   );
 }
 
-const rootElement = document.getElementById("root");
+const rootElement = document.getElementById('root');
 ReactDOM.render(<App />, rootElement);
 ```
 
