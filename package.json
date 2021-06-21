@@ -1,10 +1,11 @@
 {
   "name": "@ice/store",
-  "version": "1.4.2",
+  "version": "1.4.3",
   "description": "Simple and friendly state for React",
   "main": "lib/index.js",
   "files": [
-    "lib"
+    "lib",
+    "lib/!(*.map)"
   ],
   "repository": {
     "type": "git",
@@ -32,7 +33,8 @@
     "lint:nofix": "eslint --cache --ext .ts,.tsx,.js ./",
     "test": "cross-env NODE_ENV=unittest jest",
     "test:w": "jest --watch",
-    "coverage": "codecov"
+    "coverage": "codecov",
+    "publish": "ts-node scripts/publish"
   },
   "devDependencies": {
     "@commitlint/cli": "^8.2.0",
@@ -40,21 +42,26 @@
     "@ice/spec": "^0.1.9",
     "@testing-library/react": "^9.0.0",
     "@testing-library/react-hooks": "^3.2.1",
+    "@types/fs-extra": "^9.0.11",
     "@types/jest": "^25.2.1",
     "@types/node": "^12.0.0",
+    "axios": "^0.21.1",
     "codecov": "^3.3.0",
     "cross-env": "^7.0.2",
     "eslint": "^6.7.2",
+    "fs-extra": "^10.0.0",
     "husky": "^3.0.9",
+    "ice-npm-utils": "^2.1.1",
     "jest": "^25.2.1",
     "react": "^16.8.0",
     "react-dom": "^16.8.0",
     "react-test-renderer": "^16.13.0",
     "ts-jest": "^25.5.1",
+    "ts-node": "^10.0.0",
     "typescript": "^3.7.4"
   },
   "peerDependencies": {
-    "react": "^16.8.0"
+    "react": ">=16.8.0"
   },
   "jest": {
     "coverageDirectory": "./coverage/",
