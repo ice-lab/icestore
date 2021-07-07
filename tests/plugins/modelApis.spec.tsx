@@ -74,8 +74,7 @@ describe('modelApisPlugin', () => {
 
     const WithCounterUseEffectsState = withModelEffectsState('counter')(CounterUseEffectsState);
     const WithModelCounter = withModel('counter')(Counter);
-    const spy = jest.spyOn(warning, 'default');
-
+    
     const tester = rtl.render(
       <Provider>
         <WithCounterUseEffectsState>
@@ -93,9 +92,6 @@ describe('modelApisPlugin', () => {
       expect(getByTestId('throwErrorEffectsError').innerHTML).toBe('Error: Error!');
       done();
     }, 200);
-
-    // TODO
-    // expect(spy).toHaveBeenCalled();
   });
 
   it('get model api: should set counter to updated initial value', () => {
