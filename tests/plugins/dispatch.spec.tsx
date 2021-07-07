@@ -4,8 +4,7 @@ import * as rtl from "@testing-library/react";
 import { createStore } from '../../src/index';
 import counter from '../helpers/counter';
 import createHook from '../helpers/createHook';
-import Counter, { CounterUseDispathcers } from '../helpers/CounterClassComponent';
-import * as warning from '../../src/utils/warning';
+import Counter, { CounterWithDispatchers } from '../helpers/CounterClassComponent';
 
 describe('dispatchPlugin', () => {
   it('invalidate reducers', () => {
@@ -43,11 +42,11 @@ describe('dispatchPlugin', () => {
     const { Provider, withModelDispatchers, withModel } = store;
     const WithModelCounter = withModel('counter')(Counter);
 
-    const WithCounterUseDispathcers = withModelDispatchers('counter')(CounterUseDispathcers);
+    const WithCounterDispathcers = withModelDispatchers('counter')(CounterWithDispatchers);
     const tester = rtl.render(
       <Provider>
         <WithModelCounter>
-          <WithCounterUseDispathcers />
+          <WithCounterDispathcers />
         </WithModelCounter>
       </Provider>,
     );

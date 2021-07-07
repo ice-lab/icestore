@@ -2,10 +2,9 @@ import React, { useCallback } from 'react';
 import * as rhl from '@testing-library/react-hooks';
 import * as rtl from "@testing-library/react";
 import createStore, { withModel } from '../../src/index';
-import counter, { counterWithUnsupportEffects } from '../helpers/counter';
-import Counter, { CounterUseEffectsState } from '../helpers/CounterClassComponent';
+import counter, { counterWithUnsupportedEffects } from '../helpers/counter';
+import Counter, { CounterWithEffectsState } from '../helpers/CounterClassComponent';
 import createHook from '../helpers/createHook';
-import * as warning from '../../src/utils/warning';
 
 describe('modelApisPlugin', () => {
   it('throw error when trying to use the inexisted model', () => {
@@ -35,7 +34,7 @@ describe('modelApisPlugin', () => {
 
   it('create unsupported effects should throw error', () => {
     expect(() => {
-      createStore({ counterWithUnsupportEffects });
+      createStore({ counterWithUnsupportedEffects });
     }).toThrow();
   });
 
@@ -72,14 +71,14 @@ describe('modelApisPlugin', () => {
       withModelEffectsState,
     } = store;
 
-    const WithCounterUseEffectsState = withModelEffectsState('counter')(CounterUseEffectsState);
+    const WithCounterEffectsState = withModelEffectsState('counter')(CounterWithEffectsState);
     const WithModelCounter = withModel('counter')(Counter);
     
     const tester = rtl.render(
       <Provider>
-        <WithCounterUseEffectsState>
+        <WithCounterEffectsState>
           <WithModelCounter />
-        </WithCounterUseEffectsState>
+        </WithCounterEffectsState>
       </Provider>,
     );
     const { getByTestId } = tester;
@@ -217,11 +216,11 @@ describe('modelApisPlugin', () => {
   it('useEffectsLoading', (done) => {
     function CounterComponent({ model }) {
       const dispatchers = model.useDispatchers('counter');
-      const effectsloading = model.useEffectsLoading('counter');
+      const effectsLoading = model.useEffectsLoading('counter');
       const { asyncIncrement } = dispatchers;
       return (
         <div>
-          <div data-testid="loading">{String(effectsloading.asyncIncrement)}</div>
+          <div data-testid="loading">{String(effectsLoading.asyncIncrement)}</div>
           <div data-testid="asyncIncrement" onClick={() => asyncIncrement()} />
         </div>
       );

@@ -114,7 +114,7 @@ export const counterWithNoImmer = {
 };
 
 
-export const counterWithUnsupportEffects = {
+export const counterWithUnsupportedEffects = {
   state: {
     a: 1,
   },
@@ -128,7 +128,7 @@ export const counterWithUnsupportEffects = {
   },
 };
 
-export const counterWithUnsupportActions = {
+export const counterWithUnsupportedActions = {
   state: {
     a: 1,
   },

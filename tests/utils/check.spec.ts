@@ -1,14 +1,14 @@
 import { checkModels } from '../../src/utils/checkModels';
-import { counterWithUnsupportEffects, counterWithUnsupportActions } from '../helpers/counter';
+import { counterWithUnsupportedEffects, counterWithUnsupportedActions } from '../helpers/counter';
 
 describe('utils/checkModels', () => {
-  it('withUnsupportEffects&withUnsupportActions', () => {
+  it('withUnsupportedEffects & withUnsupportedActions', () => {
     expect(() => {
-      checkModels({ counter: counterWithUnsupportEffects });
+      checkModels({ counter: counterWithUnsupportedEffects });
     }).toThrow();
 
     expect(() => {
-      checkModels({ counter: counterWithUnsupportActions });
+      checkModels({ counter: counterWithUnsupportedActions });
     }).toThrow();
   });
 });
