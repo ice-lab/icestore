@@ -361,7 +361,7 @@ export interface ModelConfig<S = any, SS = S> {
   reducers?: ModelReducers<S>;
   effects?:
   | ModelEffects<any>
-  | ((dispatch: IcestoreDispatch) => ModelEffects<any>)
+  | ((dispatch: IcestoreDispatch) => ModelEffects<any>);
 }
 
 export interface PluginFactory extends Plugin {

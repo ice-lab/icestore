@@ -15,7 +15,7 @@ jobs:
       - name: Output branch name
         run: echo ${BRANCH_NAME}
       - run: npm install
-      - run: npm run lint:nofix
+      - run: npm run lint
       - run: npm run build
       - run: npm run test
       - name: Generate coverage
