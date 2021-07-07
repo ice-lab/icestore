@@ -33,10 +33,10 @@ export default class Counter extends PureComponent<CounterProps> {
   }
 }
 
-interface CounterUseDispathcersProps {
+interface CounterWithDispatchersProps {
   counterDispatchers: ExtractIModelDispatchersFromModelConfig<typeof counterModel>;
 };
-export class CounterUseDispathcers extends PureComponent<CounterUseDispathcersProps> {
+export class CounterWithDispatchers extends PureComponent<CounterWithDispatchersProps> {
   render() {
     const { counterDispatchers } = this.props;
     return (
@@ -45,11 +45,11 @@ export class CounterUseDispathcers extends PureComponent<CounterUseDispathcersPr
   }
 };
 
-interface CounterUseEffectsStateProps {
+interface CounterWithEffectsStateProps {
   counterEffectsState: ExtractIModelEffectsStateFromModelConfig<typeof counterModel>;
   children: React.ReactChild;
 }
-export class CounterUseEffectsState extends PureComponent<CounterUseEffectsStateProps> {
+export class CounterWithEffectsState extends PureComponent<CounterWithEffectsStateProps> {
   render() {
     const { counterEffectsState, children } = this.props;
     return (
@@ -66,12 +66,12 @@ export class CounterUseEffectsState extends PureComponent<CounterUseEffectsState
   }
 }
 
-interface CounterUseEffectsLoadingProps {
+interface CounterWithEffectsLoadingProps {
   counterEffectsLoading: ExtractIModelEffectsLoadingFromModelConfig<typeof counterModel>;
   children: React.ReactChild;
 }
 
-export class CounterUseEffectsLoading extends PureComponent<CounterUseEffectsLoadingProps> {
+export class CounterWithEffectsLoading extends PureComponent<CounterWithEffectsLoadingProps> {
   render() {
     const { counterEffectsLoading, children } = this.props;
     return (
@@ -91,12 +91,12 @@ export class CounterUseEffectsLoading extends PureComponent<CounterUseEffectsLoa
   }
 }
 
-interface CounterUseEffectsErrorProps {
+interface CounterWithEffectsErrorProps {
   counterEffectsError: ExtractIModelEffectsErrorFromModelConfig<typeof counterModel>;
   children: React.ReactChild;
 }
 
-export class CounterUseEffectsError extends PureComponent<CounterUseEffectsErrorProps> {
+export class CounterWithEffectsError extends PureComponent<CounterWithEffectsErrorProps> {
   render() {
     const { counterEffectsError, children } = this.props;
     return (

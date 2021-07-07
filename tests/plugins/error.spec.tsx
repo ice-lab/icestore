@@ -4,7 +4,7 @@ import * as rtl from "@testing-library/react";
 import createErrorPlugin from '../../src/plugins/error';
 import createStore from "../../src/index";
 import counter from '../helpers/counter';
-import Counter, { CounterUseEffectsError } from '../helpers/CounterClassComponent';
+import Counter, { CounterWithEffectsError } from '../helpers/CounterClassComponent';
 import createHook from '../helpers/createHook';
 
 describe('errorPlugin', () => {
@@ -77,14 +77,14 @@ describe('errorPlugin', () => {
     const store = createStore({ counter });
     const { Provider, withModel, withModelEffectsError } = store;
     const WithModelCounter = withModel('counter')(Counter);
-    const WithCounterUseEffectsError = withModelEffectsError('counter')(CounterUseEffectsError);
+    const WithCounterEffectsError = withModelEffectsError('counter')(CounterWithEffectsError);
 
     test('normal usage', async () => {
       const tester = rtl.render(
         <Provider>
-          <WithCounterUseEffectsError>
+          <WithCounterEffectsError>
             <WithModelCounter />
-          </WithCounterUseEffectsError>
+          </WithCounterEffectsError>
         </Provider>,
       );
       const { getByTestId } = tester;
