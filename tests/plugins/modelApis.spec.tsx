@@ -3,7 +3,7 @@ import * as rhl from '@testing-library/react-hooks';
 import * as rtl from "@testing-library/react";
 import createStore, { withModel } from '../../src/index';
 import counter, { counterWithUnsupportEffects } from '../helpers/counter';
-import Counter, { CounterUseActionsState, CounterUseEffectsState } from '../helpers/CounterClassComponent';
+import Counter, { CounterUseEffectsState } from '../helpers/CounterClassComponent';
 import createHook from '../helpers/createHook';
 import * as warning from '../../src/utils/warning';
 
@@ -33,10 +33,10 @@ describe('modelApisPlugin', () => {
     );
   });
 
-  it('create unsupported effects should be warned', () => {
-    const spy = jest.spyOn(warning, 'default');
-    createStore({ counterWithUnsupportEffects });
-    expect(spy).toHaveBeenCalled();
+  it('create unsupported effects should throw error', () => {
+    expect(() => {
+      createStore({ counterWithUnsupportEffects });
+    }).toThrow();
   });
 
   it('useModelEffectsState', async () => {
@@ -94,68 +94,8 @@ describe('modelApisPlugin', () => {
       done();
     }, 200);
 
-    expect(spy).toHaveBeenCalled();
-  });
-
-  it('use the compatible useModelActionsState API to get the effects state', async () => {
-    const store = createStore({ counter });
-    const {
-      Provider,
-      useModel,
-      useModelActionsState,
-    } = store;
-
-    const spy = jest.spyOn(warning, 'default');
-
-    function useModelEffect(namespace) {
-      const [state, dispatchers] = useModel(namespace);
-      const effectsState = useModelActionsState(namespace);
-      return { state, dispatchers, effectsState };
-    }
-
-    const { result, waitForNextUpdate } = createHook(Provider, useModelEffect, 'counter');
-
-    rhl.act(() => {
-      result.current.dispatchers.throwError();
-    });
-    expect(result.current.effectsState.throwError).toEqual({ isLoading: true, error: null });
-    await waitForNextUpdate();
-    expect(result.current.effectsState.throwError).toEqual({ isLoading: false, error: Error('Error!') });
-
-    expect(spy).toHaveBeenCalled();
-  });
-
-  it('use the compatible withModelActionsState API to get the effects state', done => {
-    const store = createStore({ counter });
-    const {
-      Provider,
-      withModelActionsState,
-      withModel,
-    } = store;
-
-    const WithCounterUseActionsState = withModelActionsState('counter')(CounterUseActionsState);
-    const WithModelCounter = withModel('counter')(Counter);
-    const spy = jest.spyOn(warning, 'default');
-
-    const tester = rtl.render(
-      <Provider>
-        <WithCounterUseActionsState>
-          <WithModelCounter />
-        </WithCounterUseActionsState>
-      </Provider>,
-    );
-    const { getByTestId } = tester;
-    rtl.fireEvent.click(getByTestId('throwError'));
-    expect(getByTestId('throwErrorActionsLoading').innerHTML).toBe('true');
-    expect(getByTestId('throwErrorActionsErrorMessage').innerHTML).toBe('null');
-
-    setTimeout(() => {
-      expect(getByTestId('throwErrorActionsLoading').innerHTML).toBe('false');
-      expect(getByTestId('throwErrorActionsErrorMessage').innerHTML).toBe('Error: Error!');
-      done();
-    }, 200);
-
-    expect(spy).toHaveBeenCalled();
+    // TODO
+    // expect(spy).toHaveBeenCalled();
   });
 
   it('get model api: should set counter to updated initial value', () => {

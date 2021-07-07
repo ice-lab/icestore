@@ -61,8 +61,7 @@ export type ExtractIModelDispatchersFromEffects<
     : {}
   : effects extends ModelEffects<any>
     ? ExtractIModelDispatchersFromEffectsObject<effects>
-    : effects extends ConfigEffects<any> ?
-      OldModelEffects<any> : {};
+    : {}
 
 type ExtractIModelDispatcherFromReducer<R> = R extends () => any
   ? IcestoreDispatcher<void, void>
@@ -214,17 +213,7 @@ interface WithModelEffectsState<M extends Models = Models, F extends MapModelEff
 
 interface ModelEffectsStateAPI<M extends Models = Models> {
   useModelEffectsState: UseModelEffectsState<M>;
-
-  /**
-   * @deprecated use `useModelEffectsState` instead
-   */
-  useModelActionsState: UseModelEffectsState<M>;
   withModelEffectsState: WithModelEffectsState<M>;
-
-  /**
-   * @deprecated use `withModelEffectsState` instead
-   */
-  withModelActionsState: WithModelEffectsState<M>;
 }
 
 interface UseModelState<M extends Models = Models, Key extends keyof M = undefined> {
@@ -252,16 +241,8 @@ interface WithModelDispatchers<M extends Models = Models, F extends MapModelDisp
 
 interface ModelDispathersAPI<M extends Models = Models> {
   useModelDispatchers: UseModelDispatchers<M>;
-  /**
-   * @deprecated use `useModelDispatchers` instead.
-   */
-  useModelActions: UseModelDispatchers<M>;
   getModelDispatchers: UseModelDispatchers<M>;
   withModelDispatchers: WithModelDispatchers<M>;
-  /**
-   * @deprecated use `withModelDispatchers` instead.
-   */
-  withModelActions: WithModelDispatchers<M>;
 }
 
 interface UseModel<M extends Models = Models, Key extends keyof M = undefined> {
@@ -377,16 +358,10 @@ export interface ModelConfig<S = any, SS = S> {
   name?: string;
   state: S;
   baseReducer?: (state: SS, action: Action) => SS;
-  reducers?: ModelReducers<S> | ConfigReducers;
+  reducers?: ModelReducers<S>;
   effects?:
   | ModelEffects<any>
   | ((dispatch: IcestoreDispatch) => ModelEffects<any>)
-  | ConfigEffects;
-
-  /**
-   * @deprecated use `effects` instead.
-   */
-  actions?: ConfigActions<S>;
 }
 
 export interface PluginFactory extends Plugin {
@@ -484,80 +459,3 @@ declare global {
     __REDUX_DEVTOOLS_EXTENSION_COMPOSE__?: any;
   }
 }
-
-/**
- * @deprecated
- */
-export type ConfigAction<S = any> = (prevState: S, payload?: any, actions?: any, globalActions?: any) => S | Promise<S>;
-/**
- * @deprecated
- */
-export type ConfigEffect<S = any> = (state: S, payload?: any, actions?: any, globalActions?: any) => void | Promise<void>;
-/**
- * @deprecated
- */
-export type ConfigReducer<S = any> = (state: S, payload?: any,) => S;
-/**
- * @deprecated use `ModelEffects` instead
- */
-export interface ConfigEffects<S = any> {
-  [name: string]: ConfigEffect<S>;
-}
-/**
- * @deprecated
- */
-export interface ConfigReducers<S = any> {
-  [name: string]: ConfigReducer<S>;
-}
-/**
- * @deprecated
- */
-export interface ConfigActions<S = any> {
-  [name: string]: ConfigAction<S>;
-}
-/**
- * @deprecated
- */
-export type Actions<A extends ConfigEffects> = {
-  [K in keyof A]: (payload?: Parameters<A[K]>[1]) => void;
-}
-/**
- * @deprecated use `ExtractIModelStateFromModelConfig` instead
- */
-export type ConfigPropTypeState<C extends ModelConfig> = PropType<C, 'state'>;
-/**
- * @deprecated
- */
-export type ConfigPropTypeActions<C extends ModelConfig> = PropType<C, 'actions'>;
-/**
- * @deprecated use `ExtractIModelEffectsFromModelConfig` instead
- */
-export type ConfigPropTypeEffects<C extends ModelConfig> = PropType<C, 'effects'>;
-/**
- * @deprecated use `ExtractIModelReducersFromModelConfig` instead
- */
-export type ConfigPropTypeReducers<C extends ModelConfig> = PropType<C, 'reducers'>;
-/**
- * @deprecated
- */
-export type ConfigMergedEffects<C extends ModelConfig> = ConfigPropTypeActions<C> & ConfigPropTypeEffects<C>;
-/**
- * @deprecated use `ExtractIModelDispatchersFromEffects` instead
- */
-export type OldModelEffects<C extends ModelConfig> = Actions<ConfigMergedEffects<C>>;
-/**
- * @deprecated use `ExtractIModelDispatchersFromModelConfig` instead
- */
-export type ModelActions<C extends ModelConfig> = Actions<ConfigPropTypeReducers<C> & ConfigPropTypeEffects<C>>;
-/**
- * @deprecated use `ExtractIModelEffectsStateFromModelConfig` instead
- */
-export type ModelEffectsState<C extends ModelConfig> = ExtractIModelEffectsStateFromModelConfig<C>;
-/**
- * @deprecated
- */
-export type ModelValue<C extends ModelConfig> = [ ConfigPropTypeState<C>, ModelActions<C>, ModelEffectsState<C> ];
-/**
- * @deprecated use `ExtractIModelFromModelConfig` instead
- */
-export type UseModelValue<C extends ModelConfig> = [ ConfigPropTypeState<C>, ModelActions<C> ];

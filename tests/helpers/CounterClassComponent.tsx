@@ -45,18 +45,6 @@ export class CounterUseDispathcers extends PureComponent<CounterUseDispathcersPr
   }
 };
 
-interface CounterUseActionsProps {
-  counterActions: ExtractIModelDispatchersFromModelConfig<typeof counterModel>;
-}
-export class CounterUseActions extends PureComponent<CounterUseActionsProps> {
-  render() {
-    const { counterActions } = this.props;
-    return (
-      <div data-testid="reset" onClick={() => counterActions.reset()} />
-    );
-  }
-}
-
 interface CounterUseEffectsStateProps {
   counterEffectsState: ExtractIModelEffectsStateFromModelConfig<typeof counterModel>;
   children: React.ReactChild;
@@ -71,27 +59,6 @@ export class CounterUseEffectsState extends PureComponent<CounterUseEffectsState
         </span>
         <span data-testid="throwErrorEffectsError">
           {String(counterEffectsState.throwError.error)}
-        </span>
-        {children}
-      </React.Fragment>
-    );
-  }
-}
-
-interface CounterUseActionsStateProps {
-  counterActionsState: ExtractIModelEffectsStateFromModelConfig<typeof counterModel>;
-  children: React.ReactChild;
-}
-export class CounterUseActionsState extends PureComponent<CounterUseActionsStateProps> {
-  render() {
-    const { counterActionsState, children } = this.props;
-    return (
-      <React.Fragment>
-        <span data-testid="throwErrorActionsLoading">
-          {String(counterActionsState.throwError.isLoading)}
-        </span>
-        <span data-testid="throwErrorActionsErrorMessage">
-          {String(counterActionsState.throwError.error)}
         </span>
         {children}
       </React.Fragment>

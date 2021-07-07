@@ -9,7 +9,7 @@ import createModelApisPlugin from './plugins/modelApis';
 import createImmerPlugin from './plugins/immer';
 import createLoadingPlugin from './plugins/loading';
 import createErrorPlugin from './plugins/error';
-import { convertEffects, convertActions } from './utils/converter';
+import { checkModels } from './utils/checkModels';
 import appendReducers from './utils/appendReducers';
 
 // incrementer used to provide a store name if none exists
@@ -70,12 +70,11 @@ export const createStore = <M extends T.Models, C extends T.CreateStoreConfig<M>
     plugins.push(createImmerPlugin({ blacklist: immerBlacklist }));
   }
 
+  // TODO: disable in production?
+  checkModels(models);
+
   // compatibility handling
-  const wrappedModels = appendReducers(
-    convertEffects(
-      convertActions(models),
-    ),
-  );
+  const wrappedModels = appendReducers(models);
 
   const store = init({
     models: wrappedModels,
