@@ -1,12 +1,5 @@
 import React from 'react';
 import * as T from '../types';
-import warning from '../utils/warning';
-
-let warnedUseModelActions = false;
-let warnedWithModelActions = false;
-let warnedUseModelActionsState = false;
-let warnedWithModelActionsState = false;
-
 
 /**
  * ModelApis Plugin
@@ -57,28 +50,6 @@ export default (): T.Plugin => {
         return store.useSelector(state => state.loading ? state.loading.effects[name] : undefined);
       }
 
-      /**
-       * @deprecated use `useModelEffectsState` instead
-       */
-      function useModelActionsState(name) {
-        if (!warnedUseModelActionsState) {
-          warnedUseModelActionsState = true;
-          warning('`useModelActionsState` API has been detected, please use `useModelEffectsState` instead. \n\n\n Visit https://github.com/ice-lab/icestore/blob/master/docs/upgrade-guidelines.md#usemodelactionsstate to learn about how to upgrade.');
-        }
-        return useModelEffectsState(name);
-      }
-
-      /**
-       * @deprecated use `useModelDispatchers` instead.
-       */
-      function useModelActions(name) {
-        if (!warnedUseModelActions) {
-          warnedUseModelActions = true;
-          warning('`useModelActions` API has been detected, please use `useModelDispatchers` instead. \n\n\n Visit https://github.com/ice-lab/icestore/blob/master/docs/upgrade-guidelines.md#usemodelactions to learn about how to upgrade.');
-        }
-        return useModelDispatchers(name);
-      }
-
       // other apis
       function getModel(name) {
         return [getModelState(name), getModelDispatchers(name)];
@@ -107,13 +78,9 @@ export default (): T.Plugin => {
         };
       }
 
-      const actionsSuffix = 'Actions';
+
       function createWithModelDispatchers(fieldSuffix = 'Dispatchers') {
         return function withModelDispatchers(name, mapModelDispatchersToProps?) {
-          if (fieldSuffix === actionsSuffix && !warnedWithModelActions) {
-            warnedWithModelActions = true;
-            warning('`withModelActions` API has been detected, please use `withModelDispatchers` instead. \n\n\n Visit https://github.com/ice-lab/icestore/blob/master/docs/upgrade-guidelines.md#withmodelactions to learn about how to upgrade.');
-          }
           mapModelDispatchersToProps = (mapModelDispatchersToProps || ((dispatch) => ({ [`${name}${fieldSuffix}`]: dispatch })));
           return (Component) => {
             return (props): React.ReactElement => {
@@ -131,14 +98,8 @@ export default (): T.Plugin => {
       }
       const withModelDispatchers = createWithModelDispatchers();
 
-      const actionsStateSuffix = 'ActionsState';
       function createWithModelEffectsState(fieldSuffix = 'EffectsState') {
         return function(name, mapModelEffectsStateToProps?) {
-          if (fieldSuffix === actionsStateSuffix && !warnedWithModelActionsState) {
-            warnedWithModelActionsState = true;
-            warning('`withModelActionsState` API has been detected, please use `withModelEffectsState` instead. \n\n\n Visit https://github.com/ice-lab/icestore/blob/master/docs/upgrade-guidelines.md#withmodelactionsstate to learn about how to upgrade.');
-          }
-
           mapModelEffectsStateToProps = (mapModelEffectsStateToProps || ((effectsState) => ({ [`${name}${fieldSuffix}`]: effectsState })));
           return (Component) => {
             return (props): React.ReactElement => {
@@ -217,8 +178,6 @@ export default (): T.Plugin => {
         useModelEffectsState,
         useModelEffectsError,
         useModelEffectsLoading,
-        useModelActions,
-        useModelActionsState,
 
         // real time
         getModel,
@@ -231,8 +190,6 @@ export default (): T.Plugin => {
         withModelEffectsState,
         withModelEffectsError,
         withModelEffectsLoading,
-        withModelActions: createWithModelDispatchers(actionsSuffix),
-        withModelActionsState: createWithModelEffectsState(actionsStateSuffix),
       };
     },
   };
