@@ -1,6 +1,6 @@
 {
   "name": "@ice/store-plugin-immer",
-  "version": "1.0.0-0",
+  "version": "1.0.0-1",
   "description": "@ice/store immer plugin",
   "main": "lib/index.js",
   "files": [

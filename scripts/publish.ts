@@ -63,8 +63,8 @@ async function publishPackage(packageDir) {
     data: {
       msgtype: 'markdown',
       markdown: {
-        title: '我是一个工具人',
-        text: `@ice/store@${version} 发布成功`,
+        title: `${name}@${version} 发布成功`,
+        text: `${name}@${version} 发布成功`,
       },
     },
   });
