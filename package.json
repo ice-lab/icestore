@@ -9,7 +9,7 @@
     }
   },
   "scripts": {
-    "setup": "npm run clean:node_modules && yarn install --registry=https://registry.npm.taobao.org/",
+    "setup": "npm run clean:node_modules && yarn install",
     "clean:packages": "rimraf ./packages/*/lib",
     "clean:node_modules": "rm -rf node_modules && rm -rf packages/*/node_modules",
     "build": "npm run clean:packages && tsc --build",
