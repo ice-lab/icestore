@@ -1,10 +1,12 @@
 export default {
-  state: [],
+  state: {
+    todos: [],
+  },
   reducers: {
     add(state, todo = {}) {
       return {
         ...state,
-        todo: [...state.todo, todo]
+        todos: [...state.todos, todo]
       }
     },
   },

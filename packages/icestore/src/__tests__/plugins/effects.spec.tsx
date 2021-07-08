@@ -102,7 +102,7 @@ describe('effectsPlugin', () => {
     expect(result.current[0].count).toBe(2);
   });
 
-  test.only('a effect that shares a name with a reducer', async () => {
+  test('a effect that shares a name with a reducer', async () => {
     const store = createStore({ counter, todos });
     const { useModel, Provider } = store;
 
@@ -112,9 +112,9 @@ describe('effectsPlugin', () => {
     expect(counterResult.current[0].count).toBe(0);
 
     // will execute: reducers add -> effects add
-    rhl.act(() => todosResult.current[1].add({ name: 'test' }));
+    await rhl.act(async () => todosResult.current[1].add({ name: 'test' }));
     await waitForNextUpdate();
     expect(counterResult.current[0].count).toBe(1);
-    expect(todosResult.current[0]).toEqual([{ name: 'test' }]);
+    expect(todosResult.current[0].todos).toEqual([{ name: 'test' }]);
   });
 });
