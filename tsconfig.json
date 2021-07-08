@@ -1,19 +1,7 @@
 {
-  "compilerOptions": {
-    "target": "es5",
-    "jsx": "react",
-    "experimentalDecorators": true,
-    "declaration": true,
-    "esModuleInterop": true,
-    "sourceMap": true,
-    "inlineSources": true,
-    "outDir": "lib",
-    "lib": ["es5", "dom"]
-  },
-  "files": [
-    "src/index.tsx"
-  ],
-  "exclude": [
-    "node_modules"
+  "files": [],
+  "references": [
+    { "path": "./packages/icestore" },
+    { "path": "./packages/plugin-immer" }
   ]
 }

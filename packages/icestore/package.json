@@ -1,0 +1,42 @@
+{
+  "name": "@ice/store",
+  "version": "2.0.0-0",
+  "description": "Simple and friendly state for React",
+  "main": "lib/index.js",
+  "files": [
+    "lib",
+    "lib/!(*.map)"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ice-lab/icestore.git"
+  },
+  "keywords": [
+    "hooks",
+    "state"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ice-lab/icestore/issues"
+  },
+  "homepage": "https://github.com/ice-lab/icestore",
+  "scripts": {
+    "build": "rm -rf lib && tsc",
+    "prepublishOnly": "npm run build"
+  },
+  "devDependencies": {
+    "react": "^16.8.0"
+  },
+  "peerDependencies": {
+    "react": ">=16.8.0"
+  },
+  "dependencies": {
+    "lodash.isfunction": "^3.0.9",
+    "react-redux": "^7.2.0",
+    "redux": "^4.0.5",
+    "redux-thunk": "^2.3.0"
+  }
+}
