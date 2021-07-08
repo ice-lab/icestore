@@ -1,4 +1,4 @@
-import * as rhl from "@testing-library/react-hooks";
+import * as rhl from '@testing-library/react-hooks';
 import { createStore } from '../../index';
 import counter, { counterCustomSetState } from '../helpers/counter';
 import todos from '../helpers/todos';

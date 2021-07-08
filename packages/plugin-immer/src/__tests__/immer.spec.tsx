@@ -1,4 +1,4 @@
-import * as rhl from "@testing-library/react-hooks";
+import * as rhl from '@testing-library/react-hooks';
 import createStore from '@ice/store';
 import createImmerPlugin from '../index';
 import { counterWithImmer, counterWithNoImmer } from './helpers/counter';
@@ -10,7 +10,7 @@ describe('immerPlugin', () => {
       plugins: [createImmerPlugin()],
     });
     const { Provider, useModel } = store;
-    const { result } = createHook(Provider, useModel, "counterWithImmer");
+    const { result } = createHook(Provider, useModel, 'counterWithImmer');
     const baseState = result.current[0];
     rhl.act(() => {
       result.current[1].add();
@@ -26,7 +26,7 @@ describe('immerPlugin', () => {
       // plugins: [createImmerPlugin()],
     });
     const { Provider, useModel } = store;
-    const { result } = createHook(Provider, useModel, "counterWithNoImmer");
+    const { result } = createHook(Provider, useModel, 'counterWithNoImmer');
     const baseState = result.current[0];
     rhl.act(() => {
       result.current[1].add();

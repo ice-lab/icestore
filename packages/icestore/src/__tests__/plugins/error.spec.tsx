@@ -1,8 +1,8 @@
 import React from 'react';
-import * as rhl from "@testing-library/react-hooks";
-import * as rtl from "@testing-library/react";
+import * as rhl from '@testing-library/react-hooks';
+import * as rtl from '@testing-library/react';
 import createErrorPlugin from '../../plugins/error';
-import createStore from "../../index";
+import createStore from '../../index';
 import counter from '../helpers/counter';
 import Counter, { CounterWithEffectsError } from '../helpers/CounterClassComponent';
 import createHook from '../helpers/createHook';
@@ -52,7 +52,7 @@ describe('errorPlugin', () => {
     }
 
     test('normal usage', async () => {
-      const { result, waitForNextUpdate } = createHook(Provider, useModelError, "counter");
+      const { result, waitForNextUpdate } = createHook(Provider, useModelError, 'counter');
       expect(result.current.effectsError.throwError).toEqual({ error: null, value: false });
       rhl.act(() => {
         result.current.dispatchers.throwError();
@@ -62,7 +62,7 @@ describe('errorPlugin', () => {
     });
 
     test('take latest effects error', async () => {
-      const { result, waitForNextUpdate } = createHook(Provider, useModelError, "counter");
+      const { result, waitForNextUpdate } = createHook(Provider, useModelError, 'counter');
 
       rhl.act(() => {
         result.current.dispatchers.throwError('1');

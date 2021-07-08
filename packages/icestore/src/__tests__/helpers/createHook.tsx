@@ -1,5 +1,5 @@
 import React from 'react';
-import * as rhl from "@testing-library/react-hooks";
+import * as rhl from '@testing-library/react-hooks';
 
 function createHook(Provider, callback, namespace, initialStates?: any) {
   return rhl.renderHook(() => callback(namespace), {

@@ -1,6 +1,6 @@
 import React from 'react';
-import * as rhl from "@testing-library/react-hooks";
-import * as rtl from "@testing-library/react";
+import * as rhl from '@testing-library/react-hooks';
+import * as rtl from '@testing-library/react';
 import { createStore } from '../../index';
 import counter from '../helpers/counter';
 import createHook from '../helpers/createHook';
@@ -30,7 +30,7 @@ describe('dispatchPlugin', () => {
     const { Provider, useModelDispatchers, useModelState } = store;
 
     const { result: dispatchersResult } = createHook(Provider, useModelDispatchers, 'counter');
-    const { result: modelResult } = createHook(Provider, useModelState, "counter");
+    const { result: modelResult } = createHook(Provider, useModelState, 'counter');
     const dispatchers = dispatchersResult.current;
 
     await rhl.act(async () => dispatchers.increment(6));

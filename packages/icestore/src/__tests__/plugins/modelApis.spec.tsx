@@ -1,6 +1,6 @@
 import React, { useCallback } from 'react';
 import * as rhl from '@testing-library/react-hooks';
-import * as rtl from "@testing-library/react";
+import * as rtl from '@testing-library/react';
 import createStore, { withModel } from '../../index';
 import counter, { counterWithUnsupportedEffects } from '../helpers/counter';
 import Counter, { CounterWithEffectsState } from '../helpers/CounterClassComponent';
