@@ -17,6 +17,7 @@ if (!branchName) {
   const packages = ['icestore', 'plugin-immer'];
 
   for (const pkg of packages) {
+    // eslint-disable-next-line no-await-in-loop
     await publishPackage(join(rootDir, 'packages', pkg));
   }
 
