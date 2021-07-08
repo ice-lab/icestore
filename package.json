@@ -1,34 +1,19 @@
 {
-  "name": "@ice/store",
-  "version": "2.0.0",
-  "description": "Simple and friendly state for React",
-  "main": "lib/index.js",
-  "files": [
-    "lib",
-    "lib/!(*.map)"
+  "private": true,
+  "workspaces": [
+    "packages/*"
   ],
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/ice-lab/icestore.git"
-  },
-  "keywords": [
-    "hooks",
-    "state"
-  ],
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/ice-lab/icestore/issues"
-  },
-  "homepage": "https://github.com/ice-lab/icestore",
   "husky": {
     "hooks": {
       "commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
     }
   },
   "scripts": {
-    "build": "rm -rf lib && tsc",
-    "watch": "tsc -w",
-    "prepublishOnly": "npm run lint && npm run test && npm run build",
+    "setup": "npm run clean:node_modules && yarn install --registry=https://registry.npm.taobao.org/",
+    "clean:packages": "rimraf ./packages/*/lib",
+    "clean:node_modules": "rm -rf node_modules && rm -rf packages/*/node_modules",
+    "build": "npm run clean:packages && tsc --build",
+    "watch": "tsc --watch",
     "lint:fix": "npm run lint -- --fix",
     "lint": "eslint --cache --ext .ts,.tsx,.js ./",
     "test": "cross-env NODE_ENV=unittest jest",
@@ -45,6 +30,7 @@
     "@types/fs-extra": "^9.0.11",
     "@types/jest": "^25.2.1",
     "@types/node": "^12.0.0",
+    "@types/testing-library__dom": "^7.5.0",
     "axios": "^0.21.1",
     "codecov": "^3.3.0",
     "cross-env": "^7.0.2",
@@ -60,23 +46,24 @@
     "ts-node": "^10.0.0",
     "typescript": "^3.7.4"
   },
-  "peerDependencies": {
-    "react": ">=16.8.0"
-  },
   "jest": {
+    "globals": {
+      "ts-jest": {
+        "tsconfig": "tsconfig.base.json"
+      }
+    },
+    "testPathIgnorePatterns": [
+      "__tests__/helpers",
+      "examples/",
+      "lib/"
+    ],
     "coverageDirectory": "./coverage/",
     "collectCoverage": true,
     "coveragePathIgnorePatterns": [
-      "<rootDir>/tests/helpers/",
-      "<rootDir>/node_modules/"
+      "<rootDir>/node_modules/",
+      "lib/",
+      "__tests__"
     ],
     "preset": "ts-jest"
-  },
-  "dependencies": {
-    "immer": "^6.0.2",
-    "lodash.isfunction": "^3.0.9",
-    "react-redux": "^7.2.0",
-    "redux": "^4.0.5",
-    "redux-thunk": "^2.3.0"
   }
 }

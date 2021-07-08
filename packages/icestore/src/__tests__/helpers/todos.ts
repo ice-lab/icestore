@@ -2,7 +2,10 @@ export default {
   state: [],
   reducers: {
     add(state, todo = {}) {
-      state.push(todo);
+      return {
+        ...state,
+        todo: [...state.todo, todo]
+      }
     },
   },
   effects: (dispatch) => ({

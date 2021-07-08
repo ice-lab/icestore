@@ -1,8 +1,8 @@
 import React from 'react';
 import * as rhl from "@testing-library/react-hooks";
 import * as rtl from "@testing-library/react";
-import createErrorPlugin from '../../src/plugins/error';
-import createStore from "../../src/index";
+import createErrorPlugin from '../../plugins/error';
+import createStore from "../../index";
 import counter from '../helpers/counter';
 import Counter, { CounterWithEffectsError } from '../helpers/CounterClassComponent';
 import createHook from '../helpers/createHook';
@@ -92,6 +92,7 @@ describe('errorPlugin', () => {
       expect(getByTestId('throwErrorEffectsErrorMessage').innerHTML).toEqual('null');
 
       rtl.fireEvent.click(getByTestId('throwError'));
+      // @ts-ignore
       await rtl.waitForDomChange({ timeout: 200 });
 
       expect(getByTestId('throwErrorEffectsErrorValue').innerHTML).toEqual('true');

@@ -1,6 +1,6 @@
 import React from 'react';
 import * as rtl from "@testing-library/react";
-import createStore, { withModel } from "../src/index";
+import createStore, { withModel } from "../index";
 import counter from './helpers/counter';
 
 describe("createStore", () => {

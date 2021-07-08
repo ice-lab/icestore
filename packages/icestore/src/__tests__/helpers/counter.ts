@@ -9,8 +9,18 @@ const counter = {
     count: 0,
   },
   reducers: {
-    increment: (prevState: CounterState, count: number) => prevState.count += count,
-    decrement: (prevState: CounterState, count: number) => prevState.count -= count,
+    increment: (prevState: CounterState, count: number) => {
+      return {
+        ...prevState,
+        count: prevState.count + count
+      };
+    },
+    decrement: (prevState: CounterState, count: number) => {
+      return {
+        ...prevState,
+        count: prevState.count - count
+      };
+    },
     reset: () => ({ count: 0 }),
   },
   effects: () => ({
@@ -63,56 +73,6 @@ export const counterCustomSetState = {
     },
   }),
 };
-
-export const counterWithImmer = {
-  state: {
-    a: {
-      b: {
-        c: 0,
-      },
-    },
-    d: {
-      b: {
-        c: 0,
-      },
-    },
-  },
-  reducers: {
-    add(state) {
-      state.a.b.c += 1;
-    },
-  },
-};
-
-export const counterWithNoImmer = {
-  state: {
-    a: {
-      b: {
-        c: 0,
-      },
-    },
-    d: {
-      b: {
-        c: 0,
-      },
-    },
-  },
-  reducers: {
-    add(state) {
-      return {
-        ...state,
-        a: {
-          ...state.a,
-          b: {
-            ...state.a.b,
-            c: state.a.b.c + 1,
-          },
-        },
-      };
-    },
-  },
-};
-
 
 export const counterWithUnsupportedEffects = {
   state: {

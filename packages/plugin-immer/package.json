@@ -1,0 +1,38 @@
+{
+  "name": "@ice/store-plugin-immer",
+  "version": "1.0.0",
+  "description": "@ice/store immer plugin",
+  "main": "lib/index.js",
+  "files": [
+    "lib",
+    "lib/!(*.map)"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ice-lab/icestore.git"
+  },
+  "keywords": [
+    "hooks",
+    "state"
+  ],
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ice-lab/icestore/issues"
+  },
+  "homepage": "https://github.com/ice-lab/icestore",
+  "scripts": {
+    "build": "rm -rf lib && tsc",
+    "watch": "tsc -w",
+    "prepublishOnly": "npm run build"
+  },
+  "dependencies": {
+    "immer": "^6.0.2",
+    "@ice/store": "^2.0.0"
+  },
+  "peerDependencies": {
+    "redux": ">= 4.0.0"
+  },
+  "devDependencies": {
+    "redux": "^4.0.5"
+  }
+}

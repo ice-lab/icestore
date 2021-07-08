@@ -1,5 +1,5 @@
-import appendReducers from '../../src/utils/appendReducers';
-import { Models } from '../../src/types';
+import appendReducers from '../../utils/appendReducers';
+import { Models } from '../../types';
 
 const originModels = {
   counter: {

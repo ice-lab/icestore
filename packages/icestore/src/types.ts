@@ -417,7 +417,6 @@ export interface InitConfig<M extends Models = Models> {
 }
 
 export interface PrsetConfig {
-  disableImmer?: boolean;
   disableLoading?: boolean;
   disableError?: boolean;
 }

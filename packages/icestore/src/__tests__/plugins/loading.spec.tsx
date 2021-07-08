@@ -2,8 +2,8 @@ import React from 'react';
 import * as rhl from "@testing-library/react-hooks";
 import * as rtl from "@testing-library/react";
 import createHook from '../helpers/createHook';
-import createLoadingPlugin from '../../src/plugins/loading';
-import createStore from "../../src/index";
+import createLoadingPlugin from '../../plugins/loading';
+import createStore from "../../index";
 import counter from '../helpers/counter';
 import Counter, { CounterWithEffectsLoading } from '../helpers/CounterClassComponent';
 

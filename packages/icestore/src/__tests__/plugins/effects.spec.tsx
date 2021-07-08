@@ -1,5 +1,5 @@
 import * as rhl from "@testing-library/react-hooks";
-import { createStore } from '../../src/index';
+import { createStore } from '../../index';
 import counter, { counterCustomSetState } from '../helpers/counter';
 import todos from '../helpers/todos';
 import createHook from '../helpers/createHook';
@@ -102,7 +102,7 @@ describe('effectsPlugin', () => {
     expect(result.current[0].count).toBe(2);
   });
 
-  test('a effect that shares a name with a reducer', async () => {
+  test.only('a effect that shares a name with a reducer', async () => {
     const store = createStore({ counter, todos });
     const { useModel, Provider } = store;
 
@@ -110,6 +110,8 @@ describe('effectsPlugin', () => {
     const { result: todosResult } = createHook(Provider, useModel, 'todos');
 
     expect(counterResult.current[0].count).toBe(0);
+
+    // will execute: reducers add -> effects add
     rhl.act(() => todosResult.current[1].add({ name: 'test' }));
     await waitForNextUpdate();
     expect(counterResult.current[0].count).toBe(1);

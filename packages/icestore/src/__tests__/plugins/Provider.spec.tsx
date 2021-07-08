@@ -2,7 +2,7 @@ import React from 'react';
 import * as rtl from "@testing-library/react";
 import counter from '../helpers/counter';
 import Counter from '../helpers/CounterClassComponent';
-import createStore from "../../src/index";
+import createStore from "../../index";
 import createHook from '../helpers/createHook';
 
 describe('providerPlugin', () => {

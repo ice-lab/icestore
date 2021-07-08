@@ -1,7 +1,7 @@
 import React from 'react';
 import * as rhl from "@testing-library/react-hooks";
 import * as rtl from "@testing-library/react";
-import { createStore } from '../../src/index';
+import { createStore } from '../../index';
 import counter from '../helpers/counter';
 import createHook from '../helpers/createHook';
 import Counter, { CounterWithDispatchers } from '../helpers/CounterClassComponent';

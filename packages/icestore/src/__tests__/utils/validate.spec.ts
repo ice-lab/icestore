@@ -1,4 +1,4 @@
-import validate from '../../src/utils/validate';
+import validate from '../../utils/validate';
 
 describe('utils/validate', () => {
   it('will throw Error', () => {

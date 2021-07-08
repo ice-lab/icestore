@@ -1,4 +1,4 @@
-import { checkModels } from '../../src/utils/checkModels';
+import { checkModels } from '../../utils/checkModels';
 import { counterWithUnsupportedEffects, counterWithUnsupportedActions } from '../helpers/counter';
 
 describe('utils/checkModels', () => {

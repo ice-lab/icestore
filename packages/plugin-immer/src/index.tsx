@@ -1,6 +1,6 @@
 import produce, { enableES5 } from 'immer';
 import { combineReducers, ReducersMapObject } from 'redux';
-import * as T from '../types';
+import { Action, Models, Plugin } from '@ice/store';
 
 // make it work in IE11
 enableES5();
@@ -9,16 +9,18 @@ export interface ImmerConfig {
   blacklist?: string[];
 }
 
-function createCombineReducersWithImmer(blacklist: string[] = []) {
+// https://github.com/ice-lab/icestore/issues/94
+// TODO: fix error & loading plugin immer problem
+function createCombineReducersWithImmer(blacklist: string[] = ['loading', 'error']) {
   return function (reducers: ReducersMapObject) {
-    const reducersWithImmer: ReducersMapObject<any, T.Action<any>> = {};
+    const reducersWithImmer: ReducersMapObject<any, Action<any>> = {};
     // reducer must return value because literal don't support immer
 
     Object.keys(reducers).forEach((key) => {
       const reducerFn = reducers[key];
       reducersWithImmer[key] = (state, payload) =>
         typeof state === 'object' && !blacklist.includes(key)
-          ? produce(state, (draft: T.Models) => {
+          ? produce(state, (draft: Models) => {
             const next = reducerFn(draft, payload);
             if (typeof next === 'object') return next;
           })
@@ -30,7 +32,7 @@ function createCombineReducersWithImmer(blacklist: string[] = []) {
 }
 
 // icestore plugin
-const immerPlugin = (config: ImmerConfig = {}): T.Plugin => ({
+const immerPlugin = (config: ImmerConfig = {}): Plugin => ({
   config: {
     redux: {
       combineReducers: createCombineReducersWithImmer(config.blacklist),
