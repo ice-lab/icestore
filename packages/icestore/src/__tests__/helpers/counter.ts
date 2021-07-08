@@ -12,13 +12,13 @@ const counter = {
     increment: (prevState: CounterState, count: number) => {
       return {
         ...prevState,
-        count: prevState.count + count
+        count: prevState.count + count,
       };
     },
     decrement: (prevState: CounterState, count: number) => {
       return {
         ...prevState,
-        count: prevState.count - count
+        count: prevState.count - count,
       };
     },
     reset: () => ({ count: 0 }),

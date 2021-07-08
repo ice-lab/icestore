@@ -5,7 +5,7 @@ import {
   ExtractIModelEffectsStateFromModelConfig,
   ExtractIModelEffectsLoadingFromModelConfig,
   ExtractIModelEffectsErrorFromModelConfig,
-} from '../../';
+} from "../..";
 import counterModel from './counter';
 
 interface CounterProps {

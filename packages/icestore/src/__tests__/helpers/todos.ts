@@ -6,8 +6,8 @@ export default {
     add(state, todo = {}) {
       return {
         ...state,
-        todos: [...state.todos, todo]
-      }
+        todos: [...state.todos, todo],
+      };
     },
   },
   effects: (dispatch) => ({
