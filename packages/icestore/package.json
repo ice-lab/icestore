@@ -15,6 +15,9 @@
     "hooks",
     "state"
   ],
+  "publishConfig": {
+    "access": "public"
+  },
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/ice-lab/icestore/issues"

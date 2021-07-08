@@ -34,5 +34,8 @@
   },
   "devDependencies": {
     "redux": "^4.0.5"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }
