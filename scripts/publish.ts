@@ -14,14 +14,26 @@ if (!branchName) {
 }
 
 (async () => {
-  const pkgData = await fse.readJSON(join(rootDir, 'package.json'));
+  const packages = ['icestore', 'plugin-immer'];
+
+  for (const pkg of packages) {
+    await publishPackage(join(rootDir, 'packages', pkg));
+  }
+
+})().catch(err => {
+  console.error(err);
+  process.exit(1);
+});
+
+async function publishPackage(packageDir) {
+  const pkgData = await fse.readJSON(join(packageDir, 'package.json'));
   const { version, name } = pkgData;
   const npmTag = branchName === 'master' ? 'latest' : 'beta';
 
   const versionExist = await checkVersionExist(name, version, 'https://registry.npmjs.org/');
   if (versionExist) {
     console.log(`${name}@${version} 已存在，无需发布。`);
-    process.exit(0);
+    return;
   }
 
   const isProdVersion = /^\d+\.\d+\.\d+$/.test(version);
@@ -31,12 +43,12 @@ if (!branchName) {
 
   if (branchName !== 'master' && isProdVersion) {
     console.log(`非 master 分支 ${branchName}，不发布正式版本 ${version}`);
-    process.exit(0);
+    return;
   }
 
   console.log('start publish', version, npmTag);
   execSync(`npm publish --tag ${npmTag} --ignore-scripts`, {
-    cwd: rootDir,
+    cwd: packageDir,
     stdio: 'inherit',
   });
 
@@ -56,8 +68,4 @@ if (!branchName) {
     },
   });
   console.log('notify success', response.data);
-
-})().catch(err => {
-  console.error(err);
-  process.exit(1);
-});
+}
