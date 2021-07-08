@@ -1,6 +1,6 @@
 {
   "name": "@ice/store-plugin-immer",
-  "version": "1.0.0",
+  "version": "1.0.0-0",
   "description": "@ice/store immer plugin",
   "main": "lib/index.js",
   "files": [
@@ -27,7 +27,7 @@
   },
   "dependencies": {
     "immer": "^6.0.2",
-    "@ice/store": "^2.0.0"
+    "@ice/store": "^2.0.0-0"
   },
   "peerDependencies": {
     "redux": ">= 4.0.0"

@@ -13,7 +13,7 @@
     "clean:packages": "rimraf ./packages/*/lib",
     "clean:node_modules": "rm -rf node_modules && rm -rf packages/*/node_modules",
     "build": "npm run clean:packages && tsc --build",
-    "watch": "tsc --watch",
+    "watch": "tsc -b ./tsconfig.json -w",
     "lint:fix": "npm run lint -- --fix",
     "lint": "eslint --cache --ext .ts,.tsx,.js ./",
     "test": "cross-env NODE_ENV=unittest jest",
