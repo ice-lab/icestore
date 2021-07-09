@@ -5,8 +5,8 @@
     "experimentalDecorators": true,
     "declaration": true,
     "esModuleInterop": true,
-    "sourceMap": true,
-    "inlineSources": true,
+    // "sourceMap": true,
+    // "inlineSources": true,
     "outDir": "lib",
     "lib": ["es5", "dom"]
   }
