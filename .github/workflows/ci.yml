@@ -14,7 +14,7 @@ jobs:
         run: echo >>$GITHUB_ENV BRANCH_NAME=${GITHUB_REF#refs/heads/}
       - name: Output branch name
         run: echo ${BRANCH_NAME}
-      - run: npm run setup
+      - run: yarn install
       - run: npm run lint
       - run: npm run build
       - run: npm run test

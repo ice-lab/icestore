@@ -1,4 +1,7 @@
 {
   "disableRuntime": true,
-  "entry": "src/index"
+  "entry": "src/index",
+  "alias": {
+    "react": "node_modules/react"
+  }
 }

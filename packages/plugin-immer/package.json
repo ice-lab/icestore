@@ -29,12 +29,6 @@
     "@ice/store": "^2.0.0-0",
     "immer": "^9.0.5"
   },
-  "peerDependencies": {
-    "redux": ">= 4.0.0"
-  },
-  "devDependencies": {
-    "redux": "^4.0.5"
-  },
   "publishConfig": {
     "access": "public"
   }

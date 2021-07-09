@@ -144,15 +144,13 @@ Develop:
 
 ```bash
 $ cd icestore/
-$ npm run setup  # use yarn
+$ yarn install
 
 $ npm run test
 $ npm run build
 
 $ cd examples/counter
-$ npm install
-$ npm link ../../packages/icestore   # link icestore
-$ npm link ../../node_modules/react  # link react
+$ yarn install
 $ npm start
 ```
 
