@@ -3,14 +3,13 @@
 {
   "compilerOptions": {
     "target": "ES5",
-    "module": "ES6",
-    "moduleResolution": "node",
+    "module": "CommonJS",
     "jsx": "react",
     "experimentalDecorators": true,
-    "declaration": true,
+    "declaration": false,
     "esModuleInterop": true,
     "sourceMap": false,
-    "outDir": "es",
+    "outDir": "lib",
     "lib": ["es5", "dom"]
   },
   "files": [

@@ -27,8 +27,8 @@
     }
   },
   "scripts": {
-    "build": "rm -rf es && tsc && rm -rf lib && tsc -p tsconfig-cjs.json",
-    "watch": "tsc -w",
+    "build": "rm -rf lib && tsc && rm -rf es && tsc -p tsconfig-ejs.json",
+    "watch": "tsc -w -p tsconfig-ejs.json",
     "prepublishOnly": "npm run lint && npm run test && npm run build",
     "lint:fix": "npm run lint -- --fix",
     "lint": "eslint --cache --ext .ts,.tsx,.js ./",
