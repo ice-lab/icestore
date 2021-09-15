@@ -1,13 +1,16 @@
+
+
 {
   "compilerOptions": {
-    "target": "es5",
+    "target": "ES5",
+    "module": "ES6",
+    "moduleResolution": "node",
     "jsx": "react",
     "experimentalDecorators": true,
     "declaration": true,
     "esModuleInterop": true,
-    "sourceMap": true,
-    "inlineSources": true,
-    "outDir": "lib",
+    "sourceMap": false,
+    "outDir": "es",
     "lib": ["es5", "dom"]
   },
   "files": [

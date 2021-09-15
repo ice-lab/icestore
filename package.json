@@ -1,8 +1,9 @@
 {
   "name": "@ice/store",
-  "version": "2.0.0",
+  "version": "2.0.0-2",
   "description": "Simple and friendly state for React",
   "main": "lib/index.js",
+  "module": "es/index.js",
   "files": [
     "lib",
     "lib/!(*.map)"
@@ -26,7 +27,7 @@
     }
   },
   "scripts": {
-    "build": "rm -rf lib && tsc",
+    "build": "rm -rf es && tsc && rm -rf lib && tsc -p tsconfig-cjs.json",
     "watch": "tsc -w",
     "prepublishOnly": "npm run lint && npm run test && npm run build",
     "lint:fix": "npm run lint -- --fix",
@@ -73,7 +74,7 @@
     "preset": "ts-jest"
   },
   "dependencies": {
-    "immer": "^6.0.2",
+    "immer": "^9.0.6",
     "lodash.isfunction": "^3.0.9",
     "react-redux": "^7.2.0",
     "redux": "^4.0.5",
