@@ -50,7 +50,7 @@ if (!branchName) {
     data: {
       msgtype: 'markdown',
       markdown: {
-        title: '我是一个工具人',
+        title: `@ice/store@${version} 发布成功`,
         text: `@ice/store@${version} 发布成功`,
       },
     },

@@ -92,6 +92,7 @@ describe('errorPlugin', () => {
       expect(getByTestId('throwErrorEffectsErrorMessage').innerHTML).toEqual('null');
 
       rtl.fireEvent.click(getByTestId('throwError'));
+      // @ts-ignore
       await rtl.waitForDomChange({ timeout: 200 });
 
       expect(getByTestId('throwErrorEffectsErrorValue').innerHTML).toEqual('true');

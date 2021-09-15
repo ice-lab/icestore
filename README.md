@@ -145,6 +145,7 @@ Develop:
 ```bash
 $ cd icestore/
 $ npm install
+$ npm run test
 $ npm run watch
 
 $ cd examples/counter
