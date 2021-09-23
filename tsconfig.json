@@ -3,14 +3,15 @@
 {
   "compilerOptions": {
     "target": "ES5",
-    "module": "CommonJS",
+    "module": "ES6",
     "jsx": "react",
     "experimentalDecorators": true,
-    "declaration": false,
     "esModuleInterop": true,
     "sourceMap": false,
     "outDir": "lib",
-    "lib": ["es5", "dom"]
+    "lib": ["es5", "dom"],
+    "moduleResolution": "node",
+    "declaration": true
   },
   "files": [
     "src/index.tsx"
