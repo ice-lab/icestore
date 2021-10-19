@@ -36,6 +36,16 @@
     "coverage": "codecov",
     "publish": "ts-node scripts/publish"
   },
+  "dependencies": {
+    "immer": "^9.0.6",
+    "lodash.isfunction": "^3.0.9",
+    "react-redux": "^7.2.0",
+    "redux": "^4.0.5",
+    "redux-thunk": "^2.3.0"
+  },
+  "peerDependencies": {
+    "react": "^16.8.3 || ^17"
+  },
   "devDependencies": {
     "@commitlint/cli": "^8.2.0",
     "@commitlint/config-conventional": "^8.2.0",
@@ -60,9 +70,6 @@
     "ts-node": "^10.0.0",
     "typescript": "^3.7.4"
   },
-  "peerDependencies": {
-    "react": ">=16.8.0"
-  },
   "jest": {
     "coverageDirectory": "./coverage/",
     "collectCoverage": true,
@@ -71,12 +78,5 @@
       "<rootDir>/node_modules/"
     ],
     "preset": "ts-jest"
-  },
-  "dependencies": {
-    "immer": "^9.0.6",
-    "lodash.isfunction": "^3.0.9",
-    "react-redux": "^7.2.0",
-    "redux": "^4.0.5",
-    "redux-thunk": "^2.3.0"
   }
 }
