@@ -2,10 +2,9 @@
   "name": "@ice/store",
   "version": "2.0.0-4",
   "description": "Simple and friendly state for React",
-  "main": "lib/index.js",
-  "module": "lib/index.js",
+  "module": "esm/index.js",
   "files": [
-    "lib"
+    "esm"
   ],
   "repository": {
     "type": "git",
@@ -26,7 +25,7 @@
     }
   },
   "scripts": {
-    "build": "rm -rf lib && tsc",
+    "build": "rm -rf esm && tsc",
     "watch": "tsc -w",
     "prepublishOnly": "npm run lint && npm run test && npm run build",
     "lint:fix": "npm run lint -- --fix",

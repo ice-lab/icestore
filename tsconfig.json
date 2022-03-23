@@ -9,7 +9,7 @@
     "experimentalDecorators": true,
     "esModuleInterop": true,
     "sourceMap": false,
-    "outDir": "lib",
+    "outDir": "esm",
     "lib": ["es5", "dom"],
     "declaration": true
   },

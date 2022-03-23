@@ -59,7 +59,7 @@ jspm_packages/
 
 # Compile directory
 lib
-es
+esm
 
 package-lock.json
 
