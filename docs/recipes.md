@@ -3,8 +3,6 @@ id: recipes
 title: 更多技巧
 ---
 
-[English](./recipes.md) | 简体中文
-
 ## 模型联动
 
 模型联动是一个非常常见的场景，可以实现在一个模型中触发另一个模型状态的变更。
@@ -80,7 +78,7 @@ function Button() {
   return (
     <button type="button" onClick={increment}> + </button>
   );
-} 
+}
 
 function Button() {
   const { increment } = useModelDispatchers('counter'); // 这里不会订阅模型状态的更新
@@ -99,10 +97,10 @@ function Button() {
 ```js
 import store from '@/store';
 
-function Logger({ foo }) {	
+function Logger({ foo }) {
   // case 1 只使用状态而不订阅更新（性能优化的手段）
-  function doSomeThing() {	
-    const counter = store.getModelState('counter');	
+  function doSomeThing() {
+    const counter = store.getModelState('counter');
     alert(counter);
   };
 
@@ -110,19 +108,19 @@ function Logger({ foo }) {
   // case 2 在闭包中获取最新状态
   const doOhterThing = useCallback(
     (payload) => {
-      const counter = store.getModelState('counter');	
+      const counter = store.getModelState('counter');
       alert(counter + foo);
     },
     [foo]
   );
-  
+
   return (
     <div>
       <button onClick={doSomeThing}>click 1<button>
       <button onClick={doOhterThing}>click 2<button>
     </div>
   );
-} 
+}
 ```
 
 ### 在模型中
@@ -187,7 +185,7 @@ class TodoList extends Component<Props> {
   render() {
     const { title, todos } = this.props;
     const [ state, dispatchers ] = todos;
-    
+
     state.field; // 获取状态
     dispatchers.add({ /* ... */}); // 调度模型的变更操作
   }
@@ -251,7 +249,7 @@ const model = {
       items.push(payload);
     },
 
-    // or 
+    // or
 
     addTodo(state, payload) => {
       const { items } = state;

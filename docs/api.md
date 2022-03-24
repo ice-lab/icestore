@@ -3,8 +3,6 @@ id: api
 title: API
 ---
 
-[English](./api.md) | 简体中文
-
 `createStore` 是 icestore 的 API 主要入口。创建后的 Store 将提供一些 Hooks 和 API 用于访问和操作数据。
 
 ## createStore
@@ -16,7 +14,7 @@ title: API
 ```js
 import { createStore } from '@ice/store';
 
-const { 
+const {
   // 主要的 API
   Provider,
   useModel,
@@ -104,7 +102,7 @@ const count = {
 }
 ```
 
-参考 [docs/recipes](./recipes.zh-CN.md#可变状态的说明) 了解更多。
+参考 [docs/recipes](./recipes.md#可变状态的说明) 了解更多。
 
 reducer 的第二个参数即是调用时传递的参数：
 
@@ -142,7 +140,7 @@ function Component() {
 
 `effects: (dispatch) => ({ [string]: (payload, rootState) => void })`
 
-一个可以处理该模型副作用的函数集合。这些方法以 payload 和 rootState 作为入参，适用于进行异步调用、[模型联动](recipes.zh-CN.md#模型联动)等场景。在 effects 内部，通过调用 `this.reducerFoo` 来更新模型状态：
+一个可以处理该模型副作用的函数集合。这些方法以 payload 和 rootState 作为入参，适用于进行异步调用、[模型联动](recipes.md#模型联动)等场景。在 effects 内部，通过调用 `this.reducerFoo` 来更新模型状态：
 
 ```js
 const counter = {
@@ -236,7 +234,7 @@ const user = {
   effects: (dispatch) => ({
     like(payload, rootState) {
       this.doSomething(payload); // 调用 user 内的其他 effect 或 reducer
-      // 另一种调用方式：dispatch.user.doSomething(payload); 
+      // 另一种调用方式：dispatch.user.doSomething(payload);
       dispatch.todos.foo(payload); // 调用其他模型的 effect 或 reducer
     },
     doSomething(payload) {
@@ -258,23 +256,21 @@ const todos = { /* ... */ };
 const store = createStore({ user, todos });
 ```
 
-参考 [docs/recipes](./recipes.zh-CN.md#模型联动) 了解更多。
+参考 [docs/recipes](./recipes.md#模型联动) 了解更多。
 
 #### options
 
 - `disableImmer` (布尔值, 可选, 默认值=false)
 
   如果您将其设置为true，那么 immer 将被禁用，这意味着您不能再在 reducers 中直接改变状态，而是必须返回新的状态。
+
 - `disableError` (布尔值, 可选, 默认值=false)
 
   如果将此设置为true，则 “UseModelEffectsError” 和 “WithModelEffectsError” 将不可用。仅当您非常关注性能或故意抛出错误时才启用该选项。
 
-  > 我们将会在未来的版本中默认开启该选项。
 - `disableLoading` (布尔值, 可选, 默认值=false)
 
   如果将此设置为true，则“useModelEffectsLoading”和“withModelEffectsLoading”将不可用。
-
-  > 我们将会在未来的版本中默认开启该选项
 
 ### 返回值
 
@@ -295,7 +291,7 @@ ReactDOM.render(
     <App />
   </Provider>,
   rootEl
-); 
+);
 ```
 
 允许您声明初始状态（可以用在诸如服务端渲染等场景）。
@@ -399,12 +395,12 @@ class TodoList extends Component<Props> {
   render() {
     const { counter } = this.props;
     const [ state, dispatchers ] = counter;
-    
+
     state.value; // 0
 
     dispatchers.add(1);
   }
-} 
+}
 
 export default withModel('counter')(TodoList);
 ```
@@ -427,14 +423,14 @@ class TodoList extends Component<Props> {
   render() {
     const { title, customKey } = this.props;
     const [ state, dispatchers ] = customKey;
-    
+
     state.field; // get state
     dispatchers.add({ /* ... */}); // run action
   }
 }
 
 export default withModel(
-  'todos', 
+  'todos',
 
   // mapModelToProps: (model: [state, dispatchers]) => Object = (model) => ({ [modelName]: model }) )
   (model) => ({

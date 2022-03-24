@@ -3,8 +3,6 @@ id: qna
 title: 常见问题
 ---
 
-[English](./qna.md) | 简体中文
-
 ## 在 TypeScript 项目中 Model 内无法使用 `this`
 
 ![image](https://user-images.githubusercontent.com/4392234/85498836-09024900-b613-11ea-9150-8287b4455e92.png)
