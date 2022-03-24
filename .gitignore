@@ -59,9 +59,11 @@ jspm_packages/
 
 # Compile directory
 lib
+esm
 
 package-lock.json
 
 yarn.lock
 
 .ice
+.DS_Store

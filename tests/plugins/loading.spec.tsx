@@ -5,7 +5,7 @@ import createHook from '../helpers/createHook';
 import createLoadingPlugin from '../../src/plugins/loading';
 import createStore from "../../src/index";
 import counter from '../helpers/counter';
-import Counter, { CounterUseEffectsLoading } from '../helpers/CounterClassComponent';
+import Counter, { CounterWithEffectsLoading } from '../helpers/CounterClassComponent';
 
 describe('loadingPlugin', () => {
   describe('validate config', () => {
@@ -121,14 +121,14 @@ describe('loadingPlugin', () => {
     const store = createStore({ counter });
     const { Provider, withModel, withModelEffectsLoading } = store;
     const WithModelCounter = withModel('counter')(Counter);
-    const WithCounterUseEffectsLoading = withModelEffectsLoading('counter')(CounterUseEffectsLoading);
+    const WithCounterEffectsLoading = withModelEffectsLoading('counter')(CounterWithEffectsLoading);
 
     test('normal usage', done => {
       const tester = rtl.render(
         <Provider>
-          <WithCounterUseEffectsLoading>
+          <WithCounterEffectsLoading>
             <WithModelCounter />
-          </WithCounterUseEffectsLoading>
+          </WithCounterEffectsLoading>
         </Provider>,
       );
       const { getByTestId } = tester;
@@ -146,9 +146,9 @@ describe('loadingPlugin', () => {
     test('take latest effects loading', (done) => {
       const tester = rtl.render(
         <Provider>
-          <WithCounterUseEffectsLoading>
+          <WithCounterEffectsLoading>
             <WithModelCounter />
-          </WithCounterUseEffectsLoading>
+          </WithCounterEffectsLoading>
         </Provider>,
       );
       const { getByTestId } = tester;
@@ -167,9 +167,9 @@ describe('loadingPlugin', () => {
     test('multiple effects loading', (done) => {
       const tester = rtl.render(
         <Provider>
-          <WithCounterUseEffectsLoading>
+          <WithCounterEffectsLoading>
             <WithModelCounter />
-          </WithCounterUseEffectsLoading>
+          </WithCounterEffectsLoading>
         </Provider>,
       );
       const { getByTestId } = tester;
@@ -190,9 +190,9 @@ describe('loadingPlugin', () => {
     test('throw error', (done) => {
       const tester = rtl.render(
         <Provider>
-          <WithCounterUseEffectsLoading>
+          <WithCounterEffectsLoading>
             <WithModelCounter />
-          </WithCounterUseEffectsLoading>
+          </WithCounterEffectsLoading>
         </Provider>,
       );
       const { getByTestId } = tester;

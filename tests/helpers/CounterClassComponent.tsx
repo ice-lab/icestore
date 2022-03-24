@@ -33,10 +33,10 @@ export default class Counter extends PureComponent<CounterProps> {
   }
 }
 
-interface CounterUseDispathcersProps {
+interface CounterWithDispatchersProps {
   counterDispatchers: ExtractIModelDispatchersFromModelConfig<typeof counterModel>;
 };
-export class CounterUseDispathcers extends PureComponent<CounterUseDispathcersProps> {
+export class CounterWithDispatchers extends PureComponent<CounterWithDispatchersProps> {
   render() {
     const { counterDispatchers } = this.props;
     return (
@@ -45,23 +45,11 @@ export class CounterUseDispathcers extends PureComponent<CounterUseDispathcersPr
   }
 };
 
-interface CounterUseActionsProps {
-  counterActions: ExtractIModelDispatchersFromModelConfig<typeof counterModel>;
-}
-export class CounterUseActions extends PureComponent<CounterUseActionsProps> {
-  render() {
-    const { counterActions } = this.props;
-    return (
-      <div data-testid="reset" onClick={() => counterActions.reset()} />
-    );
-  }
-}
-
-interface CounterUseEffectsStateProps {
+interface CounterWithEffectsStateProps {
   counterEffectsState: ExtractIModelEffectsStateFromModelConfig<typeof counterModel>;
   children: React.ReactChild;
 }
-export class CounterUseEffectsState extends PureComponent<CounterUseEffectsStateProps> {
+export class CounterWithEffectsState extends PureComponent<CounterWithEffectsStateProps> {
   render() {
     const { counterEffectsState, children } = this.props;
     return (
@@ -78,33 +66,12 @@ export class CounterUseEffectsState extends PureComponent<CounterUseEffectsState
   }
 }
 
-interface CounterUseActionsStateProps {
-  counterActionsState: ExtractIModelEffectsStateFromModelConfig<typeof counterModel>;
-  children: React.ReactChild;
-}
-export class CounterUseActionsState extends PureComponent<CounterUseActionsStateProps> {
-  render() {
-    const { counterActionsState, children } = this.props;
-    return (
-      <React.Fragment>
-        <span data-testid="throwErrorActionsLoading">
-          {String(counterActionsState.throwError.isLoading)}
-        </span>
-        <span data-testid="throwErrorActionsErrorMessage">
-          {String(counterActionsState.throwError.error)}
-        </span>
-        {children}
-      </React.Fragment>
-    );
-  }
-}
-
-interface CounterUseEffectsLoadingProps {
+interface CounterWithEffectsLoadingProps {
   counterEffectsLoading: ExtractIModelEffectsLoadingFromModelConfig<typeof counterModel>;
   children: React.ReactChild;
 }
 
-export class CounterUseEffectsLoading extends PureComponent<CounterUseEffectsLoadingProps> {
+export class CounterWithEffectsLoading extends PureComponent<CounterWithEffectsLoadingProps> {
   render() {
     const { counterEffectsLoading, children } = this.props;
     return (
@@ -124,12 +91,12 @@ export class CounterUseEffectsLoading extends PureComponent<CounterUseEffectsLoa
   }
 }
 
-interface CounterUseEffectsErrorProps {
+interface CounterWithEffectsErrorProps {
   counterEffectsError: ExtractIModelEffectsErrorFromModelConfig<typeof counterModel>;
   children: React.ReactChild;
 }
 
-export class CounterUseEffectsError extends PureComponent<CounterUseEffectsErrorProps> {
+export class CounterWithEffectsError extends PureComponent<CounterWithEffectsErrorProps> {
   render() {
     const { counterEffectsError, children } = this.props;
     return (

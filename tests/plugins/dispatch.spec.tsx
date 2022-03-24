@@ -4,8 +4,7 @@ import * as rtl from "@testing-library/react";
 import { createStore } from '../../src/index';
 import counter from '../helpers/counter';
 import createHook from '../helpers/createHook';
-import Counter, { CounterUseDispathcers, CounterUseActions } from '../helpers/CounterClassComponent';
-import * as warning from '../../src/utils/warning';
+import Counter, { CounterWithDispatchers } from '../helpers/CounterClassComponent';
 
 describe('dispatchPlugin', () => {
   it('invalidate reducers', () => {
@@ -43,52 +42,16 @@ describe('dispatchPlugin', () => {
     const { Provider, withModelDispatchers, withModel } = store;
     const WithModelCounter = withModel('counter')(Counter);
 
-    const WithCounterUseDispathcers = withModelDispatchers('counter')(CounterUseDispathcers);
+    const WithCounterDispathcers = withModelDispatchers('counter')(CounterWithDispatchers);
     const tester = rtl.render(
       <Provider>
         <WithModelCounter>
-          <WithCounterUseDispathcers />
+          <WithCounterDispathcers />
         </WithModelCounter>
       </Provider>,
     );
     const { getByTestId } = tester;
     rtl.fireEvent.click(getByTestId('reset'));
     expect(getByTestId('count').innerHTML).toBe('0');
-  });
-
-  it('use the compatible useModelActions API to get the actions', async () => {
-    const spy = jest.spyOn(warning, "default");
-    const store = createStore({ counter });
-    const { Provider, useModelActions, useModelState } = store;
-
-    const { result: actionsResult } = createHook(Provider, useModelActions, 'counter');
-    const { result: modelResult } = createHook(Provider, useModelState, "counter");
-    const actions = actionsResult.current;
-
-    await rhl.act(async () => actions.increment(6));
-    expect(modelResult.current.count).toBe(6);
-    expect(spy).toHaveBeenCalled();
-  });
-
-  it('use the compatible WithModelActions API to get the actions', () => {
-    const store = createStore({ counter });
-    const { Provider, withModelActions, withModel } = store;
-    const WithModelCounter = withModel('counter')(Counter);
-
-    const spy = jest.spyOn(warning, "default");
-
-    const WithCounterUseActions = withModelActions('counter')(CounterUseActions);
-    const tester = rtl.render(
-      <Provider>
-        <WithModelCounter>
-          <WithCounterUseActions />
-        </WithModelCounter>
-      </Provider>,
-    );
-    const { getByTestId } = tester;
-    rtl.fireEvent.click(getByTestId('reset'));
-    expect(getByTestId('count').innerHTML).toBe('0');
-
-    expect(spy).toHaveBeenCalled();
   });
 });

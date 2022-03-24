@@ -1,32 +1,30 @@
 ---
-id: ana
-title: Q & A
+id: qna
+title: 常见问题
 ---
 
-English | [简体中文](./qna.zh-CN.md)
-
-## Cannot use `this` within a model in a TypeScript project
+## 在 TypeScript 项目中 Model 内无法使用 `this`
 
 ![image](https://user-images.githubusercontent.com/4392234/85498836-09024900-b613-11ea-9150-8287b4455e92.png)
 
-### Why?
+### 原因
 
-`tsconfig.json` has:
+`tsconfig.json` 里面设置了：
 
 ```json
 {
   "compilerOptions": {
     "strict": true,
 
-    // or
+    // 或
     "noImplicitThis": true,
   }
 }
 ```
 
-### How?
+### 解决方法
 
-Method 1: Use `dispatch`
+方法一：使用 `dispatch`
 
 ```diff
 const counter = {
@@ -46,13 +44,13 @@ const counter = {
 };
 ```
 
-Method 2:
+方法二：
 
-Set `"noImplicitThis": false` in tsconfig.json.
+在 tsconfig.json 中设置 `"noImplicitThis": false`。
 
-Method 3:
+方法三：
 
-Replace `this` use `this as any`:
+使用到 `this` 时使用断言：`this as any`：
 
 ![image](https://user-images.githubusercontent.com/4392234/85499976-318b4280-b615-11ea-9be4-e7f9a79a8463.png)
 

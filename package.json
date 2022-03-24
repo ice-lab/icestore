@@ -1,11 +1,10 @@
 {
   "name": "@ice/store",
-  "version": "1.4.3",
+  "version": "2.0.0",
   "description": "Simple and friendly state for React",
-  "main": "lib/index.js",
+  "module": "esm/index.js",
   "files": [
-    "lib",
-    "lib/!(*.map)"
+    "esm"
   ],
   "repository": {
     "type": "git",
@@ -26,15 +25,25 @@
     }
   },
   "scripts": {
-    "build": "rm -rf lib && tsc",
+    "build": "rm -rf esm && tsc",
     "watch": "tsc -w",
-    "prepublishOnly": "npm run lint:nofix && npm run test && npm run build",
-    "lint": "npm run lint:nofix -- --fix",
-    "lint:nofix": "eslint --cache --ext .ts,.tsx,.js ./",
+    "prepublishOnly": "npm run lint && npm run test && npm run build",
+    "lint:fix": "npm run lint -- --fix",
+    "lint": "eslint --cache --ext .ts,.tsx,.js ./",
     "test": "cross-env NODE_ENV=unittest jest",
     "test:w": "jest --watch",
     "coverage": "codecov",
     "publish": "ts-node scripts/publish"
+  },
+  "dependencies": {
+    "immer": "^9.0.6",
+    "lodash.isfunction": "^3.0.9",
+    "react-redux": "^7.2.0",
+    "redux": "^4.0.5",
+    "redux-thunk": "^2.3.0"
+  },
+  "peerDependencies": {
+    "react": "^16.8.3 || ^17"
   },
   "devDependencies": {
     "@commitlint/cli": "^8.2.0",
@@ -60,9 +69,6 @@
     "ts-node": "^10.0.0",
     "typescript": "^3.7.4"
   },
-  "peerDependencies": {
-    "react": ">=16.8.0"
-  },
   "jest": {
     "coverageDirectory": "./coverage/",
     "collectCoverage": true,
@@ -71,12 +77,5 @@
       "<rootDir>/node_modules/"
     ],
     "preset": "ts-jest"
-  },
-  "dependencies": {
-    "immer": "^6.0.2",
-    "lodash.isfunction": "^3.0.9",
-    "react-redux": "^7.2.0",
-    "redux": "^4.0.5",
-    "redux-thunk": "^2.3.0"
   }
 }
