@@ -66,3 +66,4 @@ package-lock.json
 yarn.lock
 
 .ice
+.DS_Store

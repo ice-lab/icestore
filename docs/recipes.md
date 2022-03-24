@@ -1,17 +1,17 @@
 ---
 id: recipes
-title: Recipes
+title: 更多技巧
 ---
 
-English | [简体中文](./recipes.zh-CN.md)
+[English](./recipes.md) | 简体中文
 
-## Model interaction
+## 模型联动
 
-Model interaction is a common usage scene which can be implemented by calling actions from other model in a model's action.
+模型联动是一个非常常见的场景，可以实现在一个模型中触发另一个模型状态的变更。
 
-### Example
+### 示例
 
-Suppose you have a User Model, which records the number of tasks of the user. And a Tasks Model, which records the task list of the system. Every time a user adds a task, user's task number needs to be updated.
+您有一个用户模型，记录了用户拥有多少个任务；还有一个任务模型，记录了任务的列表详情。每当添加任务到列表时，都需要更新用户拥有的任务数。
 
 ```tsx
 // src/models/user
@@ -39,10 +39,10 @@ export default {
     async add(task) {
       await fetch('/tasks/add', task);
 
-      // Retrieve user information after adding tasks
+      // 调度用户模型从服务端获取最新数据
       await dispatch.user.refresh();
 
-      // Retrieve todos after adding tasks
+      // 调度任务模型从服务端获取最新数据
       await this.refresh();
     },
   }),
@@ -59,25 +59,23 @@ export default createStore({
 });
 ```
 
-### Pay attention to circular dependencies
+### 注意循环调用问题
 
-Please pay attention to circular dependencies problem when actions calling each other between models.
+模型间允许相互调用，需注意循环调用的问题。例如，模型 A 中的 a 方法调用了 模型 B 中的 b 方法，模型 B 中的 b 方法又调用模型 A 中的 a 方法，就会形成死循环。
 
-For example, the action A in Model A calls the action B in Model B and the action B in Model B calls the action A in Model A will results into an endless loop.
+如果是多个模型间进行相互调用，死循环问题的出现概率就会提升。
 
-Be careful the possibility of endless loop problem will arise when methods from different models call each other.
 
-## Readonly
+## 只调用方法而不订阅更新
 
-In some scenarios, you may only want to call the method returned by the model to update the state instead of subscribing to the update of the model state. For example, the button component in the "Basic example", you do not consume the state of the model in the component, so you may not expect the change of the state of the model to trigger the re-rende of the component.
-
-At this time, you can use the `useModelDispatchers` API, check following example:
+在某些场景下，您可能只希望调用模型方法来更新状态而不订阅模型状态的更新。 例如「快速开始」示例中的 Button 组件，您没有在组件中消费模型的状态，因此可能不期望模型状态的变化触发组件的重新渲染。 这时候您可以使用 useModelDispatchers API，看下面的示例比较：
 
 ```js
 import store from '@/store';
+
 const { useModelDispatchers } = store;
 function Button() {
-  const [, dispatchers ] = useModel('counter'); // The update of model'state will be subscribed here
+  const [, dispatchers ] = useModel('counter'); // 这里会订阅模型状态的更新
   const { increment } = dispatchers;
   return (
     <button type="button" onClick={increment}> + </button>
@@ -85,31 +83,31 @@ function Button() {
 } 
 
 function Button() {
-  const { increment } = useModelDispatchers('counter'); // Updates to model'state will not be subscribed here
+  const { increment } = useModelDispatchers('counter'); // 这里不会订阅模型状态的更新
   return (
     <button type="button" onClick={increment}> + </button>
   );
 }
 ```
 
-## Get the latest state of the model
+## 获取模型最新状态
 
-In some scenarios, you may want to get the latest state of the model.
+在某些场景下，您可能需要获取到模型的最新状态。
 
-### In Component
+### 在组件中
 
 ```js
 import store from '@/store';
 
 function Logger({ foo }) {	
-  // case 1 use state only instead of subscribing to updates(a means of performance optimization)
+  // case 1 只使用状态而不订阅更新（性能优化的手段）
   function doSomeThing() {	
     const counter = store.getModelState('counter');	
     alert(counter);
   };
 
 
-  // case 2 get the latest state in the closure
+  // case 2 在闭包中获取最新状态
   const doOhterThing = useCallback(
     (payload) => {
       const counter = store.getModelState('counter');	
@@ -127,7 +125,7 @@ function Logger({ foo }) {
 } 
 ```
 
-### In Model
+### 在模型中
 
 ```js
 import store from '@/store';
@@ -135,18 +133,18 @@ import store from '@/store';
 const user = {
   effects: dispatch => ({
     async asyncAdd(payload, state) {
-      dispatch.todos.addTodo(payload); // Call methods of other models to update their state
-      const todos = store.getModelState('todos'); // Get the latest state of the updated model
+      dispatch.todos.addTodo(payload); // 调用其他模型的方法更新其状态
+      const todos = store.getModelState('todos'); // 获取更新后的模型最新状态
     }
   })
 }
 ```
 
-## effects' executing status
+## 模型副作用的执行状态
 
-`icestore` has built-in support to access the executing status of effects. This enables users to have access to the isLoading and error executing status of effects without defining extra state, making the code more consise and clean.
+icestore 内部集成了对于异步副作用的状态记录，方便您在不增加额外的状态的前提下访问异步副作用的执行状态（loading 与 error），从而使状态渲染的处理逻辑更加简洁。
 
-### Example
+### 示例
 
 ```js
 import { useModelDispatchers } from './store';
@@ -159,16 +157,16 @@ function FunctionComponent() {
     dispatchers.fetch();
   }, []);
 
-  effectsState.fetch.isLoading;
-  effectsState.fetch.error;
+  effectsState.fetch.isLoading; // 是否在调用中
+  effectsState.fetch.error; // 调用结果是否有错误
 }
 ```
 
-## Class Component Support
+## 在 Class 组件中使用模型
 
-You can also using icestore with Class Component. The `withModel()` function connects a Model to a React component.
+您可以在 Class 组件中使用模型，只需要调用 `withModel()` 方法将模型绑定到 React 组件中。
 
-### Basic
+### 基础示例
 
 ```tsx
 import { ExtractIModelFromModelConfig } from '@ice/store';
@@ -178,11 +176,11 @@ import store from '@/store';
 const { withModel } = store;
 
 interface MapModelToProp {
-  todos: ExtractIModelFromModelConfig<typeof todosModel>;  // `withModel` automatically adds the name of the model as the property
+  todos: ExtractIModelFromModelConfig<typeof todosModel>;  // `withModel` 自动添加的 props 字段用于访问模型
 }
 
 interface Props extends MapModelToProp {
-  title: string; // custom property
+  title: string; // 自定义的 props
 }
 
 class TodoList extends Component<Props> {
@@ -190,15 +188,15 @@ class TodoList extends Component<Props> {
     const { title, todos } = this.props;
     const [ state, dispatchers ] = todos;
     
-    state.field; // get state
-    dispatchers.add({ /* ... */}); // run action
+    state.field; // 获取状态
+    dispatchers.add({ /* ... */}); // 调度模型的变更操作
   }
 }
 
 export default withModel('todos')<MapModelToProp, Props>(TodoList);
 ```
 
-### With multiple models
+### 使用多个模型
 
 ```tsx
 import { ExtractIModelFromModelConfig } from '@ice/store';
@@ -225,24 +223,26 @@ export default withModel('user')(
   withModel('todos')(TodoList)
 );
 
-// functional flavor:
+// 可以通过组合的方式进行函数调用：
 import compose from 'lodash/fp/compose';
 export default compose(withModel('user'), withModel('todos'))(TodoList);
 ```
 
 ### withModelDispatchers & withModelEffectsState
 
-You can use `withModelDispatchers` to call only model actions without listening for model changes, also for `withModelEffectsState`.
+您可以使用 `withModelDispatchers` 用于使用模型的调度器而不订阅模型的更新，`withModelEffectsState` 的 API 签名与前者一致。
 
-See [docs/api](./api.md) for more details.
+查看 [docs/api](./api.zh-CN.md) 了解其使用方式。
 
-## Immutable Description 
+## 可变状态的说明
 
-### Don't destructure the state argument
+icestore 默认为 reducer 提供了状态可变的操作方式。
 
-In order to support the mutation API we utilise [immer](https://github.com/immerjs/immer). Under the hood immer utilises Proxies in order to track our mutations, converting them into immutable updates. Therefore if you destructure the state that is provided to your action you break out of the Proxy, after which any update you perform to the state will not be applied.
+### 不要解构参数
 
-Below are a couple examples of this antipattern.
+icestore 内部使用 [immer](https://github.com/immerjs/immer) 来实现可变状态的操作 API。immer 使用代理（Proxy）来跟踪我们的变化，然后将它们转换为新的更新。因此，如果对提供的状态进行解构，则会脱离代理，在此之后，将不会检测到它的任何更新。
+
+下面是几个错误的示范：
 
 ```js
 const model = {
@@ -261,11 +261,9 @@ const model = {
 }
 ```
 
-### Switching to an immutable API
+### 直接更新状态
 
-By default we use immer to provide a mutation based API.
-
-This is completely optional, you can instead return new state from your actions like below.
+默认情况下，我们使用 immer 提供可变状态的操作。但这是完全可选的，您可以像下面这样操作，返回新的状态。
 
 ```js
 const model = {
@@ -279,19 +277,19 @@ const model = {
 }
 ```
 
-Should you prefer this approach you can explicitly disable immer via the disableImmer option value of createStore.
+如果您喜欢这种方式，可以通过 createStore 的 disableImmer 选项来禁用 immer。
 
 ```js
 import { createStore } from '@ice/store';
 
 const store = createStore(models, {
-  disableImmer: true; // 👈 set the flag
+  disableImmer: true; // 👈 通过该配置禁用 immer
 });
 ```
 
-## Directory organization
+## 项目的目录组织
 
-For most small and medium-sized projects, it is recommended to centrally manage all the project models in the global `src/models/` directory:
+对于大多数中小型项目，建议集中管理模型，例如在 “src/models/” 目录中存放项目的所有模型：
 
 ```bash
 ├── src/
@@ -307,11 +305,11 @@ For most small and medium-sized projects, it is recommended to centrally manage 
 │   └── store.js
 ```
 
-If the project is relatively large, or more likely to follow the page maintenance of the store,then you can declare a store instance in each page directory. However, in this case, cross page store calls should be avoided as much as possible.
+如果项目相对较大，可以按照页面来管理模型。但是，在这种情况下，应该避免跨页面使用模型。
 
 ## Devtools
 
-icestore works with [Redux Devtools](https://github.com/zalmoxisus/redux-devtools-extension) out of the box. No configuration required.
+icestore 默认支持 [Redux Devtools](https://github.com/zalmoxisus/redux-devtools-extension)，不需要额外的配置。
 
 ```js
 import { createStore } from '@ice/store';
@@ -320,7 +318,7 @@ const models = { counter: {} };
 createStore(models); // devtools up and running
 ```
 
-Its also possible to add redux devtools [configuration options](https://github.com/zalmoxisus/redux-devtools-extension/blob/master/docs/API/Arguments.md).
+可以通过额外的参数添加 Redux Devtools 的[配置选项](https://github.com/zalmoxisus/redux-devtools-extension/blob/master/docs/API/Arguments.md)。
 
 ```js
 import { createStore } from '@ice/store';
@@ -336,27 +334,27 @@ createStore(
 );
 ```
 
-## Comparison
+## 能力对比表
 
-- O: Yes
-- X: No
-- +: Extra
+- O: 支持
+- X: 不支持
+- +: 需要额外地进行能力扩展
 
-| feature | redux | constate | zustand | react-tracked | icestore |
+| 功能/库 | redux | constate | zustand | react-tracked | icestore |
 | :--------| :--------| :-------- | :-------- | :-------- | :-------- |
-| Framework | Any | React | React | React | React |
-| Simplicity | ★★ | ★★★★ | ★★★ | ★★★ | ★★★★ |
-| Less boilerplate | ★ | ★★ | ★★★ | ★★★ | ★★★★ |
-| Configurable | ★★ | ★★★ | ★★★ | ★★★ | ★★★★★ |
-| Shareable State | O | O | O | O | O |
-| Reusable State | O | O | O | O | O |
-| Interactive State | + | + | + | + | O |
-| Class Component | O | + | + | + | O |
-| Function Component | O | O | O | O | O |
-| Async Status | + | X | X | X | O |
+| 框架 | Any | React | React | React | React |
+| 简单性 | ★★ | ★★★★ | ★★★ | ★★★ | ★★★★ |
+| 更少的模板代码 | ★ | ★★ | ★★★ | ★★★ | ★★★★ |
+| 可配置性 | ★★ | ★★★ | ★★★ | ★★★ | ★★★★★ |
+| 共享状态 | O | O | O | O | O |
+| 复用状态 | O | O | O | O | O |
+| 状态联动 | + | + | + | + | O |
+| Class 组件支持 | O | + | + | + | O |
+| Function 组件支持 | O | O | O | O | O |
+| 异步更新的状态 | + | X | X | X | O |
 | SSR | O | O | X | O | O |
-| Persist | + | X | X | X | O |
-| Lazy load models | + | + | + | + | O |
-| Centralization | O | X | X | X | O |
-| Middleware or Plug-in | O | X | O | X | O |
-| Devtools | O | X | O | X | O |
+| 持久化 | + | X | X | X | + |
+| 懒加载模型 | + | + | + | + | O |
+| 中心化 | + | X | X | X | O |
+| 中间件或插件机制 | O | X | O | X | O |
+| 开发者工具 | O | X | O | X | O |

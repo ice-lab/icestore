@@ -1,21 +1,21 @@
 ---
 id: migration
-title: Migration
+title: 从其他方案迁移
 ---
 
-English | [简体中文](./migration.zh-CN.md)
+[English](./migration.md) | 简体中文
 
-## Migrating From Redux
+## 从 Redux 迁移
 
-We provide a gradual solution to allow your project to be partially migrated from Redux to icestore.
+我们提供了渐进式的方案使得您的项目可以局部从 Redux 迁移到 icestore。
 
-> Requires React 16.8.0 or later & React-Redux 7.0.0 or later.
+> 请确保在项目中使用的 react-redux >= 7.0.0 且 react >= 16.8.0 。
 
-### Step 1: Migrating createStore
+### 第一步：替换 createStore 方法
 
-See: [CodeSandbox](https://codesandbox.io/s/github/ice-lab/icestore/tree/master/examples/migration-redux-1?module=/src/index.js)
+参考：[CodeSandbox](https://codesandbox.io/s/github/ice-lab/icestore/tree/master/examples/migration-redux-1?module=/src/index.js)
 
-#### Redux createStore
+#### Redux 创建 Store 的方式
 
 ```js
 import { createStore, combineReducers } from 'redux';
@@ -30,7 +30,7 @@ const rootReducer = combineReducers({
 const store = createStore(rootReducer);
 ```
 
-#### icestore createStore
+#### icestore 创建 Store 的方式
 
 ```js
 import { createStore } from 'icestore';
@@ -38,7 +38,7 @@ import { createStore } from 'icestore';
 import sharks from './reducers/sharks';
 import dolphins from './reducers/dolphins';
 
-// Using createStore from icestore
+// 使用 icestore 的 createStore 方法
 const store = createStore(
   { /* No models */ },
   {
@@ -52,15 +52,15 @@ const store = createStore(
 );
 ```
 
-### Step 2: Mix reducers & models
+### 第二步：将 reducer 替换为 model
 
-You can locally and incrementally replace the Redux Reducer in your project with icestore Model.
+您可以局部渐进式地将项目中的 Redux reducer 替换为 icestore model。
 
-See: [CodeSandbox](https://codesandbox.io/s/github/ice-lab/icestore/tree/master/examples/migration-redux-2?module=/src/index.js)
+参考：[CodeSandbox](https://codesandbox.io/s/github/ice-lab/icestore/tree/master/examples/migration-redux-2?module=/src/index.js)
 
-#### Declaration
+#### 声明层
 
-##### Redux's Reducer
+##### Redux 中 reducer 的声明
 
 ```js
 const INCREMENT = 'sharks/increment';
@@ -80,7 +80,7 @@ export default (state = 0, action) => {
 };
 ```
 
-##### icestore's Model
+##### icestore 中 model 的声明
 
 ```js
 export default {
@@ -91,9 +91,9 @@ export default {
 }
 ```
 
-#### Consumer
+#### 消费层
 
-##### Redux in mapDispatch
+##### Redux 中 mapDispatch 的返回值
 
 ```js
 import { connect } from 'react-redux';
@@ -108,14 +108,14 @@ const mapDispatch = dispatch => ({
 export default connect(undefined, mapDispatch)(ReactComponent);
 ```
 
-##### icestore in mapDispatch
+##### icestore 中 mapDispatch 的返回值
 
 ```js
 import { connect } from 'react-redux';
 import { incrementDolphins } from './reducers/dolphins';
 
 const mapDispatch = dispatch => ({
-  // important!!!
+  // 注意这一行的区别！
   incrementSharks: () => dispatch.sharks.increment(1),
   incrementDolphins: () => dispatch(incrementDolphins(1)),
 });
@@ -123,11 +123,11 @@ const mapDispatch = dispatch => ({
 export default connect(undefined, mapDispatch)(ReactComponent);
 ```
 
-### Step 3: Migrating Provider
+### 第三步：替换 Provider 
 
-See: [CodeSandbox](https://codesandbox.io/s/github/ice-lab/icestore/tree/master/examples/migration-redux-3?module=/src/index.js)
+参考：[CodeSandbox](https://codesandbox.io/s/github/ice-lab/icestore/tree/master/examples/migration-redux-3?module=/src/index.js)
 
-#### Migrating from react-redux Provider
+#### 将 react-redux Provider 替换为 icestore Provider
 
 ##### react-redux
 
@@ -156,9 +156,9 @@ const Root = () => (
 );
 ```
 
-#### react-redux Hooks compatible
+#### 兼容 react-redux Hooks
 
-##### Origin
+##### 原 react-redux Hooks 用法
 
 ```js
 import { useSelector, useDispatch } from 'react-redux';
@@ -170,13 +170,13 @@ export default function() {
 }
 ```
 
-##### Now
+##### 兼容做法
 
 ```js
 import { createSelectorHook, createDispatchHook } from 'react-redux';
 import store from './store';
 
-// Create Redux hooks using the context provided by the store
+// 使用 store 提供的 context 创建 Redux Hooks
 const useSelector = createSelectorHook(store.context);
 const useDispatch = createDispatchHook(store.context);
 
@@ -187,9 +187,9 @@ export default function() {
 }
 ```
 
-#### react-redux connect compatible
+#### 兼容 react-redux connect
 
-##### Origin
+##### 原 react-redux connect 用法
 
 ```js
 import { connect } from 'react-redux';
@@ -200,7 +200,7 @@ export default connect(
 )(ReactComponent);
 ```
 
-##### Now
+##### 兼容做法
 
 ```js
 import { connect } from 'react-redux';
@@ -211,18 +211,18 @@ export default connect(
   mapDispatch,
   mergeProps,
 
-  // Pass the context provided by the store to the connect function
+  // 传递 store 提供的 context 给 connect 函数
   { context: store.context }
 )(ReactComponent);
 ```
 
-### Step 4: Migrating From react-redux 
+### 第四步：将 react-redux 替换为 icestore 
 
-You can locally and incrementally replace the react Redux API in your project with the icestore API.
+您可以局部渐进式地将项目中的 react-redux API 替换为 icestore API。
 
-See: [CodeSandbox](https://codesandbox.io/s/github/ice-lab/icestore/tree/master/examples/migration-redux-4?module=/src/index.js)
+参考：[CodeSandbox](https://codesandbox.io/s/github/ice-lab/icestore/tree/master/examples/migration-redux-4?module=/src/index.js)
 
-#### Migrating From react-redux Hooks
+#### 替换 react-redux Hooks
 
 ```js
 import { useSelector, useDispatch } from './reudx';
@@ -238,9 +238,9 @@ function Component (){
 }
 ```
 
-#### Migrating From react-redux connect
+#### 替换 react-redux connect
 
-##### Origin
+##### 原 react-redux connect 用法
 
 ```js
 import { connect } from 'react-reudx';
@@ -266,7 +266,7 @@ export default connect(
 )(Count);
 ```
 
-##### Now
+##### 使用 icestore API
 
 ```js
 import store from './store';
