@@ -1,4 +1,4 @@
-简体中文 | [English](./README.cn.md)
+简体中文 | [English](./README.en.md)
 
 # icestore
 
@@ -13,10 +13,10 @@
 
 | 版本 | 代码分支 | 文档 |
 | --- | --- | --- |
-| V2  | master     |  [Docs](https://github.com/ice-lab/icestore#documents)
+| V2  | master     |  [Docs](https://github.com/ice-lab/icestore#文档)
 | V1  | stable/1.x |  [Docs](https://github.com/ice-lab/icestore/tree/stable/1.x#documents)
 
-## 安装
+## 介绍
 
 icestore 是面向 React 应用的、简单友好的状态管理方案。它包含以下核心特征：
 
@@ -26,6 +26,13 @@ icestore 是面向 React 应用的、简单友好的状态管理方案。它包�
 * **良好的 TypeScript 支持**：提供完整的 TypeScript 类型定义，在 VS Code 中能获得完整的类型检查和推断。
 
 查看[《能力对比表》](docs/recipes.md#Comparison)了解更多细节。
+
+## 文档
+
+- [API](./docs/api.md)
+- [更多技巧](./docs/recipes.md)
+- [从 V1 版本升级](./docs/upgrade-guidelines.md)
+- [常见问题](./docs/qna.md)
 
 ## 示例
 
@@ -100,13 +107,6 @@ ReactDOM.render(<App />, rootElement);
 ```bash
 $ npm install @ice/store --save
 ```
-
-## 文档
-
-- [API](./docs/api.md)
-- [更多技巧](./docs/recipes.md)
-- [从 V1 版本升级](./docs/upgrade-guidelines.md)
-- [常见问题](./docs/qna.md)
 
 ## 灵感
 

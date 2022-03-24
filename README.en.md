@@ -13,7 +13,7 @@ English | [简体中文](./README.md)
 
 | Version | Branch | Docs |
 | --- | --- | --- |
-| V2  | master     |  [Docs](https://github.com/ice-lab/icestore#documents)
+| V2  | master     |  [Docs](https://github.com/ice-lab/icestore#文档)
 | V1  | stable/1.x |  [Docs](https://github.com/ice-lab/icestore/tree/stable/1.x#documents)
 
 ## Introduction
@@ -26,6 +26,13 @@ icestore is a simple and friendly state management library for React. It has the
 - **TypeScript Support**: Provide complete type definitions to support intelliSense in VS Code.
 
 See the [comparison table](docs/recipes.md#能力对比表) for more details.
+
+## Documents
+
+- [API](./docs/api.md)
+- [Recipes](./docs/recipes.md)
+- [Upgrade from V1](./docs/upgrade-guidelines.md)
+- [Q & A](./docs/qna.md)
 
 ## Examples
 
@@ -105,13 +112,6 @@ icestore requires React 16.8.0 or later.
 ```bash
 npm install @ice/store --save
 ```
-
-## Documents
-
-- [API](./docs/api.md)
-- [Recipes](./docs/recipes.md)
-- [Upgrade from V1](./docs/upgrade-guidelines.md)
-- [Q & A](./docs/qna.md)
 
 ## Inspiration
 
