@@ -1,7 +1,8 @@
 {
   "name": "@ice/store",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "Simple and friendly state for React",
+  "main": "esm/index.js",
   "module": "esm/index.js",
   "files": [
     "esm"
