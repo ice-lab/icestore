@@ -476,11 +476,23 @@ export interface ThisModelConfig<
         ThisType<ExtractIModelDispatchersFromReducersObject<R> & ExtractIModelDispatchersFromEffects<E>>;
 }
 
+type ReturnModelConfig<
+  S,
+  R extends ModelReducers<S>,
+  E extends ModelEffects<S> | ((dispatch: IcestoreDispatch) => ModelEffects<S>),
+  SS,
+> = {
+  name?: string;
+  state: S;
+  baseReducer?: (state: SS, action: Action) => SS;
+  reducers?: R;
+  effects?: E;
+};
 export function createModel<
   S,
   R extends ModelReducers<S>,
   E extends ModelEffects<S> | ((dispatch: IcestoreDispatch) => ModelEffects<S>),
   SS = S,
 >(config: ThisModelConfig<S, R, E, SS>) {
-  return config as ModelConfig<S, SS>;
+  return config as ReturnModelConfig<S, R, E, SS>;
 }
