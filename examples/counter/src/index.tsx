@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { createStore, createModel } from '../../../src';
+import { createStore, createModel } from '@ice/store';
 import 'react-app-polyfill/ie11';
 import 'react-app-polyfill/stable';
 
@@ -10,7 +10,7 @@ const delay = (time) => new Promise((resolve) => setTimeout(() => resolve(), tim
 type IState = {
   count: number;
 };
-const state = {
+const state: IState = {
   count: 0,
 };
 const counter = createModel({

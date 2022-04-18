@@ -17,40 +17,34 @@ title: 常见问题
     "strict": true,
 
     // 或
-    "noImplicitThis": true,
+    "noImplicitThis": false,
   }
 }
 ```
 
 ### 解决方法
 
-方法一：使用 `dispatch`
+1. 在 tsconfig.json 中设置 `"strict": false` 和 `"noImplicitThis": true`。
+
+2. 使用 `createModel` 工具方法来包裹你的 model 对象即可。
 
 ```diff
-const counter = {
-  state: 0,
-  reducers: {
-    increment: (prevState) => prevState + 1,
-    decrement: (prevState) => prevState - 1,
-  },
--  effects: () => ({
-+  effects: (dispatch) => ({
-    async asyncDecrement() {
-      await delay(1000);
--     // this.decrement();
-+     dispatch.counter.decrement();
++ import { createModel } from '@ice/store';
+
+- const counter = {
++ const counter = createModel({
+    state: 0,
+    reducers: {
+      increment: (prevState) => prevState + 1,
+      decrement: (prevState) => prevState - 1,
     },
-  }),
-};
+    effects: () => ({
+      async asyncDecrement() {
+        await delay(1000);
+        this.decrement();
+      },
+    }),
+- };
++ });
 ```
-
-方法二：
-
-在 tsconfig.json 中设置 `"noImplicitThis": false`。
-
-方法三：
-
-使用到 `this` 时使用断言：`this as any`：
-
-![image](https://user-images.githubusercontent.com/4392234/85499976-318b4280-b615-11ea-9be4-e7f9a79a8463.png)
-
+![image](https://user-images.githubusercontent.com/42671099/163668927-2a30ec43-7c49-4973-ae15-1035a0386ca7.png)

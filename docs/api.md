@@ -5,6 +5,44 @@ title: API
 
 `createStore` 是 icestore 的 API 主要入口。创建后的 Store 将提供一些 Hooks 和 API 用于访问和操作数据。
 
+`createModel` 是一个类型工具方法，无任何副作用。用它来包裹你的 model 对象，在 effects 中使用 `this` 时可获得完整的类型提示。
+
+## createModel
+
+`createModel(modelConfig)`
+
+该方法用于包裹 model 对象，以获得更好的类型提示。
+```ts
+import { createModel } from '@ice/store';
+
+type IState = {
+  count: number,
+};
+const state: IState = {
+  count: 0,
+};
+
+const counter = createModel({
+  state,
+  reducers: {
+    increment(state: IState, payload: number) {
+      return state.count + payload;
+    },
+    decrement(state: IState, payload: number) {
+      return state.count - payload;
+    },
+  },
+  effects: () => ({
+    async asyncDecrement(payload: number) {
+      this.decrement(payload);
+    },
+    async anotherEffect(payload: number) {
+      this.asyncDecrement(payload);
+    },
+  }),
+});
+```
+
 ## createStore
 
 `createStore(models, options)`
@@ -157,7 +195,7 @@ const counter = {
 };
 ```
 
-> 注意：如果您正在使用 TypeScript ，并且配置了编译选项 `noImplicitThis: ture`，则会遇到类似 "Property 'setState' does not exist on type" 的编译错误。您可以通过删除该编译选项，或者使用下面示例中的 `dispatch.model.reducer` 来避免此错误。
+> 注意：如果您正在使用 TypeScript ，并且配置了编译选项 `noImplicitThis: ture`，则会遇到类似 "Property 'setState' does not exist on type" 的编译错误。您可以[参考qna中的用法](qna.md)使用 `createModel` 来包裹你的 model，或者使用下面示例中的 `dispatch.model.reducer` 来避免此错误。
 
 ###### 同名处理
 
