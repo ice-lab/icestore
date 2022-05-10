@@ -486,7 +486,7 @@ type ReturnModelConfig<
   state: S;
   baseReducer?: (state: SS, action: Action) => SS;
   reducers?: R;
-  effects?: E;
+  effects: E;
 };
 export function createModel<
   S,

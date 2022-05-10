@@ -7,17 +7,13 @@ import 'react-app-polyfill/stable';
 const delay = (time) => new Promise((resolve) => setTimeout(() => resolve(), time));
 
 // 1️⃣ Use createModel function to create a model to define your store
-type IState = {
-  count: number;
-};
-const state: IState = {
-  count: 0,
-};
 const counter = createModel({
-  state,
+  state: {
+    count: 0,
+  },
   reducers: {
-    increment: (prevState: IState) => ({ count: prevState.count + 1 }),
-    decrement: (prevState: IState, payload: number) => ({ count: prevState.count - payload }),
+    increment: (prevState) => ({ count: prevState.count + 1 }),
+    decrement: (prevState, payload: number) => ({ count: prevState.count - payload }),
   },
   effects: () => ({
     async asyncDecrement(payload: number) {

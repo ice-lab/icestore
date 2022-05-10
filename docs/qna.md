@@ -14,9 +14,6 @@ title: 常见问题
 ```json
 {
   "compilerOptions": {
-    "strict": true,
-
-    // 或
     "noImplicitThis": false,
   }
 }
@@ -24,9 +21,7 @@ title: 常见问题
 
 ### 解决方法
 
-1. 在 tsconfig.json 中设置 `"strict": false` 和 `"noImplicitThis": true`。
-
-2. 使用 `createModel` 工具方法来包裹你的 model 对象即可。
+1. 使用 `createModel` 工具方法来包裹你的 model 对象即可。
 
 ```diff
 + import { createModel } from '@ice/store';
