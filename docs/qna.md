@@ -24,7 +24,31 @@ title: 常见问题
 
 ### 解决方法
 
-方法一：使用 `dispatch`
+> 更推荐使用方法一，可以获得完善的 TS 类型提示
+
+方法一：使用 `createModel` 工具方法来包裹你的 model 对象
+```diff
++ import { createModel } from '@ice/store';
+
+- const counter = {
++ const counter = createModel({
+    state: 0,
+    reducers: {
+      increment: (prevState) => prevState + 1,
+      decrement: (prevState) => prevState - 1,
+    },
+    effects: () => ({
+      async asyncDecrement() {
+        await delay(1000);
+        this.decrement();
+      },
+    }),
+- };
++ });
+```
+![image](https://user-images.githubusercontent.com/42671099/163668927-2a30ec43-7c49-4973-ae15-1035a0386ca7.png)
+
+方法二：使用 `dispatch`
 
 ```diff
 const counter = {
@@ -43,14 +67,3 @@ const counter = {
   }),
 };
 ```
-
-方法二：
-
-在 tsconfig.json 中设置 `"noImplicitThis": false`。
-
-方法三：
-
-使用到 `this` 时使用断言：`this as any`：
-
-![image](https://user-images.githubusercontent.com/4392234/85499976-318b4280-b615-11ea-9be4-e7f9a79a8463.png)
-
