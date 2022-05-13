@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "dependencies": {
-    "@ice/store": "^1.3.4",
+    "@ice/store": "^2.0.0",
     "react-app-polyfill": "^1.0.6",
     "react-dom": "^16.8.6"
   },

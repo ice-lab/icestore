@@ -329,7 +329,7 @@ export interface Action<P = any, M = any> {
 }
 
 export interface ModelReducers<S = any> {
-  [key: string]: (state: S, payload: any, meta?: any) => S;
+  [key: string]: (state: S, payload: any, meta?: any) => S | void;
 }
 
 export interface ModelEffects<S> {
