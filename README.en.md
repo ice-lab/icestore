@@ -46,29 +46,37 @@ See the [comparison table](docs/recipes.md#能力对比表) for more details.
 ```jsx
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { createStore } from '@ice/store';
+import { createStore, createModel } from '@ice/store';
 
 const delay = (time) =>
   new Promise((resolve) => setTimeout(() => resolve(), time));
 
 // 1️⃣ Use a model to define your store
-const counter = {
+const counter = createModel({
   state: 0,
   reducers: {
     increment: (prevState) => prevState + 1,
     decrement: (prevState) => prevState - 1,
   },
-  effects: () => ({
-    async asyncDecrement() {
+  effects: (dispatch) => ({
+    async asyncDecrement(_, rootState) {
       await delay(1000);
       this.decrement();
     },
   }),
-};
+});
 
 const models = {
   counter,
 };
+
+// enhance the dispatch and rootState types in effects
+declare module '@ice/store' {
+  interface IcestoreModels {
+    counter: typeof counter;
+  }
+}
+
 
 // 2️⃣ Create the store
 const store = createStore(models);
@@ -124,16 +132,16 @@ Feel free to report any questions as an [issue](https://github.com/ice-lab/icest
 Develop:
 
 ```bash
-$ cd icestore/
-$ npm install
-$ npm run test
-$ npm run watch
+cd icestore/
+npm install
+npm run test
+npm run watch
 
-$ cd examples/counter
-$ npm install
-$ npm link ../../                    # link icestore
-$ npm link ../../node_modules/react  # link react
-$ npm start
+cd examples/counter
+npm install
+npm link ../../                    # link icestore
+npm link ../../node_modules/react  # link react
+npm start
 ```
 
 ## License
