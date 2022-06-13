@@ -5,7 +5,7 @@ title: 更多技巧
 
 ## 类型增强
 
-在 `store.ts` 中增加如下代码，在书写 model 时可以获得更完善 TS 类型提示。
+在 `store.ts` 中增加如下代码，在书写 model 时可以增强 effects 中 dispatch 和 rootState 的类型提示。
 
 ```tsx
 declare module '@ice/store' {
