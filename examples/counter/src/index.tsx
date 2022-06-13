@@ -4,7 +4,7 @@ import { createStore, createModel } from '@ice/store';
 import 'react-app-polyfill/ie11';
 import 'react-app-polyfill/stable';
 
-const delay = (time: number) => new Promise((resolve) => setTimeout(() => resolve(0), time));
+const delay = (time: number) => new Promise<void>((resolve) => setTimeout(() => resolve(), time));
 
 // 1️⃣ Use createModel function to create a model to define your store
 const counter = createModel({
