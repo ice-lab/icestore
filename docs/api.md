@@ -3,7 +3,7 @@ id: api
 title: API
 ---
 
-`createStore` 是 icestore 的 API 主要入口。创建后的 Store 将提供一些 Hooks 和 API 用于访问和操作数据。
+`createStore` 是 @ice/store 的 API 主要入口。创建后的 Store 将提供一些 Hooks 和 API 用于访问和操作数据。
 
 `createModel` 是一个类型工具方法，无任何副作用。用它来包裹你的 model 对象，在 effects 中使用 `this` 时可获得完整的类型提示。
 
@@ -12,6 +12,7 @@ title: API
 `createModel(modelConfig)`
 
 该方法用于包裹 model 对象，以获得更好的类型提示。
+
 ```ts
 import { createModel } from '@ice/store';
 
@@ -41,6 +42,10 @@ const counter = createModel({
     },
   }),
 });
+
+const models = {
+  counter,
+}
 ```
 
 ## createStore
@@ -76,11 +81,11 @@ const {
 `createStore({ [string]: modelConfig });`
 
 ```js
-import { createStore } from '@ice/store'
+import { createStore, createModel } from '@ice/store'
 
-const count = {
+const count = createModel({
   state: 0,
-};
+});
 
 createStore({
   count
@@ -94,9 +99,11 @@ createStore({
 该 model 的初始 state。
 
 ```js
-const model = {
+import { createModel } from '@ice/store';
+
+const model = createModel({
   state: { loading: false },
-};
+});
 ```
 
 ##### reducers
@@ -109,7 +116,9 @@ const model = {
 一个简单的示例：
 
 ```js
-const todos = {
+import { createModel } from '@ice/store';
+
+const todos = createModel({
   state: [
     {
       title: 'Learn typescript',
@@ -122,14 +131,16 @@ const todos = {
       state[1].done = true;
     },
   },
-};
+});
 ```
 
 icestore 内部是通过调用 [immer](https://github.com/immerjs/immer) 来实现可变状态的。
 Immer 只支持对普通对象和数组的变化检测，所以像字符串或数字这样的类型需要返回一个新值。 例如：
 
 ```js
-const count = {
+import { createModel } from '@ice/store';
+
+const count = createModel({
   state: 0,
   reducers: {
     add(state) {
@@ -137,7 +148,7 @@ const count = {
       return state;
     },
   },
-}
+});
 ```
 
 参考 [docs/recipes](./recipes.md#可变状态的说明) 了解更多。
@@ -145,7 +156,9 @@ const count = {
 reducer 的第二个参数即是调用时传递的参数：
 
 ```js
-const todos = {
+import { createModel } from '@ice/store';
+
+const todos = createModel({
   state: [
     {
       title: 'Learn typescript',
@@ -162,11 +175,11 @@ const todos = {
       state.push({ title, done });
     },
   },
-};
+});
 
 // 使用时：
 function Component() {
-  const { add } = store.useModelDispathers('todos');
+  const { add } = store.useModelDispatchers('todos');
   function handleClick () {
     add({ title: 'Learn React', done: false }); // 正确用法
     add('Learn React', false); // 错误用法
@@ -181,7 +194,9 @@ function Component() {
 一个可以处理该模型副作用的函数集合。这些方法以 payload 和 rootState 作为入参，适用于进行异步调用、[模型联动](recipes.md#模型联动)等场景。在 effects 内部，通过调用 `this.reducerFoo` 来更新模型状态：
 
 ```js
-const counter = {
+import { createModel } from '@ice/store';
+
+const counter = createModel({
   state: 0,
   reducers: {
     decrement:(prevState) => prevState - 1,
@@ -192,7 +207,7 @@ const counter = {
       this.decrement(); // 调用模型 reducers 内的方法来更新状态
     },
   }),
-};
+});
 ```
 
 > 注意：如果您正在使用 TypeScript ，并且配置了编译选项 `noImplicitThis: ture`，则会遇到类似 "Property 'setState' does not exist on type" 的编译错误。您可以[参考qna中的用法](qna.md)使用 `createModel` 来包裹你的 model，或者使用下面示例中的 `dispatch.model.reducer` 来避免此错误。
@@ -202,7 +217,9 @@ const counter = {
 如果 reducers 和 effects 中的方法重名，则会在先执行 reducer.foo 后再执行 effects.foo：
 
 ```js
-const model = {
+import { createModel } from '@ice/store';
+
+const model = createModel({
   state: [],
   reducers: {
     add(state, todo) {
@@ -215,7 +232,7 @@ const model = {
       dispatch.user.setTodos(store.getModelState('todos').length);
     },
   })
-};
+});
 ```
 
 ###### this.setState
@@ -241,7 +258,9 @@ const setState = (prevState, payload) => ({
 您可以通过在 reducers 中声明 `setState` 来覆盖默认的行为：
 
 ```js
-const model = {
+import { createModel } from '@ice/store';
+
+const model = createModel({
   state: { count: 0, calledCounter: 0 },
   reducers: {
     setState: (prevState, payload) => ({
@@ -255,7 +274,7 @@ const model = {
       this.setState({ count: 1 });
     }
   })
-}
+})
 ```
 
 ###### 模型联动
@@ -263,9 +282,9 @@ const model = {
 您可以通过声明 effects 函数的第一个参数 `dispatch` 来调用其他模型的方法：
 
 ```js
-import { createStore } from '@ice/store';
+import { createStore, createModel } from '@ice/store';
 
-const user = {
+const user = createModel({
   state: {
     foo: [],
   },
@@ -287,7 +306,7 @@ const user = {
       };
     },
   }
-};
+});
 
 const todos = { /* ... */ };
 
@@ -335,11 +354,11 @@ ReactDOM.render(
 允许您声明初始状态（可以用在诸如服务端渲染等场景）。
 
 ```jsx
-import { createStore } from '@ice/store';
+import { createStore, createModel } from '@ice/store';
 
 const models = {
-  todo: { state: {}, },
-  user: { state: {}, },
+  todo: createModel({ state: {} }),
+  user: createModel({ state: {}, }),
 };
 
 const store = createStore(models);
@@ -371,7 +390,9 @@ function App() {
 通过该 hooks 使用模型，返回模型的状态和调度器。
 
 ```jsx
-const counter = {
+import { createModel } from '@ice/store';
+
+const counter = createModel({
   state: {
     value: 0,
   },
@@ -380,7 +401,7 @@ const counter = {
       state.value = state.value + payload;
     },
   },
-};
+});
 
 const { useModel } = createStore({ counter });
 
@@ -505,7 +526,7 @@ function FunctionComponent() {
 
 #### useModelEffectsLoading
 
-`useModelEffectsLoading(name: string): { [actionName: string]: boolean } `
+`useModelEffectsLoading(name: string): { [actionName: string]: boolean }`
 
 通过该 hooks 来获取模型副作用的调用状态。
 
@@ -524,7 +545,7 @@ function FunctionComponent() {
 
 #### useModelEffectsError
 
-`useModelEffectsError(name: string): { [actionName: string]: { error: Error; value: boolean;}} `
+`useModelEffectsError(name: string): { [actionName: string]: { error: Error; value: boolean;}}`
 
 通过该 hooks 来获取模型副作用的调用结果是否有错误。
 

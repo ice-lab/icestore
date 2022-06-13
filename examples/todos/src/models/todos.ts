@@ -1,13 +1,14 @@
+import { createModel } from '@ice/store';
 import { delay } from '../utils';
 
 export interface Todo {
   text: string;
-  completed?: boolean;
+  completed: boolean;
 }
 
 export type TodosState = Todo[];
 
-const model = {
+const model = createModel({
   state: [
     {
       text: 'Init',
@@ -36,6 +37,7 @@ const model = {
       this.set([
         {
           text: 'react',
+          completed: false,
         },
         {
           text: 'vue',
@@ -48,6 +50,6 @@ const model = {
       this.remove(index);
     },
   }),
-};
+});
 
 export default model;
