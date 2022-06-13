@@ -1,8 +1,8 @@
 import React from 'react';
 import * as rhl from "@testing-library/react-hooks";
 
-function createHook(Provider, callback, namespace, initialStates?: any) {
-  return rhl.renderHook(() => callback(namespace), {
+function createHook(Provider: React.ComponentType<any>, callback: (...args: any[]) => any, namespace: string, initialStates?: any) {
+  return rhl.renderHook<React.PropsWithChildren<Record<string, any>>, any>(() => callback(namespace), {
     wrapper: (props) => (
       <Provider {...props} initialStates={initialStates}>
         {props.children}

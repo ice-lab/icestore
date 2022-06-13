@@ -4,7 +4,7 @@ import { createStore, createModel } from '@ice/store';
 import 'react-app-polyfill/ie11';
 import 'react-app-polyfill/stable';
 
-const delay = (time) => new Promise((resolve) => setTimeout(() => resolve(), time));
+const delay = (time: number) => new Promise<void>((resolve) => setTimeout(() => resolve(), time));
 
 // 1️⃣ Use createModel function to create a model to define your store
 const counter = createModel({
@@ -12,7 +12,9 @@ const counter = createModel({
     count: 0,
   },
   reducers: {
-    increment: (prevState) => ({ count: prevState.count + 1 }),
+    increment: (prevState) => {
+      prevState.count++;
+    },
     decrement: (prevState, payload: number) => ({ count: prevState.count - payload }),
   },
   effects: () => ({
@@ -42,7 +44,7 @@ function Counter() {
     <div>
       <span>{count}</span>
       <button type="button" onClick={increment}>+</button>
-      <button type="button" onClick={asyncDecrement}>-</button>
+      <button type="button" onClick={() => asyncDecrement(1)}>-</button>
     </div>
   );
 }
