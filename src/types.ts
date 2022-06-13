@@ -29,7 +29,10 @@ export type ExtractIcestoreStateFromModels<M extends Models> = {
   [modelKey in keyof M]: M[modelKey]['state']
 }
 
-export type IcestoreRootState<M extends Models> = ExtractIcestoreStateFromModels<
+// should declare by user
+export interface IcestoreModels extends Models {};
+
+export type IcestoreRootState<M extends Models = IcestoreModels> = ExtractIcestoreStateFromModels<
 M
 >
 
@@ -137,7 +140,7 @@ type IcestoreDispatcherAsync<P = void, M = void, R = void> = ([P] extends [void]
 ((action: Action<P, M>) => Promise<R>) &
 ((action: Action<P, void>) => Promise<R>)
 
-export type IcestoreDispatch<M extends Models | void = void> = (M extends Models
+export type IcestoreDispatch<M extends Models | void = IcestoreModels> = (M extends Models
   ? ExtractIcestoreDispatchersFromModels<M>
   : {
     [key: string]: {

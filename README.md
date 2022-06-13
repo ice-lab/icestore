@@ -29,29 +29,29 @@ icestore 是面向 React 应用的、简单友好的状态管理方案。它包�
 
 ## 文档
 
-- [API](./docs/api.md)
-- [更多技巧](./docs/recipes.md)
-- [从 V1 版本升级](./docs/upgrade-guidelines.md)
-- [常见问题](./docs/qna.md)
+* [API](./docs/api.md)
+* [更多技巧](./docs/recipes.md)
+* [从 V1 版本升级](./docs/upgrade-guidelines.md)
+* [常见问题](./docs/qna.md)
 
 ## 示例
 
-- [Counter](https://codesandbox.io/s/github/ice-lab/icestore/tree/master/examples/counter)
-- [Todos](https://codesandbox.io/s/github/ice-lab/icestore/tree/master/examples/todos)
-- [Class Component Support](https://codesandbox.io/s/github/ice-lab/icestore/tree/master/examples/classComponent)
-- [withModel](https://codesandbox.io/s/github/ice-lab/icestore/tree/master/examples/withModel)
+* [Counter](https://codesandbox.io/s/github/ice-lab/icestore/tree/master/examples/counter)
+* [Todos](https://codesandbox.io/s/github/ice-lab/icestore/tree/master/examples/todos)
+* [Class Component Support](https://codesandbox.io/s/github/ice-lab/icestore/tree/master/examples/classComponent)
+* [withModel](https://codesandbox.io/s/github/ice-lab/icestore/tree/master/examples/withModel)
 
 ## 快速开始
 
 ```jsx
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { createStore } from '@ice/store';
+import { createStore, createModel } from '@ice/store';
 
 const delay = (time) => new Promise((resolve) => setTimeout(() => resolve(), time));
 
 // 1️⃣ 使用模型定义你的状态
-const counter = {
+const counter = createModel({
   state: 0,
   reducers: {
     increment:(prevState) => prevState + 1,
@@ -63,7 +63,7 @@ const counter = {
       this.decrement();
     },
   })
-};
+});
 
 const models = {
   counter,
@@ -71,6 +71,7 @@ const models = {
 
 // 2️⃣ 创建 Store
 const store = createStore(models);
+
 
 // 3️⃣ 消费模型
 const { useModel } = store;
@@ -105,7 +106,7 @@ ReactDOM.render(<App />, rootElement);
 使用 icestore 需要 React 在 16.8.0 版本以上。
 
 ```bash
-$ npm install @ice/store --save
+npm install @ice/store --save
 ```
 
 ## 灵感
@@ -119,16 +120,16 @@ $ npm install @ice/store --save
 开发:
 
 ```bash
-$ cd icestore/
-$ npm install
-$ npm run test
-$ npm run watch
+cd icestore/
+npm install
+npm run test
+npm run watch
 
-$ cd examples/counter
-$ npm install
-$ npm link ../../                    # link icestore
-$ npm link ../../node_modules/react  # link react
-$ npm start
+cd examples/counter
+npm install
+npm link ../../                    # link icestore
+npm link ../../node_modules/react  # link react
+npm start
 ```
 
 ## License
