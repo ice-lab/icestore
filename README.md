@@ -57,8 +57,8 @@ const counter = createModel({
     increment:(prevState) => prevState + 1,
     decrement:(prevState) => prevState - 1,
   },
-  effects: (dispatch) => ({
-    async asyncDecrement(_, rootState) {
+  effects: () => ({
+    async asyncDecrement() {
       await delay(1000);
       this.decrement();
     },
@@ -68,13 +68,6 @@ const counter = createModel({
 const models = {
   counter,
 };
-
-// 增强 effects 中 dispatch 和 rootState类型
-declare module '@ice/store' {
-  interface IcestoreModels {
-    counter: typeof counter;
-  }
-}
 
 // 2️⃣ 创建 Store
 const store = createStore(models);
