@@ -129,7 +129,7 @@ $ npm install
 $ npm run test
 $ npm run watch
 
-$ examples/counter
+$ cd examples/counter
 $ npm install
 $ npm link ../../                    # link icestore
 $ npm link ../../node_modules/react  # link react

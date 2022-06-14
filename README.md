@@ -120,16 +120,16 @@ npm install @ice/store --save
 开发:
 
 ```bash
-cd icestore/
-npm install
-npm run test
-npm run watch
+$ cd icestore/
+$ npm install
+$ npm run test
+$ npm run watch
 
-cd examples/counter
-npm install
-npm link ../../                    # link icestore
-npm link ../../node_modules/react  # link react
-npm start
+$ cd examples/counter
+$ npm install
+$ npm link ../../                    # link icestore
+$ npm link ../../node_modules/react  # link react
+$ npm start
 ```
 
 ## License
