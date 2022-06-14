@@ -29,17 +29,17 @@ icestore 是面向 React 应用的、简单友好的状态管理方案。它包�
 
 ## 文档
 
-* [API](./docs/api.md)
-* [更多技巧](./docs/recipes.md)
-* [从 V1 版本升级](./docs/upgrade-guidelines.md)
-* [常见问题](./docs/qna.md)
+- [API](./docs/api.md)
+- [更多技巧](./docs/recipes.md)
+- [从 V1 版本升级](./docs/upgrade-guidelines.md)
+- [常见问题](./docs/qna.md)
 
 ## 示例
 
-* [Counter](https://codesandbox.io/s/github/ice-lab/icestore/tree/master/examples/counter)
-* [Todos](https://codesandbox.io/s/github/ice-lab/icestore/tree/master/examples/todos)
-* [Class Component Support](https://codesandbox.io/s/github/ice-lab/icestore/tree/master/examples/classComponent)
-* [withModel](https://codesandbox.io/s/github/ice-lab/icestore/tree/master/examples/withModel)
+- [Counter](https://codesandbox.io/s/github/ice-lab/icestore/tree/master/examples/counter)
+- [Todos](https://codesandbox.io/s/github/ice-lab/icestore/tree/master/examples/todos)
+- [Class Component Support](https://codesandbox.io/s/github/ice-lab/icestore/tree/master/examples/classComponent)
+- [withModel](https://codesandbox.io/s/github/ice-lab/icestore/tree/master/examples/withModel)
 
 ## 快速开始
 
