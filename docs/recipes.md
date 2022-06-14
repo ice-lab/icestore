@@ -3,6 +3,26 @@ id: recipes
 title: 更多技巧
 ---
 
+## 类型增强
+
+在 `store.ts` 中增加如下代码，在书写 model 时可以增强 effects 中 dispatch 和 rootState 的类型提示。
+
+```tsx
+declare module '@ice/store' {
+  interface IcestoreModels {
+    // 此处替换为项目中真实的 model 名称
+    counter: typeof counter;
+    user: typeof user;
+  }
+}
+
+```
+### 效果
+
+![image](https://user-images.githubusercontent.com/42671099/173331507-df062d1a-ec42-4c71-b931-1f017bef5ffa.png)
+
+![image](https://user-images.githubusercontent.com/42671099/173331558-c9a41289-d3d2-4d76-a30c-8f4cdda857e2.png)
+
 ## 模型联动
 
 模型联动是一个非常常见的场景，可以实现在一个模型中触发另一个模型状态的变更。

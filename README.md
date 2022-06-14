@@ -72,6 +72,7 @@ const models = {
 // 2️⃣ 创建 Store
 const store = createStore(models);
 
+
 // 3️⃣ 消费模型
 const { useModel } = store;
 function Counter() {
