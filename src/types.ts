@@ -30,6 +30,7 @@ export type ExtractIcestoreStateFromModels<M extends Models> = {
 }
 
 // should declare by user
+// eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface IcestoreModels extends Models {};
 
 export type IcestoreRootState<M extends Models = IcestoreModels> = ExtractIcestoreStateFromModels<

@@ -1,10 +1,10 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { withModel } from '@ice/store';
+import { withModel, createModel } from '@ice/store';
 
 const delay = (time) => new Promise((resolve) => setTimeout(() => resolve(), time));
 
-const counter = {
+const counter = createModel({
   state: 0,
   reducers: {
     increment:(prevState) => prevState + 1,
@@ -16,7 +16,7 @@ const counter = {
       this.decrement();
     },
   }),
-};
+});
 
 function Counter({ model }) {
   const [ count, dispatchers ] = model.useValue('counter');

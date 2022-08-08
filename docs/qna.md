@@ -27,6 +27,7 @@ title: 常见问题
 > 更推荐使用方法一，可以获得完善的 TS 类型提示
 
 方法一：使用 `createModel` 工具方法来包裹你的 model 对象
+
 ```diff
 + import { createModel } from '@ice/store';
 
@@ -46,6 +47,7 @@ title: 常见问题
 - };
 + });
 ```
+
 ![image](https://user-images.githubusercontent.com/42671099/163668927-2a30ec43-7c49-4973-ae15-1035a0386ca7.png)
 
 方法二：使用 `dispatch`

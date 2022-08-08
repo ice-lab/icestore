@@ -18,13 +18,12 @@ const counter = createModel({
     decrement: (prevState, payload: number) => ({ count: prevState.count - payload }),
   },
   effects: (dispatch) => ({
-    async asyncDecrement(payload: number, rootState) {
+    async asyncDecrement(payload: number) {
       await delay(1000);
       this.decrement(payload || 1);
       dispatch.counter.decrement(1);
     },
-    async anotherEffect(_, rootState) {
-      console.log(rootState.counter.count);
+    async anotherEffect() {
       this.asyncDecrement(2);
     },
   }),
@@ -36,7 +35,7 @@ const models = {
 
 declare module '@ice/store'{
   interface IcestoreModels {
-    counter: typeof counter
+    counter: typeof counter;
   }
 }
 
