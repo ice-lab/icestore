@@ -14,7 +14,7 @@ export default function() {
         if (!input.value.trim()) {
           return;
         }
-        add({ text: input.value });
+        add({ text: input.value, completed: true });
         input.value = '';
       }}>
         <input ref={node => input = node} />

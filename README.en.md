@@ -46,13 +46,13 @@ See the [comparison table](docs/recipes.md#能力对比表) for more details.
 ```jsx
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { createStore } from '@ice/store';
+import { createStore, createModel } from '@ice/store';
 
 const delay = (time) =>
   new Promise((resolve) => setTimeout(() => resolve(), time));
 
 // 1️⃣ Use a model to define your store
-const counter = {
+const counter = createModel({
   state: 0,
   reducers: {
     increment: (prevState) => prevState + 1,
@@ -64,7 +64,7 @@ const counter = {
       this.decrement();
     },
   }),
-};
+});
 
 const models = {
   counter,

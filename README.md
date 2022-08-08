@@ -46,12 +46,12 @@ icestore 是面向 React 应用的、简单友好的状态管理方案。它包�
 ```jsx
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { createStore } from '@ice/store';
+import { createStore, createModel } from '@ice/store';
 
 const delay = (time) => new Promise((resolve) => setTimeout(() => resolve(), time));
 
 // 1️⃣ 使用模型定义你的状态
-const counter = {
+const counter = createModel({
   state: 0,
   reducers: {
     increment:(prevState) => prevState + 1,
@@ -63,7 +63,7 @@ const counter = {
       this.decrement();
     },
   })
-};
+});
 
 const models = {
   counter,
@@ -71,6 +71,7 @@ const models = {
 
 // 2️⃣ 创建 Store
 const store = createStore(models);
+
 
 // 3️⃣ 消费模型
 const { useModel } = store;
@@ -105,7 +106,7 @@ ReactDOM.render(<App />, rootElement);
 使用 icestore 需要 React 在 16.8.0 版本以上。
 
 ```bash
-$ npm install @ice/store --save
+npm install @ice/store --save
 ```
 
 ## 灵感

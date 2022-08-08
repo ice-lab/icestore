@@ -3,6 +3,26 @@ id: recipes
 title: 更多技巧
 ---
 
+## 类型增强
+
+在 `store.ts` 中增加如下代码，在书写 model 时可以增强 effects 中 dispatch 和 rootState 的类型提示。
+
+```tsx
+declare module '@ice/store' {
+  interface IcestoreModels {
+    // 此处替换为项目中真实的 model 名称
+    counter: typeof counter;
+    user: typeof user;
+  }
+}
+
+```
+### 效果
+
+![image](https://user-images.githubusercontent.com/42671099/173331507-df062d1a-ec42-4c71-b931-1f017bef5ffa.png)
+
+![image](https://user-images.githubusercontent.com/42671099/173331558-c9a41289-d3d2-4d76-a30c-8f4cdda857e2.png)
+
 ## 模型联动
 
 模型联动是一个非常常见的场景，可以实现在一个模型中触发另一个模型状态的变更。
@@ -12,8 +32,10 @@ title: 更多技巧
 您有一个用户模型，记录了用户拥有多少个任务；还有一个任务模型，记录了任务的列表详情。每当添加任务到列表时，都需要更新用户拥有的任务数。
 
 ```tsx
+import { createModel } from '@ice/store';
+
 // src/models/user
-export default {
+export default createModel({
   state: {
     name: '',
     tasks: 0,
@@ -24,10 +46,12 @@ export default {
       this.setState(data);
     },
   }),
-};
+});
 
 // src/models/tasks
-export default {
+import { createModel } from '@ice/store';
+
+export default createModel({
   state: [],
   effects: (dispatch) => ({
     async refresh() {
@@ -44,7 +68,7 @@ export default {
       await this.refresh();
     },
   }),
-};
+});
 
 // src/store
 import { createStore } from '@ice/store';
@@ -62,7 +86,6 @@ export default createStore({
 模型间允许相互调用，需注意循环调用的问题。例如，模型 A 中的 a 方法调用了 模型 B 中的 b 方法，模型 B 中的 b 方法又调用模型 A 中的 a 方法，就会形成死循环。
 
 如果是多个模型间进行相互调用，死循环问题的出现概率就会提升。
-
 
 ## 只调用方法而不订阅更新
 
@@ -106,7 +129,7 @@ function Logger({ foo }) {
 
 
   // case 2 在闭包中获取最新状态
-  const doOhterThing = useCallback(
+  const doOtherThing = useCallback(
     (payload) => {
       const counter = store.getModelState('counter');
       alert(counter + foo);
@@ -117,7 +140,7 @@ function Logger({ foo }) {
   return (
     <div>
       <button onClick={doSomeThing}>click 1<button>
-      <button onClick={doOhterThing}>click 2<button>
+      <button onClick={doOtherThing}>click 2<button>
     </div>
   );
 }
@@ -126,21 +149,22 @@ function Logger({ foo }) {
 ### 在模型中
 
 ```js
+import { createModel } from '@ice/store';
 import store from '@/store';
 
-const user = {
+const user = createModel({
   effects: dispatch => ({
     async asyncAdd(payload, state) {
       dispatch.todos.addTodo(payload); // 调用其他模型的方法更新其状态
       const todos = store.getModelState('todos'); // 获取更新后的模型最新状态
     }
   })
-}
+})
 ```
 
 ## 模型副作用的执行状态
 
-icestore 内部集成了对于异步副作用的状态记录，方便您在不增加额外的状态的前提下访问异步副作用的执行状态（loading 与 error），从而使状态渲染的处理逻辑更加简洁。
+@ice/store 内部集成了对于异步副作用的状态记录，方便您在不增加额外的状态的前提下访问异步副作用的执行状态（loading 与 error），从而使状态渲染的处理逻辑更加简洁。
 
 ### 示例
 
@@ -243,7 +267,12 @@ icestore 内部使用 [immer](https://github.com/immerjs/immer) 来实现可变�
 下面是几个错误的示范：
 
 ```js
-const model = {
+import { createModel } from '@ice/store';
+
+const model = createModel({
+  state: {
+    items: [],
+  },
   reducers: {
     addTodo({ items }, payload) {
       items.push(payload);
@@ -256,7 +285,7 @@ const model = {
       items.push(payload);
     }
   }
-}
+})
 ```
 
 ### 直接更新状态
@@ -264,7 +293,9 @@ const model = {
 默认情况下，我们使用 immer 提供可变状态的操作。但这是完全可选的，您可以像下面这样操作，返回新的状态。
 
 ```js
-const model = {
+import { createModel } from '@ice/store';
+
+const model = createModel({
   state: [],
   reducers: {
     addTodo((prevState, payload) {
@@ -272,7 +303,7 @@ const model = {
       return [...prevState, payload];
     })
   }
-}
+})
 ```
 
 如果您喜欢这种方式，可以通过 createStore 的 disableImmer 选项来禁用 immer。
