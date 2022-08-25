@@ -101,8 +101,12 @@ createStore({
 ```js
 import { createModel } from '@ice/store';
 
+interface State {
+  loading: boolean;
+}
+
 const model = createModel({
-  state: { loading: false },
+  state: { loading: false } as State,
 });
 ```
 
@@ -115,8 +119,13 @@ const model = createModel({
 
 一个简单的示例：
 
-```js
+```ts
 import { createModel } from '@ice/store';
+
+interface State {
+  title: string;
+  done: boolean;
+}
 
 const todos = createModel({
   state: [
@@ -124,7 +133,7 @@ const todos = createModel({
       title: 'Learn typescript',
       done: true,
     },
-  ],
+  ] as State[],
   reducers: {
     foo(state) {
       state.push({ title: 'Tweet about it' }); // 直接更新了数组
