@@ -1,4 +1,4 @@
-import * as rhl from "@testing-library/react-hooks";
+import * as rhl from '@testing-library/react-hooks';
 import { createStore } from '../../src/index';
 import counter, { counterCustomSetState } from '../helpers/counter';
 import todos from '../helpers/todos';
@@ -24,7 +24,7 @@ describe('effectsPlugin', () => {
   test('invalidate effect', () => {
     const testModel = {
       state: 0,
-      effects: () => ({ 'test': 1 }),
+      effects: () => ({ test: 1 }),
     };
     expect(() => createStore(({ testModel } as any))).toThrow('Invalid effect (testModel/test). Must be a function');
   });

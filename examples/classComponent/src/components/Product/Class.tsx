@@ -1,4 +1,3 @@
-/* eslint-disable react/prefer-stateless-function */
 import React from 'react';
 import { Assign } from 'utility-types';
 import { withModel, ExtractIModelAPIsFromModelConfig, ExtractIModelFromModelConfig } from '@ice/store';
@@ -16,10 +15,10 @@ interface MapModelToComponentProp {
 
 type ComponentProps = Assign<CustomProp, MapModelToComponentProp>;
 
-class Component extends React.Component<ComponentProps>{
+class Component extends React.Component<ComponentProps> {
   render() {
     const { model, title } = this.props;
-    const [ state ] = model;
+    const [state] = model;
     return (
       <Product
         title={title}
@@ -36,7 +35,7 @@ interface MapModelToProp {
 
 type Props = Assign<CustomProp, MapModelToProp>;
 
-export default withModel(model)<MapModelToProp, Props>(function ({ model, ...otherProps }) {
+export default withModel(model)<MapModelToProp, Props>(({ model, ...otherProps }) => {
   const ComponentWithModel = model.withValue()(Component);
   return <ComponentWithModel {...otherProps} />;
 });

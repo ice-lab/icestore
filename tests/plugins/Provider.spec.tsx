@@ -1,8 +1,8 @@
 import React from 'react';
-import * as rtl from "@testing-library/react";
+import * as rtl from '@testing-library/react';
 import counter from '../helpers/counter';
 import Counter from '../helpers/CounterClassComponent';
-import createStore from "../../src/index";
+import createStore from '../../src/index';
 import createHook from '../helpers/createHook';
 
 describe('providerPlugin', () => {
@@ -33,7 +33,7 @@ describe('providerPlugin', () => {
     const store = createStore({ counter });
     const { Provider, useModel } = store;
 
-    const { result } = createHook(Provider, useModel, "counter");
+    const { result } = createHook(Provider, useModel, 'counter');
     const [state] = result.current;
     expect(state.count).toEqual(0);
   });
@@ -59,7 +59,7 @@ describe('providerPlugin', () => {
     const store = createStore({ counter });
     const { Provider, useModel } = store;
 
-    const { result } = createHook(Provider, useModel, "counter", initialStates);
+    const { result } = createHook(Provider, useModel, 'counter', initialStates);
     const [state] = result.current;
     expect(state).toEqual(initialStates.counter);
   });

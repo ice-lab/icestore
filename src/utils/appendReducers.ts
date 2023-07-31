@@ -2,9 +2,9 @@ import actionTypes from '../actionTypes';
 
 const { SET_STATE } = actionTypes;
 
-export default function(originModels: any) {
+export default function (originModels: any) {
   const models = {};
-  Object.keys(originModels).forEach(function(name) {
+  Object.keys(originModels).forEach((name) => {
     const model = originModels[name];
     if (!model.reducers) {
       model.reducers = {};

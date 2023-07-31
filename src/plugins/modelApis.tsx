@@ -17,7 +17,7 @@ export default (): T.Plugin => {
       }
       function useModelState(name) {
         const selector = store.useSelector(state => state[name]);
-        if (typeof selector !== "undefined") {
+        if (typeof selector !== 'undefined') {
           return selector;
         }
         throw new Error(`Not found model by namespace: ${name}.`);
@@ -44,10 +44,10 @@ export default (): T.Plugin => {
         return states;
       }
       function useModelEffectsError(name) {
-        return store.useSelector(state => state.error ? state.error.effects[name] : undefined);
+        return store.useSelector(state => (state.error ? state.error.effects[name] : undefined));
       }
       function useModelEffectsLoading(name) {
-        return store.useSelector(state => state.loading ? state.loading.effects[name] : undefined);
+        return store.useSelector(state => (state.loading ? state.loading.effects[name] : undefined));
       }
 
       // other apis
@@ -99,7 +99,7 @@ export default (): T.Plugin => {
       const withModelDispatchers = createWithModelDispatchers();
 
       function createWithModelEffectsState(fieldSuffix = 'EffectsState') {
-        return function(name, mapModelEffectsStateToProps?) {
+        return function (name, mapModelEffectsStateToProps?) {
           mapModelEffectsStateToProps = (mapModelEffectsStateToProps || ((effectsState) => ({ [`${name}${fieldSuffix}`]: effectsState })));
           return (Component) => {
             return (props): React.ReactElement => {

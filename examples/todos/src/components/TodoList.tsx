@@ -14,13 +14,13 @@ const getVisibleTodos = (todos, filter) => {
     case VisibilityFilters.ACTIVE:
       return todos.filter(t => !t.completed);
     default:
-      throw new Error(`Unknown filter: ${  filter}`);
+      throw new Error(`Unknown filter: ${filter}`);
   }
 };
 
 export default function TodoList() {
-  const [ todos, dispatchers ] = useModel('todos');
-  const [ visibilityFilter ] = useModel('visibilityFilter');
+  const [todos, dispatchers] = useModel('todos');
+  const [visibilityFilter] = useModel('visibilityFilter');
   const effectsLoading = useModelEffectsLoading('todos');
 
   const { refresh, asyncRemove, remove, toggle } = dispatchers;

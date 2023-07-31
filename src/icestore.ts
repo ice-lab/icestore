@@ -47,7 +47,7 @@ export default class Icestore {
       ...models[name],
       reducers: models[name].reducers || {},
     }));
-  }
+  };
 
   public addModel(model: T.Model) {
     validate([

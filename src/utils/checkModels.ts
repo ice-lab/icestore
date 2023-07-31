@@ -2,11 +2,11 @@ import isFunction from 'lodash.isfunction';
 
 /**
  * checkModels
- * 
+ *
  * @param originModels
  */
 export function checkModels(originModels: any) {
-  Object.keys(originModels).forEach(function(name) {
+  Object.keys(originModels).forEach((name) => {
     const model = originModels[name];
 
     // 1.1.0-1.2.0: effects: {} -> effects: () => ({})
