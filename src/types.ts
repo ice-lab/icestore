@@ -480,7 +480,7 @@ export interface ThisModelConfig<
     ThisType<ExtractIModelDispatchersFromReducersObject<R> & ExtractIModelDispatchersFromEffects<E>>;
 }
 
-interface ReturnModelConfig<
+export interface ReturnModelConfig<
   S,
   R extends ModelReducers<S>,
   E extends ModelEffects<S> | ((dispatch: IcestoreDispatch) => ModelEffects<S>),
