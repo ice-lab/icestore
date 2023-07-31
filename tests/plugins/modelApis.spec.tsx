@@ -1,6 +1,6 @@
 import React, { useCallback } from 'react';
 import * as rhl from '@testing-library/react-hooks';
-import * as rtl from "@testing-library/react";
+import * as rtl from '@testing-library/react';
 import createStore, { withModel } from '../../src/index';
 import counter, { counterWithUnsupportedEffects } from '../helpers/counter';
 import Counter, { CounterWithEffectsState } from '../helpers/CounterClassComponent';
@@ -73,7 +73,7 @@ describe('modelApisPlugin', () => {
 
     const WithCounterEffectsState = withModelEffectsState('counter')(CounterWithEffectsState);
     const WithModelCounter = withModel('counter')(Counter);
-    
+
     const tester = rtl.render(
       <Provider>
         <WithCounterEffectsState>
@@ -199,7 +199,7 @@ describe('modelApisPlugin', () => {
           <div data-testid="throwError" onClick={() => throwError()} />
         </div>
       );
-    };
+    }
     const WithModelCounter = withModel(counter)(CounterComponent);
     const tester = rtl.render(
       <WithModelCounter />,
@@ -224,7 +224,7 @@ describe('modelApisPlugin', () => {
           <div data-testid="asyncIncrement" onClick={() => asyncIncrement()} />
         </div>
       );
-    };
+    }
     const WithModelCounter = withModel(counter)(CounterComponent);
     const tester = rtl.render(
       <WithModelCounter />,
@@ -251,7 +251,7 @@ describe('modelApisPlugin', () => {
           <div data-testid="throwError" onClick={() => throwError()} />
         </div>
       );
-    };
+    }
     const WithModelCounter = withModel(counter)(CounterComponent);
     const tester = rtl.render(
       <WithModelCounter />,

@@ -51,8 +51,8 @@ export const createStore = <M extends T.Models, C extends T.CreateStoreConfig<M>
   middlewares.push(thunkMiddleware);
 
   // defaults plugins
-  plugins.push(createProviderPlugin({context}));
-  plugins.push(createReduxHooksPlugin({context}));
+  plugins.push(createProviderPlugin({ context }));
+  plugins.push(createReduxHooksPlugin({ context }));
   plugins.push(createModelApisPlugin());
 
   // https://github.com/ice-lab/icestore/issues/94
@@ -95,7 +95,7 @@ interface MapModelToProps<M extends T.ModelConfig> {
 export const withModel = <
   M extends T.ModelConfig,
   F extends MapModelToProps<M>,
-  C extends T.CreateStoreConfig<{ model: M }>
+  C extends T.CreateStoreConfig<{ model: M }>,
 >(model: M, mapModelToProps?: F, initConfig?: C) => {
   const modelName = 'model';
   mapModelToProps = (mapModelToProps || ((modelApis) => ({ [modelName]: modelApis }))) as F;

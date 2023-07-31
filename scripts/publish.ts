@@ -56,7 +56,6 @@ if (!branchName) {
     },
   });
   console.log('notify success', response.data);
-
 })().catch(err => {
   console.error(err);
   process.exit(1);

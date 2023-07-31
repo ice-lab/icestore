@@ -1,4 +1,3 @@
-/* eslint-disable react/prefer-stateless-function */
 import React from 'react';
 import { Assign } from 'utility-types';
 import { ExtractIModelFromModelConfig } from '@ice/store';
@@ -21,7 +20,7 @@ type Props = Assign<CustomProp, PropsWithModel>;
 class Component extends React.Component<Props> {
   render() {
     const { title, user } = this.props;
-    const [ state ] = user;
+    const [state] = user;
     const { name } = state;
     return User({
       name,

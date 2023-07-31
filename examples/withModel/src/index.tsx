@@ -7,8 +7,8 @@ const delay = (time) => new Promise((resolve) => setTimeout(() => resolve(), tim
 const counter = createModel({
   state: 0,
   reducers: {
-    increment:(prevState) => prevState + 1,
-    decrement:(prevState) => prevState - 1,
+    increment: (prevState) => prevState + 1,
+    decrement: (prevState) => prevState - 1,
   },
   effects: () => ({
     async decrementAsync() {
@@ -19,7 +19,7 @@ const counter = createModel({
 });
 
 function Counter({ model }) {
-  const [ count, dispatchers ] = model.useValue('counter');
+  const [count, dispatchers] = model.useValue('counter');
   const { increment, decrementAsync } = dispatchers;
   return (
     <div>

@@ -1,6 +1,6 @@
 import React from 'react';
 
-export default function({ completed, text, onAsyncRemove, onRemove, onToggle, isLoading }) {
+export default function ({ completed, text, onAsyncRemove, onRemove, onToggle, isLoading }) {
   return (
     <li>
       <label

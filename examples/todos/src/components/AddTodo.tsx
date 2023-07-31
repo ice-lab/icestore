@@ -3,7 +3,7 @@ import store from '../store';
 
 const { useModelDispatchers } = store;
 
-export default function() {
+export default function () {
   const { add } = useModelDispatchers('todos');
   let input;
 

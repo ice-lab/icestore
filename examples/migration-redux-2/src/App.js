@@ -8,12 +8,12 @@ const Count = props => (
       <div style={{ width: 120 }}>
         <h3>Sharks</h3>
         <h1>{props.sharks}</h1>
-        <button type='button' onClick={props.incrementSharks}>+1</button>
+        <button type="button" onClick={props.incrementSharks}>+1</button>
       </div>
       <div style={{ width: 120 }}>
         <h3>Dolphins</h3>
         <h1>{props.dolphins}</h1>
-        <button type='button' onClick={props.incrementDolphins}>+1</button>
+        <button type="button" onClick={props.incrementDolphins}>+1</button>
       </div>
     </div>
     <p>Mixing Redux & icestore</p>

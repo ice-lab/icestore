@@ -35,7 +35,7 @@ export default class Counter extends PureComponent<CounterProps> {
 
 interface CounterWithDispatchersProps {
   counterDispatchers: ExtractIModelDispatchersFromModelConfig<typeof counterModel>;
-};
+}
 export class CounterWithDispatchers extends PureComponent<CounterWithDispatchersProps> {
   render() {
     const { counterDispatchers } = this.props;
@@ -43,7 +43,7 @@ export class CounterWithDispatchers extends PureComponent<CounterWithDispatchers
       <div data-testid="reset" onClick={() => counterDispatchers.reset()} />
     );
   }
-};
+}
 
 interface CounterWithEffectsStateProps {
   counterEffectsState: ExtractIModelEffectsStateFromModelConfig<typeof counterModel>;

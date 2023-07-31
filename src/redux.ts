@@ -14,7 +14,7 @@ const composeEnhancersWithDevtools = (
     : Redux.compose;
 };
 
-export default function({
+export default function ({
   redux,
   models,
 }: {
